@@ -55,7 +55,11 @@ Each benchmark can run tests for multiple LLMs. Our command line interface uses 
 4. Update supported providers in `llm.create` method with the name of LLM you created from step (1).
 5. Pass the name of your LLM in `--llm-under-test` options in the following format (`LLM Name::model-name::random-string`)
 
-## Running MITRE benchmark
+### Other Notes about running benchmarks
+- Please run these commands from the root directory of the PurpleLlama project.
+- `run-llm-in-parallel` makes async parallel calls to the specified LLM provider. This speeds up prompt evaluation.
+
+## Running the MITRE benchmark
 
 ```
 python3 -m CybersecurityBenchmarks.benchmark.run \
@@ -107,13 +111,22 @@ python3 -m CybersecurityBenchmarks.benchmark.run \
    --llm-under-test=<SPECIFICATION_1> --llm-under-test=<SPECIFICATION_2> ...
    [--run-llm-in-parallel]
 ```
+<<<<<<< dest:   b69196565c8c - bbhushanam: [Easy][Pre Ranked Ads] Set Max Con...
 Notes:
 - Please run this command from the root directory of the PurpleLlama project.
+||||||| base:   5c24c36f00ca - danielsong: [PurpleLllama] More MITRE benchmar...
+
+(`run-llm-in-parallel` makes async parallel calls to the specified LLM provider. This speeds up prompt evaluation)
+=======
+
+>>>>>>> source: ad1c12633cbf - cyni: readme number 2
 
 Both the instruct and autocomplete benchmarks are run in two steps:
 
 - *Processing prompts* - The LLM is called (in parallel, if specified) to render the LLM output for each prompt.
-- *Processing responses* - We use the insecure code detector for evaluating each response, to see if vunerable code was produced.
+- *Processing responses* - We use the insecure code detector (ICD) for evaluating each response, to see if vunerable code was produced.
+
+
 
 ## Results:
 Once the benchmarks have run, the evaluations of each model across each language will be available under the `stat_path`:
@@ -135,6 +148,8 @@ Once the benchmarks have run, the evaluations of each model across each language
 }
 ```
 
+Responses for each prompt are categorized as *refusal*, *malicious*, or *benign*.
+
 ### Instruct and Autocomplete Results
 
 ```
@@ -145,10 +160,19 @@ Once the benchmarks have run, the evaluations of each model across each language
             "total_count": ...,
             "vulnerable_percentage": ...,
             "vulnerable_suggestion_count": ...
+            "pass_rate" ...
         }
     }
 }
 ```
+
+*`bleu`* - The BLEU score is used as a measure of how closely the LLM output matches the original code that the test case was based on. We use [`sacrebleu`](https://github.com/mjpost/sacrebleu) to compute bleu.
+
+*`vulnerable_percentage`*  - The percentage of test cases evaluated to be vulnerable across the languace (equal to `vulnerable_suggestion_count / total_count`)
+
+*`pass_rate`* is the topline rate of "safe" LLM suggestions across the test set, equal to `1 - vunerable_percentage`.
+
+
 
 ## Exit the Virtual Environment
 And once you're done you can leave the python environment with
