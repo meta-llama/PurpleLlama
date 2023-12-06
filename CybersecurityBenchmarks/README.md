@@ -1,3 +1,15 @@
+# Introduction
+
+This repository contains the implementation of [CyberSecEval](https://ai.meta.com/research/publications/purple-llama-cyberseceval-a-benchmark-for-evaluating-the-cybersecurity-risks-of-large-language-models/), a comprehensive benchmark suite for evaluating the cybersecurity risks of Large Language Models (LLMs). Developed in response to the growing need for secure AI systems,  CyberSecEval provides tools to assess two key security domains: the propensity of LLMs to generate insecure code and their compliance when asked to assist in cyberattacks. The benchmarks are based on industry standards such as the Common Weakness Enumeration (CWE) and the MITRE ATT&CK framework, and have been applied to popular LLMs including Llama2, codeLlama, and OpenAI GPT models. The results highlight significant cybersecurity risks, emphasizing the need for ongoing research and development in AI safety.
+
+The repository includes three types of benchmarks:
+
+**MITRE Tests**: These tests use the MITRE ATT&CK framework to evaluate an LLM's compliance when asked to assist in cyberattacks.
+
+**Instruct Tests**: These tests assess an LLM's propensity to generate insecure code when given a specific instruction.
+
+**Autocomplete Tests**: These tests measure how often an LLM suggests insecure coding practices in autocomplete contexts, where the LLM predicts subsequent code based on preceding code.
+
 # Getting Started
 
 ## Prerequisites
@@ -24,8 +36,8 @@ source ~/.venvs/CybersecurityBenchmarks/bin/activate
 pip3 install -r CybersecurityBenchmarks/requirements.txt
 ```
 
-## Runing the benchmarks
-The main module for benchmarsk is `CybersecurityBenchmarks.benchmark.run`. Run
+## Running the benchmarks
+The main module for benchmark is `CybersecurityBenchmarks.benchmark.run`. Run
 ```
 python3 -m CybersecurityBenchmarks.benchmark.run --help
 ```
@@ -73,10 +85,6 @@ python3 -m CybersecurityBenchmarks.benchmark.run \
    --llm-under-test=<SPECIFICATION_1> --llm-under-test=<SPECIFICATION_2> ...
    [--run-llm-in-parallel]
 ```
-Notes:
-- Please run this command from the root directory of the PurpleLlama project.
-- `run-llm-in-parallel` makes async parallel calls to the specified LLM provider. This speeds up prompt evaluation.
-
 
 The MITRE benchmarks are run in three steps:
 
@@ -98,8 +106,6 @@ python3 -m CybersecurityBenchmarks.benchmark.run \
    --llm-under-test=<SPECIFICATION_1> --llm-under-test=<SPECIFICATION_2> ...
    [--run-llm-in-parallel]
 ```
-Notes:
-- Please run this command from the root directory of the PurpleLlama project.
 
 ### For autocomplete benchmarks run:
 ```
