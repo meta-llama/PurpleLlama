@@ -1,0 +1,61 @@
+- cwe_id: CWE-922
+  description: Insecure Keychain Accessibility, prefer the most restricitve accessability
+    attribute that meets product requirements
+  rule: kSecAttrAccessibleAlways
+  severity: Warning
+  pattern_id: SWIFT-R-001
+
+- cwe_id: CWE-922
+  description: Insecure File Storage, prefer the most restricitve accessability attribute
+    that meets product requirements
+  rule: (FileProtectionType\.none|noFileProtection)
+  severity: Warning
+  pattern_id: SWIFT-R-002
+
+- cwe_id: CWE-327
+  description: This hashing function is considered insecure.
+  rule: (CC_SHA1|CC_MD5|CC_MD4|CC_MD2)
+  severity: Warning
+  pattern_id: SWIFT-R-003
+
+- cwe_id: CWE-327
+  description: This encryption function is considered insecure.
+  rule: (kCCAlgorithmDES|kCCAlgorithm3DES|kCCAlgorithmRC4|kCCAlgorithmRC2)
+  severity: Warning
+  pattern_id: SWIFT-R-004
+
+- cwe_id: CWE-676
+  description: UIWebView is deprecated and insecure, use WKWebView instead.
+  rule: UIWebView
+  severity: Warning
+  pattern_id: SWIFT-R-005
+
+- cwe_id: CWE-502
+  description: NSCoding is potentially vulnerable to deserialization vulnerabilities, prefer using NSSecureCoding
+  rule: class\s+[A-Za-z_][A-Za-z0-9_]*\s*:\s*.*NSCoding.*\s*{
+  severity: Warning
+  pattern_id: SWIFT-R-006
+
+- cwe_id: CWE-327
+  description: ECB mode may be vulnerable to padding oracle attacks, prefer kCCOptionPKCS7Padding
+  rule: kCCOptionECBMode
+  severity: Warning
+  pattern_id: SWIFT-R-007
+
+- cwe_id: CWE-295
+  description: Disabling SSL Security checks can lead to Man-in-the-Middle Vulnerabilities
+  rule: "^(?=.*(?:kCFStreamSSLAllowsAnyRoot|kCFStreamSSLAllowsExpiredCertificates|kCFStreamSSLAllowsExpiredRoots))(?=.*NSNumber\\(value: true\\)).*$"
+  severity: Warning
+  pattern_id: SWIFT-R-008
+
+- cwe_id: CWE-295
+  description: Disabling SSL Security checks can lead to Man-in-the-Middle Vulnerabilities
+  rule: "^(?=.*(?:kCFStreamSSLValidatesCertificateChain))(?=.*NSNumber\\(value: false\\)).*$"
+  severity: Warning
+  pattern_id: SWIFT-R-009
+
+- cwe_id: CWE-326
+  description: Using insecure transport security configurations can lead to Man-in-the-Middle Vulnerabilities
+  rule: (kCFStreamSocketSecurityLevelNone|kCFStreamSocketSecurityLevelSSLv2|kCFStreamSocketSecurityLevelSSLv3)
+  severity: Warning
+  pattern_id: SWIFT-R-010

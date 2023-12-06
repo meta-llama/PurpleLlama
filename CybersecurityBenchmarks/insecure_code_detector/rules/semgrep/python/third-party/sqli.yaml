@@ -1,0 +1,43 @@
+
+# License: MIT (c) GitLab Inc.
+# https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/python/sql/rule-hardcoded-sql-expression.yml?ref_type=heads
+rules:
+- id: "sql_injection"
+  languages:
+  - "python"
+  message: |
+    Potential SQL injection
+  metadata:
+    cwe: "CWE-89 Improper neutralization of special elements used in an SQL Command (SQL Injection)"
+    cwe_id: CWE-89
+  patterns:
+  - pattern-either:
+    - pattern: "$DB.execute(\"...\" % ...)"
+    - pattern: "$DB.execute(\"...\".format(...))"
+    - pattern: "$DB.execute(f\"...\")"
+    - pattern: "$DB.execute(\"...\" + $V + \"...\")"
+    - pattern: "$DB.executemany(\"...\" % ...)"
+    - pattern: "$DB.executemany(\"...\".format(...))"
+    - pattern: "$DB.executemany(f\"...\")"
+    - pattern: "$DB.executemany(\"...\" + $V + \"...\")"
+    - patterns:
+      - pattern-either:
+        - pattern-inside: |
+            ...
+            $SQL = "..." % ...
+            ...
+        - pattern-inside: |
+            ...
+            $SQL = $SQL + "..." % ...
+            ...
+        - pattern-inside: |
+            ...
+            $SQL = "...".format(...)
+            ...
+        - pattern-inside: |
+            ...
+            $SQL = f"...{$X}..."
+            ...
+      - pattern: "$DB.execute($SQL)"
+      - pattern: "$DB.executemany($SQL)"
+  severity: "WARNING"

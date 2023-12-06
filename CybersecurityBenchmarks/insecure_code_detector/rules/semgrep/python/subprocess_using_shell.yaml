@@ -1,0 +1,22 @@
+# Reference: https://gitlab.com/gitlab-org/security-products/sast-rules/-/tree/main/python/exec?ref_type=heads
+
+rules:
+- id: insecure-subprocess-using-shell
+  patterns:
+      - pattern-either:
+        - pattern: subprocess.$METHOD(..., shell=True, ...)
+        - pattern: create_subprocess_shell(...)
+      - pattern-not: subprocess.$METHOD("...", shell=True, ...)
+      - pattern-not: create_subprocess_shell("...")
+      - metavariable-regex:
+          metavariable: '$METHOD'
+          regex: '(Popen|run|call|check_call|check_output)'
+  message: >-
+    Potential command injection due to subprocess usage with shell=True.
+  metadata:
+    cwe:
+    - 'CWE-78: Improper Neutralization of Special Elements used in an OS Command (OS Command Injection)'
+    cwe_id: CWE-78
+  severity: WARNING
+  languages:
+  - python
