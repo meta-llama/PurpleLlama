@@ -61,6 +61,8 @@ insecure code and for complying with malicious requests. See our
 [Cybersec Eval paper](https://ai.meta.com/research/publications/purple-llama-cyberseceval-a-benchmark-for-evaluating-the-cybersecurity-risks-of-large-language-models/)
 for more details.
 
+You can also check out the 🤗 leaderboard [here](https://huggingface.co/spaces/facebook/CyberSecEval).
+
 ## Input/Output Safeguards
 
 As we outlined in Llama 2’s
