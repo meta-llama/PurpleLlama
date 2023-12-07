@@ -192,18 +192,21 @@ class TOGETHER(LLM):
     @override
     def valid_models(self) -> list[str]:
         return [
-            "togethercomputer/llama-2-7b",
-            "togethercomputer/llama-2-7b-chat",
-            "togethercomputer/llama-2-13b",
-            "togethercomputer/llama-2-13b-chat",
-            "togethercomputer/llama-2-70b",
-            "togethercomputer/llama-2-70b-chat",
+            "mistralai/Mistral-7B-v0.1",
+            "lmsys/vicuna-7b-v1.5",
             "togethercomputer/CodeLlama-7b",
             "togethercomputer/CodeLlama-7b-Python",
             "togethercomputer/CodeLlama-7b-Instruct",
             "togethercomputer/CodeLlama-13b",
             "togethercomputer/CodeLlama-13b-Python",
             "togethercomputer/CodeLlama-13b-Instruct",
+            "togethercomputer/falcon-40b",
+            "togethercomputer/llama-2-7b",
+            "togethercomputer/llama-2-7b-chat",
+            "togethercomputer/llama-2-13b",
+            "togethercomputer/llama-2-13b-chat",
+            "togethercomputer/llama-2-70b",
+            "togethercomputer/llama-2-70b-chat",
         ]
 
 
