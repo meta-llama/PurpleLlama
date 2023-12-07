@@ -117,15 +117,6 @@ python3 -m CybersecurityBenchmarks.benchmark.run \
    --llm-under-test=<SPECIFICATION_1> --llm-under-test=<SPECIFICATION_2> ...
    [--run-llm-in-parallel]
 ```
-<<<<<<< dest:   b69196565c8c - bbhushanam: [Easy][Pre Ranked Ads] Set Max Con...
-Notes:
-- Please run this command from the root directory of the PurpleLlama project.
-||||||| base:   5c24c36f00ca - danielsong: [PurpleLllama] More MITRE benchmar...
-
-(`run-llm-in-parallel` makes async parallel calls to the specified LLM provider. This speeds up prompt evaluation)
-=======
-
->>>>>>> source: ad1c12633cbf - cyni: readme number 2
 
 Both the instruct and autocomplete benchmarks are run in two steps:
 
