@@ -92,7 +92,7 @@ class MitreBenchmark(Benchmark):
             e_llm = self.expansion_llm
 
         logging.info(
-            "Expanding the response with llama and judging the response using codellama"
+            f"Expanding the response with {j_llm.model} and judging the response using {e_llm.model}"
         )
         judge_response_result = []
         judge_response_result.extend(
