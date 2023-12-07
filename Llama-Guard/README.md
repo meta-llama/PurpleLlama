@@ -1,42 +1,42 @@
-# GuardLlama
+# Llama Guard
 
-GuardLlama is a new experimental model that provides input and output guardrails
-for LLM deployments.
+Llama Guard is a new experimental model that provides input and output
+guardrails for LLM deployments.
 
 # Download
 
-In order to download the model weights and tokenizer, please visit the Meta
-website and accept our License.
+In order to download the model weights and tokenizer, please visit the
+[Meta website](https://ai.meta.com/resources/models-and-libraries/llama-downloads/)
+and accept our License.
 
 Once your request is approved, you will receive a signed URL over email. Then
 run the download.sh script, passing the URL provided when prompted to start the
 download.
 
 Pre-requisites: Make sure you have wget and md5sum installed. Then to run the
-script: ./download.sh.
+script: `./download.sh`.
 
 Keep in mind that the links expire after 24 hours and a certain amount of
-downloads. If you start seeing errors such as 403: Forbidden, you can always
+downloads. If you start seeing errors such as `403: Forbidden`, you can always
 re-request a link.
-
-# Access on HuggingFace
-
-[TODO CHANGE LINK] We are also providing downloads on Hugging Face. You must
-first request a download from the Meta website using the same email address as
-your Hugging Face account. After doing so, you can request access to any of the
-models on Hugging Face and within 1-2 days your account will be granted access
-to all versions.
 
 # Quick Start
 
-TODO to be written.
+Since Llama Guard is a fine-tuned Llama-7B model (see our
+[model card](MODEL_CARD.md) for more information), the same quick start steps
+outlined in our
+[README file](https://github.com/facebookresearch/llama/blob/main/README.md) for
+Llama2 apply here.
+
+In addition to that, we added examples using Llama Guard in the
+[Llama 2 recipes repository](https://github.com/facebookresearch/llama-recipes).
 
 # Issues
 
-Please report any software “bug”, or other problems with the models through one
-of the following means:
+Please report any software bug, or other problems with the models through one of
+the following means:
 
-- Reporting issues with the GuardLlama model:
+- Reporting issues with the Llama Guard model:
   [github.com/facebookresearch/purplellama](github.com/facebookresearch/purplellama)
 - Reporting issues with Llama in general:
   [github.com/facebookresearch/llama](github.com/facebookresearch/llama)
@@ -57,4 +57,4 @@ as our accompanying [Acceptable Use Policy](USE_POLICY).
 
 # References
 
-Research Paper: [TODO ADD LINK]
+[Research Paper](https://ai.facebook.com/research/publications/llama-guard-llm-based-input-output-safeguard-for-human-ai-conversations/)
