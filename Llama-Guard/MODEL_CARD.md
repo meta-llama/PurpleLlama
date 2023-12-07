@@ -8,7 +8,7 @@ It acts as an LLM: it generates text in its output that indicates whether a
 given prompt or response is safe/unsafe, and if unsafe based on a policy, it
 also lists the violating subcategories. Here is an example:
 
-![](Llama Guard_example.png)
+![](llamaguard_example.png)
 
 In order to produce classifier scores, we look at the probability for the first
 token, and turn that into an “unsafe” class probability. Model users can then
