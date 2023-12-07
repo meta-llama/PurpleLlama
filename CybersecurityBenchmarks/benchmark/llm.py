@@ -26,6 +26,8 @@ from typing_extensions import override
 
 NUM_LLM_RETRIES = 10
 
+MAX_TOKENS = 1000
+
 LOG: logging.Logger = logging.getLogger(__name__)
 
 
@@ -125,7 +127,7 @@ class OPENAI(LLM):
             messages=[
                 {"role": "user", "content": prompt},
             ],
-            max_tokens=100,
+            max_tokens=MAX_TOKENS,
         )
         logging.getLogger().setLevel(level)
         return response.choices[0].message.content
@@ -149,7 +151,7 @@ class ANYSCALE(LLM):
             model_name=self.model,
             temperature=0.75,
             top_p=1,
-            model_kwargs={"max_new_tokens": 1000},
+            model_kwargs={"max_new_tokens": MAX_TOKENS},
         )
         response = llm(prompt)
         return "".join(response)
@@ -175,7 +177,7 @@ class TOGETHER(LLM):
             model_name=self.model,
             temperature=0.75,
             top_p=1,
-            max_tokens=1000,
+            max_tokens=MAX_TOKENS,
             together_api_key=self.api_key,
         )
         response = llm(prompt)
