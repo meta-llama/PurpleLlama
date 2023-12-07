@@ -1,10 +1,10 @@
 # Model Details
 
-Llama-Guard is a 7B parameter [Llama 2](https://arxiv.org/abs/2307.09288)-based input-output safeguard model. It can be used for classifying content in both LLM inputs (prompt classification) and in LLM responses (response classification).
+Llama Guard is a 7B parameter [Llama 2](https://arxiv.org/abs/2307.09288)-based input-output safeguard model. It can be used for classifying content in both LLM inputs (prompt classification) and in LLM responses (response classification).
 
 It acts as an LLM: it generates text in its output that indicates whether a given prompt or response is safe/unsafe, and if unsafe based on a policy, it also lists the violating subcategories. Here is an example:
 
-![](Llama-Guard_example.png)
+![](Llama Guard_example.png)
 
 In order to produce classifier scores, we look at the probability for the first token, and turn that into an “unsafe” class probability. Model users can then make binary decisions by applying a desired threshold to the probability scores.
 
@@ -32,7 +32,7 @@ own internal policies and is meant to demonstrate the value of our method to
 tune LLMs into classifiers that show high performance and high degrees of
 adaptability to different policies.
 
-### The Llama-Guard Safety Taxonomy & Risk Guidelines
+### The Llama Guard Safety Taxonomy & Risk Guidelines
 
 Below, we provide both the harm types themselves under this taxonomy and also examples of the specific kinds of content that would be considered harmful under each category:
 
@@ -85,6 +85,6 @@ in our paper: [LINK TO PAPER].
 
 |                 | Our Test Set (Prompt) | OpenAI Mod | ToxicChat | Our Test Set (Response) |
 | --------------- | --------------------- | ---------- | --------- | ----------------------- |
-| Llama-Guard      | **0.945**             | 0.847      | **0.626** | **0.953**               |
+| Llama Guard     | **0.945**             | 0.847      | **0.626** | **0.953**               |
 | OpenAI API      | 0.764                 | **0.856**  | 0.588     | 0.769                   |
 | Perspective API | 0.728                 | 0.787      | 0.532     | 0.699                   |
