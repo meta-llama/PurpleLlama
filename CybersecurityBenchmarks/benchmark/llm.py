@@ -68,6 +68,9 @@ class LLM(ABC):
                 last_exception = exception
                 sleep_time = backoff_factor * (2**retry)
                 time.sleep(sleep_time)
+                LOG.warning(
+                    f"LLM Query failed with error: {exception}. Sleeping for {sleep_time} seconds..."
+                )
         raise RuntimeError(
             f"Unable to query LLM after {retries} retries: {last_exception}"
         )
