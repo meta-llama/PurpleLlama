@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-        🤗 <a href="https://huggingface.co/meta-Llama"> Models on Hugging Face</a>&nbsp | <a href="https://ai.facebook.com/blog/purple-llama-open-trust-safety-generative-ai"> Blog</a>&nbsp |  <a href="https://ai.facebook.com/llama/purple-llama">Website</a>&nbsp | <a href="https://ai.meta.com/research/publications/purple-llama-cyberseceval-a-benchmark-for-evaluating-the-cybersecurity-risks-of-large-language-models/">CyberSec Eval Paper</a>&nbsp&nbsp | <a href="https://ai.meta.com/research/publications/llama-guard-llm-based-input-output-safeguard-for-human-ai-conversations/">Llama Guard Paper</a>&nbsp
+        🤗 <a href="https://huggingface.co/meta-Llama"> Models on Hugging Face</a>&nbsp | <a href="https://ai.meta.com/blog/purple-llama-open-trust-safety-generative-ai"> Blog</a>&nbsp |  <a href="https://ai.meta.com/llama/purple-llama">Website</a>&nbsp | <a href="https://ai.meta.com/research/publications/purple-llama-cyberseceval-a-benchmark-for-evaluating-the-cybersecurity-risks-of-large-language-models/">CyberSec Eval Paper</a>&nbsp&nbsp | <a href="https://ai.meta.com/research/publications/llama-guard-llm-based-input-output-safeguard-for-human-ai-conversations/">Llama Guard Paper</a>&nbsp
 <br>
 
 ---
@@ -72,8 +72,7 @@ accordance with content guidelines appropriate to the application.
 
 ### Llama Guard
 
-To support this, and empower the community, we are releasing
-[Llama Guard](https://ai.meta.com/research/publications/llama-guard-llm-based-input-output-safeguard-for-human-ai-conversations/),
+To support this, and empower the community, we are releasing Llama Guard,
 an openly-available model that performs competitively on common open benchmarks
 and provides developers with a pretrained model to help defend against
 generating potentially risky outputs.
