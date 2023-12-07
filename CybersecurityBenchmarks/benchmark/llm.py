@@ -177,7 +177,7 @@ class TOGETHER(LLM):
     @override
     def query(self, prompt: str) -> str:
         llm = Together(
-            model_name=self.model,
+            model=self.model,
             temperature=0.75,
             top_p=1,
             max_tokens=MAX_TOKENS,
