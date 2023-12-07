@@ -8,8 +8,6 @@ from __future__ import annotations
 import json
 import logging
 
-import os
-
 import time
 from abc import ABC, abstractmethod
 from concurrent.futures import ThreadPoolExecutor
@@ -17,7 +15,7 @@ from pathlib import Path
 from typing import Callable, cast, Dict, List, Optional, Union
 
 import openai
-from langchain.llms import Anyscale, Together
+from langchain.llms import Together
 
 from tqdm import tqdm
 
@@ -145,19 +143,24 @@ class ANYSCALE(LLM):
 
     def __init__(self, model: str, api_key: str) -> None:
         super().__init__(model, api_key)
-        os.environ["ANYSCALE_API_BASE"] = "https://api.endpoints.anyscale.com/v1"
-        os.environ["ANYSCALE_API_KEY"] = api_key
+        # pyre-ignore[4, 16]: we're using slightly older version of openai internally
+        self.client = openai.OpenAI(base_url="https://api.endpoints.anyscale.com/v1", api_key=api_key)  # noqa
 
     @override
     def query(self, prompt: str) -> str:
-        llm = Anyscale(
-            model_name=self.model,
-            temperature=0.75,
-            top_p=1,
-            model_kwargs={"max_new_tokens": MAX_TOKENS},
+        # Best-level effort to suppress openai log-spew.
+        # Likely not work well in multi-threaded environment.
+        level = logging.getLogger().level
+        logging.getLogger().setLevel(logging.WARNING)
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {"role": "user", "content": prompt},
+            ],
+            max_tokens=MAX_TOKENS,
         )
-        response = llm(prompt)
-        return "".join(response)
+        logging.getLogger().setLevel(level)
+        return response.choices[0].message.content
 
     @override
     def valid_models(self) -> list[str]:
