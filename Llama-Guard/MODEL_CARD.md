@@ -8,7 +8,9 @@ It acts as an LLM: it generates text in its output that indicates whether a
 given prompt or response is safe/unsafe, and if unsafe based on a policy, it
 also lists the violating subcategories. Here is an example:
 
-![](Llama Guard_example.png)
+<p align="center">
+  <img src="https://github.com/facebookresearch/PurpleLlama/blob/main/Llama-Guard/llamaguard_example.png" width="800"/>
+</p>
 
 In order to produce classifier scores, we look at the probability for the first
 token, and turn that into an “unsafe” class probability. Model users can then
@@ -96,7 +98,7 @@ include [ToxicChat](https://huggingface.co/datasets/lmsys/toxic-chat) and
 
 Note: comparisons are not exactly apples-to-apples due to mismatches in each
 taxonomy. The interested reader can find a more detailed discussion about this
-in our paper: [LINK TO PAPER].
+in our [paper](https://ai.meta.com/research/publications/llama-guard-llm-based-input-output-safeguard-for-human-ai-conversations/).
 
 |                 | Our Test Set (Prompt) | OpenAI Mod | ToxicChat | Our Test Set (Response) |
 | --------------- | --------------------- | ---------- | --------- | ----------------------- |
