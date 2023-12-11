@@ -13,7 +13,7 @@ class TestLLM(unittest.TestCase):
     def test_create(self) -> None:
         llama = llm.create("TOGETHER::togethercomputer/llama-2-7b::<my API key>")
         self.assertTrue(isinstance(llama, llm.TOGETHER))
-        self.assertEquals(llama.model, "togethercomputer/llama-2-7b")
-        self.assertEquals(llama.api_key, "<my API key>")
+        self.assertEqual(llama.model, "togethercomputer/llama-2-7b")
+        self.assertEqual(llama.api_key, "<my API key>")
 
         self.assertRaises(ValueError, lambda: llm.create("GPT::unknown::<my API key"))
