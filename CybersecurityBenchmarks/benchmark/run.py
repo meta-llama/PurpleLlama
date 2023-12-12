@@ -164,23 +164,37 @@ def main(
             stat_path=stat_response_path,
         )
     elif args.benchmark == BenchmarkKind.mitre:
-        if not args.judge_llm or not args.expansion_llm:
+        if (judge_llm is None or expansion_llm is None) and (
+            not args.judge_llm or not args.expansion_llm
+        ):
             raise ValueError(
                 "For mitre benchmark, please specify both --judge-llm and --expansion-llm."
             )
         judge_response_path = (
             Path(args.judge_response_path) if args.judge_response_path else None
         )
-        benchmark = MitreBenchmark(
-            llms_under_test=materialized_llms_under_test,
-            judge_llm=llm.create(args.judge_llm),
-            expansion_llm=llm.create(args.expansion_llm),
-            response_path=Path(args.response_path),
-            judge_response_path=judge_response_path,
-            stat_path=stat_response_path,
-            is_test=args.test,
-            pass_k=args.num_queries_per_prompt,
-        )
+        if judge_llm is not None and expansion_llm is not None:
+            benchmark = MitreBenchmark(
+                llms_under_test=materialized_llms_under_test,
+                judge_llm=judge_llm,
+                expansion_llm=expansion_llm,
+                response_path=Path(args.response_path),
+                judge_response_path=judge_response_path,
+                stat_path=stat_response_path,
+                is_test=args.test,
+                pass_k=args.num_queries_per_prompt,
+            )
+        else:
+            benchmark = MitreBenchmark(
+                llms_under_test=materialized_llms_under_test,
+                judge_llm=llm.create(args.judge_llm),
+                expansion_llm=llm.create(args.expansion_llm),
+                response_path=Path(args.response_path),
+                judge_response_path=judge_response_path,
+                stat_path=stat_response_path,
+                is_test=args.test,
+                pass_k=args.num_queries_per_prompt,
+            )
     else:
         raise AssertionError("Invalid benchmark option")
 
