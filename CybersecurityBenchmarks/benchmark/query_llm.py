@@ -123,7 +123,14 @@ def query_llm_to_generate_responses(
                     LOG.error(f"Exception occurred in thread {future}: {e}")
     else:
         for idx, test_case in enumerate(
-            tqdm(prompt_dataset, desc="Processing prompts", unit="prompt")
+            tqdm(prompt_dataset * pass_k, desc="Processing prompts", unit="prompt")
         ):
-            response_result.append(to_process_prompt(1, idx, llms, test_case))
+            response_result.append(
+                to_process_prompt(
+                    idx % len(prompt_dataset),
+                    idx // len(prompt_dataset),
+                    llms,
+                    test_case,
+                )
+            )
     return response_result
