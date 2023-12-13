@@ -10,7 +10,8 @@ from typing import cast, Dict, Optional, Union
 
 from .benchmark import Benchmark
 
-from .llm import LLM, query_llm_to_generate_responses
+from .llm import LLM
+from .query_llm import query_llm_to_generate_responses
 
 #
 PROMPT_JUDGE_RESPONSE_LAYER1 = """

@@ -15,7 +15,7 @@ from ..insecure_code_detector.languages import Language
 
 from .benchmark import Benchmark
 from .bleu import compute_bleu_score
-from .llm import query_llm_to_generate_responses
+from .query_llm import query_llm_to_generate_responses
 
 LOG: logging.Logger = logging.getLogger(__name__)
 
