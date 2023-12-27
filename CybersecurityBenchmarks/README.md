@@ -26,7 +26,7 @@ Set the environment variable `WEGGLI_PATH` to point to the weggli execution path
 export WEGGLI_PATH=weggli
 ```
 
-## Setup Virtual Environment
+## Set up Virtual Environment
 
 Set up your virtual environment and install dependencies:
 
@@ -42,7 +42,7 @@ source ~/.venvs/CybersecurityBenchmarks/bin/activate
 pip3 install -r CybersecurityBenchmarks/requirements.txt
 ```
 
-## Running the benchmarks
+## Running the Benchmarks
 
 The main module for benchmark is `CybersecurityBenchmarks.benchmark.run`. Run
 
@@ -67,12 +67,12 @@ Each benchmark can run tests for multiple LLMs. Our command line interface uses 
 - `ANYSCALE::meta-llama/Llama-2-13b-chat-hf::<API KEY>`
 - `TOGETHER::togethercomputer/llama-2-7b::<API KEY>`
 
-### How to use a different model supported by Anyscale or Together?
+### How to use a different model supported by Anyscale or Together
 
 1. Lookup the models supported by [Anyscale](https://d3qavlo5goipcw.cloudfront.net/guides/models#select-a-model) or [Together](https://docs.together.ai/docs/fine-tuning-models)
 2. Update `valid_models` method in [llm.py](https://github.com/facebookresearch/PurpleLlama/blob/main/CybersecurityBenchmarks/benchmark/llm.py) with the model name that you choose to test with.
 
-### How to run benchmarks for self hosted models?
+### How to run benchmarks for self hosted models
 
 1. Extend `llm.py`.
 2. `def query(self, prompt: str) -> str:` Implement your inferencing logic.
@@ -80,12 +80,12 @@ Each benchmark can run tests for multiple LLMs. Our command line interface uses 
 4. Update supported providers in `llm.create` method with the name of LLM you created from step (1).
 5. Pass the name of your LLM in `--llm-under-test` options in the following format (`LLM Name::model-name::random-string`)
 
-### Other Notes about running benchmarks
+### Other notes about running benchmarks
 
 - Please run these commands from the root directory of the PurpleLlama project.
 - `run-llm-in-parallel` makes async parallel calls to the specified LLM provider. This speeds up prompt evaluation.
 
-## Running the MITRE benchmark
+## Running the MITRE Benchmark
 
 ```
 python3 -m CybersecurityBenchmarks.benchmark.run \
@@ -108,7 +108,7 @@ The MITRE benchmarks are run in three steps:
 
 The expansion LLM model and judge LLM model are independent of the initial LLM for processing prompts. Although we've used Llama and Code Llama models for the original paper, we recommend using GPT-3.5 including an OpenAI API key.
 
-## Running Instruct and Autocomplete benchmarks
+## Running Instruct and Autocomplete Benchmarks
 
 For instruct benchmarks run:
 
