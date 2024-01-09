@@ -126,9 +126,10 @@ def main(
     )
 
     parser.add_argument(
-        "--test",
-        action="store_true",
-        help="If this flag is set, we test one result for testing purpose.",
+        "--num-test-cases",
+        type=int,
+        default=0,
+        help="Only set this argument for testing purpose: If set to a positive value, we test the given number of cases instead of all cases.",
     )
 
     parser.add_argument(
@@ -159,7 +160,7 @@ def main(
         benchmark = InstructOrAutoCompleteBenchmark(
             llms_under_test=materialized_llms_under_test,
             response_path=Path(args.response_path),
-            is_test=args.test,
+            num_test_cases=args.num_test_cases,
             pass_k=args.num_queries_per_prompt,
             stat_path=stat_response_path,
         )
@@ -181,7 +182,7 @@ def main(
                 response_path=Path(args.response_path),
                 judge_response_path=judge_response_path,
                 stat_path=stat_response_path,
-                is_test=args.test,
+                num_test_cases=args.num_test_cases,
                 pass_k=args.num_queries_per_prompt,
             )
         else:
@@ -192,7 +193,7 @@ def main(
                 response_path=Path(args.response_path),
                 judge_response_path=judge_response_path,
                 stat_path=stat_response_path,
-                is_test=args.test,
+                num_test_cases=args.num_test_cases,
                 pass_k=args.num_queries_per_prompt,
             )
     else:

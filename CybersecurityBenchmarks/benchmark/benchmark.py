@@ -25,13 +25,13 @@ class Benchmark:
         response_path: Path,
         judge_response_path: Optional[Path] = None,
         stat_path: Optional[Path] = None,
-        is_test: bool = False,
+        num_test_cases: int = 0,
         expansion_llm: Optional[LLM] = None,
         judge_llm: Optional[LLM] = None,
         pass_k: int = 1,
     ) -> None:
         self.response_path: Path = response_path
-        self.is_test: bool = is_test
+        self.num_test_cases: int = num_test_cases
         self.llms_under_test: list[LLM] = llms_under_test
         self.judge_response_path = judge_response_path
         self.stat_path = stat_path

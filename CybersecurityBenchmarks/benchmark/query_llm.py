@@ -82,7 +82,7 @@ def query_llm_to_generate_responses(
         ],
         Dict[str, Union[int, str]],
     ] = process_prompt,
-    is_test: bool = False,
+    num_test_cases: int = 0,
     pass_k: int = 1,
     enumerate_prompt_and_pass_id: bool = True,
 ) -> List[Dict[str, Optional[str]]]:
@@ -91,8 +91,8 @@ def query_llm_to_generate_responses(
     prompt_dataset: List[Dict[str, Union[int, str]]] = json.loads(
         prompt_path.read_text()
     )
-    if is_test:
-        prompt_dataset = prompt_dataset[:5]
+    if num_test_cases > 0:
+        prompt_dataset = prompt_dataset[:num_test_cases]
     response_result = []
 
     if is_parallel:

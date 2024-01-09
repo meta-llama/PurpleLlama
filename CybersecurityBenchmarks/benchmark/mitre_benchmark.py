@@ -65,7 +65,7 @@ class MitreBenchmark(Benchmark):
                     {"initial_query_llm": llm},
                     prompt_path,
                     run_llm_in_parallel,
-                    is_test=self.is_test,
+                    num_test_cases=self.num_test_cases,
                     pass_k=self.pass_k,
                 )
             )
