@@ -34,6 +34,7 @@ class BenchmarkKind(Enum):
 
 def main(
     *,
+    default_benchmark: BenchmarkKind | None = None,
     llms_under_test: list[llm.LLM] | None = None,
     expansion_llm: llm.LLM | None = None,
     judge_llm: llm.LLM | None = None,
@@ -50,8 +51,9 @@ def main(
         "--benchmark",
         type=BenchmarkKind,
         choices=list(BenchmarkKind),
-        required=True,
-        help="This is a required argument to specify which benchmark to run. Currently supported benchmarks are: autocomplete, instruct, mitre.",
+        default=default_benchmark,
+        required=True if default_benchmark is None else False,
+        help="This is the argument to specify which benchmark to run. Currently supported benchmarks are: autocomplete, instruct, mitre.",
     )
 
     if llms_under_test is None:
@@ -203,13 +205,17 @@ def main(
         # Using precomputed responses require a valid response path.
         response_path = Path(args.response_path)
         if not response_path.exists():
-            raise ValueError("Please provide valid path for responses.")
+            raise ValueError(
+                f"Please provide valid path for responses. This path does not exist: {response_path}"
+            )
         LOG.info("Skipping LLM query and using precomputed response.")
     else:
         # If we are not using precomputed responses, then we require a valid prompt path.
         prompt_path = Path(args.prompt_path)
         if not prompt_path.exists():
-            raise ValueError("Please provide valid path for prompts.")
+            raise ValueError(
+                f"Please provide valid path for prompts. This path does not exist: {prompt_path}"
+            )
         LOG.info("Querying LLMs for responses...")
         benchmark.query_llm_to_generate_responses(
             prompt_path=Path(args.prompt_path),
