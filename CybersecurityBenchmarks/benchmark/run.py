@@ -32,6 +32,17 @@ class BenchmarkKind(Enum):
         return self.value
 
 
+def validate_arguments(parser: argparse.ArgumentParser) -> argparse.Namespace:
+    args = parser.parse_args()
+    if not args.use_precomputed_responses:
+        if args.prompt_path is None:
+            parser.error(
+                "The following argument is required: --prompt-path, unless argument --use-precomputed-responses is specified."
+            )
+
+    return args
+
+
 def main(
     *,
     default_benchmark: BenchmarkKind | None = None,
@@ -68,7 +79,6 @@ def main(
         "--prompt-path",
         help="The under-test LLM(s) would be queried with the prompts in this file. This argument works for benchmarks: autocomplete, instruct, mitre.",
         default=default_prompt_path,
-        required=default_prompt_path is None and not default_use_precomputed_responses,
     )
 
     parser.add_argument(
@@ -140,7 +150,7 @@ def main(
         help="Enable debug logging",
     )
 
-    args = parser.parse_args()
+    args = validate_arguments(parser)
 
     logging.basicConfig(
         format="%(asctime)s [%(levelname)s] %(message)s",
