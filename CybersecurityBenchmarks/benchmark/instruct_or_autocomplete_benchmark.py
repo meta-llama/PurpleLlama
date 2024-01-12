@@ -41,7 +41,7 @@ class InstructOrAutoCompleteBenchmark(Benchmark):
                 )
             )
 
-        self.response_path.write_text(json.dumps(response_result))
+        self.response_path.write_text(json.dumps(response_result, indent=4))
 
     async def run(self) -> None:  # noqa: C901
         """
