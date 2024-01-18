@@ -39,6 +39,10 @@ def validate_arguments(parser: argparse.ArgumentParser) -> argparse.Namespace:
             parser.error(
                 "The following argument is required: --prompt-path, unless argument --use-precomputed-responses is specified."
             )
+        if "llm_under_test" in args and args.llm_under_test is None:
+            parser.error(
+                "The following argument is required: --llm-under-test, unless argument --use-precomputed-responses is specified."
+            )
 
     return args
 
@@ -72,7 +76,6 @@ def main(
             "--llm-under-test",
             help=f"LLM to benchmark provided as {llm.SPECIFICATION_FORMAT}, e.g., {llm.EXAMPLE_SPECIFICATION}",
             action="append",
-            required=True,
         )
 
     parser.add_argument(
@@ -157,11 +160,13 @@ def main(
         level=logging.INFO if not args.debug else logging.DEBUG,
     )
 
-    materialized_llms_under_test = llms_under_test or [
-        llm.create(specification) for specification in args.llm_under_test
-    ]
-    if len(materialized_llms_under_test) == 0:
-        raise ValueError("No LLMs were specified.")
+    materialized_llms_under_test = []
+    if not args.use_precomputed_responses:
+        materialized_llms_under_test = llms_under_test or [
+            llm.create(specification) for specification in args.llm_under_test
+        ]
+        if len(materialized_llms_under_test) == 0:
+            raise ValueError("No LLMs were specified.")
 
     benchmark: Benchmark
     stat_response_path = Path(args.stat_path) if args.stat_path else None
