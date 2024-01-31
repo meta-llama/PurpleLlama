@@ -55,6 +55,7 @@ class Benchmark:
     @abstractmethod
     async def run(
         self,
+        num_test_cases: int = 0,
     ) -> None:
         """
         Processes a LLM-response.

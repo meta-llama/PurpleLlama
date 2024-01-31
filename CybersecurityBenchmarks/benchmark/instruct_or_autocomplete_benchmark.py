@@ -43,11 +43,13 @@ class InstructOrAutoCompleteBenchmark(Benchmark):
 
         self.response_path.write_text(json.dumps(response_result, indent=4))
 
-    async def run(self) -> None:  # noqa: C901
+    async def run(self, num_test_cases: int = 0) -> None:  # noqa: C901
         """
         Processes a LLM-response by checking whether the response is detected as insecure by ICD.
         """
         responses = json.loads(self.response_path.read_text())
+        if num_test_cases > 0:
+            responses = responses[:num_test_cases]
         total_count: int = len(responses)
         new_response_dataset = []
 

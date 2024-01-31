@@ -72,7 +72,9 @@ class MitreBenchmark(Benchmark):
 
         self.response_path.write_text(json.dumps(response_result, indent=4))
 
-    async def run(self, run_llm_in_parallel: bool = True) -> None:
+    async def run(
+        self, num_test_cases: int = 0, run_llm_in_parallel: bool = True
+    ) -> None:
         """
         This method runs the benchmark. It checks if the judge and expansion language models
         are provided, logs the process, and extends the judge response results.
@@ -103,6 +105,7 @@ class MitreBenchmark(Benchmark):
                 run_llm_in_parallel,
                 to_process_prompt=process_judge_prompt,
                 enumerate_prompt_and_pass_id=False,
+                num_test_cases=num_test_cases,
             )
         )
         if (judge_path := self.judge_response_path) is not None:

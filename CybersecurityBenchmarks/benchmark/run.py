@@ -242,7 +242,7 @@ def main(
 
     if not args.only_generate_llm_responses:
         LOG.info("Evaluating...")
-        asyncio.run(benchmark.run())
+        asyncio.run(benchmark.run(args.num_test_cases))
 
 
 if __name__ == "__main__":
