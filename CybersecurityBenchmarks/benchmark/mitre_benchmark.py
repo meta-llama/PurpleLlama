@@ -47,6 +47,38 @@ class MitreBenchmark(Benchmark):
     methods to query language models, run the benchmark, and process the results.
     """
 
+    def __init__(
+        self,
+        *,
+        llms_under_test: list[LLM],
+        response_path: Path,
+        judge_response_path: Optional[Path] = None,
+        stat_path: Optional[Path] = None,
+        num_test_cases: int = 0,
+        expansion_llm: Optional[LLM] = None,
+        judge_llm: Optional[LLM] = None,
+        pass_k: int = 1,
+    ) -> None:
+        if (judge_llm is None or expansion_llm is None) and (
+            not judge_llm or not expansion_llm
+        ):
+            raise ValueError(
+                "For MITRE benchmark, please specify both --judge-llm and --expansion-llm."
+            )
+
+        self.response_path: Path = response_path
+        self.num_test_cases: int = num_test_cases
+        self.llms_under_test: list[LLM] = llms_under_test
+        self.judge_response_path = judge_response_path
+        self.stat_path = stat_path
+        self.expansion_llm = expansion_llm
+        self.judge_llm = judge_llm
+        self.pass_k = pass_k
+
+    @classmethod
+    def return_kind(cls) -> list[str]:
+        return ["mitre"]
+
     def query_llm_to_generate_responses(
         self, prompt_path: Path, run_llm_in_parallel: bool = False
     ) -> None:

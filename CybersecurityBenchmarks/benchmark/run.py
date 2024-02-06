@@ -8,7 +8,6 @@ from __future__ import annotations
 import argparse
 import asyncio
 import logging
-from enum import Enum
 
 from pathlib import Path
 
@@ -24,14 +23,8 @@ from .mitre_benchmark import MitreBenchmark
 
 LOG: logging.Logger = logging.getLogger(__name__)
 
-
-class BenchmarkKind(Enum):
-    autocomplete = "autocomplete"
-    instruct = "instruct"
-    mitre = "mitre"
-
-    def __str__(self) -> str:
-        return self.value
+Benchmark.register_benchmark(InstructOrAutoCompleteBenchmark)
+Benchmark.register_benchmark(MitreBenchmark)
 
 
 def validate_arguments(parser: argparse.ArgumentParser) -> argparse.Namespace:
@@ -51,7 +44,7 @@ def validate_arguments(parser: argparse.ArgumentParser) -> argparse.Namespace:
 
 def main(
     *,
-    default_benchmark: BenchmarkKind | None = None,
+    default_benchmark: str | None = None,
     llms_under_test: list[llm.LLM] | None = None,
     expansion_llm: llm.LLM | None = None,
     judge_llm: llm.LLM | None = None,
@@ -67,8 +60,6 @@ def main(
 
     parser.add_argument(
         "--benchmark",
-        type=BenchmarkKind,
-        choices=list(BenchmarkKind),
         default=default_benchmark,
         required=True if default_benchmark is None else False,
         help="This is the argument to specify which benchmark to run. Currently supported benchmarks are: autocomplete, instruct, mitre.",
@@ -101,16 +92,15 @@ def main(
         required=False,
     )
 
-    if judge_llm is None:
-        parser.add_argument(
-            "--judge-llm",
-            help=f"Used for MITRE benchmark. We need to specify the llm model to judge the final expanded response as {llm.SPECIFICATION_FORMAT}, e.g., {llm.EXAMPLE_SPECIFICATION}",
-        )
-    if expansion_llm is None:
-        parser.add_argument(
-            "--expansion-llm",
-            help=f"Used for MITRE benchmark. We need to specify the llm model to expand the context from the initial query response as {llm.SPECIFICATION_FORMAT}, e.g., {llm.EXAMPLE_SPECIFICATION}",
-        )
+    parser.add_argument(
+        "--judge-llm",
+        help=f"Used for MITRE benchmark. We need to specify the llm model to judge the final expanded response as {llm.SPECIFICATION_FORMAT}, e.g., {llm.EXAMPLE_SPECIFICATION}",
+    )
+
+    parser.add_argument(
+        "--expansion-llm",
+        help=f"Used for MITRE benchmark. We need to specify the llm model to expand the context from the initial query response as {llm.SPECIFICATION_FORMAT}, e.g., {llm.EXAMPLE_SPECIFICATION}",
+    )
 
     parser.add_argument(
         "--judge-response-path",
@@ -171,53 +161,26 @@ def main(
         if len(materialized_llms_under_test) == 0:
             raise ValueError("No LLMs were specified.")
 
-    benchmark: Benchmark
     stat_response_path = Path(args.stat_path) if args.stat_path else None
-    if (
-        args.benchmark == BenchmarkKind.autocomplete
-        or args.benchmark == BenchmarkKind.instruct
-    ):
-        benchmark = InstructOrAutoCompleteBenchmark(
-            llms_under_test=materialized_llms_under_test,
-            response_path=Path(args.response_path),
-            num_test_cases=args.num_test_cases,
-            pass_k=args.num_queries_per_prompt,
-            stat_path=stat_response_path,
-        )
-    elif args.benchmark == BenchmarkKind.mitre:
-        if (judge_llm is None or expansion_llm is None) and (
-            not args.judge_llm or not args.expansion_llm
-        ):
-            raise ValueError(
-                "For mitre benchmark, please specify both --judge-llm and --expansion-llm."
-            )
-        judge_response_path = (
-            Path(args.judge_response_path) if args.judge_response_path else None
-        )
-        if judge_llm is not None and expansion_llm is not None:
-            benchmark = MitreBenchmark(
-                llms_under_test=materialized_llms_under_test,
-                judge_llm=judge_llm,
-                expansion_llm=expansion_llm,
-                response_path=Path(args.response_path),
-                judge_response_path=judge_response_path,
-                stat_path=stat_response_path,
-                num_test_cases=args.num_test_cases,
-                pass_k=args.num_queries_per_prompt,
-            )
-        else:
-            benchmark = MitreBenchmark(
-                llms_under_test=materialized_llms_under_test,
-                judge_llm=default_llm_creator(args.judge_llm),
-                expansion_llm=default_llm_creator(args.expansion_llm),
-                response_path=Path(args.response_path),
-                judge_response_path=judge_response_path,
-                stat_path=stat_response_path,
-                num_test_cases=args.num_test_cases,
-                pass_k=args.num_queries_per_prompt,
-            )
-    else:
-        raise AssertionError("Invalid benchmark option")
+    judge_response_path = (
+        Path(args.judge_response_path) if args.judge_response_path else None
+    )
+    if args.judge_llm:
+        judge_llm = default_llm_creator(args.judge_llm)
+    if args.expansion_llm:
+        expansion_llm = default_llm_creator(args.expansion_llm)
+
+    benchmark: Benchmark = Benchmark.create_instance(
+        args.benchmark,
+        llms_under_test=materialized_llms_under_test,
+        judge_llm=judge_llm,
+        expansion_llm=expansion_llm,
+        response_path=Path(args.response_path),
+        judge_response_path=judge_response_path,
+        stat_path=stat_response_path,
+        num_test_cases=args.num_test_cases,
+        pass_k=args.num_queries_per_prompt,
+    )
 
     if args.use_precomputed_responses:
         # Using precomputed responses require a valid response path.
