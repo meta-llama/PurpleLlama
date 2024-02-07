@@ -108,7 +108,6 @@ class OPENAI(LLM):
 
     def __init__(self, model: str, api_key: str) -> None:
         super().__init__(model, api_key)
-        # pyre-ignore[4, 16]: we're using slightly older version of openai internally
         self.client = openai.OpenAI(api_key=api_key)  # noqa
 
     @override
@@ -137,7 +136,6 @@ class ANYSCALE(LLM):
 
     def __init__(self, model: str, api_key: str) -> None:
         super().__init__(model, api_key)
-        # pyre-ignore[4, 16]: we're using slightly older version of openai internally
         self.client = openai.OpenAI(base_url="https://api.endpoints.anyscale.com/v1", api_key=api_key)  # noqa
 
     @override
