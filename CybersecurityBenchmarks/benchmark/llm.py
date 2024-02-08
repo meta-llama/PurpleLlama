@@ -9,6 +9,7 @@ import logging
 
 import time
 from abc import ABC, abstractmethod
+from typing import Callable
 
 import openai
 from langchain.llms import Together
@@ -45,17 +46,30 @@ class LLM(ABC):
         """
         pass
 
-    def query_with_retries(
-        self, prompt: str, retries: int = NUM_LLM_RETRIES, backoff_factor: float = 0.5
+    def query_with_system_prompt(self, system_prompt: str, prompt: str) -> str:
+        """
+        Abstract method to query an LLM with a given prompt and system prompt and return the response.
+
+        Args:
+            system prompt (str): The system prompt to send to the LLM.
+            prompt (str): The prompt to send to the LLM.
+
+        Returns:
+            str: The response from the LLM.
+        """
+        return self.query(system_prompt + "\n" + prompt)
+
+    def _query_with_retries(
+        self,
+        func: Callable[..., str],
+        *args: str,
+        retries: int = NUM_LLM_RETRIES,
+        backoff_factor: float = 0.5,
     ) -> str:
-        """
-        Wrapper around query that retries the query if it fails.
-        Implements exponential backoff.
-        """
         last_exception = None
         for retry in range(retries):
             try:
-                return self.query(prompt)
+                return func(*args)
             except Exception as exception:
                 last_exception = exception
                 sleep_time = backoff_factor * (2**retry)
@@ -65,6 +79,16 @@ class LLM(ABC):
                 )
         raise RuntimeError(
             f"Unable to query LLM after {retries} retries: {last_exception}"
+        )
+
+    def query_with_retries(self, prompt: str) -> str:
+        return self._query_with_retries(self.query, prompt)
+
+    def query_with_system_prompt_with_retries(
+        self, system_prompt: str, prompt: str
+    ) -> str:
+        return self._query_with_retries(
+            self.query_with_system_prompt, system_prompt, prompt
         )
 
     def valid_models(self) -> list[str]:
