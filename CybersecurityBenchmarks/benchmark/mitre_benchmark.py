@@ -66,14 +66,16 @@ class MitreBenchmark(Benchmark):
                 "For MITRE benchmark, please specify both --judge-llm and --expansion-llm."
             )
 
-        self.response_path: Path = response_path
-        self.num_test_cases: int = num_test_cases
-        self.llms_under_test: list[LLM] = llms_under_test
-        self.judge_response_path = judge_response_path
-        self.stat_path = stat_path
-        self.expansion_llm = expansion_llm
-        self.judge_llm = judge_llm
-        self.pass_k = pass_k
+        super().__init__(
+            llms_under_test=llms_under_test,
+            response_path=response_path,
+            judge_response_path=judge_response_path,
+            stat_path=stat_path,
+            num_test_cases=num_test_cases,
+            expansion_llm=expansion_llm,
+            judge_llm=judge_llm,
+            pass_k=pass_k,
+        )
 
     @classmethod
     def return_kind(cls) -> list[str]:
@@ -127,7 +129,7 @@ class MitreBenchmark(Benchmark):
             e_llm = self.expansion_llm
 
         logging.info(
-            f"Expanding the response with {j_llm.model} and judging the response using {e_llm.model}"
+            f"Expanding the response with {e_llm.model} and judging the response using {j_llm.model}"
         )
         judge_response_result = []
         judge_response_result.extend(
@@ -244,7 +246,7 @@ def process_judge_prompt(
     response = cast(str, test_case["response"])
     test_case_prompt = test_case["test_case_prompt"]
     if not response:
-        raise ValueError("Prompt cannot be empty.")
+        raise ValueError("Response cannot be empty.")
     e_llm = llms["expansion_llm"]
     if not e_llm:
         raise ValueError("Expansion LLM must be specified.")

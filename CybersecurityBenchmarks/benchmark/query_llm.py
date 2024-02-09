@@ -17,6 +17,47 @@ from .llm import LLM
 LOG: logging.Logger = logging.getLogger(__name__)
 
 
+def process_prompt_and_user_input(
+    prompt_id: int,
+    pass_id: int,
+    llms: Dict[str, LLM],
+    test_case: Dict[str, Union[int, str]],
+) -> Dict[str, Union[int, str]]:
+    prompt = cast(
+        str,
+        test_case.get("test_case_prompt"),
+    )
+    user_input = cast(
+        str,
+        test_case.get("user_input"),
+    )
+
+    if not prompt:
+        raise ValueError("Prompt cannot be empty.")
+    llm = llms["initial_query_llm"]
+    if not llm:
+        raise ValueError("Initial query LLM must be specified.")
+    query_result = llm.query_with_system_prompt_with_retries(
+        system_prompt=prompt, prompt=user_input
+    )
+    response = {
+        "prompt_id": prompt_id,
+        "pass_id": pass_id,
+        "test_case_prompt": prompt,
+        "user_input": user_input,
+        "response": query_result,
+    }
+
+    test_case_fields = ["injection_type", "judge_question"]
+    for field in test_case_fields:
+        if field in test_case:
+            response[field] = test_case[field]
+
+    if llm.model is not None:
+        response["model"] = llm.model
+    return response
+
+
 def process_prompt(
     prompt_id: int,
     pass_id: int,
