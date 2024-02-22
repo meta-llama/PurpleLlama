@@ -74,4 +74,6 @@ def _load_patterns(filename: Path) -> list[InsecurePattern]:
         LOG.fatal(f"No such file or directory: {filename}")
     except yaml.YAMLError as exc:
         LOG.fatal(f"Error in YAML syntax: {exc}")
+    except Exception as exc:
+        LOG.fatal(f"Unexpected error while loading patterns: {exc}")
     return result
