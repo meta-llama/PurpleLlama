@@ -3,6 +3,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from __future__ import annotations
+
 import enum
 
 
@@ -49,3 +51,17 @@ def get_file_extension(language: Language) -> str:
         return extension_map[language]
     else:
         raise ValueError("Unknown language")
+
+
+def get_supported_languages() -> list[Language]:
+    supported_languages = [
+        Language.C,
+        Language.CPP,
+        Language.CSHARP,
+        Language.JAVA,
+        Language.JAVASCRIPT,
+        Language.PHP,
+        Language.PYTHON,
+        Language.RUST,
+    ]
+    return supported_languages
