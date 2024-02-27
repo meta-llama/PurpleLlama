@@ -75,6 +75,7 @@ class CodeContext:
     before: str | None
     after: str | None
     path: Path
+    is_existing_path: bool = False
 
 
 async def analyze(
@@ -82,22 +83,31 @@ async def analyze(
     generated_code: str,
     code_before: Optional[str] = None,
     code_after: Optional[str] = None,
+    path: Optional[Path] = None,
 ) -> List[Issue]:
     """
     Checks if the string contains insecure code.
     :return: True if the string is insecure, False otherwise.
     """
     result = []
-    code_context = CodeContext(
-        language,
-        code_before,
-        code_after,
-        _write_code_to_file(
+    is_path_preexisting = True if path else False
+    file_path = (
+        path
+        if is_path_preexisting
+        else _write_code_to_file(
             (code_before if code_before else "")
             + generated_code
             + (code_after if code_after else ""),
             languages.get_file_extension(language),
-        ),
+        )
+    )
+
+    code_context = CodeContext(
+        language,
+        code_before,
+        code_after,
+        file_path or Path(),
+        is_path_preexisting,
     )
 
     # Create tasks for each analyzer
@@ -131,7 +141,8 @@ async def analyze(
 
     # end of static analysis: clean up
     try:
-        os.remove(code_context.path)
+        if not is_path_preexisting:
+            os.remove(code_context.path)
     except OSError:
         LOG.warn("File created for static analysis could not be deleted.")
 
@@ -303,6 +314,8 @@ async def _weggli_analyze(
         ["-X"] if code_context.language == Language.CPP else []
     )
     result = await _run_all_weggli_tasks(patterns, command_base, code_context.path)
+    if code_context.is_existing_path:
+        return result
     filered_results = _filter_issues_in_generated_code(
         result, generated_code, code_context.before
     )
@@ -351,7 +364,9 @@ async def _semgrep_analyze(
     )
     output = await _run_command(command)
     result = _parse_semgrep_issues(output)
-    filered_results = _filter_issues_in_generated_code(
+    if code_context.is_existing_path:
+        return result
+    filtered_result = _filter_issues_in_generated_code(
         result, generated_code, code_context.before
     )
-    return filered_results
+    return filtered_result

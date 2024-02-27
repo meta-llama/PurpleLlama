@@ -5,6 +5,8 @@
 
 from __future__ import annotations
 
+import json
+
 from dataclasses import dataclass
 
 from .analyzers import Analyzer
@@ -24,3 +26,6 @@ class Issue:
     replacement: str | None = None
     analyzer: Analyzer | None = None
     pattern_id: str | None = None
+
+    def to_json(self) -> str:
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True)
