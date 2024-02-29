@@ -133,7 +133,11 @@ def query_llm_to_generate_responses(
         prompt_path.read_text()
     )
     if num_test_cases > 0:
-        prompt_dataset = prompt_dataset[:num_test_cases]
+        # Select the test cases distributed evenly across the dataset
+        dataset_size = len(prompt_dataset)
+        if dataset_size > num_test_cases:
+            step = dataset_size // num_test_cases
+            prompt_dataset = prompt_dataset[::step][:num_test_cases]
     response_result = []
 
     if is_parallel:
