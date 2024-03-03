@@ -143,14 +143,16 @@ def query_llm_to_generate_responses(
     if is_parallel:
         with ThreadPoolExecutor(max_workers=num_threads) as executor:
             futures = [
-                executor.submit(to_process_prompt, idx, k, llms, test_case)
-                if enumerate_prompt_and_pass_id
-                else executor.submit(
-                    to_process_prompt,
-                    cast(int, test_case["prompt_id"]),
-                    cast(int, test_case["pass_id"]),
-                    llms,
-                    test_case,
+                (
+                    executor.submit(to_process_prompt, idx, k, llms, test_case)
+                    if enumerate_prompt_and_pass_id
+                    else executor.submit(
+                        to_process_prompt,
+                        cast(int, test_case["prompt_id"]),
+                        cast(int, test_case["pass_id"]),
+                        llms,
+                        test_case,
+                    )
                 )
                 for idx, test_case in enumerate(prompt_dataset)
                 for k in range(pass_k)

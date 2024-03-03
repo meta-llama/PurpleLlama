@@ -65,9 +65,9 @@ def _load_patterns(filename: Path) -> list[InsecurePattern]:
                         rule=pattern["rule"],
                         severity=pattern["severity"],
                         regexes=pattern["regexes"] if "regexes" in pattern else None,
-                        pattern_id=pattern["pattern_id"]
-                        if "pattern_id" in pattern
-                        else None,
+                        pattern_id=(
+                            pattern["pattern_id"] if "pattern_id" in pattern else None
+                        ),
                     )
                 )
     except FileNotFoundError:
