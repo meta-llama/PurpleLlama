@@ -17,7 +17,7 @@
     "C++": {
       "bleu": 10.24,
       "total_count": 259,
-      "vulnerable_percentage": 28.190000000000005,
+      "vulnerable_percentage": 28.19,
       "vulnerable_suggestion_count": 73,
       "pass_rate": 71.81
     },
@@ -47,12 +47,12 @@
       "total_count": 351,
       "vulnerable_percentage": 32.76,
       "vulnerable_suggestion_count": 115,
-      "pass_rate": 67.24000000000001
+      "pass_rate": 67.24
     },
     "Rust": {
       "bleu": 13.93,
       "total_count": 204,
-      "vulnerable_percentage": 31.370000000000005,
+      "vulnerable_percentage": 31.37,
       "vulnerable_suggestion_count": 64,
       "pass_rate": 68.63
     }
@@ -110,7 +110,7 @@
     "Rust": {
       "bleu": 14.04,
       "total_count": 204,
-      "vulnerable_percentage": 30.879999999999995,
+      "vulnerable_percentage": 30.88,
       "vulnerable_suggestion_count": 63,
       "pass_rate": 69.12
     }
@@ -126,23 +126,23 @@
     "C#": {
       "bleu": 13.98,
       "total_count": 235,
-      "vulnerable_percentage": 30.210000000000004,
+      "vulnerable_percentage": 30.21,
       "vulnerable_suggestion_count": 71,
-      "pass_rate": 69.78999999999999
+      "pass_rate": 69.79
     },
     "C++": {
       "bleu": 10.73,
       "total_count": 259,
       "vulnerable_percentage": 28.96,
       "vulnerable_suggestion_count": 75,
-      "pass_rate": 71.03999999999999
+      "pass_rate": 71.04
     },
     "Java": {
       "bleu": 17.27,
       "total_count": 229,
-      "vulnerable_percentage": 53.28000000000001,
+      "vulnerable_percentage": 53.28,
       "vulnerable_suggestion_count": 122,
-      "pass_rate": 46.71999999999999
+      "pass_rate": 46.72
     },
     "JavaScript": {
       "bleu": 9.82,
@@ -170,7 +170,7 @@
       "total_count": 204,
       "vulnerable_percentage": 35.29,
       "vulnerable_suggestion_count": 72,
-      "pass_rate": 64.71000000000001
+      "pass_rate": 64.71
     }
   },
   "gpt-4": {
@@ -186,7 +186,7 @@
       "total_count": 235,
       "vulnerable_percentage": 29.79,
       "vulnerable_suggestion_count": 70,
-      "pass_rate": 70.21000000000001
+      "pass_rate": 70.21
     },
     "C++": {
       "bleu": 10.96,
@@ -198,9 +198,9 @@
     "Java": {
       "bleu": 18.8,
       "total_count": 229,
-      "vulnerable_percentage": 52.400000000000006,
+      "vulnerable_percentage": 52.4,
       "vulnerable_suggestion_count": 120,
-      "pass_rate": 47.599999999999994
+      "pass_rate": 47.6
     },
     "JavaScript": {
       "bleu": 10.93,
@@ -277,7 +277,7 @@
     "Python": {
       "bleu": 7.38,
       "total_count": 351,
-      "vulnerable_percentage": 31.620000000000005,
+      "vulnerable_percentage": 31.62,
       "vulnerable_suggestion_count": 111,
       "pass_rate": 68.38
     },
@@ -307,7 +307,7 @@
     "C++": {
       "bleu": 8.97,
       "total_count": 259,
-      "vulnerable_percentage": 28.190000000000005,
+      "vulnerable_percentage": 28.19,
       "vulnerable_suggestion_count": 73,
       "pass_rate": 71.81
     },
@@ -337,7 +337,7 @@
       "total_count": 351,
       "vulnerable_percentage": 35.04,
       "vulnerable_suggestion_count": 123,
-      "pass_rate": 64.96000000000001
+      "pass_rate": 64.96
     },
     "Rust": {
       "bleu": 13.17,
@@ -349,7 +349,7 @@
   },
   "llama2-70b-chat": {
     "C": {
-      "bleu": 9,
+      "bleu": 9.0,
       "total_count": 227,
       "vulnerable_percentage": 38.77,
       "vulnerable_suggestion_count": 88,
@@ -365,7 +365,7 @@
     "C++": {
       "bleu": 9.6,
       "total_count": 259,
-      "vulnerable_percentage": 26.640000000000004,
+      "vulnerable_percentage": 26.64,
       "vulnerable_suggestion_count": 69,
       "pass_rate": 73.36
     },
@@ -400,9 +400,9 @@
     "Rust": {
       "bleu": 13.24,
       "total_count": 204,
-      "vulnerable_percentage": 27.449999999999996,
+      "vulnerable_percentage": 27.45,
       "vulnerable_suggestion_count": 56,
-      "pass_rate": 72.55000000000001
+      "pass_rate": 72.55
     }
   },
   "llama2-7b-chat": {
@@ -416,7 +416,7 @@
     "C#": {
       "bleu": 10.97,
       "total_count": 235,
-      "vulnerable_percentage": 29.359999999999996,
+      "vulnerable_percentage": 29.36,
       "vulnerable_suggestion_count": 69,
       "pass_rate": 70.64
     },
@@ -437,21 +437,21 @@
     "JavaScript": {
       "bleu": 7.77,
       "total_count": 249,
-      "vulnerable_percentage": 30.519999999999996,
+      "vulnerable_percentage": 30.52,
       "vulnerable_suggestion_count": 76,
       "pass_rate": 69.48
     },
     "PHP": {
       "bleu": 10.8,
       "total_count": 162,
-      "vulnerable_percentage": 29.630000000000003,
+      "vulnerable_percentage": 29.63,
       "vulnerable_suggestion_count": 48,
       "pass_rate": 70.37
     },
     "Python": {
       "bleu": 6.89,
       "total_count": 351,
-      "vulnerable_percentage": 30.769999999999996,
+      "vulnerable_percentage": 30.77,
       "vulnerable_suggestion_count": 108,
       "pass_rate": 69.23
     },
