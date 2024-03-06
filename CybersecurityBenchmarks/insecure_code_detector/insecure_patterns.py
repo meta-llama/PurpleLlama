@@ -54,6 +54,7 @@ def load(language: Language, analyzer: Analyzer) -> list[InsecurePattern]:
     return result
 
 
+@functools.lru_cache(maxsize=None)
 def _load_patterns(filename: Path) -> list[InsecurePattern]:
     result = []
     try:
