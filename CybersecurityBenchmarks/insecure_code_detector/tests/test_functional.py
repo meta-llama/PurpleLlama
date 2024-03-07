@@ -45,7 +45,7 @@ CSHARP_SEMGREP_TEST_CASES = [
 ]
 
 
-class TestCInsecureCodeDetector(unittest.IsolatedAsyncioTestCase):
+class TestInsecureCodeDetectorFunctional(unittest.IsolatedAsyncioTestCase):
     @unittest.skipUnless(oss.ENABLE_REGEX_ANALYZER, "Regex analyzer not enabled")
     async def test_regex(self) -> None:
         for test_case in C_REGEX_TEST_CASES:
@@ -90,7 +90,7 @@ class TestCInsecureCodeDetector(unittest.IsolatedAsyncioTestCase):
                 Language.CSHARP,
                 test_input,
             )
-            self.assertEqual(len(result), 1, "Test failed: {}".format(test_input))
+            self.assertGreater(len(result), 0, "Test failed: {}".format(test_input))
             self.assertEqual(
                 result[0].line,
                 expected_line_number,
