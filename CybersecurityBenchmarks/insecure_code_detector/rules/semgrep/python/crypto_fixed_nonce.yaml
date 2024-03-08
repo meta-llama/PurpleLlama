@@ -12,6 +12,7 @@ rules:
     cwe:
     - 'CWE-323: Reusing a Nonce, Key Pair in Encryption'
     cwe_id: CWE-323
+    prescan_regex: (\biv\b|.*initialization_vector.*|.*initializationVector.*)
   severity: WARNING
   languages:
   - python

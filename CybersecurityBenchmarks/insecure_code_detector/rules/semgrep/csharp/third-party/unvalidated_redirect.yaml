@@ -47,4 +47,5 @@ rules:
   metadata:
     cwe: "URL redirection to untrusted site (open redirect)"
     cwe_id: "CWE-601"
+    prescan_regex: Redirect
   severity: "WARNING"

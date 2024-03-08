@@ -21,3 +21,4 @@ rules:
   metadata:
     cwe: "Use of a broken or risky cryptographic algorithm"
     cwe_id: "CWE-327"
+    prescan_regex: ^(ECB|CBC|OFB|CFB|CTS)$

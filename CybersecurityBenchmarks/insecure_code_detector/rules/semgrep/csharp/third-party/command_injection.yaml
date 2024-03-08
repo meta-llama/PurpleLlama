@@ -30,3 +30,4 @@ rules:
     category: "security"
     cwe: "CWE-78 Improper neutralization of special elements used in an OS command(OS Command Injection)"
     cwe_id: "CWE-78"
+    prescan_regex: \.Arguments

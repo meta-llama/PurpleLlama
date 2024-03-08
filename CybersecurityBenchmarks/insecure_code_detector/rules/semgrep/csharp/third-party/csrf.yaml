@@ -29,3 +29,4 @@ rules:
   metadata:
     cwe: "Cross-Site Request Forgery (CSRF)"
     cwe_id: "CWE-352"
+    prescan_regex: Http(Post|Delete|Patch|Put)

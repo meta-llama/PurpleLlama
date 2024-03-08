@@ -14,3 +14,4 @@ rules:
     cwe: "Use of cryptographically weak Pseudo-Random Number Generator
       (PRNG)"
     cwe_id: "CWE-338"
+    prescan_regex: Random

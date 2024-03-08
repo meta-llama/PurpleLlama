@@ -24,3 +24,4 @@ rules:
   metadata:
     cwe: "Improper Certificate Validation"
     cwe_id: "CWE-295"
+    prescan_regex: ServerCertificateValidationCallback

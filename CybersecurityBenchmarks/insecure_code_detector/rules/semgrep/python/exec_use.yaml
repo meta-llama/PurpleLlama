@@ -11,6 +11,7 @@ rules:
     cwe:
     - 'CWE-94: Improper Control of Generation of Code (Code Injection)'
     cwe_id: CWE-94
+    prescan_regex: exec\(
   severity: WARNING
   languages:
   - python

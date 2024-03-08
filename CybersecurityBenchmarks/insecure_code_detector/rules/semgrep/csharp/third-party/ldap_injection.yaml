@@ -19,3 +19,4 @@ rules:
   metadata:
     cwe: "Improper neutralization of special elements used in an LDAP query (LDAP Injection)"
     cwe_id: "CWE-90"
+    prescan_regex: DirectorySearcher

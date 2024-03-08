@@ -21,7 +21,6 @@ from pathlib import Path
 from typing import List, Optional
 
 from . import insecure_patterns, languages
-
 from .analyzers import Analyzer
 
 from .insecure_patterns import InsecurePattern
@@ -86,6 +85,7 @@ async def analyze(
     code_before: Optional[str] = None,
     code_after: Optional[str] = None,
     path: Optional[Path] = None,
+    fast_mode: bool = False,
 ) -> List[Issue]:
     """
     Checks if the string contains insecure code.
@@ -121,6 +121,11 @@ async def analyze(
     ):
         result += _regex_analyze(generated_code, code_context)
 
+    if fast_mode:
+        # fast mode is greedy. returns for any match and doesn't include all matches
+        if len(result) > 0:
+            return result
+
     # weggli analyze
     if oss.ENABLE_WEGGLI and (
         Analyzer.WEGGLI in LANGUAGE_ANALYZER_MAP.get(language, [])
@@ -131,6 +136,9 @@ async def analyze(
     if oss.ENABLE_SEMGREP and (
         Analyzer.SEMGREP in LANGUAGE_ANALYZER_MAP.get(language, [])
     ):
+        if fast_mode:
+            if not _is_semgrep_scan_recommended(generated_code, code_context):
+                return result
         tasks.append(
             asyncio.create_task(_semgrep_analyze(generated_code, code_context))
         )
@@ -188,8 +196,7 @@ def _search_pattern(pattern: InsecurePattern, generated_code: str) -> List[Issue
     return []
 
 
-def _regex_analyze(generated_code: str, code_context: CodeContext) -> List[Issue]:
-    patterns = insecure_patterns.load(code_context.language, Analyzer.REGEX)
+def _run_regex(generated_code: str, patterns: list[InsecurePattern]) -> List[Issue]:
     with ThreadPoolExecutor() as executor:
         tasks = [
             executor.submit(_search_pattern, pattern, generated_code)
@@ -201,6 +208,11 @@ def _regex_analyze(generated_code: str, code_context: CodeContext) -> List[Issue
         for future in concurrent.futures.as_completed(tasks)
         for issue in future.result()
     ]
+
+
+def _regex_analyze(generated_code: str, code_context: CodeContext) -> List[Issue]:
+    patterns = insecure_patterns.load(code_context.language, Analyzer.REGEX)
+    return _run_regex(generated_code, patterns)
 
 
 async def _run_command(command: list[str]) -> str:
@@ -353,6 +365,18 @@ def _parse_semgrep_issues(output: str) -> list[Issue]:
                 )
             )
     return result
+
+
+def _is_semgrep_scan_recommended(
+    generated_code: str, code_context: CodeContext
+) -> bool:
+    prescan_patterns = insecure_patterns.load_prescan_regexes(code_context.language)
+    if len(prescan_patterns) == 0:
+        return True
+    issues = _run_regex(generated_code, prescan_patterns)
+    if len(issues) > 0:
+        return True
+    return False
 
 
 async def _semgrep_analyze(

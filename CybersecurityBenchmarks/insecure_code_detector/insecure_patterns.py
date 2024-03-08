@@ -10,6 +10,7 @@ from __future__ import annotations
 import functools
 
 import logging
+import os
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -52,6 +53,34 @@ def load(language: Language, analyzer: Analyzer) -> list[InsecurePattern]:
     elif analyzer == Analyzer.REGEX:
         result += _load_patterns(oss.RULES_ROOT / "regex/language_agnostic.yaml")
     return result
+
+
+@functools.lru_cache(maxsize=None)
+def load_prescan_regexes(language: Language) -> list[InsecurePattern]:
+    rule_directory = oss.RULES_ROOT / "semgrep" / language
+    patterns = []
+    for root, _dirs, files in os.walk(rule_directory):
+        for file in files:
+            if not file.endswith(".yaml"):
+                continue
+            with open(os.path.join(root, file), "r") as file:
+                data = yaml.safe_load(file)
+                if "rules" in data:
+                    rule = data["rules"][0]
+                    if ("metadata" in rule) and ("prescan_regex" in rule["mdetadata"]):
+                        patterns.append(
+                            InsecurePattern(
+                                description=rule["message"],
+                                cwe_id=rule["metadata"]["cwe_id"],
+                                rule=rule["metadata"]["prescan_regex"],
+                                severity=rule["severity"],
+                            )
+                        )
+                    # even if one rule doesn't have prescan_regex,
+                    # the list is ineffective
+                    else:
+                        return []
+    return patterns
 
 
 @functools.lru_cache(maxsize=None)

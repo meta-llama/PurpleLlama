@@ -53,3 +53,4 @@ rules:
     cwe: "CWE-89 Improper Neutralization of Special Elements used in an SQL
       Command (SQL Injection)"
     cwe_id: "CWE-89"
+    prescan_regex: ^(SqlCommand|OracleCommand|NpgsqlCommand|MySqlCommand|EntityCommand|OdbcCommand|OleDbCommand|SqliteCommand)$

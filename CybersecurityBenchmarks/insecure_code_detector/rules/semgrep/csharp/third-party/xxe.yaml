@@ -24,3 +24,4 @@ rules:
   metadata:
     cwe: "Improper restriction of XML external entity reference ('XXE')"
     cwe_id: "CWE-611"
+    prescan_regex: Xml

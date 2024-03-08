@@ -58,4 +58,5 @@ rules:
   metadata:
     cwe: "Improper neutralization of input during web page generation(Cross-site Scripting)"
     cwe_id: "CWE-79"
+    prescan_regex: ^(Http)
   severity: "WARNING"

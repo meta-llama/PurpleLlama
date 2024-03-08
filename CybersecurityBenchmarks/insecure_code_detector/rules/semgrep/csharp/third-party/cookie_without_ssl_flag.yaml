@@ -19,3 +19,4 @@ rules:
   metadata:
     cwe: "Sensitive cookie in HTTPS session without 'Secure' attribute"
     cwe_id: "CWE-614"
+    prescan_regex: HttpCookie\(

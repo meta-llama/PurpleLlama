@@ -22,3 +22,4 @@ rules:
   metadata:
     cwe: "ASP.NET Misconfiguration: Not Using Input Validation Framework"
     cwe_id: "CWE-554"
+    prescan_regex: ValidateInput\(false\)

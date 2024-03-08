@@ -95,4 +95,5 @@ rules:
   metadata:
     cwe: "Improper limitation of a pathname to a restricted directory(Path Traversal)"
     cwe_id: "CWE-22"
+    prescan_regex: ^(Http)
   severity: "WARNING"

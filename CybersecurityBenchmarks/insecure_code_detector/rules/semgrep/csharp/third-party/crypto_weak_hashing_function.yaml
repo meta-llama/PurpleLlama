@@ -23,3 +23,4 @@ rules:
   metadata:
     cwe: "Use of a broken or risky cryptographic algorithm"
     cwe_id: "CWE-327"
+    prescan_regex: ^(SHA1CryptoServiceProvider|MD5CryptoServiceProvider)$

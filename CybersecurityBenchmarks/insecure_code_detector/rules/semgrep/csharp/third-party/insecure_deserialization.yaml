@@ -20,4 +20,5 @@ rules:
   metadata:
     cwe: "Deserialization of potentially untrusted data"
     cwe_id: "CWE-502"
+    prescan_regex: Deserialize
   severity: "WARNING"

@@ -21,3 +21,4 @@ rules:
   metadata:
     cwe: "Sensitive cookie without 'HttpOnly' flag"
     cwe_id: "CWE-1004"
+    prescan_regex: HttpCookie\(
