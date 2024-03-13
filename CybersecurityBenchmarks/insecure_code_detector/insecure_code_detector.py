@@ -251,7 +251,10 @@ def _filter_issues_in_generated_code(
         for x in issues
         if (
             x.line is None
-            or (generated_code_start_line <= x.line <= generated_code_end_line)
+            or (
+                isinstance(x.line, int)
+                and (generated_code_start_line <= x.line <= generated_code_end_line)
+            )
         )
     ]
     return result
@@ -359,9 +362,12 @@ def _parse_semgrep_issues(output: str) -> list[Issue]:
                     cwe_id=issue_details.get("metadata", {}).get("cwe_id", ""),
                     severity=issue_details.get("severity", ""),
                     line=issue.get("start", {}).get("line", None),
+                    char=issue.get("start", {}).get("col", None),
                     rule=issue.get("rule", None),
                     analyzer=Analyzer.SEMGREP,
                     pattern_id=issue.get("check_id", None),
+                    path=issue.get("path", None),
+                    name=issue.get("check_id", None),
                 )
             )
     return result

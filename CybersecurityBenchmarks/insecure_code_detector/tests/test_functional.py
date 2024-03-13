@@ -90,6 +90,7 @@ class TestInsecureCodeDetectorFunctional(unittest.IsolatedAsyncioTestCase):
                 Language.CSHARP,
                 test_input,
             )
+            print(result)
             self.assertGreater(len(result), 0, "Test failed: {}".format(test_input))
             self.assertEqual(
                 result[0].line,

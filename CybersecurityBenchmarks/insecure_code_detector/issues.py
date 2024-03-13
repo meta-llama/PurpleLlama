@@ -12,6 +12,7 @@ import enum
 import json
 
 from dataclasses import dataclass
+from typing import Optional
 
 from .analyzers import Analyzer
 
@@ -40,20 +41,20 @@ class Severity(str, enum.Enum):
             raise ValueError(f"Unknown severity: {severity}")
 
 
-@dataclass(frozen=True)
+@dataclass
 class Issue:
     description: str
     cwe_id: str
     severity: Severity
-    rule: str | None = None
-    line: int | None = None
-    path: str | None = None
-    char: int | None = None
-    name: str | None = None
-    original: str | None = None
-    replacement: str | None = None
-    analyzer: Analyzer | None = None
-    pattern_id: str | None = None
+    rule: Optional[str] = None
+    line: Optional[int] = None
+    path: Optional[str] = None
+    char: Optional[int] = None
+    name: Optional[str] = None
+    original: Optional[str] = None
+    replacement: Optional[str] = None
+    analyzer: Optional[Analyzer] = None
+    pattern_id: Optional[str] = None
 
     def to_json(self) -> str:
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True)
