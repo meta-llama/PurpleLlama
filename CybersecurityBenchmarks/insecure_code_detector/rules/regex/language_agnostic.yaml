@@ -37,17 +37,17 @@
 - cwe_id: CWE-798
   description: Stripe API Key
   rule: sk_live_([0-9a-zA-Z]{24})
-  severity: High
+  severity: Warning
   pattern_id: ALL-R-013
 
 - cwe_id: CWE-798
   description: Twilio API Key
   rule: SK[0-9a-fA-F]{32}
-  severity: High
+  severity: Warning
   pattern_id: ALL-R-014
 
 - cwe_id: CWE-798
   description: Heroku API Key
   rule: HEROKU_API_KEY=([0-9a-f]{40})
-  severity: Medium
+  severity: Warning
   pattern_id: ALL-R-015

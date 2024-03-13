@@ -24,7 +24,7 @@ from . import insecure_patterns, languages
 from .analyzers import Analyzer
 
 from .insecure_patterns import InsecurePattern
-from .issues import Issue
+from .issues import Issue, Severity
 from .languages import Language
 
 LOG: logging.Logger = logging.getLogger(__name__)
@@ -186,7 +186,7 @@ def _search_pattern(pattern: InsecurePattern, generated_code: str) -> List[Issue
             Issue(
                 description=pattern.description,
                 cwe_id=pattern.cwe_id,
-                severity=pattern.severity,
+                severity=Severity.from_string(pattern.severity),
                 line=line_no,
                 rule=pattern.rule,
                 analyzer=Analyzer.REGEX,
@@ -307,7 +307,7 @@ async def _execute_weggli_task(
                 Issue(
                     description=pattern.description,
                     cwe_id=pattern.cwe_id,
-                    severity=pattern.severity,
+                    severity=Severity.from_string(pattern.severity),
                     line=_get_weggli_issue_line_number(weggli_output),
                     rule=pattern.rule,
                     analyzer=Analyzer.WEGGLI,

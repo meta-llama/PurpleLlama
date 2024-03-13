@@ -7,6 +7,8 @@
 
 from __future__ import annotations
 
+import enum
+
 import json
 
 from dataclasses import dataclass
@@ -14,11 +16,35 @@ from dataclasses import dataclass
 from .analyzers import Analyzer
 
 
+class Severity(str, enum.Enum):
+    ERROR = "error"
+    WARNING = "warning"
+    ADVICE = "advice"
+    DISABLED = "disabled"
+
+    def __str__(self) -> str:
+        return self.name.lower()
+
+    @staticmethod
+    def from_string(severity: str) -> Severity:
+        severity = severity.lower()
+        if severity == "error":
+            return Severity.ERROR
+        elif severity == "warning":
+            return Severity.WARNING
+        elif severity == "advice":
+            return Severity.ADVICE
+        elif severity == "disabled":
+            return Severity.DISABLED
+        else:
+            raise ValueError(f"Unknown severity: {severity}")
+
+
 @dataclass(frozen=True)
 class Issue:
     description: str
     cwe_id: str
-    severity: str
+    severity: Severity
     rule: str | None = None
     line: int | None = None
     path: str | None = None
