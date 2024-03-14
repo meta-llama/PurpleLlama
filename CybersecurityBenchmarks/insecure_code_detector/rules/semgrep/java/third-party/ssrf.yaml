@@ -56,3 +56,4 @@ rules:
   metadata:
     cwe: "Server-Side Request Forgery (SSRF)"
     cwe_id: "CWE-918"
+    prescan_regex: (connect|GetContent|openConnection|openStream|getContent)

@@ -26,3 +26,4 @@ rules:
   metadata:
     cwe: "Permissive cross-domain policy with untrusted domains"
     cwe_id: "CWE-942"
+    prescan_regex: (HttpServletRequest|HttpServletResponse)

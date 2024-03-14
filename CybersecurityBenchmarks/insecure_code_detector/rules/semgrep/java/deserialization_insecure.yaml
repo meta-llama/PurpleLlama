@@ -9,3 +9,4 @@ rules:
   metadata:
     cwe: "Deserialization of Untrusted Data"
     cwe_id: "CWE-502"
+    prescan_regex: ObjectInputStream\(

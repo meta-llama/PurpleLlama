@@ -27,3 +27,4 @@ rules:
   metadata:
     cwe: "Improper neutralization of data within XPath expressions ('XPath Injection')"
     cwe_id: "CWE-643"
+    prescan_regex: (compile\(|evaluate\()

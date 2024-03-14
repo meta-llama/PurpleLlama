@@ -27,3 +27,4 @@ rules:
   metadata:
     cwe: "Use of insufficiently random values"
     cwe_id: "CWE-330"
+    prescan_regex: ^(next|random)

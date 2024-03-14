@@ -18,3 +18,4 @@ rules:
   metadata:
     cwe: "Missing authentication for critical function (LDAP)"
     cwe_id: "CWE-306"
+    prescan_regex: Context\.SECURITY_AUTHENTICATION

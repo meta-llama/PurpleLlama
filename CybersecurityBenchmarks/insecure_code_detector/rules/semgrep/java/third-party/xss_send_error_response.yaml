@@ -34,3 +34,4 @@ rules:
   metadata:
     cwe: "Improper neutralization of input during web page generation('XSS')"
     cwe_id: "CWE-79"
+    prescan_regex: (getParameter\(|getHeader\(|getRequestedSessionId\(|getQueryString\()
