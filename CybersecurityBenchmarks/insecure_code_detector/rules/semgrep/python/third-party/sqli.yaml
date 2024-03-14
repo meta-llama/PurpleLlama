@@ -10,6 +10,7 @@ rules:
   metadata:
     cwe: "CWE-89 Improper neutralization of special elements used in an SQL Command (SQL Injection)"
     cwe_id: CWE-89
+    prescan_regex: (\.execute|\.executemany)
   patterns:
   - pattern-either:
     - pattern: "$DB.execute(\"...\" % ...)"

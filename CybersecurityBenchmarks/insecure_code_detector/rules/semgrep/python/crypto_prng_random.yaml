@@ -11,6 +11,7 @@ rules:
     cwe:
     - 'CWE-338: Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG)'
     cwe_id: CWE-338
+    prescan_regex: random\.
   severity: WARNING
   languages:
   - python

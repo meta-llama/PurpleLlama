@@ -17,6 +17,7 @@ rules:
     cwe:
     - 'CWE-502: Deserialization of Untrusted Data'
     cwe_id: CWE-502
+    prescan_regex: (yaml\.Loader|Loader|yaml\.UnsafeLoader|UnsafeLoader)
   severity: WARNING
   languages:
   - python

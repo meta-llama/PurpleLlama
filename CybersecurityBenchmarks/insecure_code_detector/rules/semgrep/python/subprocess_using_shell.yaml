@@ -17,6 +17,7 @@ rules:
     cwe:
     - 'CWE-78: Improper Neutralization of Special Elements used in an OS Command (OS Command Injection)'
     cwe_id: CWE-78
+    prescan_regex: (Popen|run|call|check_call|check_output)
   severity: WARNING
   languages:
   - python
