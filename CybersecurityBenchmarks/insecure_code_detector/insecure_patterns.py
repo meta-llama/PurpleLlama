@@ -67,7 +67,7 @@ def load_prescan_regexes(language: Language) -> list[InsecurePattern]:
                 data = yaml.safe_load(file)
                 if "rules" in data:
                     rule = data["rules"][0]
-                    if ("metadata" in rule) and ("prescan_regex" in rule["mdetadata"]):
+                    if ("metadata" in rule) and ("prescan_regex" in rule["metadata"]):
                         patterns.append(
                             InsecurePattern(
                                 description=rule["message"],
