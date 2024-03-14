@@ -126,3 +126,4 @@ rules:
     cwe: "Improper limitation of a pathname to a restricted directory
       (Path Traversal)"
     category: "security"
+    prescan_regex: require\(

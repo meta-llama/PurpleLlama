@@ -48,4 +48,5 @@ rules:
     cwe: "Improper restriction of operations within the bounds of a memory
       buffer"
     cwe_id: "CWE-119"
+    prescan_regex: \w+\.(?:read|write)(U?Int8|(U?Int(16|32)|Float|Double)(LE|BE))*\([^,]*,\s*true\)
     source-rule-url: "https://github.com/nodesecurity/eslint-plugin-security/blob/master/rules/detect-buffer-noassert.js"

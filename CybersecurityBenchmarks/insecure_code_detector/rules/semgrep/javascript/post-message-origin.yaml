@@ -10,3 +10,4 @@ rules:
     cwe_id: CWE-345
     cwe: "Insufficient Verification of Data Authenticity"
     category: "security"
+    prescan_regex: \.postMessage\(

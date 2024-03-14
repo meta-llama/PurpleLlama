@@ -12,3 +12,4 @@ rules:
   metadata:
     cwe_id: "CWE-908"
     cwe: "Use of Uninitialized Resource"
+    prescan_regex: (Buffer\.allocUnsafe\(|Buffer\.allocUnsafeSlow\()

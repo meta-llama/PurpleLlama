@@ -19,6 +19,7 @@ rules:
     cwe: "Improper Neutralization of Directives in Dynamically Evaluated
       Code (Eval Injection)"
     category: "security"
+    prescan_regex: child_process\.exec
     # yamllint disable
     source-rule-url: "https://github.com/nodesecurity/eslint-plugin-security/blob/master/rules/detect-child-process.js"
     # yamllint enable

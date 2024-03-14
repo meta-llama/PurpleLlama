@@ -20,6 +20,7 @@ rules:
     owasp: "A1:2017-Injection"
     cwe: "Improper neutralization of directives in dynamically evaluated
       code (Eval Injection)"
+    prescan_regex: require\(
     category: "security"
     # yamllint disable
     source-rule-url: "https://github.com/nodesecurity/eslint-plugin-security/blob/master/rules/detect-non-literal-require.js"

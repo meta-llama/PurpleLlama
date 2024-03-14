@@ -20,6 +20,7 @@ rules:
     cwe_id: "CWE-338"
     cwe: "Use of cryptographically weak pseudo-random number generator
       (PRNG)"
+    prescan_regex: (crypto\.pseudoRandomBytes\(|crypto\.getRandomValues\(|Math\.random\()
     category: "security"
     # yamllint disable
     source-rule-url: "https://github.com/nodesecurity/eslint-plugin-security/blob/master/rules/detect-pseudoRandomBytes.js"

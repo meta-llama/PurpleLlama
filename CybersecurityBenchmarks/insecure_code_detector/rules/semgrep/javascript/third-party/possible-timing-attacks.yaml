@@ -503,3 +503,4 @@ rules:
     cwe_id: "CWE-208"
     cwe: "Observable timing discrepancy"
     category: "security"
+    prescan_regex: (password|pass|key|auth_token|token|api_key|secret|api_secret|apiSecret|apiKey|hash)

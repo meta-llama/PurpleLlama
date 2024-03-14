@@ -16,6 +16,7 @@ rules:
     cwe_id: "CWE-185"
     cwe: "Regular expression with non-literal value"
     category: "security"
+    prescan_regex: new\s*RegExp\(
   pattern-either:
   - patterns:
     - pattern: |

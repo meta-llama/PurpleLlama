@@ -29,6 +29,7 @@ rules:
     cwe: "Allocation of resources without limits or throttling"
     cwe_id: "CWE-770"
     category: "security"
+    prescan_regex: new\s*Buffer\(
     # yamllint disable
     source-rule-url: "https://github.com/eslint-community/eslint-plugin-security/blob/main/rules/detect-new-buffer.js"
     # yamllint enable

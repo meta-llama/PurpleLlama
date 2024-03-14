@@ -22,3 +22,4 @@ rules:
     owasp: "A7:2017-Cross-Site Scripting (XSS)"
     cwe: "Improper neutralization of input during web page generation
       (Cross-site Scripting)"
+    prescan_regex: dangerouslySetInnerHTML

@@ -21,3 +21,4 @@ rules:
     cwe: "Improper neutralization of directives in dynamically evaluated
       code (Eval Injection)"
     category: "security"
+    prescan_regex: (execScript\(|new\s*Function\()
