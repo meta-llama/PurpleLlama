@@ -155,6 +155,21 @@ class OPENAI(LLM):
         return response.choices[0].message.content
 
     @override
+    def query_with_system_prompt(self, system_prompt: str, prompt: str) -> str:
+        level = logging.getLogger().level
+        logging.getLogger().setLevel(logging.WARNING)
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": prompt},
+            ],
+            max_tokens=MAX_TOKENS,
+        )
+        logging.getLogger().setLevel(level)
+        return response.choices[0].message.content
+
+    @override
     def valid_models(self) -> list[str]:
         return ["gpt-3.5-turbo", "gpt-4"]
 
