@@ -50,7 +50,7 @@ def process_prompt_and_user_input(
         "response": query_result,
     }
 
-    test_case_fields = ["injection_type", "judge_question"]
+    test_case_fields = ["injection_type", "injection_variant", "judge_question"]
     for field in test_case_fields:
         if field in test_case:
             response[field] = test_case[field]
