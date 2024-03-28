@@ -8,7 +8,6 @@ rules:
           - pattern: pickle.load(...)
           - pattern: _pickle.loads(...)
           - pattern: _pickle.loads(...)
-          - pattern: shelve.$FUNC(...)
       - pattern-not: pickle.loads("...")
       - pattern-not: pickle.load("...")
       - pattern-not: _pickle.loads("...")
