@@ -5,6 +5,11 @@ rules:
   patterns:
       - pattern: exec(...)
       - pattern-not: exec("...")
+      - pattern-not: exec()
+      - pattern-not-inside: |
+          def exec(...):
+            ...
+          ...
   message: >-
     Potential code injection due to exec usage.
   metadata:

@@ -5,6 +5,11 @@ rules:
   patterns:
       - pattern: eval(...)
       - pattern-not: eval("...")
+      - pattern-not: eval()
+      - pattern-not-inside: |
+          def eval(...):
+            ...
+          ...
   message: >-
     Potential code injection due to eval usage.
   metadata:
