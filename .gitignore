@@ -2,3 +2,4 @@
 .DS_Store
 CybersecurityBenchmarks/datasets/mitre_responses.json
 __pycache__
+command.txt
