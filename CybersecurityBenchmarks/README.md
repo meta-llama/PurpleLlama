@@ -102,7 +102,7 @@ python3 -m CybersecurityBenchmarks.benchmark.run \
    --benchmark=instruct \
    --prompt-path="$DATASETS/instruct/instruct.json" \
    --response-path="$DATASETS/instruct_responses.json" \
-   --stat-path="$DATASETS/instruct_stat.json \
+   --stat-path="$DATASETS/instruct_stat.json" \
    --llm-under-test=<SPECIFICATION_1> --llm-under-test=<SPECIFICATION_2> ...
    [--run-llm-in-parallel]
 ```
@@ -113,7 +113,7 @@ python3 -m CybersecurityBenchmarks.benchmark.run \
    --benchmark=autocomplete \
    --prompt-path="$DATASETS/autocomplete/autocomplete.json" \
    --response-path="$DATASETS/autocomplete_responses.json" \
-   --stat-path="$DATASETS/instruct_stat.json \
+   --stat-path="$DATASETS/autocomplete_stat.json" \
    --llm-under-test=<SPECIFICATION_1> --llm-under-test=<SPECIFICATION_2> ...
    [--run-llm-in-parallel]
 ```
