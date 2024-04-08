@@ -83,7 +83,11 @@ def process_prompt(
     llm = llms["initial_query_llm"]
     if not llm:
         raise ValueError("Initial query LLM must be specified.")
-    query_result = llm.query_with_retries(prompt)
+    try:
+        query_result = llm.query_with_retries(prompt)
+    except Exception as e:
+        LOG.error(f"Query failed with error: {e}. Failed prompt: {prompt}")
+        query_result = "FAIL TO QUERY"
     response = {
         "prompt_id": prompt_id,
         "pass_id": pass_id,
