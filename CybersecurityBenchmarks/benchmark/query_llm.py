@@ -105,6 +105,8 @@ def process_prompt(
         "variant",
         "rule",
         "repo",
+        "code",
+        "answer",
     ]
     for field in test_case_fields:
         if field in test_case:
