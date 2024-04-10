@@ -24,6 +24,7 @@ def process_prompt_and_user_input(
     pass_id: int,
     llms: Dict[str, LLM],
     test_case: Dict[str, Union[int, str]],
+    guided_decode_json_schema: Optional[str] = None,
 ) -> Dict[str, Union[int, str]]:
     prompt = cast(
         str,
@@ -40,7 +41,9 @@ def process_prompt_and_user_input(
     if not llm:
         raise ValueError("Initial query LLM must be specified.")
     query_result = llm.query_with_system_prompt_with_retries(
-        system_prompt=prompt, prompt=user_input
+        system_prompt=prompt,
+        prompt=user_input,
+        guided_decode_json_schema=guided_decode_json_schema,
     )
     response = {
         "prompt_id": prompt_id,
@@ -65,6 +68,7 @@ def process_prompt(
     pass_id: int,
     llms: Dict[str, LLM],
     test_case: Dict[str, Union[int, str]],
+    guided_decode_json_schema: Optional[str] = None,
 ) -> Dict[str, Union[int, str]]:
     prompt = cast(
         str,
@@ -84,7 +88,10 @@ def process_prompt(
     if not llm:
         raise ValueError("Initial query LLM must be specified.")
     try:
-        query_result = llm.query_with_retries(prompt)
+        query_result = llm.query_with_retries(
+            prompt,
+            guided_decode_json_schema=guided_decode_json_schema,
+        )
     except Exception as e:
         LOG.error(f"Query failed with error: {e}. Failed prompt: {prompt}")
         query_result = "FAIL TO QUERY"
@@ -128,12 +135,14 @@ def query_llm_to_generate_responses(
             int,
             Dict[str, LLM],
             Dict[str, Union[int, str]],
+            Optional[str],
         ],
         Dict[str, Union[int, str]],
     ] = process_prompt,
     num_test_cases: int = 0,
     pass_k: int = 1,
     enumerate_prompt_and_pass_id: bool = True,
+    guided_decode_json_schema: Optional[str] = None,
 ) -> List[Dict[str, Optional[str]]]:
     if not prompt_path.exists():
         raise ValueError("Please provide valid path for prompts.")
@@ -152,7 +161,14 @@ def query_llm_to_generate_responses(
         with ThreadPoolExecutor(max_workers=num_threads) as executor:
             futures = [
                 (
-                    executor.submit(to_process_prompt, idx, k, llms, test_case)
+                    executor.submit(
+                        to_process_prompt,
+                        idx,
+                        k,
+                        llms,
+                        test_case,
+                        guided_decode_json_schema,
+                    )
                     if enumerate_prompt_and_pass_id
                     else executor.submit(
                         to_process_prompt,
@@ -160,6 +176,7 @@ def query_llm_to_generate_responses(
                         cast(int, test_case["pass_id"]),
                         llms,
                         test_case,
+                        guided_decode_json_schema,
                     )
                 )
                 for idx, test_case in enumerate(prompt_dataset)
@@ -186,6 +203,7 @@ def query_llm_to_generate_responses(
                     idx // len(prompt_dataset),
                     llms,
                     test_case,
+                    guided_decode_json_schema,
                 )
             )
     return response_result
