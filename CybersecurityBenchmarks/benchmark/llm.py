@@ -205,6 +205,7 @@ class ANYSCALE(LLM):
             "codellama/CodeLlama-34b-Instruct-hf",
             "mistralai/Mistral-7B-Instruct-v0.1",
             "HuggingFaceH4/zephyr-7b-beta",
+            "codellama/CodeLlama-70b-Instruct-hf",
         ]
 
 
