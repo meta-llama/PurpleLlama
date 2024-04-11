@@ -19,6 +19,8 @@ from . import llm
 
 from .benchmark import Benchmark
 
+from .frr_benchmark import FRRBenchmark
+
 from .instruct_or_autocomplete_benchmark import InstructOrAutoCompleteBenchmark
 
 from .mitre_benchmark import MitreBenchmark
@@ -27,6 +29,7 @@ LOG: logging.Logger = logging.getLogger(__name__)
 
 Benchmark.register_benchmark(InstructOrAutoCompleteBenchmark)
 Benchmark.register_benchmark(MitreBenchmark)
+Benchmark.register_benchmark(FRRBenchmark)
 
 
 def validate_arguments(parser: argparse.ArgumentParser) -> argparse.Namespace:
