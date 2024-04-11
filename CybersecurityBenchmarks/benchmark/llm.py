@@ -166,10 +166,13 @@ class OPENAI(LLM):
                 {"role": "user", "content": prompt},
             ],
             max_tokens=MAX_TOKENS,
+            response_format=(
+                {"type": "json_object"}
+                if guided_decode_json_schema is not None
+                else None
+            ),
         )
         logging.getLogger().setLevel(level)
-        if guided_decode_json_schema is not None:
-            return response.choices[0].message.model_dump_json(indent=2)
         return response.choices[0].message.content
 
     @override
@@ -188,10 +191,13 @@ class OPENAI(LLM):
                 {"role": "user", "content": prompt},
             ],
             max_tokens=MAX_TOKENS,
+            response_format=(
+                {"type": "json_object"}
+                if guided_decode_json_schema is not None
+                else None
+            ),
         )
         logging.getLogger().setLevel(level)
-        if guided_decode_json_schema:
-            return response.choices[0].message.model_dump_json(indent=2)
         return response.choices[0].message.content
 
     @override
@@ -220,10 +226,13 @@ class ANYSCALE(LLM):
                 {"role": "user", "content": prompt},
             ],
             max_tokens=MAX_TOKENS,
+            response_format=(
+                {"type": "json_object"}
+                if guided_decode_json_schema is not None
+                else None
+            ),
         )
         logging.getLogger().setLevel(level)
-        if guided_decode_json_schema is not None:
-            return response.choices[0].message.model_dump_json(indent=2)
         return response.choices[0].message.content
 
     @override
