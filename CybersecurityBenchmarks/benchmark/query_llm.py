@@ -114,6 +114,8 @@ def process_prompt(
         "repo",
         "code",
         "answer",
+        "challenge_type",
+        "language",
     ]
     for field in test_case_fields:
         if field in test_case:
