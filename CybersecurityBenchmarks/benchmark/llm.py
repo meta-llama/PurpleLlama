@@ -20,7 +20,7 @@ from langchain.llms import Together
 from typing_extensions import override
 
 
-NUM_LLM_RETRIES = 10
+NUM_LLM_RETRIES = 100
 
 MAX_TOKENS = 1000
 
