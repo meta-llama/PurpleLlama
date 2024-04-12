@@ -106,6 +106,7 @@ def process_prompt(
     test_case_fields = [
         "cwe_identifier",
         "mitre_category",
+        "attack_type",
         "language",
         "line_text",
         "origin_code",
