@@ -24,12 +24,14 @@ from .frr_benchmark import FRRBenchmark
 from .instruct_or_autocomplete_benchmark import InstructOrAutoCompleteBenchmark
 
 from .mitre_benchmark import MitreBenchmark
+from .prompt_injection_benchmark import PromptInjectionBenchmark
 
 LOG: logging.Logger = logging.getLogger(__name__)
 
 Benchmark.register_benchmark(InstructOrAutoCompleteBenchmark)
 Benchmark.register_benchmark(MitreBenchmark)
 Benchmark.register_benchmark(FRRBenchmark)
+Benchmark.register_benchmark(PromptInjectionBenchmark)
 
 
 def validate_arguments(parser: argparse.ArgumentParser) -> argparse.Namespace:
