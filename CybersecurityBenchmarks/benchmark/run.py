@@ -18,6 +18,7 @@ from typing import Callable
 from . import llm
 
 from .benchmark import Benchmark
+from .canary_exploit_benchmark import CanaryExploitBenchmark
 
 from .frr_benchmark import FRRBenchmark
 
@@ -32,6 +33,7 @@ Benchmark.register_benchmark(InstructOrAutoCompleteBenchmark)
 Benchmark.register_benchmark(MitreBenchmark)
 Benchmark.register_benchmark(FRRBenchmark)
 Benchmark.register_benchmark(PromptInjectionBenchmark)
+Benchmark.register_benchmark(CanaryExploitBenchmark)
 
 
 def validate_arguments(parser: argparse.ArgumentParser) -> argparse.Namespace:
