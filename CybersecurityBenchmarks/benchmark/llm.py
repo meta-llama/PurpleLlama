@@ -236,6 +236,31 @@ class ANYSCALE(LLM):
         return response.choices[0].message.content
 
     @override
+    def query_with_system_prompt(
+        self,
+        system_prompt: str,
+        prompt: str,
+        guided_decode_json_schema: Optional[str] = None,
+    ) -> str:
+        level = logging.getLogger().level
+        logging.getLogger().setLevel(logging.WARNING)
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": prompt},
+            ],
+            max_tokens=MAX_TOKENS,
+            response_format=(
+                {"type": "json_object"}
+                if guided_decode_json_schema is not None
+                else None
+            ),
+        )
+        logging.getLogger().setLevel(level)
+        return response.choices[0].message.content
+
+    @override
     def valid_models(self) -> list[str]:
         return [
             "meta-llama/Llama-2-7b-chat-hf",
@@ -265,6 +290,26 @@ class TOGETHER(LLM):
         )
         response = llm(prompt)
         return "".join(response)
+
+    @override
+    def query_with_system_prompt(
+        self,
+        prompt: str,
+        system_prompt: str,
+        guided_decode_json_schema: Optional[str] = None,
+    ) -> str:
+        client = Together(api_key=self.api_key)
+        response = client.chat_completions.create(
+            model=self.model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": prompt},
+            ],
+            max_tokens=MAX_TOKENS,
+            temperature=0.75,
+            top_p=1,
+        )
+        return response.choices[0].message.content
 
     @override
     def valid_models(self) -> list[str]:
