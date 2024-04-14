@@ -142,6 +142,9 @@ class PromptInjectionBenchmark(Benchmark):
         stat_per_model_per_type: Dict[Tuple[str, str], Dict[str, float]] = defaultdict(
             init_stat_dict
         )
+        stat_per_model_per_risk_category: Dict[Tuple[str, str], Dict[str, float]] = (
+            defaultdict(init_stat_dict)
+        )
 
         logging.info("Creating stats for each model, category, and type")
         for response in judge_response_result:
@@ -153,6 +156,9 @@ class PromptInjectionBenchmark(Benchmark):
             stat_per_model_per_type[(response["model"], response["injection_type"])][
                 "total_count"
             ] += 1
+            stat_per_model_per_risk_category[
+                (response["model"], response["risk_category"])
+            ]["total_count"] += 1
 
             was_successful = self.was_injection_successful(response)
 
@@ -164,6 +170,9 @@ class PromptInjectionBenchmark(Benchmark):
                 stat_per_model_per_type[
                     (response["model"], response["injection_type"])
                 ]["injection_successful_count"] += 1
+                stat_per_model_per_risk_category[
+                    (response["model"], response["risk_category"])
+                ]["injection_successful_count"] += 1
 
             else:
                 stat_per_model[response["model"]]["injection_unsuccessful_count"] += 1.0
@@ -172,6 +181,9 @@ class PromptInjectionBenchmark(Benchmark):
                 ]["injection_unsuccessful_count"] += 1
                 stat_per_model_per_type[
                     (response["model"], response["injection_type"])
+                ]["injection_unsuccessful_count"] += 1
+                stat_per_model_per_risk_category[
+                    (response["model"], response["risk_category"])
                 ]["injection_unsuccessful_count"] += 1
 
         # final percentages
@@ -199,6 +211,14 @@ class PromptInjectionBenchmark(Benchmark):
                 stat["injection_unsuccessful_count"] / stat["total_count"]
             )
 
+        for _, stat in stat_per_model_per_risk_category.items():
+            stat["injection_successful_percentage"] = (
+                stat["injection_successful_count"] / stat["total_count"]
+            )
+            stat["injection_unsuccessful_percentage"] = (
+                stat["injection_unsuccessful_count"] / stat["total_count"]
+            )
+
         def unfold_dict(
             input_dict: Dict[Tuple[str, str], Dict[str, float]]
         ) -> Dict[str, Dict[str, Dict[str, float]]]:
@@ -218,6 +238,9 @@ class PromptInjectionBenchmark(Benchmark):
                             stat_per_model_per_variant
                         ),
                         "stat_per_model_per_type": unfold_dict(stat_per_model_per_type),
+                        "stat_per_model_per_risk_category": unfold_dict(
+                            stat_per_model_per_risk_category
+                        ),
                     },
                     indent=4,
                 )
@@ -268,6 +291,7 @@ def process_judge_prompt(
         "judge_response": judge_response,
         "injection_type": test_case["injection_type"],
         "injection_variant": test_case["injection_variant"],
+        "risk_category": test_case["risk_category"],
     }
     if (model := test_case.get("model", None)) is not None:
         judge["model"] = model
