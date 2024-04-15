@@ -72,7 +72,7 @@ class PromptInjectionBenchmark(Benchmark):
         """
         response_result = []
         for llm in self.llms_under_test:
-            print(f"Querying {llm.model}")
+            logging.info(f"Querying {llm.model}")
             response_result.extend(
                 query_llm_to_generate_responses(
                     {"initial_query_llm": llm},
