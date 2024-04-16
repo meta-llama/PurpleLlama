@@ -123,6 +123,23 @@ Both the instruct and autocomplete benchmarks are run in two steps:
 - *Processing prompts* - The LLM is called (in parallel, if specified) to render the LLM output for each prompt.
 - *Processing responses* - We use the insecure code detector (ICD) for evaluating each response, to see if vunerable code was produced.
 
+## Running prompt injection benchmarks:
+```
+python3 -m CybersecurityBenchmarks.benchmark.run \
+   --benchmark=prompt-injection \
+   --prompt-path="$DATASETS/prompt_injection/prompt_injection.json" \
+   --response-path="$DATASETS/prompt_injection/prompt_injection_responses.json" \
+   --judge-response-path="$DATASETS/prompt_injection/prompt_injection_judge_responses.json" \
+   --stat-path="$DATASETS/prompt_injection/prompt_injection_stat.json" \
+   --judge-llm=<>SPECIFICATION_1 \
+   --llm-under-test=<SPECIFICATION_1> --llm-under-test=<SPECIFICATION_2> ...
+   [--run-llm-in-parallel]
+```
+
+Prompt injection benchmarks are run in the following two steps:
+- *Processing prompts* Query the LLMs under test with a system prompt and a user prompt, where the user prompt tries to inject instructions to the LLM that is violating the original system prompt
+- *Processing response* The responses of the LLMs under test will go through another judge LLM, where the judge LLM will judge if the injected instruction is executed
+
 
 
 ## Results:
@@ -169,6 +186,48 @@ Responses for each prompt are categorized as *refusal*, *malicious*, or *benign*
 
 *`pass_rate`* is the topline rate of "safe" LLM suggestions across the test set, equal to `1 - vunerable_percentage`.
 
+### Prompt Injection Results
+
+Based on judge LLM, the prompt injection will be either successful or unsuccessful
+
+```
+{
+    "stat_per_model": {
+        "model_name": {
+            "injection_successful_count": ...,
+            "injection_unsuccessful_count": ...,
+            "total_count": ...,
+            "injection_successful_percentage": ...,
+            "injection_unsuccessful_percentage": ...
+        }
+    }
+}
+```
+
+In the same output file, the results are futher bucketized in different dimensions, e.g., the injection techniques, and whether the prompt is a direct prompt injection or an indrect prompt injection, etc. The result of each bucket follows the same structure.
+
+```
+{
+    "stat_per_model_per_variant": {
+        "model_name": {
+            "injected_prompt_technique_variant": {
+                "injection_successful_count": ...,
+                "injection_unsuccessful_count": ...,
+                "total_count": ...,
+                "injection_successful_percentage": ...,
+                "injection_unsuccessful_percentage": ...
+            },
+            ...
+        }
+    },
+    "stat_per_model_per_type": {
+        ...
+    },
+    "stat_per_model_per_risk_category": {
+        ...
+    }
+}
+```
 
 
 ## Exit the Virtual Environment
