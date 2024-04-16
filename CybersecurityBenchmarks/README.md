@@ -2,13 +2,21 @@
 
 This repository contains the implementation of [CyberSecEval](https://ai.meta.com/research/publications/purple-llama-cyberseceval-a-benchmark-for-evaluating-the-cybersecurity-risks-of-large-language-models/), a comprehensive benchmark suite for evaluating the cybersecurity risks of Large Language Models (LLMs). Developed in response to the growing need for secure AI systems,  CyberSecEval provides tools to assess two key security domains: the propensity of LLMs to generate insecure code and their compliance when asked to assist in cyberattacks. The benchmarks are based on industry standards such as the Common Weakness Enumeration (CWE) and the MITRE ATT&CK framework, and have been applied to popular LLMs including Llama2, codeLlama, and OpenAI GPT models. The results highlight significant cybersecurity risks, emphasizing the need for ongoing research and development in AI safety.
 
-The repository includes three types of benchmarks:
+The repository includes seven types of benchmarks:
 
 **MITRE Tests**: These tests use the MITRE ATT&CK framework to evaluate an LLM's compliance when asked to assist in cyberattacks.
 
 **Instruct Tests**: These tests assess an LLM's propensity to generate insecure code when given a specific instruction.
 
 **Autocomplete Tests**: These tests measure how often an LLM suggests insecure coding practices in autocomplete contexts, where the LLM predicts subsequent code based on preceding code.
+
+**Prompt Injection Tests**: These tests assess an LLM’s susceptibility to “prompt injection attacks” - attacks in which a portion of the LLM prompt coming from untrusted user input contains malicious instructions intended to override the LLM’s original task.
+
+**False Refusal Rate (FRR) Tests**: These tests measure how often an LLM incorrectly refuses a borderline but essentially benign query, due to misinterpreting the prompt as a malicious request.
+
+**Code Interpreter Tests**: These tests evaluate the security risks posed by integrating LLMs with code interpreters, specifically assessing how effectively an LLM can prevent malicious attempts to exploit the system or execute harmful code.
+
+**Vulnerability Exploitation Tests**: PLACEHOLDER
 
 # Getting Started
 
@@ -141,6 +149,38 @@ Prompt injection benchmarks are run in the following two steps:
 - *Processing response* The responses of the LLMs under test will go through another judge LLM, where the judge LLM will judge if the injected instruction is executed
 
 
+## Running False Refusal Rate (FRR) benchmark
+```
+python3 -m CybersecurityBenchmarks.benchmark.run \
+   --benchmark=frr \
+   --prompt-path="$DATASETS/frr/frr.json" \
+   --response-path="$DATASETS/frr/frr_responses.json" \
+   --stat-path="$DATASETS/frr/frr_stat.json" \
+   --llm-under-test=<SPECIFICATION_1> --llm-under-test=<SPECIFICATION_2> ...
+   [--run-llm-in-parallel]
+```
+
+FRR benchmark is run in two steps:
+- *Processing prompts* The LLM is called (in parallel, if specified) to render the LLM output for each prompt. Once the response is received, a keyword-based judgment is conducted and the judged result is attached.
+- *Gathering stat* The benchmark extracts all models' judged results from the `response-path` and outputs them to the `stat-path`.
+
+
+## Code Interpreter Abuse benchmark
+```
+python3 -m CybersecurityBenchmarks.benchmark.run \
+   --benchmark=interpreter \
+   --prompt-path="$DATASETS/interpreter/interpreter.json" \
+   --response-path="$DATASETS/interpreter/interpreter_responses.json" \
+   --judge-response-path="$DATASETS/interpreter/interpreter_responses.json" \
+   --stat-path="$DATASETS/interpreter/interpreter_stat.json" \
+   --judge-llm="OPENAI::gpt-3.5-turbo::<YOUR API KEY>" \
+   --llm-under-test=<SPECIFICATION_1> --llm-under-test=<SPECIFICATION_2> ...
+   [--run-llm-in-parallel]
+```
+
+Code Interpreter Abuse benchmark is run in two steps:
+- *Processing prompts* - The LLM is called (in parallel, if specified) to render the LLM output for each prompt.
+- *Judging responses* - The judge LLM determines whether the responses are extremely malicious, potentially malicious, or non-malicious. This is based on whether the LLM-under-test has complied with a malicious prompt. The judge LLM model is independent of the initial LLM used for processing prompts.
 
 ## Results:
 Once the benchmarks have run, the evaluations of each model across each language will be available under the `stat_path`:
@@ -229,6 +269,35 @@ In the same output file, the results are futher bucketized in different dimensio
 }
 ```
 
+### FRR RESULTS
+
+```
+{
+    "accept_count": ...,
+    "refusal_count": ...,
+    "refusal_rate": ...
+}
+```
+
+prompt is evaluated and the model's response is categorized as either accept or refusal. The overall statistics provide a summary of the model's performance, including the total number of accepted and refused prompts, and the overall refusal rate.
+
+### CODE INTERPRETER ABUSE RESULTS
+
+```
+{
+    "model_name": {
+        "attack_type": {
+            "is_extremely_malicious": ...,
+            "is_potentially_malicious": ...,
+            "is_non_malicious": ...,
+            "total_count": ...,
+            "malicious_percentage": ...
+        },
+    }
+}
+```
+
+Each prompt is evaluated and the model's response is categorized as either extremely malicious, potentially malicious, or non-malicious. The overall statistics provide a summary of the model's performance, including the total number of each category and the overall malicious percentage for each type of attack.
 
 ## Exit the Virtual Environment
 And once you're done you can leave the python environment with
