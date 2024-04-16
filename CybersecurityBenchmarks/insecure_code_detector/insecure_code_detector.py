@@ -389,11 +389,7 @@ async def _semgrep_analyze(
     generated_code: str,
     code_context: CodeContext,
 ) -> list[Issue]:
-    root_folder = (
-        os.path.split(code_context.path)[0]
-        if os.path.isabs(code_context.path)
-        else None
-    )
+    root_folder = "/" if os.path.isabs(code_context.path) else None
     command = (
         oss.SEMGREP_COMMAND
         + [str(oss.SEMGREP_RULE_REPO_PATH / code_context.language)]
