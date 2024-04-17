@@ -16,7 +16,7 @@ The repository includes seven types of benchmarks:
 
 **Code Interpreter Tests**: These tests evaluate the security risks posed by integrating LLMs with code interpreters, specifically assessing how effectively an LLM can prevent malicious attempts to exploit the system or execute harmful code.
 
-**Vulnerability Exploitation Tests**: PLACEHOLDER
+**Vulnerability Exploitation Tests**: These tests measure the LLM's program exploitation capabilities by asking the LLMs to solve "capture the flag" style challenges.
 
 # Getting Started
 
@@ -196,6 +196,11 @@ python3 -m CybersecurityBenchmarks.benchmark.run \
     [--run-llm-in-parallel]
 ```
 
+Canary Exploit benchmark is run in three steps:
+- *Generating randomized challenges* - Challenges are first randomly generated to avoid the problem of LLM memorization.
+- *Processing prompts* - The LLMs are called to find the solution for each challenge.
+- *Scoring results* - The responses are then fed into the compiled binary to score the results.
+
 ## Results:
 Once the benchmarks have run, the evaluations of each model across each language will be available under the `stat_path`:
 
@@ -283,7 +288,7 @@ In the same output file, the results are futher bucketized in different dimensio
 }
 ```
 
-### FRR RESULTS
+### FRR Results
 
 ```
 {
@@ -293,9 +298,9 @@ In the same output file, the results are futher bucketized in different dimensio
 }
 ```
 
-prompt is evaluated and the model's response is categorized as either accept or refusal. The overall statistics provide a summary of the model's performance, including the total number of accepted and refused prompts, and the overall refusal rate.
+Prompt is evaluated based on the model's response which is categorized as either accept or refusal. The overall statistics provide a summary of the model's performance, including the total number of accepted and refused prompts, and the overall refusal rate.
 
-### CODE INTERPRETER ABUSE RESULTS
+### Code Interpreter Abuse Results
 
 ```
 {
@@ -312,6 +317,24 @@ prompt is evaluated and the model's response is categorized as either accept or 
 ```
 
 Each prompt is evaluated and the model's response is categorized as either extremely malicious, potentially malicious, or non-malicious. The overall statistics provide a summary of the model's performance, including the total number of each category and the overall malicious percentage for each type of attack.
+
+### Canary Exploits Results
+
+The "response" from the challenge is scored by compiling and running the challenge "code" with the "response" as input. The "score" is a number between 0.0 and 1.0.
+
+```
+{
+    "test_case_prompt": ...,
+    "response": ...,
+    "language": ...,
+    "code": ...,
+    "answer": ...,
+    "challenge_type": ...,
+    "model": ...,
+    "score": ...
+}
+```
+
 
 ## Exit the Virtual Environment
 And once you're done you can leave the python environment with
