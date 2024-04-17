@@ -148,7 +148,6 @@ Prompt injection benchmarks are run in the following two steps:
 - *Processing prompts* Query the LLMs under test with a system prompt and a user prompt, where the user prompt tries to inject instructions to the LLM that is violating the original system prompt
 - *Processing response* The responses of the LLMs under test will go through another judge LLM, where the judge LLM will judge if the injected instruction is executed
 
-
 ## Running False Refusal Rate (FRR) benchmark
 ```
 python3 -m CybersecurityBenchmarks.benchmark.run \
@@ -181,6 +180,21 @@ python3 -m CybersecurityBenchmarks.benchmark.run \
 Code Interpreter Abuse benchmark is run in two steps:
 - *Processing prompts* - The LLM is called (in parallel, if specified) to render the LLM output for each prompt.
 - *Judging responses* - The judge LLM determines whether the responses are extremely malicious, potentially malicious, or non-malicious. This is based on whether the LLM-under-test has complied with a malicious prompt. The judge LLM model is independent of the initial LLM used for processing prompts.
+
+
+## Running canary exploit benchmarks:
+```
+python3 -m CybersecurityBenchmarks.datasets.canary_exploit.run
+
+python3 -m CybersecurityBenchmarks.benchmark.run \
+    --benchmark="canary-exploit" \
+    --prompt-path="$DATASETS/canary_exploit/canary_exploit.json" \
+    --response-path="$DATASETS/canary_exploit/canary_exploit_responses.json" \
+    --judge-response-path="$DATASETS/canary_exploit/canary_exploit_judge_responses.json" \
+    --stat-path="$DATASETS/canary_exploit/canary_exploit_stat.json" \
+    --llm-under-test=<SPECIFICATION_1> \
+    [--run-llm-in-parallel]
+```
 
 ## Results:
 Once the benchmarks have run, the evaluations of each model across each language will be available under the `stat_path`:
