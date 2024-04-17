@@ -298,8 +298,11 @@ class TOGETHER(LLM):
         system_prompt: str,
         guided_decode_json_schema: Optional[str] = None,
     ) -> str:
-        client = Together(api_key=self.api_key)
-        response = client.chat_completions.create(
+        client = openai.OpenAI(
+            api_key=self.api_key,
+            base_url="https://api.together.xyz/v1",
+        )
+        response = client.chat.completions.create(
             model=self.model,
             messages=[
                 {"role": "system", "content": system_prompt},
