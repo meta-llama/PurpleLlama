@@ -1,6 +1,6 @@
 # Introduction
 
-This repository contains the implementation of [CyberSecEval](https://ai.meta.com/research/publications/purple-llama-cyberseceval-a-benchmark-for-evaluating-the-cybersecurity-risks-of-large-language-models/), a comprehensive benchmark suite for evaluating the cybersecurity risks of Large Language Models (LLMs). Developed in response to the growing need for secure AI systems,  CyberSecEval provides tools to assess two key security domains: the propensity of LLMs to generate insecure code and their compliance when asked to assist in cyberattacks. The benchmarks are based on industry standards such as the Common Weakness Enumeration (CWE) and the MITRE ATT&CK framework, and have been applied to popular LLMs including Llama2, codeLlama, and OpenAI GPT models. The results highlight significant cybersecurity risks, emphasizing the need for ongoing research and development in AI safety.
+This repository contains the implementation of [CyberSecEval 2](https://ai.meta.com/research/publications/purple-llama-cyberseceval-a-benchmark-for-evaluating-the-cybersecurity-risks-of-large-language-models/), extending the original [CyberSecEval](https://ai.meta.com/research/publications/purple-llama-cyberseceval-a-benchmark-for-evaluating-the-cybersecurity-risks-of-large-language-models/). CyberSecEval 2 is a comprehensive benchmark suite for evaluating the cybersecurity risks of Large Language Models (LLMs). Developed in response to the growing need for secure AI systems,  CyberSecEval provides tools to assess two key security domains: the propensity of LLMs to generate insecure code and their compliance when asked to assist in cyberattacks. The benchmarks are based on industry standards such as the Common Weakness Enumeration (CWE) and the MITRE ATT&CK framework, and have been applied to popular LLMs including Llama2, Llama3, codeLlama, and OpenAI GPT models. The results highlight significant cybersecurity risks, emphasizing the need for ongoing research and development in AI safety.
 
 The repository includes seven types of benchmarks:
 
@@ -57,7 +57,7 @@ export DATASETS=$PWD/CybersecurityBenchmarks/datasets
 ```
 We currently support three kinds of benchmarks: MITRE, instruct, and auto-complete. Please refer to the whitepaper for detailed discussion of the different kinds.
 
-Each benchmark can run tests for multiple LLMs. Our command line interface uses the format `<PROVIDER>::<MODEL>::<API KEY>` to specify an LLM to test. We currently support the following LLMs:
+Each benchmark can run tests for multiple LLMs. Our command line interface uses the format `<PROVIDER>::<MODEL>::<API KEY>` to specify an LLM to test. We currently support APIs from OPENAI, ANYSCALE, and TOGETHER. The followings are a few examples:
 
 - `OPENAI::gpt-4::<API KEY>`
 - `OPENAI::gpt-3.5-turbo::<API KEY>`
