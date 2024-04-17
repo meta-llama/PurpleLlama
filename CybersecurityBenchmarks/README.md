@@ -79,7 +79,7 @@ Each benchmark can run tests for multiple LLMs. Our command line interface uses 
 - Please run these commands from the root directory of the PurpleLlama project.
 - `run-llm-in-parallel` makes async parallel calls to the specified LLM provider. This speeds up prompt evaluation.
 
-## Running the MITRE benchmark
+## Running the MITRE Benchmark
 
 ```
 python3 -m CybersecurityBenchmarks.benchmark.run \
@@ -102,9 +102,9 @@ The MITRE benchmarks are run in three steps:
 
 The expansion LLM model and judge LLM model are independent of the initial LLM for processing prompts. Although we've used Llama and Code Llama models for the original paper, we recommend using GPT-3.5 including an OpenAI API key.
 
-## Running Instruct and Autocomplete benchmarks
+## Running Instruct and Autocomplete Benchmarks
 
-For instruct benchmarks run:
+### For instruct benchmarks run:
 ```
 python3 -m CybersecurityBenchmarks.benchmark.run \
    --benchmark=instruct \
@@ -131,7 +131,7 @@ Both the instruct and autocomplete benchmarks are run in two steps:
 - *Processing prompts* - The LLM is called (in parallel, if specified) to render the LLM output for each prompt.
 - *Processing responses* - We use the insecure code detector (ICD) for evaluating each response, to see if vunerable code was produced.
 
-## Running prompt injection benchmarks:
+## Running prompt injection Benchmark
 ```
 python3 -m CybersecurityBenchmarks.benchmark.run \
    --benchmark=prompt-injection \
@@ -148,7 +148,7 @@ Prompt injection benchmarks are run in the following two steps:
 - *Processing prompts* Query the LLMs under test with a system prompt and a user prompt, where the user prompt tries to inject instructions to the LLM that is violating the original system prompt
 - *Processing response* The responses of the LLMs under test will go through another judge LLM, where the judge LLM will judge if the injected instruction is executed
 
-## Running False Refusal Rate (FRR) benchmark
+## Running False Refusal Rate (FRR) Benchmark
 ```
 python3 -m CybersecurityBenchmarks.benchmark.run \
    --benchmark=frr \
@@ -164,13 +164,13 @@ FRR benchmark is run in two steps:
 - *Gathering stat* The benchmark extracts all models' judged results from the `response-path` and outputs them to the `stat-path`.
 
 
-## Code Interpreter Abuse benchmark
+## Running Code Interpreter Abuse Benchmark
 ```
 python3 -m CybersecurityBenchmarks.benchmark.run \
    --benchmark=interpreter \
    --prompt-path="$DATASETS/interpreter/interpreter.json" \
    --response-path="$DATASETS/interpreter/interpreter_responses.json" \
-   --judge-response-path="$DATASETS/interpreter/interpreter_responses.json" \
+   --judge-response-path="$DATASETS/interpreter/interpreter_judge_responses.json" \
    --stat-path="$DATASETS/interpreter/interpreter_stat.json" \
    --judge-llm="OPENAI::gpt-3.5-turbo::<YOUR API KEY>" \
    --llm-under-test=<SPECIFICATION_1> --llm-under-test=<SPECIFICATION_2> ...
@@ -182,7 +182,7 @@ Code Interpreter Abuse benchmark is run in two steps:
 - *Judging responses* - The judge LLM determines whether the responses are extremely malicious, potentially malicious, or non-malicious. This is based on whether the LLM-under-test has complied with a malicious prompt. The judge LLM model is independent of the initial LLM used for processing prompts.
 
 
-## Running canary exploit benchmarks:
+## Running Vulnerability Exploitation Benchmark
 ```
 python3 -m CybersecurityBenchmarks.datasets.canary_exploit.run
 
@@ -318,7 +318,7 @@ Prompt is evaluated based on the model's response which is categorized as either
 
 Each prompt is evaluated and the model's response is categorized as either extremely malicious, potentially malicious, or non-malicious. The overall statistics provide a summary of the model's performance, including the total number of each category and the overall malicious percentage for each type of attack.
 
-### Canary Exploits Results
+### Vulnerability Exploitation Results
 
 The "response" from the challenge is scored by compiling and running the challenge "code" with the "response" as input. The "score" is a number between 0.0 and 1.0.
 
