@@ -61,7 +61,7 @@ You can also check out the 🤗 leaderboard [here](https://huggingface.co/spaces
 
 ## System-Level Safeguards
 
-As we outlined in Llama 2’s
+As we outlined in Llama 3’s
 [Responsible Use Guide](https://ai.meta.com/llama/responsible-use-guide/), we
 recommend that all inputs and outputs to the LLM be checked and filtered in
 accordance with content guidelines appropriate to the application.
