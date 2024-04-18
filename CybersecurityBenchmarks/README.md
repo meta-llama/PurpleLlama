@@ -1,22 +1,22 @@
 # Introduction
 
-This repository contains the implementation of [CyberSecEval 2](https://ai.meta.com/research/publications/purple-llama-cyberseceval-a-benchmark-for-evaluating-the-cybersecurity-risks-of-large-language-models/), extending the original [CyberSecEval](https://ai.meta.com/research/publications/purple-llama-cyberseceval-a-benchmark-for-evaluating-the-cybersecurity-risks-of-large-language-models/). CyberSecEval 2 is a comprehensive benchmark suite for evaluating the cybersecurity risks of Large Language Models (LLMs). Developed in response to the growing need for secure AI systems,  CyberSecEval provides tools to assess two key security domains: the propensity of LLMs to generate insecure code and their compliance when asked to assist in cyberattacks. The benchmarks are based on industry standards such as the Common Weakness Enumeration (CWE) and the MITRE ATT&CK framework, and have been applied to popular LLMs including Llama2, Llama3, codeLlama, and OpenAI GPT models. The results highlight significant cybersecurity risks, emphasizing the need for ongoing research and development in AI safety.
+This repository contains the implementation of CyberSecEval 2, extending the original [CyberSecEval](https://ai.meta.com/research/publications/purple-llama-cyberseceval-a-benchmark-for-evaluating-the-cybersecurity-risks-of-large-language-models/). CyberSecEval 2 is a comprehensive benchmark suite for evaluating the cybersecurity risks of Large Language Models (LLMs). Developed in response to the growing need for secure AI systems, CyberSecEval provides tools to assess two key security domains: the propensity of LLMs to generate insecure code and their compliance when asked to assist in cyberattacks. The benchmarks are based on industry standards such as the Common Weakness Enumeration (CWE) and the MITRE ATT&CK framework, and have been applied to popular LLMs including Llama2, Llama3, codeLlama, and OpenAI GPT models. The results highlight significant cybersecurity risks, emphasizing the need for ongoing research and development in AI safety.
 
 The repository includes seven types of benchmarks:
 
-**MITRE Tests**: These tests use the MITRE ATT&CK framework to evaluate an LLM's compliance when asked to assist in cyberattacks.
+1. **MITRE Tests**: These tests use the MITRE ATT&CK framework to evaluate an LLM's compliance when asked to assist in cyberattacks.
 
-**Instruct Tests**: These tests assess an LLM's propensity to generate insecure code when given a specific instruction.
+2. **Instruct Tests**: These tests assess an LLM's propensity to generate insecure code when given a specific instruction.
 
-**Autocomplete Tests**: These tests measure how often an LLM suggests insecure coding practices in autocomplete contexts, where the LLM predicts subsequent code based on preceding code.
+3. **Autocomplete Tests**: These tests measure how often an LLM suggests insecure coding practices in autocomplete contexts, where the LLM predicts subsequent code based on preceding code.
 
-**Prompt Injection Tests**: These tests assess an LLM’s susceptibility to “prompt injection attacks” - attacks in which a portion of the LLM prompt coming from untrusted user input contains malicious instructions intended to override the LLM’s original task.
+4. **Prompt Injection Tests**: These tests assess an LLM’s susceptibility to “prompt injection attacks” - attacks in which a portion of the LLM prompt coming from untrusted user input contains malicious instructions intended to override the LLM’s original task.
 
-**False Refusal Rate (FRR) Tests**: These tests measure how often an LLM incorrectly refuses a borderline but essentially benign query, due to misinterpreting the prompt as a malicious request.
+5. **False Refusal Rate (FRR) Tests**: These tests measure how often an LLM incorrectly refuses a borderline but essentially benign query, due to misinterpreting the prompt as a malicious request.
 
-**Code Interpreter Tests**: These tests evaluate the security risks posed by integrating LLMs with code interpreters, specifically assessing how effectively an LLM can prevent malicious attempts to exploit the system or execute harmful code.
+6. **Code Interpreter Tests**: These tests evaluate the security risks posed by integrating LLMs with code interpreters, specifically assessing how effectively an LLM can prevent malicious attempts to exploit the system or execute harmful code.
 
-**Vulnerability Exploitation Tests**: These tests measure the LLM's program exploitation capabilities by asking the LLMs to solve "capture the flag" style challenges.
+7. **Vulnerability Exploitation Tests**: These tests measure the LLM's program exploitation capabilities by asking the LLMs to solve "capture the flag" style challenges.
 
 # Getting Started
 
@@ -31,33 +31,41 @@ cargo install weggli --rev=9d97d462854a9b682874b259f70cc5a97a70f2cc --git=https:
 ```
 
 Set the environment variable `WEGGLI_PATH` to point to the weggli execution path. For example, if `weggli` is set to reference the path of the executable, use the below command.
+
 ```
 export WEGGLI_PATH=weggli
 ```
 
-## Setup Virtual Environment
+## Set up Virtual Environment
 Set up your virtual environment and install dependencies:
+
 ```
 python3 -m venv ~/.venvs/CybersecurityBenchmarks
 ```
+
 ```
 source ~/.venvs/CybersecurityBenchmarks/bin/activate
 ```
+
 ```
 pip3 install -r CybersecurityBenchmarks/requirements.txt
 ```
 
-## Running the benchmarks
+## Running the Benchmarks
+
 The main module for benchmark is `CybersecurityBenchmarks.benchmark.run`. Run
 ```
 python3 -m CybersecurityBenchmarks.benchmark.run --help
 ```
+
 to get a list of available options.
 
 We simplify the following commands by setting a `DATASETS` environment variable:
+
 ```
 export DATASETS=$PWD/CybersecurityBenchmarks/datasets
 ```
+
 We currently support three kinds of benchmarks: MITRE, instruct, and auto-complete. Please refer to the whitepaper for detailed discussion of the different kinds.
 
 Each benchmark can run tests for multiple LLMs. Our command line interface uses the format `<PROVIDER>::<MODEL>::<API KEY>` to specify an LLM to test. We currently support APIs from OPENAI, ANYSCALE, and TOGETHER. The followings are a few examples:
@@ -67,18 +75,18 @@ Each benchmark can run tests for multiple LLMs. Our command line interface uses 
 - `ANYSCALE::meta-llama/Llama-2-13b-chat-hf::<API KEY>`
 - `TOGETHER::togethercomputer/llama-2-7b::<API KEY>`
 
-### How to use a different model supported by Anyscale or Together?
+### How to use a different model supported by Anyscale or Together
 1. Lookup the models supported by [Anyscale](https://d3qavlo5goipcw.cloudfront.net/guides/models#select-a-model) or [Together](https://docs.together.ai/docs/fine-tuning-models)
-2. Update ```valid_models``` method in [llm.py](https://github.com/facebookresearch/PurpleLlama/blob/main/CybersecurityBenchmarks/benchmark/llm.py) with the model name that you choose to test with.
+2. Update `valid_models` method in [llm.py](https://github.com/facebookresearch/PurpleLlama/blob/main/CybersecurityBenchmarks/benchmark/llm.py) with the model name that you choose to test with.
 
-### How to run benchmarks for self hosted models?
+### How to run benchmarks for self hosted models
 1. Extend `llm.py`.
 2. `def query(self, prompt: str) -> str:` Implement your inferencing logic.
 3. Make sure response of your llm is always a string, thats returned from the `query` function.
 4. Update supported providers in `llm.create` method with the name of LLM you created from step (1).
 5. Pass the name of your LLM in `--llm-under-test` options in the following format (`LLM Name::model-name::random-string`)
 
-### Other Notes about running benchmarks
+### Other notes about running benchmarks
 - Please run these commands from the root directory of the PurpleLlama project.
 - `run-llm-in-parallel` makes async parallel calls to the specified LLM provider. This speeds up prompt evaluation.
 
@@ -340,16 +348,21 @@ The "response" from the challenge is scored by compiling and running the challen
 
 
 ## Exit the Virtual Environment
+
 And once you're done you can leave the python environment with
+
 ```
 deactivate
 ```
 
 # Developer's Guide
+
 To run unit tests follow the setup instructions above. You can then run
+
 ```
 (CybersecurityBenchmarks) $ cd CybersecurityBenchmarks
 ```
+
 ```
 (CybersecurityBenchmarks) $ python3 -m unittest
 ```
