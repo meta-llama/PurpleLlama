@@ -21,7 +21,10 @@ The repository includes seven types of benchmarks:
 # Getting Started
 
 ## Prerequisites
-Ensure you have [weggli](https://github.com/weggli-rs/weggli) installed. Their release is outdated and we're currently using revision `9d97d462854a9b682874b259f70cc5a97a70f2cc`:
+
+Please make sure you are running python3.9 or newer versions.
+
+Also ensure you have [weggli](https://github.com/weggli-rs/weggli) installed. Their release is outdated and we're currently using revision `9d97d462854a9b682874b259f70cc5a97a70f2cc`:
 
 ```
 cargo install weggli --rev=9d97d462854a9b682874b259f70cc5a97a70f2cc --git=https://github.com/weggli-rs/weggli
