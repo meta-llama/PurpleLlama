@@ -1,6 +1,6 @@
 # Insecure Code Detector
 
-** Note that an improved version of insecure code detector library is released together with [CodeShield] (https://https://github.com/meta-llama/PurpleLlama/tree/main/CodeShield), CybersecurityBenchmarks will migrate to the new version in near future**
+**Note that an improved version of insecure code detector library is released together with [CodeShield](https://github.com/meta-llama/PurpleLlama/tree/main/CodeShield), CybersecurityBenchmarks will migrate to the new version in near future**
 
 Insecure Code Detector(ICD) is a tool designed to identify Insecure coding practices in any given code snippet. ICD operates using a comprehensive set of analyzers, each equipped with specific rules. As of now, ICD supports 8 different programming languages. Theses include widely-used languages such as C, C++, Python, and Java.
 
