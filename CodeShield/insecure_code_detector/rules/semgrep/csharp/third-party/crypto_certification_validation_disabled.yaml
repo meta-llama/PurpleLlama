@@ -1,0 +1,27 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/csharp/crypto/rule-CertificateValidationDisabled.yml?ref_type=heads
+
+rules:
+- id: "crypto-certificate-validation-disabled"
+  languages:
+  - csharp
+  patterns:
+  - pattern-inside: |
+      using System.Net;
+      ...
+  - pattern: "ServicePointManager.ServerCertificateValidationCallback += $CALLBACK;"
+  - metavariable-pattern:
+      metavariable: "$CALLBACK"
+      patterns:
+      - pattern-either:
+        - pattern: "$RETURNTYPE $FUNC(...) { return true; }"
+        - pattern: "(...) => true;"
+  message: |
+    The `ServicePointManager.ServerCertificateValidationCallback` event has been set
+    to always return `true`, which effectively disables the validation of server
+    certificates.
+  severity: "WARNING"
+  metadata:
+    cwe: "Improper Certificate Validation"
+    cwe_id: "CWE-295"
+    prescan_regex: ServerCertificateValidationCallback

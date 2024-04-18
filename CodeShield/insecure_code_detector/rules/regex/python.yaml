@@ -1,0 +1,25 @@
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+#
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
+- cwe_id: CWE-328
+  description: The MD5 hash function is considered insecure. Avoid using it unless
+    explicitly needed for compatibility reasons
+  rule: \bhashlib\.md5\(
+  severity: Warning
+  pattern_id: insecure-md5-hash-usage
+
+- cwe_id: CWE-328
+  description: The SHA1 hash function is considered insecure. Avoid using it unless
+    explicitly needed for compatibility reasons
+  rule: \bhashlib\.sha1\(
+  severity: Warning
+  pattern_id: insecure-sha1-hash-usage
+
+- cwe_id: CWE-328
+  description: The SHA1 and MD5 hash functions are considered insecure. Avoid using
+    it unless explicitly needed for compatibility reasons
+  rule: \bhashlib\.new\s*\(["\'](sha1|md5)["\']\)
+  severity: Warning
+  pattern_id: insecure-hash-function-usage

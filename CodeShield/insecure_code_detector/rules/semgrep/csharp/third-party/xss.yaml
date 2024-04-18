@@ -1,0 +1,62 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/csharp/xss/rule-Xss.yml?ref_type=heads
+
+rules:
+- id: "xss"
+  mode: "taint"
+  pattern-sources:
+  - patterns:
+    - pattern: "$PARAM"
+    - metavariable-regex:
+        metavariable: "$HTTP_ANNO"
+        regex: "^(Http)"
+    - pattern-inside: |
+        public class $CLASS : Controller {
+          ...
+        }
+    - pattern-inside: |
+        [$HTTP_ANNO]
+        public string $METHOD(...,$PARAM,...){...}
+  pattern-sanitizers:
+  - patterns:
+    - metavariable-regex:
+        metavariable: "$FUNC"
+        regex: "(SerializeObject|HtmlAttributeEncode|HtmlEncode|HtmlFormUrlEncode|UrlEncode|UrlPathEncode|XmlAttributeEncode|XmlEncode|Encode)"
+    - pattern: "$CLASS.$FUNC(...)"
+  pattern-sinks:
+  - pattern: "(System.Web.Mvc.HtmlHelper $E).Raw(...)"
+  - pattern: "(Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper $E).Raw(...)"
+  - pattern: "(System.Web.HttpResponse $E).AddHeader(...)"
+  - pattern: "(System.Web.HttpResponse $E).AppendHeader(...)"
+  - pattern: "(System.Web.HttpResponse $E).Write(...)"
+  - pattern: "(System.Web.HttpResponse $E).BinaryWrite(...)"
+  - pattern: "(System.Web.HttpResponse $E).TransmitFile(...)"
+  - pattern: "(System.Web.HttpResponse $E).WriteFile(...)"
+  - pattern: "(System.Web.HttpResponseBase $E).AddHeader(...)"
+  - pattern: "(System.Web.HttpResponseBase $E).AppendHeader(...)"
+  - pattern: "(System.Web.HttpResponseBase $E).Write(...)"
+  - pattern: "(System.Web.HttpResponseBase $E).BinaryWrite(...)"
+  - pattern: "(System.Web.HttpResponseBase $E).WriteFile(...)"
+  - pattern: "(System.Web.UI.HtmlTextWriter $E).AddAttribute(...)"
+  - pattern: "(System.Web.UI.HtmlTextWriter $E).AddStyleAttribute(...)"
+  - pattern: "(System.Web.UI.HtmlTextWriter $E).RenderBeginTag(...)"
+  - pattern: "(System.Web.UI.HtmlTextWriter $E).Write(...)"
+  - pattern: "(System.Web.UI.HtmlTextWriter $E).WriteAttribute(...)"
+  - pattern: "(System.Web.UI.HtmlTextWriter $E).WriteBeginTag(...)"
+  - pattern: "(System.Web.UI.HtmlTextWriter $E).WriteEndTag(...)"
+  - pattern: "(System.Web.UI.HtmlTextWriter $E).WriteFullBeginTag(...)"
+  - pattern: "(System.Web.UI.HtmlTextWriter $E).WriteStyleAttribute(...)"
+  - pattern: "(System.Web.UI.ClientScriptManager $E).RegisterStartupScript(...)"
+  - pattern: "(System.Web.UI.ClientScriptManager $E).RegisterClientScriptBlock(...)"
+  - pattern: "(System.Web.UI.Page $E).RegisterStartupScript(...)"
+  - pattern: "(System.Web.UI.Page $E).RegisterClientScriptBlock(...)"
+  - pattern: "return ...;"
+  languages:
+  - "csharp"
+  message: |
+    Potential cross site scripting risk detected
+  metadata:
+    cwe: "Improper neutralization of input during web page generation(Cross-site Scripting)"
+    cwe_id: "CWE-79"
+    prescan_regex: ^(Http)
+  severity: "WARNING"

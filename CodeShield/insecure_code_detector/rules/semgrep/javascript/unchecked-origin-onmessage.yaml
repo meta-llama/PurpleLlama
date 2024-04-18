@@ -1,0 +1,23 @@
+rules:
+  - id: unchecked-origin-onmessage
+    languages:
+      - typescript
+      - javascript
+    patterns:
+      - pattern-either:
+        - pattern: window.addEventListener('message', $FUNC, ...);
+        - pattern: window.onmessage = $FUNC;
+      - metavariable-pattern:
+          metavariable: $FUNC
+          patterns:
+          - pattern-not: function($OBJ) { <... $OBJ.origin ...> }
+    severity: WARNING
+    message: |
+      The application is not validating the origin of a received postMessage.
+      A malicious website may send spoofed messages to this application and
+      perform cross-origin attacks.
+    metadata:
+      cwe_id: CWE-940
+      cwe: Improper Verification of Source of a Communication Channel
+      category: security
+      prescan_regex: (\bonmessage\s*=|['"`]message['"`]\s*,)

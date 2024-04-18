@@ -1,0 +1,56 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/csharp/injection/rule-SQLInjection.yml?ref_type=heads
+
+rules:
+- id: "sql-injection"
+  languages:
+  - "csharp"
+  patterns:
+  - pattern-either:
+    - patterns:
+      - metavariable-regex:
+          metavariable: "$FUNC"
+          regex: "^(SqlQuery|ExecuteSqlCommand|ExecuteSqlCommandAsync|ExecuteSqlRaw|ExecuteSqlRawAsync|FromSqlRaw|FromSql|GetSqlStringCommand|ExecuteDataSet|ExecuteReader|ExecuteNonQuery|ExecuteScalar|CreateSQLQuery)$"
+      - pattern: "$DB.$FUNC($ARG, ...);"
+      - pattern-not: "$DB.$FUNC(\"...\", ...);"
+    - patterns:
+      - metavariable-regex:
+          metavariable: "$FUNC"
+          regex: "^(ExecuteQuery|ExecuteCommand)$"
+      - pattern-inside: |
+          using System.Data.Linq;
+          ...
+      - pattern: "(DataContext $CTX).$FUNC($ARG, ...)"
+    - patterns:
+      - metavariable-regex:
+          metavariable: "$IMPL"
+          regex: "^(SqlCommand|OracleCommand|NpgsqlCommand|MySqlCommand|EntityCommand|OdbcCommand|OleDbCommand|SqliteCommand)$"
+      - pattern-either:
+        - patterns:
+          - pattern: "new $IMPL($ARG, ...);"
+          - pattern-not: "new $IMPL(\"...\", ...);"
+        - patterns:
+          - pattern: "($IMPL $CMD).CommandText = <...$ARG...>;"
+          - pattern-not: "($IMPL $CMD).CommandText = \"...\";"
+    - patterns:
+      - metavariable-regex:
+          metavariable: "$FUNC"
+          regex: "^(ExecuteDataRow|ExecuteDataRowAsync|ExecuteDataset|ExecuteDatasetAsync|ExecuteNonQuery|ExecuteNonQueryAsync|ExecuteReader|ExecuteReaderAsync|ExecuteScalar|ExecuteScalarAsync|UpdateDataSet|UpdateDataSetAsync)$"
+      - pattern-inside: |
+          using MySql.Data.MySqlClient;
+          ...
+      - pattern: "MySqlHelper.$FUNC(\"...\", $ARG, ...);"
+    - patterns:
+      - pattern-inside: |
+          using Cassandra;
+          ...
+      - pattern: "(Session $SESS).Execute($ARG, ...);"
+      - pattern-not: "(Session $SESS).Execute(\"...\", ...);"
+  message: |
+    Dynamic SQL queries constructed from sanitized input can lead to SQL Injection.
+  severity: "WARNING"
+  metadata:
+    cwe: "CWE-89 Improper Neutralization of Special Elements used in an SQL
+      Command (SQL Injection)"
+    cwe_id: "CWE-89"
+    prescan_regex: ^(SqlCommand|OracleCommand|NpgsqlCommand|MySqlCommand|EntityCommand|OdbcCommand|OleDbCommand|SqliteCommand)$

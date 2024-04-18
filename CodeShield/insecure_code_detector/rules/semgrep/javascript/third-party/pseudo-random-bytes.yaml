@@ -1,0 +1,27 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/tree/main/javascript?ref_type=heads
+
+rules:
+- id: "pseudo-random-bytes"
+  languages:
+  - "javascript"
+  - "typescript"
+  pattern-either:
+    - pattern: "crypto.pseudoRandomBytes(...)"
+    - pattern: "crypto.getRandomValues(...)"
+    - pattern: "Math.random(...)"
+  severity: "WARNING"
+  message: |
+    Depending on the context, generating weak random numbers may expose cryptographic functions,
+    which rely on these numbers, to be exploitable. When generating numbers for sensitive values
+    such as tokens, nonces, and cryptographic keys, it is recommended that the `randomBytes` method
+    of the `crypto` module be used instead of `pseudoRandomBytes`.
+  metadata:
+    cwe_id: "CWE-338"
+    cwe: "Use of cryptographically weak pseudo-random number generator
+      (PRNG)"
+    prescan_regex: (crypto\.pseudoRandomBytes\(|crypto\.getRandomValues\(|Math\.random\()
+    category: "security"
+    # yamllint disable
+    source-rule-url: "https://github.com/nodesecurity/eslint-plugin-security/blob/master/rules/detect-pseudoRandomBytes.js"
+    # yamllint enable

@@ -1,0 +1,13 @@
+rules:
+- id: backticks-use
+  pattern: '`...$VAR...`;'
+  message: >-
+    Backticks "` `" act as a execution operator, user controlled input in backticks can result in a command execution.
+  metadata:
+    cwe:
+      - "CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+    cwe_id: CWE-78
+    prescan_regex: (`.*`)
+  severity: WARNING
+  languages:
+    - php

@@ -1,0 +1,33 @@
+rules:
+  - id: write-to-stack-buffer
+    message: Calls to memcpy that write to a stack buffer
+    patterns:
+      - pattern: $FUN($BUF, ..., $LEN)
+      - pattern-inside: |
+          $TYPE $BUF[$Y];
+          ...
+          $FUN($BUF, ..., $LEN);
+      - pattern-not-inside: |
+          $TYPE $BUF[$Y];
+          ...
+          if($LEN < $Z) {...}
+          ...
+          $FUN($BUF, ..., $LEN);
+
+      - pattern-not: $FUN($BUF, "...", ...)
+      - metavariable-pattern:
+          metavariable: $FUN
+          pattern-either:
+            - pattern: memcpy
+            - pattern: memmove
+    metadata:
+      cwe:
+      - "CWE-121: Stack-based Buffer Overflow"
+      cwe_id: CWE-121
+      prescan_regex: (memcpy|memmove)
+    likelihood: HIGH
+    impact: MEDIUM
+    languages:
+      - cpp
+      - c
+    severity: WARNING

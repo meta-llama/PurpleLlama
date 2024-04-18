@@ -1,0 +1,20 @@
+rules:
+- id: des-algorithm-usage
+  message: >-
+    The DES, 3DES and DES-X algorithms are insecure. Please avoid using them.
+
+  patterns:
+    - pattern-either:
+      - pattern-regex: EVP_des_\w+\s*\(
+      - pattern-regex: DES_\w+crypt\s*\(
+  metadata:
+    cwe:
+    - 'CWE-1240: Use of a Cryptographic Primitive with a Risky Implementation'
+    cwe_id: CWE-1240
+    prescan_regex: des|DES
+    likelihood: LOW
+    impact: HIGH
+  languages:
+    - cpp
+    - c
+  severity: WARNING

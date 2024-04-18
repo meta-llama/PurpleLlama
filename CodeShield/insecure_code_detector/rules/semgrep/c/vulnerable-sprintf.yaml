@@ -1,0 +1,19 @@
+rules:
+- id: vulnerable-sprintf
+  patterns:
+    - pattern: sprintf(..., $FORMAT, ...)
+    - metavariable-regex:
+        metavariable: '$FORMAT'
+        regex: '.*%s.*'
+  message: Potential buffer overflow due to usage of sprintf
+  metadata:
+    cwe:
+    - 'CWE-120: Classic buffer overflow'
+    cwe_id: CWE-120
+    confidence: MEDIUM
+    likelihood: LOW
+    impact: HIGH
+  languages:
+    - cpp
+    - c
+  severity: WARNING

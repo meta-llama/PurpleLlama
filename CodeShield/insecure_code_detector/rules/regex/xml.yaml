@@ -1,0 +1,17 @@
+- cwe_id: CWE-489 # MSTG-RESILIENCE-2 / OWASP M1
+  description: The Android application is debuggable
+  rule: android:debuggable="true"
+  severity: Warning
+  pattern_id: XML-R-001
+
+- cwe_id: CWE-312
+  description: The Android application has global backups enabled
+  rule: android:allowBackup="true"
+  severity: Warning
+  pattern_id: XML-R-002
+
+- cwe_id: CWE-312
+  description: The Android application has global backups enabled
+  rule: (cleartextTrafficPermitted="true"|android:usesCleartextTraffic="true")
+  severity: Warning
+  pattern_id: XML-R-003

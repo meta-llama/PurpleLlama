@@ -1,0 +1,20 @@
+rules:
+- id: sha1-usage
+  message: >-
+    The SHA1 hash function is considered insecure
+  patterns:
+    - pattern-either:
+      - pattern: SHA1_Init(...)
+      - pattern: EVP_sha1(...)
+      - pattern: EVP_md5_sha1(...)
+  metadata:
+    cwe:
+    - 'CWE-328: Use of Weak Hash'
+    cwe_id: CWE-328
+    prescan_regex: sha1|SHA1
+    likelihood: LOW
+    impact: HIGH
+  languages:
+    - cpp
+    - c
+  severity: WARNING

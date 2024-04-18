@@ -1,0 +1,29 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/java/cors/rule-PermissiveCORSInjection.yml?ref_type=heads
+
+rules:
+- id: "cors-servlet-header-injection"
+  languages:
+  - "java"
+  mode: "taint"
+  pattern-sources:
+  - pattern: "(HttpServletRequest $REQ).getParamater(...)"
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern: "(HttpServletResponse $RES).setHeader(\"$HEADER\", ...)"
+      - pattern: "(HttpServletResponse $RES).addHeader(\"$HEADER\", ...)"
+    - metavariable-regex:
+        metavariable: "$HEADER"
+        regex: "(?i)(Access-Control-Allow-Origin)"
+  message: |
+    This application potentially allows user-supplied input into the value of the
+    `Access-Control-Allow-Origin` response header. This header is part of the CORS
+    specification. By allowing user input to specify which domains can communicate with this
+    server, an adversary could exploit a weakness in this server to force clients to send credentials (such
+    as session identifiers) to the adversary's server.
+  severity: "ERROR"
+  metadata:
+    cwe: "Permissive cross-domain policy with untrusted domains"
+    cwe_id: "CWE-942"
+    prescan_regex: (HttpServletRequest|HttpServletResponse)

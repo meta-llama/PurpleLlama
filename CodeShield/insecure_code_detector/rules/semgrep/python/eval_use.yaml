@@ -1,0 +1,22 @@
+# Reference: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/python/eval/rule-eval.yml?ref_type=heads
+
+rules:
+- id: insecure-eval-use
+  patterns:
+      - pattern: eval(...)
+      - pattern-not: eval("...")
+      - pattern-not: eval()
+      - pattern-not-inside: |
+          def eval(...):
+            ...
+          ...
+  message: >-
+    Potential code injection due to eval usage.
+  metadata:
+    cwe:
+    - 'CWE-94: Improper Control of Generation of Code (Code Injection)'
+    cwe_id: CWE-94
+    prescan_regex: eval\(
+  severity: WARNING
+  languages:
+  - python

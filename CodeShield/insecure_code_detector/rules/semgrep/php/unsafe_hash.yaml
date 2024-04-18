@@ -1,0 +1,17 @@
+rules:
+- id: unsafe-hash-use
+  pattern-either:
+    - pattern: md5(...);
+    - pattern: md5_file(...);
+    - pattern: sha1(...);
+    - pattern: sha1_file(...);
+  message: >-
+    Usage of insecure hashing algorithms, these alogrithms are vulneable to collision attacks, do not use in a security context.
+  metadata:
+    cwe:
+      - 'CWE-327: Use of a Broken or Risky Cryptographic Algorithm'
+    cwe_id: CWE-327
+    prescan_regex: (md5\(|md5_file\(|sha1\(|sha1_file\()
+  severity: WARNING
+  languages:
+    - php

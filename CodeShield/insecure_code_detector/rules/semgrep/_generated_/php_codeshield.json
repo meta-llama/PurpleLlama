@@ -1,0 +1,213 @@
+{
+  "rules": [
+    {
+      "id": "backticks-use",
+      "languages": [
+        "php"
+      ],
+      "message": "Backticks \"` `\" act as a execution operator, user controlled input in backticks can result in a command execution.",
+      "metadata": {
+        "cwe": [
+          "CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+        ],
+        "cwe_id": "CWE-78",
+        "prescan_regex": "(`.*`)"
+      },
+      "pattern": "`...$VAR...`;",
+      "severity": "WARNING"
+    },
+    {
+      "id": "insecure-eval-use",
+      "languages": [
+        "php"
+      ],
+      "message": "Potential code injection due to eval usage.",
+      "metadata": {
+        "cwe": [
+          "CWE-94: Improper Control of Generation of Code (Code Injection)"
+        ],
+        "cwe_id": "CWE-94",
+        "prescan_regex": "eval\\("
+      },
+      "patterns": [
+        {
+          "pattern": "eval(...);"
+        },
+        {
+          "pattern-not": "eval('...');"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "mcrypt-use",
+      "languages": [
+        "php"
+      ],
+      "message": "Mcrypt has been deprecated and removed from newer php versions.",
+      "metadata": {
+        "cwe": [
+          "CWE-477: Use of Obsolete Function"
+        ],
+        "cwe_id": "CWE-477",
+        "prescan_regex": "(mdecrypt_generic\\(|mcrypt_.*\\()"
+      },
+      "pattern-either": [
+        {
+          "pattern": "mdecrypt_generic(...)"
+        },
+        {
+          "pattern-regex": "mcrypt_(.*)(...)"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "phpinfo-use",
+      "languages": [
+        "php"
+      ],
+      "message": "Usage of phpinfo function may reveal sensitive technical information about the system.",
+      "metadata": {
+        "cwe": [
+          "CWE-200: Exposure of Sensitive Information to an Unauthorized Actor"
+        ],
+        "cwe_id": "CWE-200",
+        "prescan_regex": "phpinfo\\("
+      },
+      "pattern": "phpinfo(...);",
+      "severity": "WARNING"
+    },
+    {
+      "id": "unsafe-exec",
+      "languages": [
+        "php"
+      ],
+      "message": "User controlled input (e.g $_GET and $_POST) might flows into a command execution function.\n",
+      "metadata": {
+        "cwe": [
+          "CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+        ],
+        "cwe_id": "CWE-78",
+        "prescan_regex": "(exec\\(|passthru\\(|proc_open\\(|shell_exec\\(|system\\(|popen\\(|pcntl_exec\\()"
+      },
+      "mode": "taint",
+      "pattern-sanitizers": [
+        {
+          "pattern": "escapeshellcmd(...)"
+        },
+        {
+          "pattern": "escapeshellarg(...)"
+        }
+      ],
+      "pattern-sinks": [
+        {
+          "patterns": [
+            {
+              "pattern": "$F(...)"
+            },
+            {
+              "pattern-not": "$F('...', ...)"
+            },
+            {
+              "metavariable-regex": {
+                "metavariable": "$F",
+                "regex": "(exec|passthru|proc_open|shell_exec|system|popen|pcntl_exec)"
+              }
+            }
+          ]
+        }
+      ],
+      "pattern-sources": [
+        {
+          "pattern": "$_POST"
+        },
+        {
+          "pattern": "$_GET"
+        },
+        {
+          "pattern": "$_REQUEST"
+        },
+        {
+          "pattern": "$_COOKIE"
+        },
+        {
+          "pattern": "$_FILES"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "unsafe-extract",
+      "languages": [
+        "php"
+      ],
+      "message": "Do not use extract() on user controlled input (e.g. $_GET and $_POST) as it can overrite exisiting variable value with a user controlled value.\n",
+      "metadata": {
+        "cwe": [
+          "CWE-621: Variable Extraction Error"
+        ],
+        "cwe_id": "CWE-621",
+        "prescan_regex": "(extract\\()"
+      },
+      "mode": "taint",
+      "pattern-sanitizers": [
+        {
+          "pattern": "extract(..., EXTR_SKIP,...);"
+        }
+      ],
+      "pattern-sinks": [
+        {
+          "pattern": "extract(...);"
+        }
+      ],
+      "pattern-sources": [
+        {
+          "pattern": "$_POST"
+        },
+        {
+          "pattern": "$_GET"
+        },
+        {
+          "pattern": "$_REQUEST"
+        },
+        {
+          "pattern": "$_COOKIE"
+        },
+        {
+          "pattern": "$_FILES"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "unsafe-hash-use",
+      "languages": [
+        "php"
+      ],
+      "message": "Usage of insecure hashing algorithms, these alogrithms are vulneable to collision attacks, do not use in a security context.",
+      "metadata": {
+        "cwe": [
+          "CWE-327: Use of a Broken or Risky Cryptographic Algorithm"
+        ],
+        "cwe_id": "CWE-327",
+        "prescan_regex": "(md5\\(|md5_file\\(|sha1\\(|sha1_file\\()"
+      },
+      "pattern-either": [
+        {
+          "pattern": "md5(...);"
+        },
+        {
+          "pattern": "md5_file(...);"
+        },
+        {
+          "pattern": "sha1(...);"
+        },
+        {
+          "pattern": "sha1_file(...);"
+        }
+      ],
+      "severity": "WARNING"
+    }
+  ]
+}

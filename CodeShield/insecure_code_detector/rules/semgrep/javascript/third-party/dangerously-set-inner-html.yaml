@@ -1,0 +1,25 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/tree/main/javascript?ref_type=heads
+
+rules:
+- id: "dangerously-set-inner-html"
+  languages:
+  - "typescript"
+  - "javascript"
+  pattern-either:
+  - pattern: |
+      <$X dangerouslySetInnerHTML=... />
+  - pattern: |
+      {dangerouslySetInnerHTML: ...}
+  severity: "WARNING"
+  message: |
+    The application was found calling `dangerouslySetInnerHTML` which may lead to Cross Site
+    Scripting (XSS). By default, React components will encode the data properly before rendering.
+    Calling `dangerouslySetInnerHTML` disables this encoding and allows raw markup
+    and JavaScript to be executed.
+  metadata:
+    cwe_id: "CWE-79"
+    owasp: "A7:2017-Cross-Site Scripting (XSS)"
+    cwe: "Improper neutralization of input during web page generation
+      (Cross-site Scripting)"
+    prescan_regex: dangerouslySetInnerHTML

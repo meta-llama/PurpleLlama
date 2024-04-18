@@ -1,0 +1,25 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/csharp/crypto/rule-WeakCipherAlgorithm.yml?ref_type=heads
+
+rules:
+- id: "crypto-weak-cipher-algorithm"
+  patterns:
+  - pattern-inside: |
+      using System.Security.Cryptography;
+      ...
+  - pattern-either:
+    - pattern-regex: ".*DES\\.Create\\(\\);"
+    - pattern: "new DESCryptoServiceProvider();"
+    - pattern-regex: ".*TripleDES\\.Create\\(\\);"
+    - pattern: "new TripleDESCryptoServiceProvider();"
+    - pattern-regex: ".*RC2\\.Create\\(\\);"
+    - pattern: "new RC2CryptoServiceProvider();"
+  message: |
+    DES, TripleDES and RC2 are all considered broken or insecure cryptographic algorithms.
+  languages:
+  - csharp
+  severity: "WARNING"
+  metadata:
+    cwe: "Use of a broken or risky cryptographic algorithm"
+    cwe_id: "CWE-327"
+    prescan_regex: DES

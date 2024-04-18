@@ -1,0 +1,100 @@
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+#
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
+- cwe_id: CWE-119
+  description: Potential buffer overflow due to insecure usage of scanf
+  rule: \bscanf\s*\(\s*"[^"]*%s[^"]*"[^)]*\)
+  severity: Warning
+  pattern_id: bugprone-scanf
+
+- cwe_id: CWE-120
+  description: Potential buffer overflow due to use of strcpy
+  rule: \bstrcpy\s*\(
+  severity: Error
+  pattern_id: bugprone-strcpy
+
+- cwe_id: CWE-120
+  description: Potential buffer overflow risk due to use of strcat
+  rule: \bstrcat\s*\(\s*\w+\s*,\s*\w+\s*\)
+  severity: Warning
+  pattern_id: bugprone-strcat
+
+- cwe_id: CWE-328
+  description: The MD5 hash function is considered insecure.
+  rule: (MD5_Init\s*\()|(EVP_md5\s*\()
+  severity: Warning
+  pattern_id: insecure-md5-usage
+
+- cwe_id: CWE-328
+  description: The SHA1 hash function is considered insecure.
+  rule: (SHA1_Init\s*\()|(EVP_sha1\s*\()|(EVP_sha1_md5\s*\()
+  severity: Warning
+  pattern_id: insecure-sha1-usage
+
+- cwe_id: CWE-328
+  description: The MD2 and MD4 hash functions are considered insecure.
+  rule: (MD2_Init\s*\()|(EVP_md2\s*\()|(MD4_Init\s*\()|(EVP_md4\s*\()
+  severity: Warning
+  pattern_id: insecure-md2-md4-usage
+
+- cwe_id: CWE-1240
+  description: The Blowfish encryption algorithm has suboptimal security and speed.
+    Please avoid using it.
+  rule: (EVP_bf_\w+\s*\()|(BF_\w+crypt\s*\()
+  severity: Warning
+  pattern_id: insecure-blowfish-usage
+
+- cwe_id: CWE-1240
+  description: The DES, 3DES and DES-X algorithms are insecure. Please avoid using them.
+  rule: (EVP_des_\w+\s*\()|(DES_\w+crypt\s*\()
+  severity: Warning
+  pattern_id: insecure-des-usage
+
+- cwe_id: CWE-323
+  description: ECB mode encryption is both deterministic and unauthenticated. Do not
+    use it unless this is very explicitly what you need.
+  rule: EVP_\w+_ecb\s*\(
+  severity: Error
+  pattern_id: insecure-ecb-usage
+
+- cwe_id: CWE-347
+  description: It looks like you are using an unauthenticated mode of encryption.
+    Don't use this unless you have a good reason or are separately adding authentication.
+  rule: (EVP_\w+_cbc\s*\()|(EVP_\w+_ctr\s*\()|(EVP_\w+_xts\s*\()|(EVP_\w+_cfb\w\s*\()|(EVP_\w+_ofb\s*\()
+  severity: Warning
+  pattern_id: unauthenticated-encryption-usage
+
+- cwe_id: CWE-331
+  description: The NIST Prime 192 elliptic curve's security level is too low and it's
+    considered outdated.
+  rule: BN_get0_nist_prime_192\s*\(
+  severity: Warning
+  pattern_id: outdated-nist-prime-192-usage
+
+- cwe_id: CWE-242
+  description: Potential buffer overflow risk due to use of gets
+  rule: \bgets\s*\(\s*\w*\s*\)
+  severity: Error
+  pattern_id: bugprone-gets
+
+- cwe_id: CWE-377
+  description: Usage of tmpnam, which generates temporary file without exclusive access.
+    It may lead to race conditions.
+  rule: tmpnam\s*\(\s*\w+\s*\)
+  severity: Warning
+  pattern_id: insecure-tmpnam-usage
+
+- cwe_id: CWE-676
+  description: Usage of strtok is insecure as it's not thread-safe and can also often
+    lead to buffer overflow vulnerabilities
+  rule: strtok\s*\(\s*\w+\s*,\s*\w+\s*\)
+  severity: Warning
+  pattern_id: insecure-strtok-usage
+
+- cwe_id: CWE-477
+  description: Usage of obsolete function getpw, which can overflow the buffer passed to the second parameter.
+  rule: getpw\s*\(\s*\w+\s*,\s*\w+\s*\)
+  severity: Warning
+  pattern_id: obsolete-getpw-usage

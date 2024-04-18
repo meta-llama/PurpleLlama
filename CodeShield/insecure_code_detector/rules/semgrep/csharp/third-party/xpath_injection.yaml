@@ -1,0 +1,48 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/csharp/injection/rule-XPathInjection.yml?ref_type=heads#L61
+
+rules:
+- id: "xpath-injection"
+  languages:
+  - "csharp"
+  patterns:
+  - pattern-inside: |
+      using System.Xml;
+      ...
+  - pattern-either:
+    - patterns:
+      - metavariable-regex:
+          metavariable: "$FUNC"
+          regex: "^(SelectNodes|SelectSingleNode|Compile|Evaluate|Matches|Select|SelectAncestors|SelectChildren|SelectDescendants)$"
+      - metavariable-regex:
+          metavariable: "$TY"
+          regex: "^(XPathNavigator|XmlDocument|XmlNode|XmlDocumentXPathExtensions)$"
+      - pattern: "($TY $VAR).$FUNC(<...$ARG...>, ...)"
+      - pattern-not: "($TY $VAR).$FUNC(\"...\", ...)"
+    - patterns:
+      - pattern-inside: |
+          using System.Xml.Linq;
+          ...
+      - metavariable-regex:
+          metavariable: "$FUNC"
+          regex: "^(XPathEvaluate|XPathSelectElement|XPathSelectElements)$"
+      - pattern: "$VAR.$FUNC(<...$ARG...>, ...)"
+      - pattern-not: "$VAR.$FUNC(\"...\", ...)"
+    - patterns:
+      - pattern-inside: |
+          using System.Xml.Schema;
+          ...
+      - pattern-either:
+        - patterns:
+          - pattern: "$VAR.XPath = <...$ARG...>;"
+          - pattern-not: "$VAR.XPath = \"...\""
+        - patterns:
+          - pattern: "new XmlSchemaXPath { XPath = <...$ARG...> };"
+          - focus-metavariable: "$ARG"
+  message: |
+    Unsanitized input in XPath query can lead to XPath Injections
+  severity: "INFO"
+  metadata:
+    cwe: "Improper neutralization of data within XPath expressions(XPath Injection)"
+    cwe_id: "CWE-643"
+    prescan_regex: ^(SelectNodes|SelectSingleNode|Compile|Evaluate|Matches|Select|SelectAncestors|SelectChildren|SelectDescendants|XPathNavigator|XmlDocument|XmlNode|XmlDocumentXPathExtensions)$

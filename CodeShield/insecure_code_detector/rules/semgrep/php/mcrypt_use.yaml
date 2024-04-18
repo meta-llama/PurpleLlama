@@ -1,0 +1,15 @@
+rules:
+- id: mcrypt-use
+  pattern-either:
+    - pattern: mdecrypt_generic(...)
+    - pattern-regex: mcrypt_(.*)(...)
+  message: >-
+    Mcrypt has been deprecated and removed from newer php versions.
+  metadata:
+    cwe:
+      - 'CWE-477: Use of Obsolete Function'
+    cwe_id: CWE-477
+    prescan_regex: (mdecrypt_generic\(|mcrypt_.*\()
+  severity: WARNING
+  languages:
+    - php

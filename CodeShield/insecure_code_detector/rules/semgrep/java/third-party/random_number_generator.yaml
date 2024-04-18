@@ -1,0 +1,30 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/java/random/rule-PseudoRandom.yml?ref_type=heads
+
+rules:
+- id: "random_number_generator_methods"
+  languages:
+  - "java"
+  patterns:
+  - pattern-either:
+    - pattern: |
+        java.util.Random $R = new java.util.Random();
+        ...
+        $R.$METHOD();
+    - pattern: "(java.util.Random $R).$METHOD()"
+    - pattern: "new java.util.Random().$METHOD()"
+    - pattern: "org.apache.commons.lang.math.RandomUtils.$METHOD()"
+    - pattern: "org.apache.commons.lang.RandomStringUtils.$METHOD(...)"
+  - metavariable-regex:
+      metavariable: "$METHOD"
+      regex: "^(next|random)"
+  message: |
+    Depending on the context, generating weak random numbers may expose cryptographic functions
+    which rely on these numbers, to be exploitable. When generating numbers for sensitive values
+    such as tokens, nonces, and cryptographic keys, it is recommended that the `DRBG` instance
+    of `SecureRandom` be used.
+  severity: "WARNING"
+  metadata:
+    cwe: "Use of insufficiently random values"
+    cwe_id: "CWE-330"
+    prescan_regex: ^(next|random)

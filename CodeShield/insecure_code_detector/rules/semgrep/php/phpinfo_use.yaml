@@ -1,0 +1,13 @@
+rules:
+- id: phpinfo-use
+  pattern: phpinfo(...);
+  message: >-
+    Usage of phpinfo function may reveal sensitive technical information about the system.
+  metadata:
+    cwe:
+      - 'CWE-200: Exposure of Sensitive Information to an Unauthorized Actor'
+    cwe_id: CWE-200
+    prescan_regex: phpinfo\(
+  severity: WARNING
+  languages:
+    - php

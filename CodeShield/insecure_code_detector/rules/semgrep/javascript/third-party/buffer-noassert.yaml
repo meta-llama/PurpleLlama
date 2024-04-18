@@ -1,0 +1,52 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/tree/main/javascript?ref_type=heads
+
+rules:
+- id: "buffer-noassert"
+  languages:
+  - "javascript"
+  - "typescript"
+  pattern-either:
+  - pattern: "$OBJ.readUInt8(..., true)"
+  - pattern: "$OBJ.readUInt16LE(..., true)"
+  - pattern: "$OBJ.readUInt16BE(..., true)"
+  - pattern: "$OBJ.readUInt32LE(..., true)"
+  - pattern: "$OBJ.readUInt32BE(..., true)"
+  - pattern: "$OBJ.readInt8(..., true)"
+  - pattern: "$OBJ.readInt16LE(..., true)"
+  - pattern: "$OBJ.readInt16BE(..., true)"
+  - pattern: "$OBJ.readInt32LE(..., true)"
+  - pattern: "$OBJ.readInt32BE(..., true)"
+  - pattern: "$OBJ.readFloatLE(..., true)"
+  - pattern: "$OBJ.readFloatBE(..., true)"
+  - pattern: "$OBJ.readDoubleLE(..., true)"
+  - pattern: "$OBJ.readDoubleBE(..., true)"
+  - pattern: "$OBJ.writeUInt8(..., true)"
+  - pattern: "$OBJ.writeUInt16LE(..., true)"
+  - pattern: "$OBJ.writeUInt16BE(..., true)"
+  - pattern: "$OBJ.writeUInt32LE(..., true)"
+  - pattern: "$OBJ.writeUInt32BE(..., true)"
+  - pattern: "$OBJ.writeInt8(..., true)"
+  - pattern: "$OBJ.writeInt16LE(..., true)"
+  - pattern: "$OBJ.writeInt16BE(..., true)"
+  - pattern: "$OBJ.writeInt32LE(..., true)"
+  - pattern: "$OBJ.writeInt32BE(..., true)"
+  - pattern: "$OBJ.writeFloatLE(..., true)"
+  - pattern: "$OBJ.writeFloatBE(..., true)"
+  - pattern: "$OBJ.writeDoubleLE(..., true)"
+  - pattern: "$OBJ.writeDoubleBE(..., true)"
+  severity: "WARNING"
+  message: |
+    The application was found using `noAssert` when calling the Buffer API. The `noAssert`
+    argument has
+    been deprecated since Node 10. Calling the Buffer API with this argument allows the offset
+    specified to
+    be beyond the end of the buffer. This could result in writing or reading beyond the end of the
+    buffer and
+    cause a segmentation fault, leading to the application crashing.
+  metadata:
+    cwe: "Improper restriction of operations within the bounds of a memory
+      buffer"
+    cwe_id: "CWE-119"
+    prescan_regex: \w+\.(?:read|write)(U?Int8|(U?Int(16|32)|Float|Double)(LE|BE))*\([^,]*,\s*true\)
+    source-rule-url: "https://github.com/nodesecurity/eslint-plugin-security/blob/master/rules/detect-buffer-noassert.js"

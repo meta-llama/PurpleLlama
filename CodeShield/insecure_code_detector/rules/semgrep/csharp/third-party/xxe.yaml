@@ -1,0 +1,27 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/csharp/injection/rule-XXEInjection.yml?ref_type=heads
+
+rules:
+- id: "xxe-injection"
+  languages:
+  - "csharp"
+  mode: "taint"
+  pattern-sanitizers:
+  - pattern: "(XmlReaderSettings $SETTINGS).ProhibitDtd = true;"
+  - pattern: "(XmlReaderSettings $SETTINGS).DtdProcessing = DtdProcessing.Prohibit;"
+  - pattern: "(XmlDocument $DOC).XmlResolver = null;"
+  - pattern: "var $DOC = new XmlDocument { ..., XmlResolver = null, ... };"
+  pattern-sinks:
+  - pattern: "XmlReader.Create(..., $SETTINGS);"
+  - pattern: "(XmlDocument $DOC).Load(...);"
+  pattern-sources:
+  - pattern: "var $SETTINGS = new XmlReaderSettings();"
+  - pattern: "var $DOC = new XmlDocument(...);"
+  - pattern: "var $DOC = new XmlDocument {...};"
+  message: |
+    Incorrectly configured XML parser could be vulnerable to XML External Entity processing
+  severity: "WARNING"
+  metadata:
+    cwe: "Improper restriction of XML external entity reference ('XXE')"
+    cwe_id: "CWE-611"
+    prescan_regex: Xml

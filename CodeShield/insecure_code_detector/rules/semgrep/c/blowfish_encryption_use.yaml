@@ -1,0 +1,19 @@
+rules:
+- id: blowfish-encryption-usage
+  message: >-
+    The Blowfish encryption algorithm has suboptimal security and speed.
+  patterns:
+    - pattern-either:
+      - pattern-regex: EVP_bf_\w+\s*\(
+      - pattern-regex: BF_\w+crypt\s*\(
+  metadata:
+    cwe:
+    - 'CWE-1240: Use of a Cryptographic Primitive with a Risky Implementation'
+    cwe_id: CWE-1240
+    prescan_regex: bf|BF
+    likelihood: LOW
+    impact: HIGH
+  languages:
+    - cpp
+    - c
+  severity: WARNING

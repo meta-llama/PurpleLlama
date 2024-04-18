@@ -1,0 +1,30 @@
+[project]
+name = "codeshield"
+version = "0.0.1"
+authors = [
+  { name = "Sahana CB", email = "csahana@meta.com" },
+  { name = "Thomas Robinson", email = "trobinson@meta.com" },
+]
+description = "Codeshield helps identify insecure code"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+]
+dependencies = ["semgrep>1.68", "pyyaml"]
+
+[project.optional-dependencies]
+external_llm = ["llama-recipes"]
+
+[project.urls]
+Homepage = "https://github.com/meta-llama/PurpleLlama"
+Issues = "https://github.com/meta-llama/PurpleLlama/issues"
+
+[build-system]
+requires = ["hatchling", "hatch-requirements-txt"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel.force-include]
+"codeshield.py" = "codeshield/cs.py"
+"insecure_code_detector/" = "codeshield/insecure_code_detector"

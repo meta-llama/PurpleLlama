@@ -1,0 +1,13 @@
+rules:
+- id: "post-message-origin"
+  languages:
+  - "javascript"
+  pattern: $OBJ.postMessage(..., '*')
+  severity: "WARNING"
+  message: |
+    Insufficient verification of data authenticity due to lack of target origin check.
+  metadata:
+    cwe_id: CWE-345
+    cwe: "Insufficient Verification of Data Authenticity"
+    category: "security"
+    prescan_regex: \.postMessage\(

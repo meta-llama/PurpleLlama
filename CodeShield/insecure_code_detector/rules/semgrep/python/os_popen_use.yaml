@@ -1,0 +1,17 @@
+# Reference: https://gitlab.com/gitlab-org/security-products/sast-rules/-/tree/main/python/exec?ref_type=heads
+
+rules:
+- id: insecure-os-popen-use
+  patterns:
+      - pattern: os.popen(...)
+      - pattern-not: os.popen("...", ...)
+  message: >-
+    Potential command injection due to os.system usage.
+  metadata:
+    cwe:
+    - 'CWE-78: CWE-78: Improper Neutralization of Special Elements used in an OS Command (OS Command Injection)'
+    cwe_id: CWE-78
+    prescan_regex: os\.popen\(
+  severity: WARNING
+  languages:
+  - python

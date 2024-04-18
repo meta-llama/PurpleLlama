@@ -1,0 +1,20 @@
+rules:
+- id: hardcoded-key-usage
+  message: >-
+    Use of hardcoded keys/credentials. Prefer using a key/secret management system.
+  patterns:
+    - pattern: $SECRET = ...
+    - metavariable-regex:
+        metavariable: $SECRET
+        regex: '(\w*password\w*|\w*secret\w*|\w*privateKey\w*|\w*private_key\w*|\w*secret_key\w*|\w*secretKey\w*)'
+  metadata:
+    cwe:
+    - 'CWE-798: Use of Hard-coded Credentials'
+    cwe_id: CWE-798
+    prescan_regex: password|secret|private
+    likelihood: LOW
+    impact: HIGH
+  languages:
+    - cpp
+    - c
+  severity: WARNING

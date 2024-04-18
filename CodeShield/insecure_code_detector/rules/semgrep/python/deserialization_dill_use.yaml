@@ -1,0 +1,17 @@
+# Reference: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/python/deserialization/rule-dill.yml?ref_type=heads
+
+rules:
+- id: unsafe-dill-use
+  patterns:
+      - pattern: dill.loads(...)
+      - pattern-not: dill.loads("...")
+  message: >-
+    Potential deserialization risk due to pickle usage.
+  metadata:
+    cwe:
+    - 'CWE-502: Deserialization of Untrusted Data'
+    cwe_id: CWE-502
+    prescan_regex: \bdill\.loads\s*\(
+  severity: WARNING
+  languages:
+  - python

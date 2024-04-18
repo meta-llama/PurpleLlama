@@ -1,0 +1,17 @@
+rules:
+- id: ecb-mode-encryption-usage
+  message: >-
+    ECB mode encryption is both deterministic and unauthenticated. Do not use it unless this is very explicitly what you need.
+  patterns:
+      - pattern-regex: EVP_\w+_ecb\s*\(
+  metadata:
+    cwe:
+    - 'CWE-323: Reusing a Nonce, Key Pair in Encryption'
+    cwe_id: CWE-323
+    prescan_regex: EVP
+    likelihood: LOW
+    impact: HIGH
+  languages:
+    - cpp
+    - c
+  severity: WARNING

@@ -1,0 +1,17 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/csharp/crypto/rule-WeakRNG.yml?ref_type=heads
+
+rules:
+- id: "crypto-weak-pseudo-random-number-generator"
+  languages:
+  - "csharp"
+  patterns:
+  - pattern: "(Random $RNG).$METHOD(...);"
+  message: |
+    Use of a weak random value can lead to vulnerabilities when used in certain security critical contexts.
+  severity: "WARNING"
+  metadata:
+    cwe: "Use of cryptographically weak Pseudo-Random Number Generator
+      (PRNG)"
+    cwe_id: "CWE-338"
+    prescan_regex: Random

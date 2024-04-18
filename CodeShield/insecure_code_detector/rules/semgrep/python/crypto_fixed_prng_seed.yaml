@@ -1,0 +1,17 @@
+rules:
+- id: crypto-fixed-prng-seed
+  patterns:
+      - pattern: $VAR = "..."
+      - metavariable-regex:
+          metavariable: '$VAR'
+          regex: '.*(rngSeed|rng_seed).*'
+  message: >-
+    Use of fixed seed for PRNG.
+  metadata:
+    cwe:
+    - 'CWE-335: Incorrect Usage of Seeds in Pseudo-Random Number Generator (PRNG)'
+    cwe_id: CWE-335
+    prescan_regex: (rngSeed|rng_seed)
+  severity: WARNING
+  languages:
+  - python

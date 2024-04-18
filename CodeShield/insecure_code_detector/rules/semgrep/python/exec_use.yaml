@@ -1,0 +1,22 @@
+# Reference: https://gitlab.com/gitlab-org/security-products/sast-rules/-/tree/main/python/exec?ref_type=heads
+
+rules:
+- id: insecure-exec-use
+  patterns:
+      - pattern: exec(...)
+      - pattern-not: exec("...")
+      - pattern-not: exec()
+      - pattern-not-inside: |
+          def exec(...):
+            ...
+          ...
+  message: >-
+    Potential code injection due to exec usage.
+  metadata:
+    cwe:
+    - 'CWE-94: Improper Control of Generation of Code (Code Injection)'
+    cwe_id: CWE-94
+    prescan_regex: exec\(
+  severity: WARNING
+  languages:
+  - python

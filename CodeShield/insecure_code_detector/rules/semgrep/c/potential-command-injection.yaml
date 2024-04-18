@@ -1,0 +1,21 @@
+rules:
+- id: potential-command-injection
+  message: >-
+    Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG).
+  patterns:
+    - pattern: system($X)
+    - pattern-not: system("...")
+    - metavariable-regex:
+        metavariable: $X
+        regex: ^(?![A-Z_]+).*$
+  metadata:
+    cwe:
+    - "CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+    cwe_id: CWE-78
+    prescan_regex: system\(
+    likelihood: LOW
+    impact: HIGH
+  languages:
+    - cpp
+    - c
+  severity: WARNING

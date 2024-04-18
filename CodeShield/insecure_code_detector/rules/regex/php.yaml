@@ -1,0 +1,136 @@
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+#
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
+- cwe_id: CWE-94
+  description: Potential code injection with unsanitized GET input
+  rule: \beval\s*\(\s*\$_GET\s*\[\s*['"][^'"]+['"]\s*\]\s*\)
+  severity: Warning
+  pattern_id: potential-code-injection
+
+- cwe_id: CWE-502
+  description: Deserialization of Untrusted Data
+  rule: \b(serialize|unserialize)\s*\(\s*\$_(GET|POST|REQUEST|COOKIE|SERVER)
+  severity: Warning
+  pattern_id: untrusted-data-deserialization
+
+- cwe_id: CWE-78
+  description: OS Command Injection
+  rule: \b(shell_exec|system|passthru|exec)\s*\(\s*\$_(GET|POST|REQUEST|COOKIE)
+  severity: Warning
+  pattern_id: os-command-injection
+
+- cwe_id: CWE-89
+  description: SQL Injection with unsanitized input in query
+  rule: \bmysql_query\(\s*\$_(GET|POST|REQUEST)\s*\[\s*'[^']*'\s*\]
+  severity: Warning
+  pattern_id: sql-injection
+
+- cwe_id: CWE-79
+  description: Cross-Site Scripting (XSS) in echo/print statements
+  rule: \b(echo|print)\s*\(\s*\$_(GET|POST|REQUEST|COOKIE)
+  severity: Warning
+  pattern_id: xss-in-echo-print
+
+- cwe_id: CWE-200
+  description: Potential exposure of sensitive information through error messages
+  rule: \b(error_reporting|ini_set)\s*\(\s*['"]display_errors['"],\s*['"]on['"]\s*\)
+  severity: Warning
+  pattern_id: sensitive-info-exposure
+
+- cwe_id: CWE-327
+  description: Use of a Broken or Risky Cryptographic Algorithm
+  rule: \b(md5|sha1)\s*\(
+  severity: Warning
+  pattern_id: risky-crypto-algorithm
+
+- cwe_id: CWE-862
+  description: Missing Authorization in critical function call
+  rule: \b(exec|shell_exec|system|passthru)\(
+  severity: Warning
+  pattern_id: missing-authorization
+
+- cwe_id: CWE-311
+  description: Missing Encryption of Sensitive Data
+  rule: \bsetcookie\s*\(\s*.*\s*,\s*.*\s*,\s*[^,]*\s*,\s*[^,]*\s*,\s*false\s*,\s*false\s*\)
+  severity: Warning
+  pattern_id: missing-secure-cookie
+
+- cwe_id: CWE-759
+  description: Use of a One-Way Hash without a Salt
+  rule: \bpassword_hash\b\s*\(\s*.*\s*,\s*PASSWORD_DEFAULT\s*\)
+  severity: Warning
+  pattern_id: hash-without-salt
+
+- cwe_id: CWE-209
+  description: Information Exposure Through an Error Message
+  rule: \b(die|exit)\s*\(\s*\$_(GET|POST|REQUEST|COOKIE)
+  severity: Warning
+  pattern_id: info-exposure-error-message
+
+- cwe_id: CWE-22
+  description: Path Traversal
+  rule: \b(?:include|require)\s*\(\s*\$_(GET|POST|REQUEST|COOKIE|SESSION)\s*\[\s*['"](?:[^'"]*)['"]\s*\]
+  severity: Warning
+  pattern_id: path-traversal
+
+- cwe_id: CWE-732
+  description: Incorrect Permission Assignment for Critical Resource
+  rule: \b(?:chmod|chown|chgrp)\s*\(\s*\$_(GET|POST|REQUEST|COOKIE)
+  severity: Warning
+  pattern_id: incorrect-permission-assignment
+
+- cwe_id: CWE-918
+  description: Server-Side Request Forgery (SSRF)
+  rule: \b(?:file_get_contents|fopen|curl_exec)\s*\(\s*\$_(GET|POST|REQUEST|COOKIE)
+  severity: Warning
+  pattern_id: potential-ssrf
+
+- cwe_id: CWE-290
+  description: Authentication Bypass by Spoofing
+  rule: \$_(SERVER|ENV)\b\[\s*['"]REMOTE_(ADDR|HOST)['"]\s*\]
+  severity: Warning
+  pattern_id: auth-bypass-spoofing
+
+- cwe_id: CWE-601
+  description: Open redirect vulnerability due to unsanitized URL parameter
+  rule: header\s*\(\s*['"]Location:.*\$_(GET|POST|REQUEST|COOKIE)
+  severity: Warning
+  pattern_id: open-redirect
+
+- cwe_id: CWE-434
+  description: Unrestricted Upload of File with Dangerous Type
+  rule: move_uploaded_file\s*\(\s*.*\.(exe|sh)
+  severity: Warning
+  pattern_id: unrestricted-file-upload
+
+- cwe_id: CWE-306
+  description: Missing Authentication for Critical Function
+  rule: (update|delete|create)(_once)?\s*\(\s*\$_(SESSION|COOKIE)\s*\[\s*'[^']*'\s*\]
+  severity: Warning
+  pattern_id: missing-auth-for-critical-function
+
+- cwe_id: CWE-494
+  description: Download of Code Without Integrity Check
+  rule: \b(file_get_contents|curl_exec)(_once)?\s*\(\s*\$_(GET|POST|REQUEST)\s*\[\s*'[^']*'\s*\]
+  severity: Warning
+  pattern_id: code-download-without-integrity-check
+
+- cwe_id: CWE-330
+  description: Use of Insufficiently Random Values
+  rule: \b(mt_rand|rand|uniqid|rand)\s*\(\s*\$[a-zA-Z0-9_]+\s*\)
+  severity: Warning
+  pattern_id: insufficiently-random-values
+
+- cwe_id: CWE-311
+  description: Missing Encryption of Sensitive Data
+  rule: \b(set_cookie)\s*\(\s*\$_(GET|POST|REQUEST|COOKIE)
+  severity: Warning
+  pattern_id: missing-encryption-sensitive-data
+
+- cwe_id: CWE-611
+  description: Improper Restriction of XML External Entity Reference using LIBXML_NOENT parameter
+  rule: \bsimplexml_load_string\b\s*\(\s*.*\s*,\s*LIBXML_NOENT\s*\)
+  severity: Warning
+  pattern_id: improper-xml-entity-restriction

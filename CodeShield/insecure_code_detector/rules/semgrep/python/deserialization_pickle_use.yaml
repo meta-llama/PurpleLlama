@@ -1,0 +1,18 @@
+rules:
+- id: unsafe-pickle-use
+  patterns:
+      - pattern-either:
+          - pattern: pickle.loads(...)
+          - pattern: _pickle.loads(...)
+      - pattern-not: pickle.loads("...")
+      - pattern-not: _pickle.loads("...")
+  message: >-
+    Potential deserialization risk due to pickle usage.
+  metadata:
+    cwe:
+    - 'CWE-502: Deserialization of Untrusted Data'
+    cwe_id: CWE-502
+    prescan_regex: pickle\.loads
+  severity: WARNING
+  languages:
+  - python

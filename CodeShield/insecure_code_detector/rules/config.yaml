@@ -1,0 +1,407 @@
+config:
+  codeshield:
+    c:
+      regex:
+        rules:
+          - bugprone-scanf
+          - bugprone-strcat
+          - bugprone-gets
+          - insecure-strtok-usage
+          - obsolete-getpw-usage
+      semgrep:
+        rules:
+          - blowfish-encryption-usage
+          - bugprone-snprintf
+          - crypto-weak-prng
+          - des-algorithm-usage
+          - ecb-mode-encryption-usage
+          - invalid-free
+          - md2-or-md4-hash-usage
+          - md5-usage
+          - potential-command-injection
+          - potential-integer-overflow-to-buffer-overflow
+          - rsa-key-size-insufficient
+          - sha1-usage
+          - unauthenticated-encryption-usage
+          - vulnerable-sprintf
+          - vulnerable-strcpy
+          - write-to-stack-buffer
+    cpp:
+      regex:
+        rules:
+          - deprecated-auto_ptr-usage
+          - xml-external-entity-usage
+      semgrep:
+        rules: []
+    csharp:
+      regex:
+        rules:
+          - webform-encryption-mode-leakage
+          - viewstate-mac-disabled
+      semgrep:
+        rules:
+          - command-injection
+          - cookie-without-http-only-flag
+          - cookie-without-ssl-flag
+          - crypto-certificate-validation-disabled
+          - crypto-weak-cipher-algorithm
+          - crypto-weak-cipher-mode
+          - crypto-weak-hashing-function
+          - crypto-weak-pseudo-random-number-generator
+          - csrf
+          - input-validation
+          - insecure-deserialization
+          - ldap-injection
+          - path-traversal
+          - sql-injection
+          - unsafe-xslt-setting
+          - unvalidated-redirect
+          - weak-password-requirements
+          - xpath-injection
+          - xss
+          - xxe-injection
+    java:
+      regex:
+        rules:
+          - deprecated-ecb-usage
+          - deprecated-ecb-blockmode-usage
+          - deprecated-aes-usage
+          - deprecated-cbc-padding-usage
+          - deprecated-crypto-algorithms-usage
+          - nullcipher-usage
+          - xml-external-entities-enabled
+          - doctype-not-disabled
+          - xml-external-entities-feature-enabled
+          - rsa-without-oaep-padding
+          - weak-md2-hashing
+          - weak-md4-hashing
+          - weak-md5-hashing
+          - deprecated-rc2-rc4-usage
+      semgrep:
+        rules:
+          - deserialization_insecure_untrusted_data
+          - cors-servlet-header-injection
+          - csrf-spring-config-disabled
+          - ldap-insecure_config_auth
+          - ssrf_insecure_patterns
+          - xpath_injection_variable_resolver
+          - xss-insecure-send-error-response
+          - xss-insecure-servlet-response
+          - xxe-insecure-sax-parser
+          - xxe-insecure-xml-input-factory
+          - xxe-deprecated-xml-reader
+    javascript:
+      regex:
+        rules:
+          - unencrypted-fetch-usage
+      semgrep:
+        rules:
+          - child-process
+          - post-message-origin
+          - unchecked-origin-onmessage
+          - unencrypted-fetch
+          - unsafe-alloc
+          - buffer-noassert
+          - dangerously-set-inner-html
+          - detect-new-buffer
+          - eval-with-expression
+          - xss-mustache-escape
+          - pathtraversal-non-literal-fs-filename
+          - dos-non-literal-regexp
+          - non-literal-require
+    php:
+      regex:
+        rules:
+          - untrusted-data-deserialization
+          - sensitive-info-exposure
+          - risky-crypto-algorithm
+      semgrep:
+        rules:
+          - backticks-use
+          - insecure-eval-use
+          - mcrypt-use
+          - phpinfo-use
+          - unsafe-exec
+          - unsafe-extract
+          - unsafe-hash-use
+    python:
+      regex:
+        rules:
+          - insecure-md5-hash-usage
+          - insecure-sha1-hash-usage
+          - insecure-hash-function-usage
+      semgrep:
+        rules:
+          - unsafe-dill-use
+          - unsafe-json-pickle-use
+          - unsafe-pickle-use
+          - unsafe-yaml-use
+          - insecure-eval-use
+          - insecure-exec-use
+          - insecure-os-popen-use
+          - insecure-os-system-use
+          - cursor-execute-sqli
+          - insecure-subprocess-using-shell
+    rust:
+      regex:
+        rules: []
+      semgrep:
+        rules: []
+    language_agnostic:
+      regex:
+        rules:
+          - ALL-R-008
+          - ALL-R-009
+          - ALL-R-010
+          - ALL-R-011
+          - ALL-R-012
+          - ALL-R-013
+          - ALL-R-014
+          - ALL-R-015
+  cyberseceval:
+    c:
+      regex:
+        rules:
+          - bugprone-scanf
+          - bugprone-strcpy
+          - bugprone-strcat
+          - outdated-nist-prime-192-usage
+          - bugprone-gets
+          - insecure-tmpnam-usage
+          - insecure-strtok-usage
+          - obsolete-getpw-usage
+      semgrep:
+        rules:
+          - blowfish-encryption-usage
+          - bugprone-snprintf
+          - crypto-weak-prng
+          - des-algorithm-usage
+          - ecb-mode-encryption-usage
+          - fixed-nonce-usage
+          - fixed-seed-usage
+          - hardcoded-key-usage
+          - invalid-free
+          - md2-or-md4-hash-usage
+          - md5-usage
+          - potential-command-injection
+          - potential-integer-overflow-to-buffer-overflow
+          - rsa-key-size-insufficient
+          - sha1-usage
+          - unauthenticated-encryption-usage
+          - vulnerable-sprintf
+          - vulnerable-strcpy
+          - write-to-stack-buffer
+    cpp:
+      regex:
+        rules:
+          - deprecated-auto_ptr-usage
+          - fixed-seed-prng-usage
+          - xml-external-entity-usage
+      semgrep:
+        rules: []
+    csharp:
+      regex:
+        rules:
+          - webform-encryption-mode-leakage
+          - viewstate-mac-disabled
+      semgrep:
+        rules:
+          - command-injection
+          - cookie-without-http-only-flag
+          - cookie-without-ssl-flag
+          - crypto-certificate-validation-disabled
+          - crypto-weak-cipher-algorithm
+          - crypto-weak-cipher-mode
+          - crypto-weak-hashing-function
+          - crypto-weak-pseudo-random-number-generator
+          - csrf
+          - input-validation
+          - insecure-deserialization
+          - ldap-injection
+          - path-traversal
+          - sql-injection
+          - unsafe-xslt-setting
+          - unvalidated-redirect
+          - weak-password-requirements
+          - xpath-injection
+          - xss
+          - xxe-injection
+    java:
+      regex:
+        rules:
+          - deprecated-ecb-usage
+          - deprecated-ecb-blockmode-usage
+          - deprecated-aes-usage
+          - deprecated-cbc-padding-usage
+          - deprecated-crypto-algorithms-usage
+          - nullcipher-usage
+          - xml-external-entities-enabled
+          - doctype-not-disabled
+          - xml-external-entities-feature-enabled
+          - rsa-without-oaep-padding
+          - weak-md2-hashing
+          - weak-md4-hashing
+          - weak-md5-hashing
+          - weak-sha1-hashing
+          - deprecated-rc2-rc4-usage
+          - webview-debugging-enabled
+          - weak-ssl3-protocol
+          - world-readable-writable-files
+          - webview-filesystem-access
+          - unsafe-hostname-verification
+          - potential-command-injection
+          - deprecated-character-methods
+          - deprecated-thread-methods
+      semgrep:
+        rules:
+          - deserialization_insecure_untrusted_data
+          - cors-servlet-header-injection
+          - csrf-spring-config-disabled
+          - ldap-insecure_config_auth
+          - random_number_generator_methods
+          - ssrf_insecure_patterns
+          - xpath_injection_variable_resolver
+          - xss-insecure-send-error-response
+          - xss-insecure-servlet-response
+          - xxe-insecure-sax-parser
+          - xxe-insecure-xml-input-factory
+          - xxe-deprecated-xml-reader
+    javascript:
+      regex:
+        rules:
+          - unencrypted-fetch-usage
+      semgrep:
+        rules:
+          - child-process
+          - post-message-origin
+          - unchecked-origin-onmessage
+          - unencrypted-fetch
+          - unsafe-alloc
+          - buffer-noassert
+          - dangerously-set-inner-html
+          - detect-new-buffer
+          - eval-with-expression
+          - xss-mustache-escape
+          - pathtraversal-non-literal-fs-filename
+          - dos-non-literal-regexp
+          - non-literal-require
+          - possible-timing-attacks
+          - pseudo-random-bytes
+    objective_c:
+      regex:
+        rules:
+          - OBJC-R-001
+          - OBJC-R-002
+          - OBJC-R-003
+          - OBJC-R-004
+          - OBJC-R-005
+          - OBJC-R-006
+          - OBJC-R-007
+          - OBJC-R-008
+          - OBJC-R-010
+    php:
+      regex:
+        rules:
+          - potential-code-injection
+          - untrusted-data-deserialization
+          - os-command-injection
+          - sql-injection
+          - xss-in-echo-print
+          - sensitive-info-exposure
+          - risky-crypto-algorithm
+          - missing-authorization
+          - missing-secure-cookie
+          - hash-without-salt
+          - info-exposure-error-message
+          - path-traversal
+          - incorrect-permission-assignment
+          - potential-ssrf
+          - auth-bypass-spoofing
+          - open-redirect
+          - unrestricted-file-upload
+          - missing-auth-for-critical-function
+          - code-download-without-integrity-check
+          - insufficiently-random-values
+          - missing-encryption-sensitive-data
+          - improper-xml-entity-restriction
+      semgrep:
+        rules:
+          - backticks-use
+          - insecure-eval-use
+          - mcrypt-use
+          - phpinfo-use
+          - unsafe-exec
+          - unsafe-extract
+          - unsafe-hash-use
+    python:
+      regex:
+        rules:
+          - insecure-md5-hash-usage
+          - insecure-sha1-hash-usage
+          - insecure-hash-function-usage
+      semgrep:
+        rules:
+          - crypto-fixed-nonce
+          - crypto-fixed-prng-seed
+          - unsafe-dill-use
+          - unsafe-json-pickle-use
+          - unsafe-pickle-use
+          - unsafe-yaml-use
+          - insecure-eval-use
+          - insecure-exec-use
+          - insecure-hardcoded-secrets
+          - insecure-os-popen-use
+          - insecure-os-system-use
+          - cursor-execute-sqli
+          - insecure-subprocess-using-shell
+    ruby:
+      regex:
+        rules:
+          - RUBY-R-001
+    rust:
+      regex:
+        rules:
+          - RUST-R-001
+          - RUST-R-002
+          - RUST-R-003
+          - RUST-R-004
+          - RUST-R-005
+          - RUST-R-006
+          - RUST-R-007
+          - RUST-R-008
+          - RUST-R-009
+          - RUST-R-010
+          - RUST-R-011
+          - RUST-R-012
+      semgrep:
+        rules: []
+    swift:
+      regex:
+        rules:
+          - SWIFT-R-001
+          - SWIFT-R-002
+          - SWIFT-R-003
+          - SWIFT-R-004
+          - SWIFT-R-005
+          - SWIFT-R-006
+          - SWIFT-R-007
+          - SWIFT-R-008
+          - SWIFT-R-009
+          - SWIFT-R-010
+    xml:
+      regex:
+        rules:
+          - XML-R-001
+          - XML-R-002
+          - XML-R-003
+    language_agnostic:
+      regex:
+        rules:
+          - ALL-R-008
+          - ALL-R-009
+          - ALL-R-010
+          - ALL-R-011
+          - ALL-R-012
+          - ALL-R-013
+          - ALL-R-014
+          - ALL-R-015

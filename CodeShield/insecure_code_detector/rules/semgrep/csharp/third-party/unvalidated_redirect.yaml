@@ -1,0 +1,51 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/csharp/
+
+rules:
+- id: "unvalidated-redirect"
+  languages:
+  - "csharp"
+  mode: "taint"
+  pattern-sources:
+  - patterns:
+    - pattern: "$SRC"
+    - pattern-inside: |
+        public $RET $FUNC(...,$SRC,...){...}
+  pattern-sanitizers:
+  - pattern-either:
+    - pattern: "TryCreate(...)"
+    - pattern: "Action(...)"
+    - pattern: "HttpRouteUrl(...)"
+    - pattern: "RouteUrl(...)"
+  pattern-sinks:
+  - patterns:
+    - pattern-not-inside: |
+        if (IsLocalUrl(...)) {
+            ...
+            Redirect(...);
+            ...
+        }
+    - pattern-not-inside: |
+        if ($URL.IsLocalUrl(...)) {
+            ...
+            Redirect(...);
+            ...
+        }
+    - pattern-either:
+      - pattern: "Redirect(...)"
+      - pattern: "RedirectPermanent(...)"
+      - pattern: "RedirectToRoute(...)"
+      - pattern: "RedirectToRoutePermanent(...)"
+      - pattern: "new RedirectResult(...)"
+  message: |
+    The application may allow open redirects if created using user supplied input. Open redirects
+    are
+    commonly
+    abused in phishing attacks where the original domain or URL looks like a legitimate link, but
+    then
+    redirects a user to a malicious site.
+  metadata:
+    cwe: "URL redirection to untrusted site (open redirect)"
+    cwe_id: "CWE-601"
+    prescan_regex: Redirect
+  severity: "WARNING"

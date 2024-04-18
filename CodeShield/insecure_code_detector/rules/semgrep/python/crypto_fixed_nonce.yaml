@@ -1,0 +1,18 @@
+rules:
+- id: crypto-fixed-nonce
+  patterns:
+      - pattern: $VAR = "..."
+      - metavariable-regex:
+          metavariable: '$VAR'
+          regex: '(\biv\b|.*initialization_vector.*|.*initializationVector.*)'
+  message: >-
+    Use of fixed nonce as input to encryption/signing is generally considered
+    insecure.
+  metadata:
+    cwe:
+    - 'CWE-323: Reusing a Nonce, Key Pair in Encryption'
+    cwe_id: CWE-323
+    prescan_regex: (\biv\b|.*initialization_vector.*|.*initializationVector.*)
+  severity: WARNING
+  languages:
+  - python

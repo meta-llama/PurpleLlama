@@ -1,0 +1,34 @@
+rules:
+  - id: invalid-free
+    message: Free of memory not on the heap
+    patterns:
+      - pattern-either:
+        - pattern: $TYPE $X; ... free(&$X);
+        - pattern: $TYPE $ARR[$Z]; ... free($ARR);
+      - pattern-inside:
+          $TYPE2 $FUNC(...){
+            ...
+          }
+      - pattern-not-inside: |
+          $TYPE $X;
+          ...
+          return $Y;
+          ...
+          free(&$X);
+      - pattern-not-inside: |
+          $TYPE $ARR[$Z];
+          ...
+          return $Y;
+          ...
+          free($ARR);
+    metadata:
+      cwe:
+      - "CWE-590: Free of Memory not on the Heap"
+      cwe_id: CWE-590
+      prescan_regex: free\(
+    likelihood: HIGH
+    impact: MEDIUM
+    languages:
+      - cpp
+      - c
+    severity: WARNING

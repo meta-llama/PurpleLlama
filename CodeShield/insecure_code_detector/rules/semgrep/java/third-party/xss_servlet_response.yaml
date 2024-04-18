@@ -1,0 +1,41 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/java/xss/rule-XSSReqParamToServletWriter.yml?ref_type=heads
+
+rules:
+- id: "xss-insecure-servlet-response"
+  languages:
+  - "java"
+  mode: "taint"
+  pattern-sanitizers:
+  - patterns:
+    - pattern-inside: |-
+        org.owasp.encoder.Encode.forHtml($TAINTED);
+    - pattern: "$TAINTED"
+  pattern-sinks:
+  - patterns:
+    - pattern-inside: |-
+        $FUNC(..., HttpServletResponse $RES, ...) {...}
+    - pattern-inside: |
+        $WRITER = $RES.getWriter();
+        ...
+    - pattern: "$WRITER.write($DATA,...);"
+    - pattern: "$DATA"
+  - patterns:
+    - pattern-inside: |-
+        $FUNC(..., HttpServletResponse $RES, ...) {...}
+    - pattern: "$RES.getWriter().write($DATA,...);"
+    - pattern: "$DATA"
+  pattern-sources:
+  - patterns:
+    - pattern-inside: |-
+        $FUNC(..., HttpServletRequest $REQ, ...) {...}
+    - pattern: "$REQ.getParameter(...);"
+  message: |
+    The application is returning user-supplied data from an HTTP request directly into an HTTP
+    response output writer. This could lead to Cross Site Scripting (XSS) if the input were malicious
+    script code and the application server is not properly validating the output.
+  severity: "WARNING"
+  metadata:
+    cwe: "Improper neutralization of input during web page generation('XSS')"
+    cwe_id: "CWE-79"
+    prescan_regex: (getParameter\(|getWriter\()

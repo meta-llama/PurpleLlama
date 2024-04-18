@@ -1,0 +1,22 @@
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+#
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
+- cwe_id: CWE-665
+  description: Uses deprecated auto_ptr, which can lead to undefined behavior.
+  rule: \bstd::auto_ptr<\s*\w+\s*>
+  severity: Warning
+  pattern_id: deprecated-auto_ptr-usage
+
+- cwe_id: CWE-335
+  description: Use of fixed seed for PRNG
+  rule: \b(std::mt19937|std::mt19937_64|std::minstd_rand|std::minstd_rand0|std::default_random_engine)\s*(\{|\()\s*\d*\s*(\}|\)|\/)
+  severity: Warning
+  pattern_id: fixed-seed-prng-usage
+
+- cwe_id: CWE-611
+  description: Use of XML external entity
+  rule: \bxmlReadDoc\s*\(\s*[^,]+,\s*[^,]+,\s*[^,]+,\s*[^,]*\b(XML_PARSE_NOENT|XML_PARSE_DTDLOAD)\s*\)
+  severity: Warning
+  pattern_id: xml-external-entity-usage

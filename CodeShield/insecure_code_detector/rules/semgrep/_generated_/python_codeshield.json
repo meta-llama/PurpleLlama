@@ -1,0 +1,376 @@
+{
+  "rules": [
+    {
+      "id": "unsafe-dill-use",
+      "languages": [
+        "python"
+      ],
+      "message": "Potential deserialization risk due to pickle usage.",
+      "metadata": {
+        "cwe": [
+          "CWE-502: Deserialization of Untrusted Data"
+        ],
+        "cwe_id": "CWE-502",
+        "prescan_regex": "\\bdill\\.loads\\s*\\("
+      },
+      "patterns": [
+        {
+          "pattern": "dill.loads(...)"
+        },
+        {
+          "pattern-not": "dill.loads(\"...\")"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "unsafe-json-pickle-use",
+      "languages": [
+        "python"
+      ],
+      "message": "Potential deserialization risk due to pickle usage.",
+      "metadata": {
+        "cwe": [
+          "CWE-502: Deserialization of Untrusted Data"
+        ],
+        "cwe_id": "CWE-502",
+        "prescan_regex": "\\bjsonpickle\\.(decode|unpickler)"
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "pattern": "jsonpickle.decode(...)"
+            },
+            {
+              "pattern": "jsonpickle.unpickler.decode(...)"
+            }
+          ]
+        },
+        {
+          "pattern-not": "jsonpickle.decode(\"...\")"
+        },
+        {
+          "pattern-not": "jsonpickle.unpickler.decode(\"...\")"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "unsafe-pickle-use",
+      "languages": [
+        "python"
+      ],
+      "message": "Potential deserialization risk due to pickle usage.",
+      "metadata": {
+        "cwe": [
+          "CWE-502: Deserialization of Untrusted Data"
+        ],
+        "cwe_id": "CWE-502",
+        "prescan_regex": "pickle\\.loads"
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "pattern": "pickle.loads(...)"
+            },
+            {
+              "pattern": "_pickle.loads(...)"
+            }
+          ]
+        },
+        {
+          "pattern-not": "pickle.loads(\"...\")"
+        },
+        {
+          "pattern-not": "_pickle.loads(\"...\")"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "unsafe-yaml-use",
+      "languages": [
+        "python"
+      ],
+      "message": "Potential deserialization risk due to unsafe yaml deserialization usage.",
+      "metadata": {
+        "cwe": [
+          "CWE-502: Deserialization of Untrusted Data"
+        ],
+        "cwe_id": "CWE-502",
+        "prescan_regex": "(yaml\\.Loader|Loader|yaml\\.UnsafeLoader|UnsafeLoader)"
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "pattern": "yaml.unsafe_load(...)"
+            },
+            {
+              "pattern": "yaml.load(..., Loader = $LOADER, ...)"
+            }
+          ]
+        },
+        {
+          "pattern-not": "yaml.unsafe_load(\"...\")"
+        },
+        {
+          "pattern-not": "yaml.load(\"...\", Loader = $LOADER, ...)"
+        },
+        {
+          "metavariable-regex": {
+            "metavariable": "$LOADER",
+            "regex": "(yaml\\.Loader|Loader|yaml\\.UnsafeLoader|UnsafeLoader)"
+          }
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "insecure-eval-use",
+      "languages": [
+        "python"
+      ],
+      "message": "Potential code injection due to eval usage.",
+      "metadata": {
+        "cwe": [
+          "CWE-94: Improper Control of Generation of Code (Code Injection)"
+        ],
+        "cwe_id": "CWE-94",
+        "prescan_regex": "eval\\("
+      },
+      "patterns": [
+        {
+          "pattern": "eval(...)"
+        },
+        {
+          "pattern-not": "eval(\"...\")"
+        },
+        {
+          "pattern-not": "eval()"
+        },
+        {
+          "pattern-not-inside": "def eval(...):\n  ...\n...\n"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "insecure-exec-use",
+      "languages": [
+        "python"
+      ],
+      "message": "Potential code injection due to exec usage.",
+      "metadata": {
+        "cwe": [
+          "CWE-94: Improper Control of Generation of Code (Code Injection)"
+        ],
+        "cwe_id": "CWE-94",
+        "prescan_regex": "exec\\("
+      },
+      "patterns": [
+        {
+          "pattern": "exec(...)"
+        },
+        {
+          "pattern-not": "exec(\"...\")"
+        },
+        {
+          "pattern-not": "exec()"
+        },
+        {
+          "pattern-not-inside": "def exec(...):\n  ...\n...\n"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "insecure-os-popen-use",
+      "languages": [
+        "python"
+      ],
+      "message": "Potential command injection due to os.system usage.",
+      "metadata": {
+        "cwe": [
+          "CWE-78: CWE-78: Improper Neutralization of Special Elements used in an OS Command (OS Command Injection)"
+        ],
+        "cwe_id": "CWE-78",
+        "prescan_regex": "os\\.popen\\("
+      },
+      "patterns": [
+        {
+          "pattern": "os.popen(...)"
+        },
+        {
+          "pattern-not": "os.popen(\"...\", ...)"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "insecure-os-system-use",
+      "languages": [
+        "python"
+      ],
+      "message": "Potential command injection due to os.system usage.",
+      "metadata": {
+        "cwe": [
+          "CWE-78: CWE-78: Improper Neutralization of Special Elements used in an OS Command (OS Command Injection)"
+        ],
+        "cwe_id": "CWE-78",
+        "prescan_regex": "os\\.system\\("
+      },
+      "patterns": [
+        {
+          "pattern": "os.system(...)"
+        },
+        {
+          "pattern-not": "os.system(\"...\")"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "cursor-execute-sqli",
+      "languages": [
+        "python"
+      ],
+      "message": "Potential SQL injection due to variable usage in query string.",
+      "metadata": {
+        "cwe": [
+          "CWE-89: Improper Neutralization of Special Elements used in an SQL Command (SQL Injection)"
+        ],
+        "cwe_id": "CWE-89",
+        "prescan_regex": "(\\.execute|\\.executemany)"
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "pattern-either": [
+                {
+                  "pattern": "$CURSOR.$EXECUTE($S.format(...), ...)"
+                },
+                {
+                  "pattern": "$CURSOR.$EXECUTE($S % ..., ... )"
+                },
+                {
+                  "pattern": "$CURSOR.$EXECUTE(f\"...{...}...\", ...)"
+                },
+                {
+                  "pattern": "$CURSOR.$EXECUTE($S + ... , ...)"
+                },
+                {
+                  "pattern": "$CURSOR.$EXECUTE($S + ... + ..., ...)"
+                }
+              ]
+            },
+            {
+              "pattern-either": [
+                {
+                  "pattern-inside": "$QUERY = \"...\" % ...\n...\n"
+                },
+                {
+                  "pattern-inside": "$QUERY =  \"...\" + ...\n...\n"
+                },
+                {
+                  "pattern-inside": "$QUERY = \"...\".format(...)\n...\n"
+                },
+                {
+                  "pattern-inside": "$QUERY = f\"...{...}...\"\n...\n"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "pattern": "$CURSOR.$EXECUTE($QUERY)"
+        },
+        {
+          "pattern-not": "$CURSOR.$EXECUTE($S + \"...\", ...)"
+        },
+        {
+          "pattern-not": "$CURSOR.$EXECUTE($S + \"...\" + \"...\", ...)"
+        },
+        {
+          "metavariable-regex": {
+            "metavariable": "$CURSOR",
+            "regex": "(?i)(cur|[\\w_]*cursor|conn|[\\w_]*connection)"
+          }
+        },
+        {
+          "metavariable-regex": {
+            "metavariable": "$EXECUTE",
+            "regex": "(execute|execute_many)"
+          }
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "insecure-subprocess-using-shell",
+      "languages": [
+        "python"
+      ],
+      "message": "Potential command injection due to subprocess usage with shell=True.",
+      "metadata": {
+        "cwe": [
+          "CWE-78: Improper Neutralization of Special Elements used in an OS Command (OS Command Injection)"
+        ],
+        "cwe_id": "CWE-78",
+        "prescan_regex": "(Popen\\(|run\\(|call\\(|check_call\\(|check_output\\()"
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "pattern": "Popen(..., shell=True, ...)"
+            },
+            {
+              "pattern": "run(..., shell=True, ...)"
+            },
+            {
+              "pattern": "call(..., shell=True, ...)"
+            },
+            {
+              "pattern": "check_call(..., shell=True, ...)"
+            },
+            {
+              "pattern": "check_output(..., shell=True, ...)"
+            },
+            {
+              "pattern": "subprocess.$METHOD(..., shell=True, ...)"
+            },
+            {
+              "pattern": "create_subprocess_shell(...)"
+            }
+          ]
+        },
+        {
+          "pattern-not": "subprocess.$METHOD(\"...\", shell=True, ...)"
+        },
+        {
+          "pattern-not": "create_subprocess_shell(\"...\")"
+        },
+        {
+          "pattern-not": "Popen(\"...\", shell=True, ...)"
+        },
+        {
+          "pattern-not": "run(\"...\", shell=True, ...)"
+        },
+        {
+          "pattern-not": "call(\"...\", shell=True, ...)"
+        },
+        {
+          "pattern-not": "check_call(\"...\", shell=True, ...)"
+        },
+        {
+          "pattern-not": "check_output(\"...\", shell=True, ...)"
+        }
+      ],
+      "severity": "WARNING"
+    }
+  ]
+}

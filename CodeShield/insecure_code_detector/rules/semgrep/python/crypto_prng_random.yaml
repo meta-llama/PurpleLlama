@@ -1,0 +1,17 @@
+rules:
+- id: insecure-crypto-prng-random
+  patterns:
+      - pattern-either:
+        - pattern: random.$FUNC(...)
+  message: >-
+    The default random module in Python should not be used for cryptographic applications.
+    Prefer the secrets module for these uses (https://docs.python.org/3/library/random.html).
+  metadata:
+    source-rule-url: https://cwe.mitre.org/data/definitions/338.html
+    cwe:
+    - 'CWE-338: Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG)'
+    cwe_id: CWE-338
+    prescan_regex: random\.
+  severity: WARNING
+  languages:
+  - python

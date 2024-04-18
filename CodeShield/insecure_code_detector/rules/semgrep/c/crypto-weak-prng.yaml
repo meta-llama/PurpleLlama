@@ -1,0 +1,17 @@
+rules:
+- id: crypto-weak-prng
+  message: >-
+    Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG).
+  patterns:
+    - pattern: rand(...)
+  metadata:
+    cwe:
+    - 'CWE-338: Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG)'
+    cwe_id: CWE-338
+    prescan_regex: rand\(
+    likelihood: HIGH
+    impact: LOW
+  languages:
+    - cpp
+    - c
+  severity: WARNING

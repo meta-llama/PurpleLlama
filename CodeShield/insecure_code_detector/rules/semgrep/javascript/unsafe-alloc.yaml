@@ -1,0 +1,15 @@
+rules:
+- id: "unsafe-alloc"
+  languages:
+  - "javascript"
+  patterns:
+    - pattern-either:
+      - pattern: Buffer.allocUnsafe(...)
+      - pattern: Buffer.allocUnsafeSlow(...)
+  severity: "WARNING"
+  message: |
+    Use of uninitialized buffer can lead to information leak related risks.
+  metadata:
+    cwe_id: "CWE-908"
+    cwe: "Use of Uninitialized Resource"
+    prescan_regex: (Buffer\.allocUnsafe\(|Buffer\.allocUnsafeSlow\()

@@ -1,0 +1,532 @@
+{
+  "rules": [
+    {
+      "id": "blowfish-encryption-usage",
+      "languages": [
+        "cpp",
+        "c"
+      ],
+      "message": "The Blowfish encryption algorithm has suboptimal security and speed.",
+      "metadata": {
+        "cwe": [
+          "CWE-1240: Use of a Cryptographic Primitive with a Risky Implementation"
+        ],
+        "cwe_id": "CWE-1240",
+        "impact": "HIGH",
+        "likelihood": "LOW",
+        "prescan_regex": "bf|BF"
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "pattern-regex": "EVP_bf_\\w+\\s*\\("
+            },
+            {
+              "pattern-regex": "BF_\\w+crypt\\s*\\("
+            }
+          ]
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "bugprone-snprintf",
+      "languages": [
+        "cpp",
+        "c"
+      ],
+      "message": "Potential out of bounds access due to improper validation of return values of .*snprintf.* functions\n",
+      "metadata": {
+        "cwe": "Improper Restriction of Operations within the Bounds of a Memory Buffer",
+        "cwe_id": "CWE-119",
+        "prescan_regex": ".*(snprintf).*"
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "pattern": "$RET = $FUN($BUF, ...);\n...\n$BUF[$RET] = ...;\n"
+            },
+            {
+              "pattern": "$RET = $FUN($BUF, ...);\n...\n*($BUF + $RET) = ...;\n"
+            },
+            {
+              "pattern": "$RET = $FUN($BUF, ...);\n...\n$FUNC($BUF + $RET, ...);\n"
+            }
+          ]
+        },
+        {
+          "pattern-not": "$RET = $FUN($BUF, ...);\n...\nif ($RET < $Y) {...}\n"
+        },
+        {
+          "metavariable-regex": {
+            "metavariable": "$FUN",
+            "regex": ".*(snprintf).*"
+          }
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "crypto-weak-prng",
+      "languages": [
+        "cpp",
+        "c"
+      ],
+      "message": "Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG).",
+      "metadata": {
+        "cwe": [
+          "CWE-338: Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG)"
+        ],
+        "cwe_id": "CWE-338",
+        "impact": "LOW",
+        "likelihood": "HIGH",
+        "prescan_regex": "rand\\("
+      },
+      "patterns": [
+        {
+          "pattern": "rand(...)"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "des-algorithm-usage",
+      "languages": [
+        "cpp",
+        "c"
+      ],
+      "message": "The DES, 3DES and DES-X algorithms are insecure. Please avoid using them.",
+      "metadata": {
+        "cwe": [
+          "CWE-1240: Use of a Cryptographic Primitive with a Risky Implementation"
+        ],
+        "cwe_id": "CWE-1240",
+        "impact": "HIGH",
+        "likelihood": "LOW",
+        "prescan_regex": "des|DES"
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "pattern-regex": "EVP_des_\\w+\\s*\\("
+            },
+            {
+              "pattern-regex": "DES_\\w+crypt\\s*\\("
+            }
+          ]
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "ecb-mode-encryption-usage",
+      "languages": [
+        "cpp",
+        "c"
+      ],
+      "message": "ECB mode encryption is both deterministic and unauthenticated. Do not use it unless this is very explicitly what you need.",
+      "metadata": {
+        "cwe": [
+          "CWE-323: Reusing a Nonce, Key Pair in Encryption"
+        ],
+        "cwe_id": "CWE-323",
+        "impact": "HIGH",
+        "likelihood": "LOW",
+        "prescan_regex": "EVP"
+      },
+      "patterns": [
+        {
+          "pattern-regex": "EVP_\\w+_ecb\\s*\\("
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "rsa-key-size-insufficient",
+      "languages": [
+        "cpp",
+        "c"
+      ],
+      "message": "Creation of RSA Key with insufficient size.",
+      "metadata": {
+        "cwe": [
+          "CWE-331: Insufficient Entropy"
+        ],
+        "cwe_id": "CWE-331",
+        "impact": "HIGH",
+        "likelihood": "LOW",
+        "prescan_regex": "(RSA\\_generate\\_key|EVP\\_RSA\\_gen)"
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "pattern": "$X = $KEYSIZE;\n...\n$RSAGENFUNCTION($ARG1,$X,$ARG2,$ARG3);\n"
+            },
+            {
+              "pattern": "$RSAGENFUNCTION($ARG1,$KEYSIZE,$ARG2,$ARG3);"
+            },
+            {
+              "pattern": "$X = $KEYSIZE;\n...\nEVP_RSA_gen($X);\n"
+            },
+            {
+              "pattern": "EVP_RSA_gen($KEYSIZE)"
+            }
+          ]
+        },
+        {
+          "metavariable-regex": {
+            "metavariable": "$KEYSIZE",
+            "regex": "(512|768|1024|1536)"
+          }
+        },
+        {
+          "metavariable-regex": {
+            "metavariable": "$RSAGENFUNCTION",
+            "regex": "RSA_generate_key\\w*"
+          }
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "unauthenticated-encryption-usage",
+      "languages": [
+        "cpp",
+        "c"
+      ],
+      "message": "It looks like you are using an unauthenticated mode of encryption. Don't use this unless you have a good reason or are separately adding authentication.",
+      "metadata": {
+        "cwe": [
+          "CWE-347: Improper Verification of Cryptographic Signature"
+        ],
+        "cwe_id": "CWE-347",
+        "impact": "HIGH",
+        "likelihood": "LOW",
+        "prescan_regex": "EVP"
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "pattern-regex": "EVP_\\w+_cbc\\s*\\("
+            },
+            {
+              "pattern-regex": "EVP_\\w+_ctr\\s*\\("
+            },
+            {
+              "pattern-regex": "EVP_\\w+_xts\\s*\\("
+            },
+            {
+              "pattern-regex": "EVP_\\w+_cfb\\w\\s*\\("
+            },
+            {
+              "pattern-regex": "EVP_\\w+_ofb\\s*\\("
+            }
+          ]
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "potential-integer-overflow-to-buffer-overflow",
+      "impact": "MEDIUM",
+      "languages": [
+        "cpp",
+        "c"
+      ],
+      "likelihood": "HIGH",
+      "message": "Potential integer overflow may result in buffer overflow",
+      "metadata": {
+        "cwe": [
+          "CWE-680: Integer Overflow to Buffer Overflow"
+        ],
+        "cwe_id": "CWE-680",
+        "prescan_regex": "malloc\\("
+      },
+      "patterns": [
+        {
+          "pattern": "malloc($X * ...)"
+        },
+        {
+          "pattern-not-inside": "if($X < ...){...}\n...\n"
+        },
+        {
+          "pattern-not-inside": "if ($X > ...){...}\n...\n"
+        },
+        {
+          "metavariable-regex": {
+            "metavariable": "$X",
+            "regex": "^(?![A-Z_]+).*$"
+          }
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "invalid-free",
+      "impact": "MEDIUM",
+      "languages": [
+        "cpp",
+        "c"
+      ],
+      "likelihood": "HIGH",
+      "message": "Free of memory not on the heap",
+      "metadata": {
+        "cwe": [
+          "CWE-590: Free of Memory not on the Heap"
+        ],
+        "cwe_id": "CWE-590",
+        "prescan_regex": "free\\("
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "pattern": "$TYPE $X; ... free(&$X);"
+            },
+            {
+              "pattern": "$TYPE $ARR[$Z]; ... free($ARR);"
+            }
+          ]
+        },
+        {
+          "pattern-inside": "$TYPE2 $FUNC(...){ ... }"
+        },
+        {
+          "pattern-not-inside": "$TYPE $X;\n...\nreturn $Y;\n...\nfree(&$X);\n"
+        },
+        {
+          "pattern-not-inside": "$TYPE $ARR[$Z];\n...\nreturn $Y;\n...\nfree($ARR);\n"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "md2-or-md4-hash-usage",
+      "languages": [
+        "cpp",
+        "c"
+      ],
+      "message": "The MD2 and MD4 hash functions are considered insecure.",
+      "metadata": {
+        "cwe": [
+          "CWE-328: Use of Weak Hash"
+        ],
+        "cwe_id": "CWE-328",
+        "impact": "HIGH",
+        "likelihood": "LOW",
+        "prescan_regex": "md2|md4|MD2|MD4"
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "pattern": "MD2_Init(...)"
+            },
+            {
+              "pattern": "EVP_md2(...)"
+            },
+            {
+              "pattern": "MD4_Init(...)"
+            },
+            {
+              "pattern": "EVP_md4(...)"
+            }
+          ]
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "md5-usage",
+      "languages": [
+        "cpp",
+        "c"
+      ],
+      "message": "The MD5 hash function is considered insecure",
+      "metadata": {
+        "cwe": [
+          "CWE-328: Use of Weak Hash"
+        ],
+        "cwe_id": "CWE-328",
+        "impact": "HIGH",
+        "likelihood": "LOW",
+        "prescan_regex": "md5|MD5"
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "pattern": "MD5_Init(...)"
+            },
+            {
+              "pattern": "EVP_md5(...)"
+            }
+          ]
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "potential-command-injection",
+      "languages": [
+        "cpp",
+        "c"
+      ],
+      "message": "Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG).",
+      "metadata": {
+        "cwe": [
+          "CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+        ],
+        "cwe_id": "CWE-78",
+        "impact": "HIGH",
+        "likelihood": "LOW",
+        "prescan_regex": "system\\("
+      },
+      "patterns": [
+        {
+          "pattern": "system($X)"
+        },
+        {
+          "pattern-not": "system(\"...\")"
+        },
+        {
+          "metavariable-regex": {
+            "metavariable": "$X",
+            "regex": "^(?![A-Z_]+).*$"
+          }
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "sha1-usage",
+      "languages": [
+        "cpp",
+        "c"
+      ],
+      "message": "The SHA1 hash function is considered insecure",
+      "metadata": {
+        "cwe": [
+          "CWE-328: Use of Weak Hash"
+        ],
+        "cwe_id": "CWE-328",
+        "impact": "HIGH",
+        "likelihood": "LOW",
+        "prescan_regex": "sha1|SHA1"
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "pattern": "SHA1_Init(...)"
+            },
+            {
+              "pattern": "EVP_sha1(...)"
+            },
+            {
+              "pattern": "EVP_md5_sha1(...)"
+            }
+          ]
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "vulnerable-sprintf",
+      "languages": [
+        "cpp",
+        "c"
+      ],
+      "message": "Potential buffer overflow due to usage of sprintf",
+      "metadata": {
+        "confidence": "MEDIUM",
+        "cwe": [
+          "CWE-120: Classic buffer overflow"
+        ],
+        "cwe_id": "CWE-120",
+        "impact": "HIGH",
+        "likelihood": "LOW"
+      },
+      "patterns": [
+        {
+          "pattern": "sprintf(..., $FORMAT, ...)"
+        },
+        {
+          "metavariable-regex": {
+            "metavariable": "$FORMAT",
+            "regex": ".*%s.*"
+          }
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "vulnerable-strcpy",
+      "languages": [
+        "cpp",
+        "c"
+      ],
+      "message": "Calls to strcpy",
+      "metadata": {
+        "impact": "MEDIUM",
+        "likelihood": "HIGH"
+      },
+      "patterns": [
+        {
+          "pattern": "strcpy(...)"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "write-to-stack-buffer",
+      "impact": "MEDIUM",
+      "languages": [
+        "cpp",
+        "c"
+      ],
+      "likelihood": "HIGH",
+      "message": "Calls to memcpy that write to a stack buffer",
+      "metadata": {
+        "cwe": [
+          "CWE-121: Stack-based Buffer Overflow"
+        ],
+        "cwe_id": "CWE-121",
+        "prescan_regex": "(memcpy|memmove)"
+      },
+      "patterns": [
+        {
+          "pattern": "$FUN($BUF, ..., $LEN)"
+        },
+        {
+          "pattern-inside": "$TYPE $BUF[$Y];\n...\n$FUN($BUF, ..., $LEN);\n"
+        },
+        {
+          "pattern-not-inside": "$TYPE $BUF[$Y];\n...\nif($LEN < $Z) {...}\n...\n$FUN($BUF, ..., $LEN);\n"
+        },
+        {
+          "pattern-not": "$FUN($BUF, \"...\", ...)"
+        },
+        {
+          "metavariable-pattern": {
+            "metavariable": "$FUN",
+            "pattern-either": [
+              {
+                "pattern": "memcpy"
+              },
+              {
+                "pattern": "memmove"
+              }
+            ]
+          }
+        }
+      ],
+      "severity": "WARNING"
+    }
+  ]
+}

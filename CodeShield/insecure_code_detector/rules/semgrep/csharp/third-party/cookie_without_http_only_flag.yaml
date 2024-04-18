@@ -1,0 +1,24 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/csharp/cookies/rule-CookieWithoutHttpOnlyFlag.yml?ref_type=heads
+
+rules:
+- id: "cookie-without-http-only-flag"
+  languages:
+  - "csharp"
+  patterns:
+  - pattern: |
+      var $COOKIE = new HttpCookie(...);
+      ...
+      $COOKIE.HttpOnly = false;
+  message: |
+    The `HttpOnly` attribute when set to `true` protects the cookie value from being accessed by
+    client side JavaScript such
+    as reading the `document.cookie` values. By enabling this protection, a website that is
+    vulnerable to
+    Cross-Site Scripting (XSS) will be able to block malicious scripts from accessing the cookie
+    value from JavaScript.
+  severity: "WARNING"
+  metadata:
+    cwe: "Sensitive cookie without 'HttpOnly' flag"
+    cwe_id: "CWE-1004"
+    prescan_regex: HttpCookie\(

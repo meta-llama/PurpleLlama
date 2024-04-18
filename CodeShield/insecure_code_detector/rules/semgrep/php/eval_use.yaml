@@ -1,0 +1,15 @@
+rules:
+- id: insecure-eval-use
+  patterns:
+    - pattern: eval(...);
+    - pattern-not: eval('...');
+  message: >-
+    Potential code injection due to eval usage.
+  metadata:
+    cwe:
+      - 'CWE-94: Improper Control of Generation of Code (Code Injection)'
+    cwe_id: CWE-94
+    prescan_regex: eval\(
+  severity: WARNING
+  languages:
+    - php

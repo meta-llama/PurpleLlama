@@ -1,0 +1,33 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/csharp/injection/rule-CommandInjection.yml
+
+rules:
+- id: "command-injection"
+  languages:
+  - csharp
+  patterns:
+  - pattern-inside: |
+      using System.Diagnostics;
+      ...
+  - pattern-either:
+    - patterns:
+      - pattern: "Process.Start($ARG)"
+      - pattern-not: "Process.Start(\"...\")"
+    - pattern: "(Process $PROC).StartInfo.FileName = <...$ARG...>;"
+    - pattern: "(Process $PROC).StartInfo.Arguments = <...$ARG...>;"
+    - patterns:
+      - pattern-inside: |
+          $PSINFO = new ProcessStartInfo(...)
+          ...
+          Process.Start($PSINFO)
+      - pattern-either:
+        - pattern: "$PSINFO.Arguments = <...$ARG...>;"
+        - pattern: "$PSINFO.FileName = <...$ARG...>;"
+  message: |
+    Untrusted input passed to command execution can lead to command injection vulnerabilities
+  severity: "WARNING"
+  metadata:
+    category: "security"
+    cwe: "CWE-78 Improper neutralization of special elements used in an OS command(OS Command Injection)"
+    cwe_id: "CWE-78"
+    prescan_regex: \.Arguments

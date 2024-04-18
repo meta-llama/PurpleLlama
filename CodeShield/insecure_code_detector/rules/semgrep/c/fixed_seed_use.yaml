@@ -1,0 +1,22 @@
+rules:
+- id: fixed-seed-usage
+  message: >-
+    Use of fixed seed for PRNG.
+  patterns:
+    - pattern-either:
+      - pattern: $SEED = "..."
+      - pattern: $SEED = (int $Y)
+    - metavariable-regex:
+        metavariable: $SEED
+        regex: (seed|rngSeed|rng_seed|prng_seed|prngSeed)
+  metadata:
+    cwe:
+    - 'CWE-335: Incorrect Usage of Seeds in Pseudo-Random Number Generator (PRNG)'
+    cwe_id: CWE-335
+    prescan_regex: (\w*seed\w*|rngSeed\w*|rng_seed\w*|prng_seed\w*|prngSeed\w*)
+    likelihood: HIGH
+    impact: LOW
+  languages:
+    - cpp
+    - c
+  severity: WARNING

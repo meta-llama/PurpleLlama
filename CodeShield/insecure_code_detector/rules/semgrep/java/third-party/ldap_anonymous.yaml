@@ -1,0 +1,21 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/java/ldap/rule-AnonymousLDAP.yml?ref_type=heads
+
+rules:
+- id: "ldap-insecure_config_auth"
+  languages:
+  - "java"
+  patterns:
+  - pattern-inside: |
+      import javax.naming.Context;
+      ...
+  - pattern: "$ENV.put(Context.SECURITY_AUTHENTICATION, \"none\");"
+  message: |
+    The application does not provide authentication when communicating an LDAP
+    server. It is strongly recommended that the LDAP server be configured with
+    authentication and restrict what queries users can execute.
+  severity: "WARNING"
+  metadata:
+    cwe: "Missing authentication for critical function (LDAP)"
+    cwe_id: "CWE-306"
+    prescan_regex: Context\.SECURITY_AUTHENTICATION

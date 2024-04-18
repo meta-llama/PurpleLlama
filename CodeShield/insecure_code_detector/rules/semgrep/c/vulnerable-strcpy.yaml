@@ -1,0 +1,12 @@
+rules:
+- id: vulnerable-strcpy
+  message: Calls to strcpy
+  patterns:
+    - pattern: strcpy(...)
+  metadata:
+    likelihood: HIGH
+    impact: MEDIUM
+  languages:
+    - cpp
+    - c
+  severity: WARNING

@@ -1,0 +1,19 @@
+rules:
+- id: md5-usage
+  message: >-
+    The MD5 hash function is considered insecure
+  patterns:
+    - pattern-either:
+      - pattern: MD5_Init(...)
+      - pattern: EVP_md5(...)
+  metadata:
+    cwe:
+    - 'CWE-328: Use of Weak Hash'
+    cwe_id: CWE-328
+    prescan_regex: md5|MD5
+    likelihood: LOW
+    impact: HIGH
+  languages:
+    - cpp
+    - c
+  severity: WARNING

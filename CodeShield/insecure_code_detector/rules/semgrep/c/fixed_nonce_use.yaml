@@ -1,0 +1,22 @@
+rules:
+- id: fixed-nonce-usage
+  message: >-
+    Use of fixed nonce as input to encryption/signing is generally considered insecure.
+  patterns:
+    - pattern-either:
+      - pattern: $NONCE = "..."
+      - pattern: $NONCE = (int $Y)
+    - metavariable-regex:
+        metavariable: $NONCE
+        regex: '(\w*nonce\w*|\biv\b|\w*initializationVector\w*|\w*initialization_vector\w*)'
+  metadata:
+    cwe:
+    - 'CWE-323: Reusing a Nonce, Key Pair in Encryption'
+    cwe_id: CWE-323
+    prescan_regex: nonce|iv|initialization_vector|initializationVector
+    likelihood: LOW
+    impact: HIGH
+  languages:
+    - cpp
+    - c
+  severity: WARNING

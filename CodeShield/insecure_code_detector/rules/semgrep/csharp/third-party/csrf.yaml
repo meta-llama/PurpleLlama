@@ -1,0 +1,32 @@
+
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/csharp/csrf/rule-Csrf.yml?ref_type=heads
+
+rules:
+- id: "csrf"
+  languages:
+  - "csharp"
+  patterns:
+  - pattern: |
+      [$HTTPMETHOD]
+      public $RET $FOO(...) {
+        ...
+      }
+  - pattern-not: |
+      [ValidateAntiForgeryToken]
+      public $RET $FOO(...) {
+        ...
+      }
+  - metavariable-regex:
+      metavariable: "$HTTPMETHOD"
+      regex: "Http(Post|Delete|Patch|Put)"
+  message: |
+    The application failed to protect against Cross-Site Request Forgery (CSRF)
+    due to not including the `[ValidateAntiForgeryToken]` attribute on an
+    HTTP method handler that could change user state (usually in the form of POST or PUT
+    methods).
+  severity: "WARNING"
+  metadata:
+    cwe: "Cross-Site Request Forgery (CSRF)"
+    cwe_id: "CWE-352"
+    prescan_regex: Http(Post|Delete|Patch|Put)

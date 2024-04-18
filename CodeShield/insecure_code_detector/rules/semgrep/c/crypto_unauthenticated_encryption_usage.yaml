@@ -1,0 +1,22 @@
+rules:
+- id: unauthenticated-encryption-usage
+  message: >-
+    It looks like you are using an unauthenticated mode of encryption. Don't use this unless you have a good reason or are separately adding authentication.
+  patterns:
+    - pattern-either:
+      - pattern-regex: EVP_\w+_cbc\s*\(
+      - pattern-regex: EVP_\w+_ctr\s*\(
+      - pattern-regex: EVP_\w+_xts\s*\(
+      - pattern-regex: EVP_\w+_cfb\w\s*\(
+      - pattern-regex: EVP_\w+_ofb\s*\(
+  metadata:
+    cwe:
+    - 'CWE-347: Improper Verification of Cryptographic Signature'
+    cwe_id: CWE-347
+    prescan_regex: EVP
+    likelihood: LOW
+    impact: HIGH
+  languages:
+    - cpp
+    - c
+  severity: WARNING

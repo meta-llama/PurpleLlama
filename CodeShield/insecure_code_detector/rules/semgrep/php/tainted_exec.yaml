@@ -1,0 +1,30 @@
+rules:
+  - id: unsafe-exec
+    mode: taint
+    pattern-sources:
+      - pattern: $_POST
+      - pattern: $_GET
+      - pattern: $_REQUEST
+      - pattern: $_COOKIE
+      - pattern: $_FILES
+    pattern-sanitizers:
+      - pattern: escapeshellcmd(...)
+      - pattern: escapeshellarg(...)
+    pattern-sinks:
+      - patterns:
+          - pattern: $F(...)
+          - pattern-not: $F('...', ...)
+          - metavariable-regex:
+              metavariable: $F
+              regex: (exec|passthru|proc_open|shell_exec|system|popen|pcntl_exec)
+    message: >
+      User controlled input (e.g $_GET and $_POST) might flows into a command execution function.
+    languages:
+      - php
+    severity: WARNING
+    metadata:
+      cwe:
+        - "CWE-78: Improper Neutralization of Special Elements used in an OS
+          Command ('OS Command Injection')"
+      cwe_id: CWE-78
+      prescan_regex: (exec\(|passthru\(|proc_open\(|shell_exec\(|system\(|popen\(|pcntl_exec\()

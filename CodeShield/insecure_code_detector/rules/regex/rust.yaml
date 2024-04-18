@@ -1,0 +1,82 @@
+- cwe_id: CWE-89
+  description: Potential sql injection vulnerability. Please consider using a prepared
+    statement instead.
+  rule: sql_query\s*\(\s*[^"].*\)
+  severity: Warning
+  pattern_id: RUST-R-001
+
+- cwe_id: CWE-78
+  description: Potential for command injection if input is not sanitized.
+  rule: Command::new\s*\(\s*[^"'].*\)
+  severity: Warning
+  pattern_id: RUST-R-002
+
+- cwe_id: CWE-676
+  description: using unsafe code - please review carefully
+  rule: unsafe\s*\{
+  severity: Advice
+  pattern_id: RUST-R-003
+
+- cwe_id: CWE-807
+  description: The first argument can be controlled by an attacker. Do not use this
+    function in security relevant contexts
+  rule: args_os\(\)
+  severity: Advice
+  pattern_id: RUST-R-004
+
+- cwe_id: CWE-807
+  description: The first argument can be controlled by an attacker. Do not use this
+    function in security relevant contexts
+  rule: args\(\)
+  severity: Advice
+  pattern_id: RUST-R-005
+
+- cwe_id: CWE-807
+  description: This can be controlled by an attacker. Do not use this function in
+    security relevant contexts
+  rule: current_exe\(\)
+  severity: Advice
+  pattern_id: RUST-R-006
+
+- cwe_id: CWE-328
+  description: Potential usage of weak hash functions
+  rule: (Md2::new|Md4::new|Md5::new|Sha1::new)
+  severity: Advice
+  pattern_id: RUST-R-007
+
+- cwe_id: CWE-328
+  description: Potential usage of weak hash functions from rust-openssl
+  rule: (MessageDigest::md5|MessageDigest::sha1)
+  severity: Advice
+  pattern_id: RUST-R-007
+
+- cwe_id: CWE-295
+  description: 'Dangerous APIs: Accepting invalid tls connections'
+  rule: danger_accept_invalid_hostnames|danger_accept_invalid_certs
+  severity: Advice
+  pattern_id: RUST-R-008
+
+- cwe_id: CWE-295
+  description: 'Dangerous APIs: Accepting invalid ssl connections'
+  rule: ClientConfig::dangerous|DangerousClientConfig|\.dangerous\(\)
+  severity: Advice
+  pattern_id: RUST-R-009
+
+- cwe_id: CWE-295
+  description: 'Disabled SSL verification: Accepting invalid ssl connections'
+  rule: set_verify\(.*SSL_VERIFY_NONE\)
+  severity: Advice
+  pattern_id: RUST-R-010
+
+- cwe_id: CWE-807
+  description: Creates an insecure temp dir - other processes might guess it / overwrite
+    / change / read files.
+  rule: temp_dir\(\)
+  severity: Advice
+  pattern_id: RUST-R-011
+
+- cwe_id: CWE-328
+  description: Potential usage of outdated ciphers from rust-openssl
+  rule: (Cipher::rc4|Cipher::bf_|Cipher::des_)
+  severity: Advice
+  pattern_id: RUST-R-012

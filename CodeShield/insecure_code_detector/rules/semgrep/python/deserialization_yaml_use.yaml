@@ -1,0 +1,23 @@
+# Reference: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/python/deserialization/rule-yaml-load.yml?ref_type=heads
+
+rules:
+- id: unsafe-yaml-use
+  patterns:
+      - pattern-either:
+          - pattern: yaml.unsafe_load(...)
+          - pattern: yaml.load(..., Loader = $LOADER, ...)
+      - pattern-not: yaml.unsafe_load("...")
+      - pattern-not: yaml.load("...", Loader = $LOADER, ...)
+      - metavariable-regex:
+          metavariable: '$LOADER'
+          regex: (yaml\.Loader|Loader|yaml\.UnsafeLoader|UnsafeLoader)
+  message: >-
+    Potential deserialization risk due to unsafe yaml deserialization usage.
+  metadata:
+    cwe:
+    - 'CWE-502: Deserialization of Untrusted Data'
+    cwe_id: CWE-502
+    prescan_regex: (yaml\.Loader|Loader|yaml\.UnsafeLoader|UnsafeLoader)
+  severity: WARNING
+  languages:
+  - python

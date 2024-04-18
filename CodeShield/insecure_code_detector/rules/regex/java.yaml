@@ -1,0 +1,143 @@
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+#
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
+- cwe_id: CWE-327 # MSTG-CRYPTO-4 / OWASP M5
+  description: Deprecated cryptographic algorithms being used (ECB)
+  rule: Cipher\.getInstance\(".*ECB.*"
+  severity: Warning
+  pattern_id: deprecated-ecb-usage
+
+- cwe_id: CWE-327 # MSTG-CRYPTO-4 / OWASP M5
+  description: Deprecated cryptographic algorithms being used (ECB)
+  rule: \.setBlockModes\(.*BLOCK_MODE_ECB
+  severity: Warning
+  pattern_id: deprecated-ecb-blockmode-usage
+
+- cwe_id: CWE-327 # MSTG-CRYPTO-4 / OWASP M5
+  description: Deprecated cryptographic algorithms being used (ECB)
+  rule: Cipher\.getInstance\("AES"\)
+  severity: Warning
+  pattern_id: deprecated-aes-usage
+
+- cwe_id: CWE-327 # MSTG-CRYPTO-4 / OWASP M5
+  description: Deprecated cryptographic algorithms being used (CBC) with PKCS5 / PKCS7 padding, might be vulnerable to Padding Oracle attacks
+  rule: Cipher\.getInstance\(.*\/CBC\/(PKCS5|PKCS7)Padding"
+  severity: Warning
+  pattern_id: deprecated-cbc-padding-usage
+
+- cwe_id: CWE-327 # MSTG-CRYPTO-4 / OWASP M5
+  description: Deprecated cryptographic algorithms being used (3DES/DES/DESede/Blowfish/DESedeWrap)
+  rule: \.getInstance\("(3DES|DESede|DES|Blowfish|DESedeWrap)
+  severity: Warning
+  pattern_id: deprecated-crypto-algorithms-usage
+
+- cwe_id: CWE-327 # MSTG-CRYPTO-4 / OWASP M5
+  description: The application uses "NullCipher"
+  rule: (new NullCipher\(|new javax\.crypto\.NullCipher\()
+  severity: Warning
+  pattern_id: nullcipher-usage
+
+- cwe_id: CWE-611
+  description: XML external entities enabled
+  rule: \.setProperty\("javax\.xml\.stream\.isSupportingExternalEntities",[\s]?true\)
+  severity: Warning
+  pattern_id: xml-external-entities-enabled
+
+- cwe_id: CWE-611
+  description: XML external entities enabled (DOCTYPE not disabled)
+  rule: \.setFeature\("http?://[^\s]+disallow-doctype-decl",[\s]?false\)
+  severity: Warning
+  pattern_id: doctype-not-disabled
+
+- cwe_id: CWE-611
+  description: XML external entities enabled
+  rule: \.setFeature\("http?://[^\s]+(external-parameter-entities|external-general-entities)",[\s]?true\)
+  severity: Warning
+  pattern_id: xml-external-entities-feature-enabled
+
+- cwe_id: CWE-327 # MSTG-CRYPTO-4 / OWASP M5
+  description: Use of RSA without OAEP padding.
+  rule: Cipher\.getInstance\(.*NoPadding"
+  severity: Warning
+  pattern_id: rsa-without-oaep-padding
+
+- cwe_id: CWE-327 # MSTG-CRYPTO-4 / OWASP M5
+  description: Use of weak hashing algorithm
+  rule: \.getSha1Digest\(\)|\.sha1\(|\.sha1Hex\(|\.getInstance\("(SHA1|SHA-1)"
+  severity: Warning
+  pattern_id: weak-sha1-hashing
+
+- cwe_id: CWE-327 # MSTG-CRYPTO-4 / OWASP M5
+  description: Use of weak hashing algorithm
+  rule: \.getMd2Digest\(\)|\.md2\(|\.md2Hex\(|\.getInstance\("(MD2|md2)"
+  severity: Warning
+  pattern_id: weak-md2-hashing
+
+- cwe_id: CWE-327 # MSTG-CRYPTO-4 / OWASP M5
+  description: Use of weak hashing algorithm
+  rule: \.getMd4Digest\(\)|\.md4\(|\.md4Hex\(|\.getInstance\("(MD4|md4)"
+  severity: Warning
+  pattern_id: weak-md4-hashing
+
+- cwe_id: CWE-327 # MSTG-CRYPTO-4 / OWASP M5
+  description: Use of weak hashing algorithm
+  rule: \.getMd5Digest\(\)|\.md5\(|\.md5Hex\(|\.getInstance\("(MD5|md5)"
+  severity: Warning
+  pattern_id: weak-md5-hashing
+
+- cwe_id: CWE-327 # MSTG-CRYPTO-4 / OWASP M5
+  description: Deprecated cryptographic algorithms being used (RC2/RC4)
+  rule: \.getInstance\("(RC2|rc2|RC4|rc4|ARCFOUR)
+  severity: Warning
+  pattern_id: deprecated-rc2-rc4-usage
+
+- cwe_id: CWE-489 # MSTG-RESILIENCE-2 / OWASP M1
+  description: Webview debugging enabled
+  rule: \.setWebContentsDebuggingEnabled\(true\);
+  severity: Warning
+  pattern_id: webview-debugging-enabled
+
+- cwe_id: CWE-327 # MSTG-CRYPTO-4 / OWASP M5
+  description: Weak networking protocol (SSLv3)
+  rule: \.getInstance\("SSLv3
+  severity: Warning
+  pattern_id: weak-ssl3-protocol
+
+- cwe_id: CWE-276 # MSTG-STORAGE-2 / OWASP M2
+  description: The application creates world readable or world writable files
+  rule: Context\.MODE_WORLD_(READABLE|WRITABLE)
+  severity: Warning
+  pattern_id: world-readable-writable-files
+
+- cwe_id: CWE-200 # MSTG-PLATFORM-6 / OWASP M7
+  description: Content loaded in the WebView is allowed to access the filesystem
+  rule: \.(setAllowFileAccess|setAllowFileAccessFromURLs|setAllowUniversalAccessFromURLs)\(true\)
+  severity: Warning
+  pattern_id: webview-filesystem-access
+
+- cwe_id: CWE-295
+  description: Unsafe hostname verification
+  rule: (ALLOW_ALL_HOSTNAME_VERIFIER|new AllowAllHostnameVerifier|new NullHostnameVerifier|NoopHostnameVerifier)
+  severity: Warning
+  pattern_id: unsafe-hostname-verification
+
+# Reference: https://wiki.sei.cmu.edu/confluence/display/java/SEI+CERT+Oracle+Coding+Standard+for+Java
+- cwe_id: CWE-78
+  description: Potential command injection if unsanitized input is sent to Runtime.exec() method
+  rule: Runtime\.getRuntime\(\)(.*)?\.exec\s*\(
+  severity: Warning
+  pattern_id: potential-command-injection
+
+- cwe_id: CWE-589
+  description: Use of deprecated or obsolete methods
+  rule: Character\.(isJavaLetter|isJavaLetterOrDigit|isSpace)\(
+  severity: Advice
+  pattern_id: deprecated-character-methods
+
+- cwe_id: CWE-589
+  description: Use of deprecated or obsolete methods
+  rule: Thread\.(run|stop)\(
+  severity: Advice
+  pattern_id: deprecated-thread-methods

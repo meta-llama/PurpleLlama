@@ -1,0 +1,12 @@
+rules:
+- id: "deserialization_insecure_untrusted_data"
+  languages:
+  - "java"
+  pattern: "new ObjectInputStream(...);"
+  message: |
+    Insecure deserialization detected. Ensure proper validation and handling of serialized data.
+  severity: "WARNING"
+  metadata:
+    cwe: "Deserialization of Untrusted Data"
+    cwe_id: "CWE-502"
+    prescan_regex: ObjectInputStream\(

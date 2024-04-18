@@ -1,0 +1,19 @@
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+#
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
+# Deserialization vulnerability patterns
+# Reference: https://learn.microsoft.com/en-us/dotnet/standard/serialization/binaryformatter-security-guide
+
+- cwe_id: CWE-554
+  description: Sensitive information stored in web forms controls may be leaked to the client side if encryption mode is not used.
+  rule: <system\.web>\s*<pages[^>]*viewStateEncryptionMode="(?:Auto|Never)"[^>]*/>\s*</system\.web>
+  severity: Warning
+  pattern_id: webform-encryption-mode-leakage
+
+- cwe_id: CWE-554
+  description: The view state could be altered by attacker since enableViewStateMac is disabled
+  rule: <system\.web>\s*<pages[^>]*enableViewStateMac="false"[^>]*/>\s*</system\.web>
+  severity: Warning
+  pattern_id: viewstate-mac-disabled

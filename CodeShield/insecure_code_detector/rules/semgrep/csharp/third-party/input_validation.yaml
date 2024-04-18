@@ -1,0 +1,25 @@
+
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/csharp/validation/rule-InputValidation.yml?ref_type=heads
+
+rules:
+- id: "input-validation"
+  languages:
+  - "csharp"
+  patterns:
+  - pattern: |
+      [ValidateInput(false)]
+      public $RET $FOO(...)
+      {
+        ...
+      }
+  message: |
+    By using the `[ValidateInput(false)]` attribute in a controller
+    class, the application will disable request validation for that
+    method. This disables ASP.NET from examining requests for injection
+    attacks such as Cross-Site-Scripting (XSS).
+  severity: "WARNING"
+  metadata:
+    cwe: "ASP.NET Misconfiguration: Not Using Input Validation Framework"
+    cwe_id: "CWE-554"
+    prescan_regex: ValidateInput\(false\)

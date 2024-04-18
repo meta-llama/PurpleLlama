@@ -1,0 +1,28 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/java/xxe/rule-XMLRdr.yml?ref_type=heads
+
+rules:
+- id: "xxe-deprecated-xml-reader"
+  languages:
+  - "java"
+  patterns:
+  - pattern-inside: |
+      $R = XMLReaderFactory.createXMLReader();
+      ...
+  - pattern-not-inside: |
+      $R.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+      ...
+  - pattern: "$R.parse(...);"
+  message: |
+    External XML entities are a feature of XML parsers that allow documents to contain references
+    to other documents or data. This feature can be abused to read files, communicate with external
+    hosts, exfiltrate data, or cause a Denial of Service (DoS).
+    The XMLReaderFactory has been deprecated. It is recommended that
+    [SAXParserFactory](https://docs.oracle.com/javase/9/docs/api/javax/xml/parsers/SAXParserFactory.html)
+    be used instead. Additionally when using the SAXParser it must be configured to disallow doctypes,
+    which will protect against the majority of XXE attacks.
+  severity: "ERROR"
+  metadata:
+    cwe: "Improper restriction of XML external entity reference ('XXE')"
+    cwe_id: "CWE-611"
+    prescan_regex: parse\(

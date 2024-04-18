@@ -1,0 +1,24 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/csharp/deserialization/rule-InsecureDeserialization.yml?ref_type=heads
+rules:
+- id: "insecure-deserialization"
+  patterns:
+    - pattern-either:
+        - pattern: "(System.Runtime.Serialization.Formatters.Binary.BinaryFormatter $OBJ).Deserialize(...)"
+        - pattern: "(System.Runtime.Serialization.Formatters.Binary.BinaryFormatter $OBJ).UnsafeDeserialize(...)"
+        - pattern: "(System.Runtime.Serialization.Formatters.Binary.BinaryFormatter $OBJ).UnsafeDeserializeMethod(...)"
+        - pattern: "(System.Runtime.Serialization.Formatters.Soap.SoapFormatter $OBJ).Deserialize(...)"
+        - pattern: "(System.Runtime.Serialization.NetDataContractSerializer $OBJ).Deserialize(...)"
+        - pattern: "(System.Web.UI.LosFormatter $OBJ).Deserialize(...)"
+        - pattern: "(System.Web.UI.ObjectStateFormatter $OBJ).Deserialize(...)"
+        - pattern: "(MongoDB.Bson.Serialization.BsonSerializer $OBJ).Deserialize(...)"
+        - pattern: "(System.Web.Script.Serialization.JavaScriptSerializer $OBJ).Deserialize(...)"
+  languages:
+  - "csharp"
+  message: |
+    Unsafe deserialization methods used on untrusted data can lead to deserialization related vulnerabilities
+  metadata:
+    cwe: "Deserialization of potentially untrusted data"
+    cwe_id: "CWE-502"
+    prescan_regex: Deserialize
+  severity: "WARNING"

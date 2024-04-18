@@ -1,0 +1,53 @@
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+#
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
+- cwe_id: CWE-798
+  description: Graph API Access Token
+  rule: ([^a-zA-Z0-9]|^)(AR|ANA|AMA|BUL|CP|DL|EAA|EP|EX|XWF|FRL|HACK|HW|IG|LPT|LIBRA|MLY|MDC|MINT|MO|NPE|OC|ON|OB|PLC|PL|SC|SPK|ST|TI|UN|WAWIT)[a-zA-Z0-9]{90,400}
+  severity: Warning
+  pattern_id: ALL-R-008
+
+- cwe_id: CWE-312
+  description: Private Keys
+  rule: (-{3,}\s*\bBEGIN\b.*PRIVATE
+    KEY\b\s*-{3,}\s*([\S\n]+?)-{3,}\s*\bEND\b.*PRIVATE KEY\b\s*-{3,})
+  severity: Warning
+  pattern_id: ALL-R-009
+
+- cwe_id: CWE-798
+  description: Github Access Token
+  rule: gh[p|o|s|u|r]_[0-9a-zA-Z]{36}
+  severity: Warning
+  pattern_id: ALL-R-010
+
+- cwe_id: CWE-798
+  description: GCP API Key
+  rule: AIza[0-9A-Za-z-_]{35}
+  severity: Warning
+  pattern_id: ALL-R-011
+
+- cwe_id: CWE-798
+  description: GCP 0Auth Token
+  rule: ya29\.[A-Za-z0-9_-]+
+  severity: Warning
+  pattern_id: ALL-R-012
+
+- cwe_id: CWE-798
+  description: Stripe API Key
+  rule: sk_live_([0-9a-zA-Z]{24})
+  severity: Warning
+  pattern_id: ALL-R-013
+
+- cwe_id: CWE-798
+  description: Twilio API Key
+  rule: SK[0-9a-fA-F]{32}
+  severity: Warning
+  pattern_id: ALL-R-014
+
+- cwe_id: CWE-798
+  description: Heroku API Key
+  rule: HEROKU_API_KEY=([0-9a-f]{40})
+  severity: Warning
+  pattern_id: ALL-R-015

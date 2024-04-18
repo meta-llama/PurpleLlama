@@ -1,0 +1,43 @@
+rules:
+  - id: cursor-execute-sqli
+    patterns:
+      - pattern-either:
+          - pattern-either:
+              - pattern: $CURSOR.$EXECUTE($S.format(...), ...)
+              - pattern: $CURSOR.$EXECUTE($S % ..., ... )
+              - pattern: $CURSOR.$EXECUTE(f"...{...}...", ...)
+              - pattern: $CURSOR.$EXECUTE($S + ... , ...)
+              - pattern: $CURSOR.$EXECUTE($S + ... + ..., ...)
+          - pattern-either:
+              - pattern-inside: |
+                  $QUERY = "..." % ...
+                  ...
+              - pattern-inside: |
+                  $QUERY =  "..." + ...
+                  ...
+              - pattern-inside: |
+                  $QUERY = "...".format(...)
+                  ...
+              - pattern-inside: |
+                  $QUERY = f"...{...}..."
+                  ...
+      - pattern: $CURSOR.$EXECUTE($QUERY)
+      - pattern-not: $CURSOR.$EXECUTE($S + "...", ...)
+      - pattern-not: $CURSOR.$EXECUTE($S + "..." + "...", ...)
+      - metavariable-regex:
+          metavariable: $CURSOR
+          regex: (?i)(cur|[\w_]*cursor|conn|[\w_]*connection)
+      - metavariable-regex:
+          metavariable: $EXECUTE
+          regex: (execute|execute_many)
+
+    message: Potential SQL injection due to variable usage in query string.
+    metadata:
+      cwe:
+        - "CWE-89: Improper Neutralization of Special Elements used in an SQL
+          Command (SQL Injection)"
+      cwe_id: CWE-89
+      prescan_regex: (\.execute|\.executemany)
+    severity: WARNING
+    languages:
+      - python

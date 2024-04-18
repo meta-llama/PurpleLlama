@@ -1,0 +1,34 @@
+rules:
+  - id: bugprone-snprintf
+    message: >
+      Potential out of bounds access due to improper validation of return values
+      of .*snprintf.* functions
+    patterns:
+      - pattern-either:
+        - pattern: |
+              $RET = $FUN($BUF, ...);
+              ...
+              $BUF[$RET] = ...;
+        - pattern: |
+              $RET = $FUN($BUF, ...);
+              ...
+              *($BUF + $RET) = ...;
+        - pattern: |
+              $RET = $FUN($BUF, ...);
+              ...
+              $FUNC($BUF + $RET, ...);
+      - pattern-not: |
+            $RET = $FUN($BUF, ...);
+            ...
+            if ($RET < $Y) {...}
+      - metavariable-regex:
+          metavariable: $FUN
+          regex: .*(snprintf).*
+    metadata:
+      cwe: Improper Restriction of Operations within the Bounds of a Memory Buffer
+      cwe_id: CWE-119
+      prescan_regex: .*(snprintf).*
+    languages:
+      - cpp
+      - c
+    severity: WARNING

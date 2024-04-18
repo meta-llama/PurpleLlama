@@ -1,0 +1,33 @@
+rules:
+- id: rsa-key-size-insufficient
+  message: >-
+    Creation of RSA Key with insufficient size.
+  patterns:
+    - pattern-either:
+      - pattern: |
+          $X = $KEYSIZE;
+          ...
+          $RSAGENFUNCTION($ARG1,$X,$ARG2,$ARG3);
+      - pattern: $RSAGENFUNCTION($ARG1,$KEYSIZE,$ARG2,$ARG3);
+      - pattern: |
+          $X = $KEYSIZE;
+          ...
+          EVP_RSA_gen($X);
+      - pattern: EVP_RSA_gen($KEYSIZE)
+    - metavariable-regex:
+        metavariable: $KEYSIZE
+        regex: "(512|768|1024|1536)"
+    - metavariable-regex:
+        metavariable: $RSAGENFUNCTION
+        regex: "RSA_generate_key\\w*"
+  metadata:
+    cwe:
+    - 'CWE-331: Insufficient Entropy'
+    cwe_id: CWE-331
+    prescan_regex: (RSA\_generate\_key|EVP\_RSA\_gen)
+    likelihood: LOW
+    impact: HIGH
+  languages:
+    - cpp
+    - c
+  severity: WARNING

@@ -1,0 +1,36 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/java/xxe/rule-XMLStreamRdr.yml?ref_type=heads
+
+rules:
+- id: "xxe-insecure-xml-input-factory"
+  languages:
+  - "java"
+  patterns:
+  - pattern-inside: |
+      $SF = XMLInputFactory.newFactory();
+      ...
+  - pattern-not-inside: |
+      $SF.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+      ...
+  - pattern-not-inside: |
+      $SF.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+      ...
+  - pattern-not-inside: |
+      $SF.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+      ...
+  - pattern-not-inside: |
+      $SF.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
+      ...
+  - pattern: "$SF.createXMLStreamReader(...)"
+  message: |
+    External XML entities are a feature of XML parsers that allow documents to contain references
+    to other documents or data. This feature can be abused to read files, communicate with external
+    hosts, exfiltrate data, or cause a Denial of Service (DoS).
+    In most XML parsers, the recommendation to protect against XXE is to disable the doctype feature.
+    Unfortunately use of the `XMLInputFactory` requires that the doctypes feature be enabled. Instead
+    the application can set the `ACCESS_EXTERNAL_DTD` to disable supporting external entities.
+  severity: "ERROR"
+  metadata:
+    cwe: "Improper restriction of XML external entity reference ('XXE')"
+    cwe_id: "CWE-611"
+    prescan_regex: createXMLStreamReader\(

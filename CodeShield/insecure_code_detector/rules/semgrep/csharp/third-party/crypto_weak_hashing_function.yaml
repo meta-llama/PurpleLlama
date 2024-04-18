@@ -1,0 +1,26 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/csharp/crypto/rule-WeakHashingFunction.yml?ref_type=heads
+
+rules:
+- id: "crypto-weak-hashing-function"
+  languages:
+  - "csharp"
+  patterns:
+  - pattern-either:
+    - patterns:
+      - metavariable-regex:
+          metavariable: "$HASH_PROVIDER"
+          regex: "^(SHA1CryptoServiceProvider|MD5CryptoServiceProvider)$"
+      - pattern: "new $HASH_PROVIDER"
+    - patterns:
+      - metavariable-regex:
+          metavariable: "$HASH_CLASS"
+          regex: "^System.Security.Cryptography.(SHA1|MD5)$"
+      - pattern: "$HASH_CLASS.$METHOD();"
+  message: |
+    Use of a broken or risky cryptographic algorithm. MD5 and SHA1 hash algorithms have been found to be vulnerable to producing collisions.
+  severity: "WARNING"
+  metadata:
+    cwe: "Use of a broken or risky cryptographic algorithm"
+    cwe_id: "CWE-327"
+    prescan_regex: ^(SHA1CryptoServiceProvider|MD5CryptoServiceProvider)$

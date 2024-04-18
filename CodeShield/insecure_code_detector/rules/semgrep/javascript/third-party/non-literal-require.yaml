@@ -1,0 +1,27 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/tree/main/javascript?ref_type=heads
+
+rules:
+- id: "non-literal-require"
+  languages:
+  - "javascript"
+  - "typescript"
+  patterns:
+  - pattern: "require($OBJ)"
+  - pattern-not: "require('...')"
+  severity: "WARNING"
+  message: |
+    The application was found to dynamically import a module by calling `require` using a
+    non-literal string. An adversary might be able to read the first line of
+    arbitrary files. If they had write access to the file system, they may also be able to
+    execute arbitrary code.
+  metadata:
+    cwe_id: "CWE-95"
+    owasp: "A1:2017-Injection"
+    cwe: "Improper neutralization of directives in dynamically evaluated
+      code (Eval Injection)"
+    prescan_regex: require\(
+    category: "security"
+    # yamllint disable
+    source-rule-url: "https://github.com/nodesecurity/eslint-plugin-security/blob/master/rules/detect-non-literal-require.js"
+    # yamllint enable

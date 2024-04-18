@@ -1,0 +1,88 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/tree/main/javascript?ref_type=heads
+
+rules:
+- id: "eval-with-expression"
+  languages:
+  - "javascript"
+  - "typescript"
+  patterns:
+  - pattern-either:
+    - patterns:
+      - pattern: |
+          eval($OBJ)
+      - pattern-not: |
+          eval("...")
+    - patterns:
+      - pattern: |
+          $A.eval($OBJ)
+      - pattern-not: |
+          $A.eval("...")
+    - patterns:
+      - pattern: |
+          (..., eval)($OBJ)
+      - pattern-not: |
+          (..., eval)("...")
+    - patterns:
+      - pattern: |
+          $ALIAS = eval;
+          ...
+          $ALIAS($OBJ)
+      - pattern-not: |
+          $ALIAS = eval;
+          ...
+          $ALIAS("...")
+    - pattern: |
+        new Function(..., "..." + $OBJ + "...")
+    - pattern: |
+        $BODY = "..." + $OBJ + "..."
+        ...
+        new Function(..., $BODY)
+    - pattern: |
+        new Function(..., `...${...}...`)
+    - pattern: |
+        $BODY = `...${...}...`
+        ...
+        new Function(..., $BODY)
+    - pattern: |
+        Function(..., "..." + $OBJ + "...")
+    - pattern: |
+        $BODY = "..." + $OBJ + "..."
+        ...
+        Function(..., $BODY)
+    - pattern: |
+        $BODY = `...${...}...`
+        ...
+        Function(..., $BODY)
+    - pattern: |
+        Function(..., `...${...}...`)
+    - pattern: |
+        setTimeout("..." + $OBJ + "...", ...)
+    - pattern: |
+        setTimeout(`...${...}...`, ...)
+    - pattern: |
+        setInterval("..." + $OBJ + "...", ...)
+    - pattern: |
+        setInterval(`...${...}...`, ...)
+  - pattern-not: |
+      setTimeout("...", ...)
+  - pattern-not: |
+      setInterval("...", ...)
+  severity: "WARNING"
+  message: |
+    The application was found calling the `eval` function OR Function()
+    constructor OR setTimeout() OR setInterval() methods. If the
+    variables or strings or functions passed to these methods contains
+    user-supplied input, an adversary could attempt to execute arbitrary
+    JavaScript code. This could lead to a full system compromise in Node
+    applications or Cross-site Scripting (XSS) in web applications.
+  metadata:
+    cwe_id: "CWE-95"
+    owasp: "A1:2017-Injection"
+    cwe: "Improper neutralization of directives in dynamically evaluated
+      code (Eval Injection)"
+    prescan_regex: (\beval\s*\([^)]*\)|\bnew\s*Function\s*\(|\bsetTimeout\s*\(|\bsetInterval\s*\()
+    category: "security"
+    # yamllint disable
+    source-rule-url: "https://github.com/nodesecurity/eslint-plugin-security/blob/master/rules/detect-eval-with-expression.js"
+    # yamllint enable

@@ -1,0 +1,22 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/csharp/cookies/rule-CookieWithoutSSLFlag.yml?ref_type=heads
+
+rules:
+- id: "cookie-without-ssl-flag"
+  languages:
+  - "csharp"
+  patterns:
+  - pattern: |
+      var $COOKIE = new HttpCookie(...);
+      ...
+      $COOKIE.Secure = false;
+  message: |
+    The `Secure` attribute when set to `true` protects the cookie value from being
+    transmitted over clear text
+    communication paths such as HTTP. By enabling this protection, the cookie will only be sent
+    over HTTPS.
+  severity: "WARNING"
+  metadata:
+    cwe: "Sensitive cookie in HTTPS session without 'Secure' attribute"
+    cwe_id: "CWE-614"
+    prescan_regex: HttpCookie\(

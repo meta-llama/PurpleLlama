@@ -1,0 +1,24 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/csharp/crypto/rule-WeakCipherMode.yml?ref_type=heads
+
+rules:
+- id: "crypto-weak-cipher-mode"
+  languages:
+  - "csharp"
+  patterns:
+  - pattern-inside: |
+      using System.Security.Cryptography;
+      ...
+  - metavariable-regex:
+      metavariable: "$CIPHER"
+      regex: "^(ECB|CBC|OFB|CFB|CTS)$"
+  - pattern: "CipherMode.$CIPHER"
+  message: |
+    Cryptographic algorithms provide many different modes of operation, only some of which provide
+    message integrity. Without message integrity it could be possible for an adversary to attempt
+    to tamper with the ciphertext which could lead to compromising the encryption key. This ciphermode is unsafe.
+  severity: "WARNING"
+  metadata:
+    cwe: "Use of a broken or risky cryptographic algorithm"
+    cwe_id: "CWE-327"
+    prescan_regex: ^(ECB|CBC|OFB|CFB|CTS)$

@@ -1,0 +1,99 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/csharp/path/rule-PathTraversal.yml?ref_type=heads
+
+rules:
+- id: "path-traversal"
+  languages:
+  - "csharp"
+  mode: "taint"
+  pattern-sources:
+  - patterns:
+    - pattern-inside: |
+        public class $CLASS : Controller {
+          ...
+        }
+    - pattern: "$PARAM"
+    - pattern-either:
+      - patterns:
+        - metavariable-regex:
+            metavariable: "$HTTP_ANNO"
+            regex: "^(Http)"
+        - pattern-inside: |
+            [$HTTP_ANNO]
+            public string $METHOD(...,$PARAM,...){...}
+      - pattern-inside: |
+          public IActionResult $METHOD(...,$PARAM,...){...}
+  pattern-sanitizers:
+  - pattern-either:
+    - pattern: "(Microsoft.Extensions.FileProviders.PhysicalFileProvider $E).GetFileInfo(...)"
+    - pattern: "(System.Web.HttpServerUtility $E).MapPath(...)"
+    - pattern: "(System.Web.HttpServerUtilityBase $E).MapPath(...)"
+    - pattern: "(System.Web.HttpRequest $E).MapPath(...)"
+  pattern-sinks:
+  - pattern-either:
+    - pattern: "System.IO.Directory.Delete(...)"
+    - pattern: "System.IO.Directory.GetFiles(...)"
+    - pattern: "System.IO.Directory.Move(...)"
+    - pattern: "System.IO.File.AppendAllLines(...)"
+    - pattern: "System.IO.File.AppendAllLinesAsync(...)"
+    - pattern: "System.IO.File.AppendAllText(...)"
+    - pattern: "System.IO.File.AppendAllTextAsync(...)"
+    - pattern: "System.IO.File.AppendText(...)"
+    - pattern: "System.IO.File.Copy(...)"
+    - pattern: "System.IO.File.Create(...)"
+    - pattern: "System.IO.File.CreateText(...)"
+    - pattern: "System.IO.File.Delete(...)"
+    - pattern: "System.IO.File.Move(...)"
+    - pattern: "System.IO.File.Open(...)"
+    - pattern: "System.IO.File.OpenRead(...)"
+    - pattern: "System.IO.File.OpenText(...)"
+    - pattern: "System.IO.File.OpenWrite(...)"
+    - pattern: "System.IO.File.ReadAllBytes(...)"
+    - pattern: "System.IO.File.ReadAllBytesAsync(...)"
+    - pattern: "System.IO.File.ReadAllLines(...)"
+    - pattern: "System.IO.File.ReadAllLinesAsync(...)"
+    - pattern: "System.IO.File.ReadAllText(...)"
+    - pattern: "System.IO.File.ReadAllTextAsync(...)"
+    - pattern: "System.IO.File.ReadLines(...)"
+    - pattern: "System.IO.File.Replace(...)"
+    - pattern: "System.IO.File.SetAccessControl(...)"
+    - pattern: "System.IO.File.WriteAllBytes(...)"
+    - pattern: "System.IO.File.WriteAllBytesAsync(...)"
+    - pattern: "System.IO.File.WriteAllLines(...)"
+    - pattern: "System.IO.File.WriteAllLinesAsync(...)"
+    - pattern: "System.IO.File.WriteAllText(...)"
+    - pattern: "System.IO.File.WriteAllTextAsync(...)"
+    - pattern: "new System.IO.FileInfo(...)"
+    - pattern: "(System.IO.FileInfo $E).CopyTo(...)"
+    - pattern: "(System.IO.FileInfo $E).MoveTo(...)"
+    - pattern: "(System.IO.FileInfo $E).Replace(...)"
+    - pattern: "System.Reflection.Assembly.LoadFile(...)"
+    - pattern: "System.Reflection.Assembly.LoadFrom(...)"
+    - pattern: "System.Reflection.Assembly.ReflectionOnlyLoadFrom(...)"
+    - pattern: "System.Reflection.Assembly.UnsafeLoadFrom(...)"
+    - pattern: "System.AppDomain.AppendPrivatePath(...)"
+    - pattern: "System.Xml.XmlReader.Create(...)"
+    - pattern: "new System.IO.StreamReader.ctor(...)"
+    - pattern: "new System.IO.StreamWriter.ctor(...)"
+    - pattern: "new System.IO.FileStream.ctor(...)"
+    - pattern: "new System.Web.Mvc.FilePathResult(...)"
+    - pattern: "new Microsoft.AspNetCore.Mvc.PhysicalFileResult(...)"
+    - pattern: "(Microsoft.AspNetCore.Mvc.RazorPages.PageModel $E).PhysicalFile(...)"
+    - pattern: "(System.Web.UI.WebControls.FileUpload $E).SaveAs(...)"
+    - pattern: "(System.Web.HttpResponse $E).TransmitFile(...)"
+    - pattern: "(System.Web.HttpResponse $E).WriteFile(...)"
+    - pattern: "(System.Web.HttpResponseBase $E).TransmitFile(...)"
+    - pattern: "(System.Web.HttpResponseBase $E).WriteFile(...)"
+    - pattern: "(System.IO.Compression.ZipFileExtensions $E).CreateEntryFromFile(...)"
+    - pattern: "(System.IO.Compression.ZipFileExtensions $E).ExtractToFile(...)"
+    - pattern: "(System.IO.Compression.ZipFileExtensions $E).ExtractToDirectory(...)"
+    - pattern: "(System.Net.WebClient $E).DownloadFile(...)"
+    - pattern: "(System.Net.WebClient $E).DownloadFileAsync(...)"
+    - pattern: "(System.Net.WebClient $E).DownloadFileTaskAsync(...)"
+  message: |
+    User controlled malicious relative path could lead to path traversal vulnerabilities
+  metadata:
+    cwe: "Improper limitation of a pathname to a restricted directory(Path Traversal)"
+    cwe_id: "CWE-22"
+    prescan_regex: ^(Http)
+  severity: "WARNING"

@@ -1,0 +1,19 @@
+rules:
+- id: mcf-get-cstring-result-ignored
+  message: Return value from MCFgetCStringResult ignored
+  patterns:
+    - pattern: MCFStringGetCString(...)
+    - pattern-not-inside: $V = MCFStringGetCString(...);
+    - pattern-not-inside: $TYPE $VAR = MCFStringGetCString(...);
+    - pattern-not-inside: return MCFStringGetCString(...);
+    - pattern-not-inside: if(MCFStringGetCString(...)){...}
+    - pattern-not-inside: if(!MCFStringGetCString(...)){...}
+    - pattern-not-inside: MCFStringGetCString(...) == $X
+    - pattern-not-inside: $FUNC(MCFStringGetCString(...))
+  metadata:
+    likelihood: LOW
+    impact: HIGH
+  languages:
+    - cpp
+    - c
+  severity: WARNING

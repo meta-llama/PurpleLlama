@@ -1,0 +1,1168 @@
+{
+  "rules": [
+    {
+      "id": "command-injection",
+      "languages": [
+        "csharp"
+      ],
+      "message": "Untrusted input passed to command execution can lead to command injection vulnerabilities\n",
+      "metadata": {
+        "category": "security",
+        "cwe": "CWE-78 Improper neutralization of special elements used in an OS command(OS Command Injection)",
+        "cwe_id": "CWE-78",
+        "prescan_regex": "\\.Arguments"
+      },
+      "patterns": [
+        {
+          "pattern-inside": "using System.Diagnostics;\n...\n"
+        },
+        {
+          "pattern-either": [
+            {
+              "patterns": [
+                {
+                  "pattern": "Process.Start($ARG)"
+                },
+                {
+                  "pattern-not": "Process.Start(\"...\")"
+                }
+              ]
+            },
+            {
+              "pattern": "(Process $PROC).StartInfo.FileName = <...$ARG...>;"
+            },
+            {
+              "pattern": "(Process $PROC).StartInfo.Arguments = <...$ARG...>;"
+            },
+            {
+              "patterns": [
+                {
+                  "pattern-inside": "$PSINFO = new ProcessStartInfo(...)\n...\nProcess.Start($PSINFO)\n"
+                },
+                {
+                  "pattern-either": [
+                    {
+                      "pattern": "$PSINFO.Arguments = <...$ARG...>;"
+                    },
+                    {
+                      "pattern": "$PSINFO.FileName = <...$ARG...>;"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "cookie-without-http-only-flag",
+      "languages": [
+        "csharp"
+      ],
+      "message": "The `HttpOnly` attribute when set to `true` protects the cookie value from being accessed by\nclient side JavaScript such\nas reading the `document.cookie` values. By enabling this protection, a website that is\nvulnerable to\nCross-Site Scripting (XSS) will be able to block malicious scripts from accessing the cookie\nvalue from JavaScript.\n",
+      "metadata": {
+        "cwe": "Sensitive cookie without 'HttpOnly' flag",
+        "cwe_id": "CWE-1004",
+        "prescan_regex": "HttpCookie\\("
+      },
+      "patterns": [
+        {
+          "pattern": "var $COOKIE = new HttpCookie(...);\n...\n$COOKIE.HttpOnly = false;\n"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "cookie-without-ssl-flag",
+      "languages": [
+        "csharp"
+      ],
+      "message": "The `Secure` attribute when set to `true` protects the cookie value from being\ntransmitted over clear text\ncommunication paths such as HTTP. By enabling this protection, the cookie will only be sent\nover HTTPS.\n",
+      "metadata": {
+        "cwe": "Sensitive cookie in HTTPS session without 'Secure' attribute",
+        "cwe_id": "CWE-614",
+        "prescan_regex": "HttpCookie\\("
+      },
+      "patterns": [
+        {
+          "pattern": "var $COOKIE = new HttpCookie(...);\n...\n$COOKIE.Secure = false;\n"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "crypto-certificate-validation-disabled",
+      "languages": [
+        "csharp"
+      ],
+      "message": "The `ServicePointManager.ServerCertificateValidationCallback` event has been set\nto always return `true`, which effectively disables the validation of server\ncertificates.\n",
+      "metadata": {
+        "cwe": "Improper Certificate Validation",
+        "cwe_id": "CWE-295",
+        "prescan_regex": "ServerCertificateValidationCallback"
+      },
+      "patterns": [
+        {
+          "pattern-inside": "using System.Net;\n...\n"
+        },
+        {
+          "pattern": "ServicePointManager.ServerCertificateValidationCallback += $CALLBACK;"
+        },
+        {
+          "metavariable-pattern": {
+            "metavariable": "$CALLBACK",
+            "patterns": [
+              {
+                "pattern-either": [
+                  {
+                    "pattern": "$RETURNTYPE $FUNC(...) { return true; }"
+                  },
+                  {
+                    "pattern": "(...) => true;"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "crypto-weak-cipher-algorithm",
+      "languages": [
+        "csharp"
+      ],
+      "message": "DES, TripleDES and RC2 are all considered broken or insecure cryptographic algorithms.\n",
+      "metadata": {
+        "cwe": "Use of a broken or risky cryptographic algorithm",
+        "cwe_id": "CWE-327",
+        "prescan_regex": "DES"
+      },
+      "patterns": [
+        {
+          "pattern-inside": "using System.Security.Cryptography;\n...\n"
+        },
+        {
+          "pattern-either": [
+            {
+              "pattern-regex": ".*DES\\.Create\\(\\);"
+            },
+            {
+              "pattern": "new DESCryptoServiceProvider();"
+            },
+            {
+              "pattern-regex": ".*TripleDES\\.Create\\(\\);"
+            },
+            {
+              "pattern": "new TripleDESCryptoServiceProvider();"
+            },
+            {
+              "pattern-regex": ".*RC2\\.Create\\(\\);"
+            },
+            {
+              "pattern": "new RC2CryptoServiceProvider();"
+            }
+          ]
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "crypto-weak-cipher-mode",
+      "languages": [
+        "csharp"
+      ],
+      "message": "Cryptographic algorithms provide many different modes of operation, only some of which provide\nmessage integrity. Without message integrity it could be possible for an adversary to attempt\nto tamper with the ciphertext which could lead to compromising the encryption key. This ciphermode is unsafe.\n",
+      "metadata": {
+        "cwe": "Use of a broken or risky cryptographic algorithm",
+        "cwe_id": "CWE-327",
+        "prescan_regex": "^(ECB|CBC|OFB|CFB|CTS)$"
+      },
+      "patterns": [
+        {
+          "pattern-inside": "using System.Security.Cryptography;\n...\n"
+        },
+        {
+          "metavariable-regex": {
+            "metavariable": "$CIPHER",
+            "regex": "^(ECB|CBC|OFB|CFB|CTS)$"
+          }
+        },
+        {
+          "pattern": "CipherMode.$CIPHER"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "crypto-weak-hashing-function",
+      "languages": [
+        "csharp"
+      ],
+      "message": "Use of a broken or risky cryptographic algorithm. MD5 and SHA1 hash algorithms have been found to be vulnerable to producing collisions.\n",
+      "metadata": {
+        "cwe": "Use of a broken or risky cryptographic algorithm",
+        "cwe_id": "CWE-327",
+        "prescan_regex": "^(SHA1CryptoServiceProvider|MD5CryptoServiceProvider)$"
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "patterns": [
+                {
+                  "metavariable-regex": {
+                    "metavariable": "$HASH_PROVIDER",
+                    "regex": "^(SHA1CryptoServiceProvider|MD5CryptoServiceProvider)$"
+                  }
+                },
+                {
+                  "pattern": "new $HASH_PROVIDER"
+                }
+              ]
+            },
+            {
+              "patterns": [
+                {
+                  "metavariable-regex": {
+                    "metavariable": "$HASH_CLASS",
+                    "regex": "^System.Security.Cryptography.(SHA1|MD5)$"
+                  }
+                },
+                {
+                  "pattern": "$HASH_CLASS.$METHOD();"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "crypto-weak-pseudo-random-number-generator",
+      "languages": [
+        "csharp"
+      ],
+      "message": "Use of a weak random value can lead to vulnerabilities when used in certain security critical contexts.\n",
+      "metadata": {
+        "cwe": "Use of cryptographically weak Pseudo-Random Number Generator (PRNG)",
+        "cwe_id": "CWE-338",
+        "prescan_regex": "Random"
+      },
+      "patterns": [
+        {
+          "pattern": "(Random $RNG).$METHOD(...);"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "csrf",
+      "languages": [
+        "csharp"
+      ],
+      "message": "The application failed to protect against Cross-Site Request Forgery (CSRF)\ndue to not including the `[ValidateAntiForgeryToken]` attribute on an\nHTTP method handler that could change user state (usually in the form of POST or PUT\nmethods).\n",
+      "metadata": {
+        "cwe": "Cross-Site Request Forgery (CSRF)",
+        "cwe_id": "CWE-352",
+        "prescan_regex": "Http(Post|Delete|Patch|Put)"
+      },
+      "patterns": [
+        {
+          "pattern": "[$HTTPMETHOD]\npublic $RET $FOO(...) {\n  ...\n}\n"
+        },
+        {
+          "pattern-not": "[ValidateAntiForgeryToken]\npublic $RET $FOO(...) {\n  ...\n}\n"
+        },
+        {
+          "metavariable-regex": {
+            "metavariable": "$HTTPMETHOD",
+            "regex": "Http(Post|Delete|Patch|Put)"
+          }
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "input-validation",
+      "languages": [
+        "csharp"
+      ],
+      "message": "By using the `[ValidateInput(false)]` attribute in a controller\nclass, the application will disable request validation for that\nmethod. This disables ASP.NET from examining requests for injection\nattacks such as Cross-Site-Scripting (XSS).\n",
+      "metadata": {
+        "cwe": "ASP.NET Misconfiguration: Not Using Input Validation Framework",
+        "cwe_id": "CWE-554",
+        "prescan_regex": "ValidateInput\\(false\\)"
+      },
+      "patterns": [
+        {
+          "pattern": "[ValidateInput(false)]\npublic $RET $FOO(...)\n{\n  ...\n}\n"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "insecure-deserialization",
+      "languages": [
+        "csharp"
+      ],
+      "message": "Unsafe deserialization methods used on untrusted data can lead to deserialization related vulnerabilities\n",
+      "metadata": {
+        "cwe": "Deserialization of potentially untrusted data",
+        "cwe_id": "CWE-502",
+        "prescan_regex": "Deserialize"
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "pattern": "(System.Runtime.Serialization.Formatters.Binary.BinaryFormatter $OBJ).Deserialize(...)"
+            },
+            {
+              "pattern": "(System.Runtime.Serialization.Formatters.Binary.BinaryFormatter $OBJ).UnsafeDeserialize(...)"
+            },
+            {
+              "pattern": "(System.Runtime.Serialization.Formatters.Binary.BinaryFormatter $OBJ).UnsafeDeserializeMethod(...)"
+            },
+            {
+              "pattern": "(System.Runtime.Serialization.Formatters.Soap.SoapFormatter $OBJ).Deserialize(...)"
+            },
+            {
+              "pattern": "(System.Runtime.Serialization.NetDataContractSerializer $OBJ).Deserialize(...)"
+            },
+            {
+              "pattern": "(System.Web.UI.LosFormatter $OBJ).Deserialize(...)"
+            },
+            {
+              "pattern": "(System.Web.UI.ObjectStateFormatter $OBJ).Deserialize(...)"
+            },
+            {
+              "pattern": "(MongoDB.Bson.Serialization.BsonSerializer $OBJ).Deserialize(...)"
+            },
+            {
+              "pattern": "(System.Web.Script.Serialization.JavaScriptSerializer $OBJ).Deserialize(...)"
+            }
+          ]
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "ldap-injection",
+      "languages": [
+        "csharp"
+      ],
+      "message": "Unsanitized dynamic value passed to LDAP query can lead to LDAP Injections\n",
+      "metadata": {
+        "cwe": "Improper neutralization of special elements used in an LDAP query (LDAP Injection)",
+        "cwe_id": "CWE-90",
+        "prescan_regex": "DirectorySearcher"
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "patterns": [
+                {
+                  "pattern": "(DirectorySearcher $SOURCE).Filter = ..."
+                },
+                {
+                  "pattern-not": "(DirectorySearcher $SOURCE).Filter = \"...\""
+                }
+              ]
+            },
+            {
+              "patterns": [
+                {
+                  "pattern": "(DirectorySearcher $SOURCE).Path = ..."
+                },
+                {
+                  "pattern-not": "(DirectorySearcher $SOURCE).Path = \"...\""
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "path-traversal",
+      "languages": [
+        "csharp"
+      ],
+      "message": "User controlled malicious relative path could lead to path traversal vulnerabilities\n",
+      "metadata": {
+        "cwe": "Improper limitation of a pathname to a restricted directory(Path Traversal)",
+        "cwe_id": "CWE-22",
+        "prescan_regex": "^(Http)"
+      },
+      "mode": "taint",
+      "pattern-sanitizers": [
+        {
+          "pattern-either": [
+            {
+              "pattern": "(Microsoft.Extensions.FileProviders.PhysicalFileProvider $E).GetFileInfo(...)"
+            },
+            {
+              "pattern": "(System.Web.HttpServerUtility $E).MapPath(...)"
+            },
+            {
+              "pattern": "(System.Web.HttpServerUtilityBase $E).MapPath(...)"
+            },
+            {
+              "pattern": "(System.Web.HttpRequest $E).MapPath(...)"
+            }
+          ]
+        }
+      ],
+      "pattern-sinks": [
+        {
+          "pattern-either": [
+            {
+              "pattern": "System.IO.Directory.Delete(...)"
+            },
+            {
+              "pattern": "System.IO.Directory.GetFiles(...)"
+            },
+            {
+              "pattern": "System.IO.Directory.Move(...)"
+            },
+            {
+              "pattern": "System.IO.File.AppendAllLines(...)"
+            },
+            {
+              "pattern": "System.IO.File.AppendAllLinesAsync(...)"
+            },
+            {
+              "pattern": "System.IO.File.AppendAllText(...)"
+            },
+            {
+              "pattern": "System.IO.File.AppendAllTextAsync(...)"
+            },
+            {
+              "pattern": "System.IO.File.AppendText(...)"
+            },
+            {
+              "pattern": "System.IO.File.Copy(...)"
+            },
+            {
+              "pattern": "System.IO.File.Create(...)"
+            },
+            {
+              "pattern": "System.IO.File.CreateText(...)"
+            },
+            {
+              "pattern": "System.IO.File.Delete(...)"
+            },
+            {
+              "pattern": "System.IO.File.Move(...)"
+            },
+            {
+              "pattern": "System.IO.File.Open(...)"
+            },
+            {
+              "pattern": "System.IO.File.OpenRead(...)"
+            },
+            {
+              "pattern": "System.IO.File.OpenText(...)"
+            },
+            {
+              "pattern": "System.IO.File.OpenWrite(...)"
+            },
+            {
+              "pattern": "System.IO.File.ReadAllBytes(...)"
+            },
+            {
+              "pattern": "System.IO.File.ReadAllBytesAsync(...)"
+            },
+            {
+              "pattern": "System.IO.File.ReadAllLines(...)"
+            },
+            {
+              "pattern": "System.IO.File.ReadAllLinesAsync(...)"
+            },
+            {
+              "pattern": "System.IO.File.ReadAllText(...)"
+            },
+            {
+              "pattern": "System.IO.File.ReadAllTextAsync(...)"
+            },
+            {
+              "pattern": "System.IO.File.ReadLines(...)"
+            },
+            {
+              "pattern": "System.IO.File.Replace(...)"
+            },
+            {
+              "pattern": "System.IO.File.SetAccessControl(...)"
+            },
+            {
+              "pattern": "System.IO.File.WriteAllBytes(...)"
+            },
+            {
+              "pattern": "System.IO.File.WriteAllBytesAsync(...)"
+            },
+            {
+              "pattern": "System.IO.File.WriteAllLines(...)"
+            },
+            {
+              "pattern": "System.IO.File.WriteAllLinesAsync(...)"
+            },
+            {
+              "pattern": "System.IO.File.WriteAllText(...)"
+            },
+            {
+              "pattern": "System.IO.File.WriteAllTextAsync(...)"
+            },
+            {
+              "pattern": "new System.IO.FileInfo(...)"
+            },
+            {
+              "pattern": "(System.IO.FileInfo $E).CopyTo(...)"
+            },
+            {
+              "pattern": "(System.IO.FileInfo $E).MoveTo(...)"
+            },
+            {
+              "pattern": "(System.IO.FileInfo $E).Replace(...)"
+            },
+            {
+              "pattern": "System.Reflection.Assembly.LoadFile(...)"
+            },
+            {
+              "pattern": "System.Reflection.Assembly.LoadFrom(...)"
+            },
+            {
+              "pattern": "System.Reflection.Assembly.ReflectionOnlyLoadFrom(...)"
+            },
+            {
+              "pattern": "System.Reflection.Assembly.UnsafeLoadFrom(...)"
+            },
+            {
+              "pattern": "System.AppDomain.AppendPrivatePath(...)"
+            },
+            {
+              "pattern": "System.Xml.XmlReader.Create(...)"
+            },
+            {
+              "pattern": "new System.IO.StreamReader.ctor(...)"
+            },
+            {
+              "pattern": "new System.IO.StreamWriter.ctor(...)"
+            },
+            {
+              "pattern": "new System.IO.FileStream.ctor(...)"
+            },
+            {
+              "pattern": "new System.Web.Mvc.FilePathResult(...)"
+            },
+            {
+              "pattern": "new Microsoft.AspNetCore.Mvc.PhysicalFileResult(...)"
+            },
+            {
+              "pattern": "(Microsoft.AspNetCore.Mvc.RazorPages.PageModel $E).PhysicalFile(...)"
+            },
+            {
+              "pattern": "(System.Web.UI.WebControls.FileUpload $E).SaveAs(...)"
+            },
+            {
+              "pattern": "(System.Web.HttpResponse $E).TransmitFile(...)"
+            },
+            {
+              "pattern": "(System.Web.HttpResponse $E).WriteFile(...)"
+            },
+            {
+              "pattern": "(System.Web.HttpResponseBase $E).TransmitFile(...)"
+            },
+            {
+              "pattern": "(System.Web.HttpResponseBase $E).WriteFile(...)"
+            },
+            {
+              "pattern": "(System.IO.Compression.ZipFileExtensions $E).CreateEntryFromFile(...)"
+            },
+            {
+              "pattern": "(System.IO.Compression.ZipFileExtensions $E).ExtractToFile(...)"
+            },
+            {
+              "pattern": "(System.IO.Compression.ZipFileExtensions $E).ExtractToDirectory(...)"
+            },
+            {
+              "pattern": "(System.Net.WebClient $E).DownloadFile(...)"
+            },
+            {
+              "pattern": "(System.Net.WebClient $E).DownloadFileAsync(...)"
+            },
+            {
+              "pattern": "(System.Net.WebClient $E).DownloadFileTaskAsync(...)"
+            }
+          ]
+        }
+      ],
+      "pattern-sources": [
+        {
+          "patterns": [
+            {
+              "pattern-inside": "public class $CLASS : Controller {\n  ...\n}\n"
+            },
+            {
+              "pattern": "$PARAM"
+            },
+            {
+              "pattern-either": [
+                {
+                  "patterns": [
+                    {
+                      "metavariable-regex": {
+                        "metavariable": "$HTTP_ANNO",
+                        "regex": "^(Http)"
+                      }
+                    },
+                    {
+                      "pattern-inside": "[$HTTP_ANNO]\npublic string $METHOD(...,$PARAM,...){...}\n"
+                    }
+                  ]
+                },
+                {
+                  "pattern-inside": "public IActionResult $METHOD(...,$PARAM,...){...}\n"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "sql-injection",
+      "languages": [
+        "csharp"
+      ],
+      "message": "Dynamic SQL queries constructed from sanitized input can lead to SQL Injection.\n",
+      "metadata": {
+        "cwe": "CWE-89 Improper Neutralization of Special Elements used in an SQL Command (SQL Injection)",
+        "cwe_id": "CWE-89",
+        "prescan_regex": "^(SqlCommand|OracleCommand|NpgsqlCommand|MySqlCommand|EntityCommand|OdbcCommand|OleDbCommand|SqliteCommand)$"
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "patterns": [
+                {
+                  "metavariable-regex": {
+                    "metavariable": "$FUNC",
+                    "regex": "^(SqlQuery|ExecuteSqlCommand|ExecuteSqlCommandAsync|ExecuteSqlRaw|ExecuteSqlRawAsync|FromSqlRaw|FromSql|GetSqlStringCommand|ExecuteDataSet|ExecuteReader|ExecuteNonQuery|ExecuteScalar|CreateSQLQuery)$"
+                  }
+                },
+                {
+                  "pattern": "$DB.$FUNC($ARG, ...);"
+                },
+                {
+                  "pattern-not": "$DB.$FUNC(\"...\", ...);"
+                }
+              ]
+            },
+            {
+              "patterns": [
+                {
+                  "metavariable-regex": {
+                    "metavariable": "$FUNC",
+                    "regex": "^(ExecuteQuery|ExecuteCommand)$"
+                  }
+                },
+                {
+                  "pattern-inside": "using System.Data.Linq;\n...\n"
+                },
+                {
+                  "pattern": "(DataContext $CTX).$FUNC($ARG, ...)"
+                }
+              ]
+            },
+            {
+              "patterns": [
+                {
+                  "metavariable-regex": {
+                    "metavariable": "$IMPL",
+                    "regex": "^(SqlCommand|OracleCommand|NpgsqlCommand|MySqlCommand|EntityCommand|OdbcCommand|OleDbCommand|SqliteCommand)$"
+                  }
+                },
+                {
+                  "pattern-either": [
+                    {
+                      "patterns": [
+                        {
+                          "pattern": "new $IMPL($ARG, ...);"
+                        },
+                        {
+                          "pattern-not": "new $IMPL(\"...\", ...);"
+                        }
+                      ]
+                    },
+                    {
+                      "patterns": [
+                        {
+                          "pattern": "($IMPL $CMD).CommandText = <...$ARG...>;"
+                        },
+                        {
+                          "pattern-not": "($IMPL $CMD).CommandText = \"...\";"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "patterns": [
+                {
+                  "metavariable-regex": {
+                    "metavariable": "$FUNC",
+                    "regex": "^(ExecuteDataRow|ExecuteDataRowAsync|ExecuteDataset|ExecuteDatasetAsync|ExecuteNonQuery|ExecuteNonQueryAsync|ExecuteReader|ExecuteReaderAsync|ExecuteScalar|ExecuteScalarAsync|UpdateDataSet|UpdateDataSetAsync)$"
+                  }
+                },
+                {
+                  "pattern-inside": "using MySql.Data.MySqlClient;\n...\n"
+                },
+                {
+                  "pattern": "MySqlHelper.$FUNC(\"...\", $ARG, ...);"
+                }
+              ]
+            },
+            {
+              "patterns": [
+                {
+                  "pattern-inside": "using Cassandra;\n...\n"
+                },
+                {
+                  "pattern": "(Session $SESS).Execute($ARG, ...);"
+                },
+                {
+                  "pattern-not": "(Session $SESS).Execute(\"...\", ...);"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "unsafe-xslt-setting",
+      "languages": [
+        "csharp"
+      ],
+      "message": "By setting `XsltSettings.EnableScript` to true, an adversary who is able to influence the\nloaded\nXSL document could directly inject code to compromise the system. It is strongly\nrecommended that an alternative approach is used to work with XML data.\n",
+      "metadata": {
+        "cwe": "Improper restriction of XML external entity reference",
+        "cwe_id": "CWE-611",
+        "prescan_regex": "XsltSettings"
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "pattern": "new XsltSettings() {EnableScript = true};"
+            },
+            {
+              "pattern": "var $SETTINGS = new XsltSettings();\n...\n$SETTINGS.EnableScript = true;\n"
+            }
+          ]
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "unvalidated-redirect",
+      "languages": [
+        "csharp"
+      ],
+      "message": "The application may allow open redirects if created using user supplied input. Open redirects\nare\ncommonly\nabused in phishing attacks where the original domain or URL looks like a legitimate link, but\nthen\nredirects a user to a malicious site.\n",
+      "metadata": {
+        "cwe": "URL redirection to untrusted site (open redirect)",
+        "cwe_id": "CWE-601",
+        "prescan_regex": "Redirect"
+      },
+      "mode": "taint",
+      "pattern-sanitizers": [
+        {
+          "pattern-either": [
+            {
+              "pattern": "TryCreate(...)"
+            },
+            {
+              "pattern": "Action(...)"
+            },
+            {
+              "pattern": "HttpRouteUrl(...)"
+            },
+            {
+              "pattern": "RouteUrl(...)"
+            }
+          ]
+        }
+      ],
+      "pattern-sinks": [
+        {
+          "patterns": [
+            {
+              "pattern-not-inside": "if (IsLocalUrl(...)) {\n    ...\n    Redirect(...);\n    ...\n}\n"
+            },
+            {
+              "pattern-not-inside": "if ($URL.IsLocalUrl(...)) {\n    ...\n    Redirect(...);\n    ...\n}\n"
+            },
+            {
+              "pattern-either": [
+                {
+                  "pattern": "Redirect(...)"
+                },
+                {
+                  "pattern": "RedirectPermanent(...)"
+                },
+                {
+                  "pattern": "RedirectToRoute(...)"
+                },
+                {
+                  "pattern": "RedirectToRoutePermanent(...)"
+                },
+                {
+                  "pattern": "new RedirectResult(...)"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "pattern-sources": [
+        {
+          "patterns": [
+            {
+              "pattern": "$SRC"
+            },
+            {
+              "pattern-inside": "public $RET $FUNC(...,$SRC,...){...}\n"
+            }
+          ]
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "weak-password-requirements",
+      "languages": [
+        "csharp"
+      ],
+      "message": "Weak password requirements\n",
+      "metadata": {
+        "cwe": "Weak password requirements",
+        "cwe_id": "CWE-521",
+        "prescan_regex": "PasswordValidator"
+      },
+      "patterns": [
+        {
+          "pattern": "new PasswordValidator\n{\n  ...,\n};\n"
+        },
+        {
+          "pattern": "new PasswordValidator\n{\n  ...,\n  RequiredLength = $LEN,\n  ...,\n};\n"
+        },
+        {
+          "pattern-not": "new PasswordValidator\n{\n  ...,\n  RequireNonLetterOrDigit = true,\n  ...,\n};\n"
+        },
+        {
+          "pattern-not": "new PasswordValidator\n{\n  ...,\n  RequireDigit = true,\n  ...,\n};\n"
+        },
+        {
+          "pattern-not": "new PasswordValidator\n{\n  ...,\n  RequireLowercase = true,\n  ...,\n};\n"
+        },
+        {
+          "pattern-not": "new PasswordValidator\n{\n  ...,\n  RequireUppercase = true,\n  ...,\n};\n"
+        },
+        {
+          "metavariable-comparison": {
+            "comparison": "$LEN < 8",
+            "metavariable": "$LEN"
+          }
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "xpath-injection",
+      "languages": [
+        "csharp"
+      ],
+      "message": "Unsanitized input in XPath query can lead to XPath Injections\n",
+      "metadata": {
+        "cwe": "Improper neutralization of data within XPath expressions(XPath Injection)",
+        "cwe_id": "CWE-643",
+        "prescan_regex": "^(SelectNodes|SelectSingleNode|Compile|Evaluate|Matches|Select|SelectAncestors|SelectChildren|SelectDescendants|XPathNavigator|XmlDocument|XmlNode|XmlDocumentXPathExtensions)$"
+      },
+      "patterns": [
+        {
+          "pattern-inside": "using System.Xml;\n...\n"
+        },
+        {
+          "pattern-either": [
+            {
+              "patterns": [
+                {
+                  "metavariable-regex": {
+                    "metavariable": "$FUNC",
+                    "regex": "^(SelectNodes|SelectSingleNode|Compile|Evaluate|Matches|Select|SelectAncestors|SelectChildren|SelectDescendants)$"
+                  }
+                },
+                {
+                  "metavariable-regex": {
+                    "metavariable": "$TY",
+                    "regex": "^(XPathNavigator|XmlDocument|XmlNode|XmlDocumentXPathExtensions)$"
+                  }
+                },
+                {
+                  "pattern": "($TY $VAR).$FUNC(<...$ARG...>, ...)"
+                },
+                {
+                  "pattern-not": "($TY $VAR).$FUNC(\"...\", ...)"
+                }
+              ]
+            },
+            {
+              "patterns": [
+                {
+                  "pattern-inside": "using System.Xml.Linq;\n...\n"
+                },
+                {
+                  "metavariable-regex": {
+                    "metavariable": "$FUNC",
+                    "regex": "^(XPathEvaluate|XPathSelectElement|XPathSelectElements)$"
+                  }
+                },
+                {
+                  "pattern": "$VAR.$FUNC(<...$ARG...>, ...)"
+                },
+                {
+                  "pattern-not": "$VAR.$FUNC(\"...\", ...)"
+                }
+              ]
+            },
+            {
+              "patterns": [
+                {
+                  "pattern-inside": "using System.Xml.Schema;\n...\n"
+                },
+                {
+                  "pattern-either": [
+                    {
+                      "patterns": [
+                        {
+                          "pattern": "$VAR.XPath = <...$ARG...>;"
+                        },
+                        {
+                          "pattern-not": "$VAR.XPath = \"...\""
+                        }
+                      ]
+                    },
+                    {
+                      "patterns": [
+                        {
+                          "pattern": "new XmlSchemaXPath { XPath = <...$ARG...> };"
+                        },
+                        {
+                          "focus-metavariable": "$ARG"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "severity": "INFO"
+    },
+    {
+      "id": "xss",
+      "languages": [
+        "csharp"
+      ],
+      "message": "Potential cross site scripting risk detected\n",
+      "metadata": {
+        "cwe": "Improper neutralization of input during web page generation(Cross-site Scripting)",
+        "cwe_id": "CWE-79",
+        "prescan_regex": "^(Http)"
+      },
+      "mode": "taint",
+      "pattern-sanitizers": [
+        {
+          "patterns": [
+            {
+              "metavariable-regex": {
+                "metavariable": "$FUNC",
+                "regex": "(SerializeObject|HtmlAttributeEncode|HtmlEncode|HtmlFormUrlEncode|UrlEncode|UrlPathEncode|XmlAttributeEncode|XmlEncode|Encode)"
+              }
+            },
+            {
+              "pattern": "$CLASS.$FUNC(...)"
+            }
+          ]
+        }
+      ],
+      "pattern-sinks": [
+        {
+          "pattern": "(System.Web.Mvc.HtmlHelper $E).Raw(...)"
+        },
+        {
+          "pattern": "(Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper $E).Raw(...)"
+        },
+        {
+          "pattern": "(System.Web.HttpResponse $E).AddHeader(...)"
+        },
+        {
+          "pattern": "(System.Web.HttpResponse $E).AppendHeader(...)"
+        },
+        {
+          "pattern": "(System.Web.HttpResponse $E).Write(...)"
+        },
+        {
+          "pattern": "(System.Web.HttpResponse $E).BinaryWrite(...)"
+        },
+        {
+          "pattern": "(System.Web.HttpResponse $E).TransmitFile(...)"
+        },
+        {
+          "pattern": "(System.Web.HttpResponse $E).WriteFile(...)"
+        },
+        {
+          "pattern": "(System.Web.HttpResponseBase $E).AddHeader(...)"
+        },
+        {
+          "pattern": "(System.Web.HttpResponseBase $E).AppendHeader(...)"
+        },
+        {
+          "pattern": "(System.Web.HttpResponseBase $E).Write(...)"
+        },
+        {
+          "pattern": "(System.Web.HttpResponseBase $E).BinaryWrite(...)"
+        },
+        {
+          "pattern": "(System.Web.HttpResponseBase $E).WriteFile(...)"
+        },
+        {
+          "pattern": "(System.Web.UI.HtmlTextWriter $E).AddAttribute(...)"
+        },
+        {
+          "pattern": "(System.Web.UI.HtmlTextWriter $E).AddStyleAttribute(...)"
+        },
+        {
+          "pattern": "(System.Web.UI.HtmlTextWriter $E).RenderBeginTag(...)"
+        },
+        {
+          "pattern": "(System.Web.UI.HtmlTextWriter $E).Write(...)"
+        },
+        {
+          "pattern": "(System.Web.UI.HtmlTextWriter $E).WriteAttribute(...)"
+        },
+        {
+          "pattern": "(System.Web.UI.HtmlTextWriter $E).WriteBeginTag(...)"
+        },
+        {
+          "pattern": "(System.Web.UI.HtmlTextWriter $E).WriteEndTag(...)"
+        },
+        {
+          "pattern": "(System.Web.UI.HtmlTextWriter $E).WriteFullBeginTag(...)"
+        },
+        {
+          "pattern": "(System.Web.UI.HtmlTextWriter $E).WriteStyleAttribute(...)"
+        },
+        {
+          "pattern": "(System.Web.UI.ClientScriptManager $E).RegisterStartupScript(...)"
+        },
+        {
+          "pattern": "(System.Web.UI.ClientScriptManager $E).RegisterClientScriptBlock(...)"
+        },
+        {
+          "pattern": "(System.Web.UI.Page $E).RegisterStartupScript(...)"
+        },
+        {
+          "pattern": "(System.Web.UI.Page $E).RegisterClientScriptBlock(...)"
+        },
+        {
+          "pattern": "return ...;"
+        }
+      ],
+      "pattern-sources": [
+        {
+          "patterns": [
+            {
+              "pattern": "$PARAM"
+            },
+            {
+              "metavariable-regex": {
+                "metavariable": "$HTTP_ANNO",
+                "regex": "^(Http)"
+              }
+            },
+            {
+              "pattern-inside": "public class $CLASS : Controller {\n  ...\n}\n"
+            },
+            {
+              "pattern-inside": "[$HTTP_ANNO]\npublic string $METHOD(...,$PARAM,...){...}\n"
+            }
+          ]
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "xxe-injection",
+      "languages": [
+        "csharp"
+      ],
+      "message": "Incorrectly configured XML parser could be vulnerable to XML External Entity processing\n",
+      "metadata": {
+        "cwe": "Improper restriction of XML external entity reference ('XXE')",
+        "cwe_id": "CWE-611",
+        "prescan_regex": "Xml"
+      },
+      "mode": "taint",
+      "pattern-sanitizers": [
+        {
+          "pattern": "(XmlReaderSettings $SETTINGS).ProhibitDtd = true;"
+        },
+        {
+          "pattern": "(XmlReaderSettings $SETTINGS).DtdProcessing = DtdProcessing.Prohibit;"
+        },
+        {
+          "pattern": "(XmlDocument $DOC).XmlResolver = null;"
+        },
+        {
+          "pattern": "var $DOC = new XmlDocument { ..., XmlResolver = null, ... };"
+        }
+      ],
+      "pattern-sinks": [
+        {
+          "pattern": "XmlReader.Create(..., $SETTINGS);"
+        },
+        {
+          "pattern": "(XmlDocument $DOC).Load(...);"
+        }
+      ],
+      "pattern-sources": [
+        {
+          "pattern": "var $SETTINGS = new XmlReaderSettings();"
+        },
+        {
+          "pattern": "var $DOC = new XmlDocument(...);"
+        },
+        {
+          "pattern": "var $DOC = new XmlDocument {...};"
+        }
+      ],
+      "severity": "WARNING"
+    }
+  ]
+}

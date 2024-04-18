@@ -1,0 +1,36 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/tree/main/javascript?ref_type=heads
+
+rules:
+- id: "detect-new-buffer"
+  languages:
+  - "javascript"
+  - "typescript"
+  patterns:
+  - patterns:
+    - pattern-not-inside: |-
+        require("safe-buffer")
+        ...
+    - pattern-not-inside: |-
+        import { Buffer } from "safe-buffer"
+        ...
+    - pattern-inside: |-
+        function $FUNC(..., $X, ...) { ... }
+    - pattern: "new Buffer($X,...)"
+  - pattern-not: |
+      new Buffer("...",...)
+  - pattern-not: |
+      new Buffer([...] , ...)
+  message: |
+    The application was found calling  the `new Buffer` constructor which has been deprecated
+    since Node 8.
+    By passing in a non-literal value, an adversary could allocate large amounts of memory.
+  metadata:
+    cwe: "Allocation of resources without limits or throttling"
+    cwe_id: "CWE-770"
+    category: "security"
+    prescan_regex: new\s*Buffer\(
+    # yamllint disable
+    source-rule-url: "https://github.com/eslint-community/eslint-plugin-security/blob/main/rules/detect-new-buffer.js"
+    # yamllint enable
+  severity: "WARNING"

@@ -1,0 +1,27 @@
+rules:
+  - id: unencrypted-fetch
+    languages:
+      - typescript
+      - javascript
+    patterns:
+      - pattern-either:
+        - pattern-inside: |
+            $XHR = new XMLHttpRequest();
+            ...
+            $XHR.open(..., '$URL');
+        - pattern: fetch('$URL');
+        - pattern: fetch('$URL', ...);
+      - focus-metavariable: $URL
+      - metavariable-regex:
+          metavariable: $URL
+          regex: ^http:\/\/(?!(localhost($|\/|:\d+)|127\.0\.0\.1($|\/|:\d+)))
+    severity: WARNING
+    message: |
+      The application is loading content from an unencrypted source (http://).
+      A man-in-the-middle attacker may be able to intercept or change its
+      contents.
+    metadata:
+      cwe_id: CWE-319
+      cwe: Usage of unencrypted communication channel
+      category: security
+      prescan_regex: (\bfetch\s*\(|\bopen\s*\()

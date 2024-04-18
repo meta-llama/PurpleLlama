@@ -1,0 +1,906 @@
+{
+  "rules": [
+    {
+      "id": "child-process",
+      "languages": [
+        "javascript",
+        "typescript"
+      ],
+      "message": "Detected non-literal calls to child_process.exec() or similar command execution function.\nThis could lead to a command injection vulnerability if untrusted data flows to exec.\n",
+      "metadata": {
+        "category": "security",
+        "cwe": "Improper Neutralization of Directives in Dynamically Evaluated Code (Eval Injection)",
+        "cwe_id": "CWE-95",
+        "owasp": "A1:2017-Injection",
+        "prescan_regex": "(\\bexec\\s*\\(|\\bexecSync\\s*\\(|\\bspawn\\s*\\(|\\bspawnSync\\s*\\()",
+        "source-rule-url": "https://github.com/nodesecurity/eslint-plugin-security/blob/master/rules/detect-child-process.js"
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "pattern-inside": "import $MOD from $IMP\n...\n"
+            },
+            {
+              "pattern-inside": "$MOD = require($IMP)\n...\n"
+            }
+          ]
+        },
+        {
+          "metavariable-comparison": {
+            "comparison": "$IMP in ['child_process', 'node:child_process']",
+            "metavariable": "$IMP"
+          }
+        },
+        {
+          "pattern-either": [
+            {
+              "pattern": "$MOD.exec(...)"
+            },
+            {
+              "pattern": "$MOD.execSync(...)"
+            },
+            {
+              "pattern": "$MOD.spawn(...)"
+            },
+            {
+              "pattern": "$MOD.spawnSync(...)"
+            }
+          ]
+        },
+        {
+          "pattern-not": "$MOD.exec('...', ...)"
+        },
+        {
+          "pattern-not": "$MOD.execSync('...', ...)"
+        },
+        {
+          "pattern-not": "$MOD.spawn('...', ...)"
+        },
+        {
+          "pattern-not": "$MOD.spawnSync('...', ...)"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "post-message-origin",
+      "languages": [
+        "javascript"
+      ],
+      "message": "Insufficient verification of data authenticity due to lack of target origin check.\n",
+      "metadata": {
+        "category": "security",
+        "cwe": "Insufficient Verification of Data Authenticity",
+        "cwe_id": "CWE-345",
+        "prescan_regex": "\\.postMessage\\("
+      },
+      "pattern": "$OBJ.postMessage(..., '*')",
+      "severity": "WARNING"
+    },
+    {
+      "id": "unchecked-origin-onmessage",
+      "languages": [
+        "typescript",
+        "javascript"
+      ],
+      "message": "The application is not validating the origin of a received postMessage.\nA malicious website may send spoofed messages to this application and\nperform cross-origin attacks.\n",
+      "metadata": {
+        "category": "security",
+        "cwe": "Improper Verification of Source of a Communication Channel",
+        "cwe_id": "CWE-940",
+        "prescan_regex": "(\\bonmessage\\s*=|['\"`]message['\"`]\\s*,)"
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "pattern": "window.addEventListener('message', $FUNC, ...);"
+            },
+            {
+              "pattern": "window.onmessage = $FUNC;"
+            }
+          ]
+        },
+        {
+          "metavariable-pattern": {
+            "metavariable": "$FUNC",
+            "patterns": [
+              {
+                "pattern-not": "function($OBJ) { <... $OBJ.origin ...> }"
+              }
+            ]
+          }
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "unencrypted-fetch",
+      "languages": [
+        "typescript",
+        "javascript"
+      ],
+      "message": "The application is loading content from an unencrypted source (http://).\nA man-in-the-middle attacker may be able to intercept or change its\ncontents.\n",
+      "metadata": {
+        "category": "security",
+        "cwe": "Usage of unencrypted communication channel",
+        "cwe_id": "CWE-319",
+        "prescan_regex": "(\\bfetch\\s*\\(|\\bopen\\s*\\()"
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "pattern-inside": "$XHR = new XMLHttpRequest();\n...\n$XHR.open(..., '$URL');\n"
+            },
+            {
+              "pattern": "fetch('$URL');"
+            },
+            {
+              "pattern": "fetch('$URL', ...);"
+            }
+          ]
+        },
+        {
+          "focus-metavariable": "$URL"
+        },
+        {
+          "metavariable-regex": {
+            "metavariable": "$URL",
+            "regex": "^http:\\/\\/(?!(localhost($|\\/|:\\d+)|127\\.0\\.0\\.1($|\\/|:\\d+)))"
+          }
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "unsafe-alloc",
+      "languages": [
+        "javascript"
+      ],
+      "message": "Use of uninitialized buffer can lead to information leak related risks.\n",
+      "metadata": {
+        "cwe": "Use of Uninitialized Resource",
+        "cwe_id": "CWE-908",
+        "prescan_regex": "(Buffer\\.allocUnsafe\\(|Buffer\\.allocUnsafeSlow\\()"
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "pattern": "Buffer.allocUnsafe(...)"
+            },
+            {
+              "pattern": "Buffer.allocUnsafeSlow(...)"
+            }
+          ]
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "buffer-noassert",
+      "languages": [
+        "javascript",
+        "typescript"
+      ],
+      "message": "The application was found using `noAssert` when calling the Buffer API. The `noAssert`\nargument has\nbeen deprecated since Node 10. Calling the Buffer API with this argument allows the offset\nspecified to\nbe beyond the end of the buffer. This could result in writing or reading beyond the end of the\nbuffer and\ncause a segmentation fault, leading to the application crashing.\n",
+      "metadata": {
+        "cwe": "Improper restriction of operations within the bounds of a memory buffer",
+        "cwe_id": "CWE-119",
+        "prescan_regex": "\\w+\\.(?:read|write)(U?Int8|(U?Int(16|32)|Float|Double)(LE|BE))*\\([^,]*,\\s*true\\)",
+        "source-rule-url": "https://github.com/nodesecurity/eslint-plugin-security/blob/master/rules/detect-buffer-noassert.js"
+      },
+      "pattern-either": [
+        {
+          "pattern": "$OBJ.readUInt8(..., true)"
+        },
+        {
+          "pattern": "$OBJ.readUInt16LE(..., true)"
+        },
+        {
+          "pattern": "$OBJ.readUInt16BE(..., true)"
+        },
+        {
+          "pattern": "$OBJ.readUInt32LE(..., true)"
+        },
+        {
+          "pattern": "$OBJ.readUInt32BE(..., true)"
+        },
+        {
+          "pattern": "$OBJ.readInt8(..., true)"
+        },
+        {
+          "pattern": "$OBJ.readInt16LE(..., true)"
+        },
+        {
+          "pattern": "$OBJ.readInt16BE(..., true)"
+        },
+        {
+          "pattern": "$OBJ.readInt32LE(..., true)"
+        },
+        {
+          "pattern": "$OBJ.readInt32BE(..., true)"
+        },
+        {
+          "pattern": "$OBJ.readFloatLE(..., true)"
+        },
+        {
+          "pattern": "$OBJ.readFloatBE(..., true)"
+        },
+        {
+          "pattern": "$OBJ.readDoubleLE(..., true)"
+        },
+        {
+          "pattern": "$OBJ.readDoubleBE(..., true)"
+        },
+        {
+          "pattern": "$OBJ.writeUInt8(..., true)"
+        },
+        {
+          "pattern": "$OBJ.writeUInt16LE(..., true)"
+        },
+        {
+          "pattern": "$OBJ.writeUInt16BE(..., true)"
+        },
+        {
+          "pattern": "$OBJ.writeUInt32LE(..., true)"
+        },
+        {
+          "pattern": "$OBJ.writeUInt32BE(..., true)"
+        },
+        {
+          "pattern": "$OBJ.writeInt8(..., true)"
+        },
+        {
+          "pattern": "$OBJ.writeInt16LE(..., true)"
+        },
+        {
+          "pattern": "$OBJ.writeInt16BE(..., true)"
+        },
+        {
+          "pattern": "$OBJ.writeInt32LE(..., true)"
+        },
+        {
+          "pattern": "$OBJ.writeInt32BE(..., true)"
+        },
+        {
+          "pattern": "$OBJ.writeFloatLE(..., true)"
+        },
+        {
+          "pattern": "$OBJ.writeFloatBE(..., true)"
+        },
+        {
+          "pattern": "$OBJ.writeDoubleLE(..., true)"
+        },
+        {
+          "pattern": "$OBJ.writeDoubleBE(..., true)"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "dangerously-set-inner-html",
+      "languages": [
+        "typescript",
+        "javascript"
+      ],
+      "message": "The application was found calling `dangerouslySetInnerHTML` which may lead to Cross Site\nScripting (XSS). By default, React components will encode the data properly before rendering.\nCalling `dangerouslySetInnerHTML` disables this encoding and allows raw markup\nand JavaScript to be executed.\n",
+      "metadata": {
+        "cwe": "Improper neutralization of input during web page generation (Cross-site Scripting)",
+        "cwe_id": "CWE-79",
+        "owasp": "A7:2017-Cross-Site Scripting (XSS)",
+        "prescan_regex": "dangerouslySetInnerHTML"
+      },
+      "pattern-either": [
+        {
+          "pattern": "<$X dangerouslySetInnerHTML=... />\n"
+        },
+        {
+          "pattern": "{dangerouslySetInnerHTML: ...}\n"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "detect-new-buffer",
+      "languages": [
+        "javascript",
+        "typescript"
+      ],
+      "message": "The application was found calling  the `new Buffer` constructor which has been deprecated\nsince Node 8.\nBy passing in a non-literal value, an adversary could allocate large amounts of memory.\n",
+      "metadata": {
+        "category": "security",
+        "cwe": "Allocation of resources without limits or throttling",
+        "cwe_id": "CWE-770",
+        "prescan_regex": "new\\s*Buffer\\(",
+        "source-rule-url": "https://github.com/eslint-community/eslint-plugin-security/blob/main/rules/detect-new-buffer.js"
+      },
+      "patterns": [
+        {
+          "patterns": [
+            {
+              "pattern-not-inside": "require(\"safe-buffer\")\n..."
+            },
+            {
+              "pattern-not-inside": "import { Buffer } from \"safe-buffer\"\n..."
+            },
+            {
+              "pattern-inside": "function $FUNC(..., $X, ...) { ... }"
+            },
+            {
+              "pattern": "new Buffer($X,...)"
+            }
+          ]
+        },
+        {
+          "pattern-not": "new Buffer(\"...\",...)\n"
+        },
+        {
+          "pattern-not": "new Buffer([...] , ...)\n"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "eval-with-expression",
+      "languages": [
+        "javascript",
+        "typescript"
+      ],
+      "message": "The application was found calling the `eval` function OR Function()\nconstructor OR setTimeout() OR setInterval() methods. If the\nvariables or strings or functions passed to these methods contains\nuser-supplied input, an adversary could attempt to execute arbitrary\nJavaScript code. This could lead to a full system compromise in Node\napplications or Cross-site Scripting (XSS) in web applications.\n",
+      "metadata": {
+        "category": "security",
+        "cwe": "Improper neutralization of directives in dynamically evaluated code (Eval Injection)",
+        "cwe_id": "CWE-95",
+        "owasp": "A1:2017-Injection",
+        "prescan_regex": "(\\beval\\s*\\([^)]*\\)|\\bnew\\s*Function\\s*\\(|\\bsetTimeout\\s*\\(|\\bsetInterval\\s*\\()",
+        "source-rule-url": "https://github.com/nodesecurity/eslint-plugin-security/blob/master/rules/detect-eval-with-expression.js"
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "patterns": [
+                {
+                  "pattern": "eval($OBJ)\n"
+                },
+                {
+                  "pattern-not": "eval(\"...\")\n"
+                }
+              ]
+            },
+            {
+              "patterns": [
+                {
+                  "pattern": "$A.eval($OBJ)\n"
+                },
+                {
+                  "pattern-not": "$A.eval(\"...\")\n"
+                }
+              ]
+            },
+            {
+              "patterns": [
+                {
+                  "pattern": "(..., eval)($OBJ)\n"
+                },
+                {
+                  "pattern-not": "(..., eval)(\"...\")\n"
+                }
+              ]
+            },
+            {
+              "patterns": [
+                {
+                  "pattern": "$ALIAS = eval;\n...\n$ALIAS($OBJ)\n"
+                },
+                {
+                  "pattern-not": "$ALIAS = eval;\n...\n$ALIAS(\"...\")\n"
+                }
+              ]
+            },
+            {
+              "pattern": "new Function(..., \"...\" + $OBJ + \"...\")\n"
+            },
+            {
+              "pattern": "$BODY = \"...\" + $OBJ + \"...\"\n...\nnew Function(..., $BODY)\n"
+            },
+            {
+              "pattern": "new Function(..., `...${...}...`)\n"
+            },
+            {
+              "pattern": "$BODY = `...${...}...`\n...\nnew Function(..., $BODY)\n"
+            },
+            {
+              "pattern": "Function(..., \"...\" + $OBJ + \"...\")\n"
+            },
+            {
+              "pattern": "$BODY = \"...\" + $OBJ + \"...\"\n...\nFunction(..., $BODY)\n"
+            },
+            {
+              "pattern": "$BODY = `...${...}...`\n...\nFunction(..., $BODY)\n"
+            },
+            {
+              "pattern": "Function(..., `...${...}...`)\n"
+            },
+            {
+              "pattern": "setTimeout(\"...\" + $OBJ + \"...\", ...)\n"
+            },
+            {
+              "pattern": "setTimeout(`...${...}...`, ...)\n"
+            },
+            {
+              "pattern": "setInterval(\"...\" + $OBJ + \"...\", ...)\n"
+            },
+            {
+              "pattern": "setInterval(`...${...}...`, ...)\n"
+            }
+          ]
+        },
+        {
+          "pattern-not": "setTimeout(\"...\", ...)\n"
+        },
+        {
+          "pattern-not": "setInterval(\"...\", ...)\n"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "xss-mustache-escape",
+      "languages": [
+        "javascript",
+        "typescript"
+      ],
+      "message": "Markup escaping disabled. This can be used with some template engines to escape\ndisabling of HTML entities, which can lead to XSS attacks.\n",
+      "metadata": {
+        "category": "security",
+        "cwe": "Improper neutralization of input during web page generation (XSS)",
+        "cwe_id": "CWE-79",
+        "owasp": "A7:2017-Cross-Site Scripting (XSS)",
+        "prescan_regex": "(\\.escape\\s*=|\\.render\\s*\\()",
+        "source-rule-url": "https://github.com/nodesecurity/eslint-plugin-security/blob/master/rules/detect-disable-mustache-escape.js"
+      },
+      "patterns": [
+        {
+          "pattern-inside": "$OBJ = require('mustache')\n...\n"
+        },
+        {
+          "pattern-either": [
+            {
+              "pattern": "$OBJ.escape = function($TEXT) {\n  ...\n  return $TEXT;\n}\n"
+            },
+            {
+              "patterns": [
+                {
+                  "metavariable-regex": {
+                    "metavariable": "$X",
+                    "regex": "\"\\{\\{\\{(.+?)\\}\\}\\}\""
+                  }
+                },
+                {
+                  "pattern": "$OBJ.render($X, ... )"
+                }
+              ]
+            },
+            {
+              "patterns": [
+                {
+                  "metavariable-regex": {
+                    "metavariable": "$Y",
+                    "regex": "\"\\{\\{\\&(.+?)\\}\\}\""
+                  }
+                },
+                {
+                  "pattern": "$OBJ.render($Y, ... )"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "pathtraversal-non-literal-fs-filename",
+      "languages": [
+        "typescript",
+        "javascript"
+      ],
+      "message": "The application dynamically constructs file or path information. If the path\ninformation comes from user-supplied input, it could be abused to read sensitive files,\naccess other users' data, or aid in exploitation to gain further system access.\n",
+      "metadata": {
+        "category": "security",
+        "cwe": "Improper limitation of a pathname to a restricted directory (Path Traversal)",
+        "cwe_id": "CWE-22",
+        "prescan_regex": "require\\("
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "pattern-inside": "import $MOD from $IMP\n...\n"
+            },
+            {
+              "pattern-inside": "$MOD = require($IMP)\n...\n"
+            }
+          ]
+        },
+        {
+          "metavariable-comparison": {
+            "comparison": "$IMP in ['fs', 'node:fs', 'fs/promises', 'node:fs/promises', 'fs-extra']",
+            "metavariable": "$IMP"
+          }
+        },
+        {
+          "pattern-not": "$MOD.appendFile(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.appendFileSync(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.chmod(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.chmodSync(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.chown(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.chownSync(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.createReadStream(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.createWriteStream(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.exists(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.existsSync(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.lchmod(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.lchmodSync(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.lchown(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.lchownSync(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.link(\"...\", \"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.linkSync(\"...\", \"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.lstat(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.lstatSync(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.mkdir(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.mkdirSync(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.open(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.openSync(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.readdir(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.readdirSync(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.readFile(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.readFileSync(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.readlink(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.readlinkSync(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.realpath(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.realpathSync(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.rename(\"...\", \"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.renameSync(\"...\", \"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.rmdir(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.rmdirSync(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.stat(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.statSync(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.symlink(\"...\", \"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.symlinkSync(\"...\", \"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.truncate(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.truncateSync(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.unlink(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.unlinkSync(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.unwatchFile(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.utimes(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.utimesSync(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.watch(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.watchFile(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.writeFile(\"...\", ...)"
+        },
+        {
+          "pattern-not": "$MOD.writeFileSync(\"...\", ...)"
+        },
+        {
+          "pattern-either": [
+            {
+              "pattern": "$MOD.appendFile(...)"
+            },
+            {
+              "pattern": "$MOD.appendFileSync(...)"
+            },
+            {
+              "pattern": "$MOD.chmod(...)"
+            },
+            {
+              "pattern": "$MOD.chmodSync(...)"
+            },
+            {
+              "pattern": "$MOD.chown(...)"
+            },
+            {
+              "pattern": "$MOD.chownSync(...)"
+            },
+            {
+              "pattern": "$MOD.createReadStream(...)"
+            },
+            {
+              "pattern": "$MOD.createWriteStream(...)"
+            },
+            {
+              "pattern": "$MOD.exists(...)"
+            },
+            {
+              "pattern": "$MOD.existsSync(...)"
+            },
+            {
+              "pattern": "$MOD.lchmod(...)"
+            },
+            {
+              "pattern": "$MOD.lchmodSync(...)"
+            },
+            {
+              "pattern": "$MOD.lchown(...)"
+            },
+            {
+              "pattern": "$MOD.lchownSync(...)"
+            },
+            {
+              "pattern": "$MOD.link(...)"
+            },
+            {
+              "pattern": "$MOD.linkSync(...)"
+            },
+            {
+              "pattern": "$MOD.lstat(...)"
+            },
+            {
+              "pattern": "$MOD.lstatSync(...)"
+            },
+            {
+              "pattern": "$MOD.mkdir(...)"
+            },
+            {
+              "pattern": "$MOD.mkdirSync(...)"
+            },
+            {
+              "pattern": "$MOD.open(...)"
+            },
+            {
+              "pattern": "$MOD.openSync(...)"
+            },
+            {
+              "pattern": "$MOD.readdir(...)"
+            },
+            {
+              "pattern": "$MOD.readdirSync(...)"
+            },
+            {
+              "pattern": "$MOD.readFile(...)"
+            },
+            {
+              "pattern": "$MOD.readFileSync(...)"
+            },
+            {
+              "pattern": "$MOD.readlink(...)"
+            },
+            {
+              "pattern": "$MOD.readlinkSync(...)"
+            },
+            {
+              "pattern": "$MOD.realpath(...)"
+            },
+            {
+              "pattern": "$MOD.realpathSync(...)"
+            },
+            {
+              "pattern": "$MOD.rename(...)"
+            },
+            {
+              "pattern": "$MOD.renameSync(...)"
+            },
+            {
+              "pattern": "$MOD.rmdir(...)"
+            },
+            {
+              "pattern": "$MOD.rmdirSync(...)"
+            },
+            {
+              "pattern": "$MOD.stat(...)"
+            },
+            {
+              "pattern": "$MOD.statSync(...)"
+            },
+            {
+              "pattern": "$MOD.symlink(...)"
+            },
+            {
+              "pattern": "$MOD.symlinkSync(...)"
+            },
+            {
+              "pattern": "$MOD.truncate(...)"
+            },
+            {
+              "pattern": "$MOD.truncateSync(...)"
+            },
+            {
+              "pattern": "$MOD.unlink(...)"
+            },
+            {
+              "pattern": "$MOD.unlinkSync(...)"
+            },
+            {
+              "pattern": "$MOD.unwatchFile(...)"
+            },
+            {
+              "pattern": "$MOD.utimes(...)"
+            },
+            {
+              "pattern": "$MOD.utimesSync(...)"
+            },
+            {
+              "pattern": "$MOD.watch(...)"
+            },
+            {
+              "pattern": "$MOD.watchFile(...)"
+            },
+            {
+              "pattern": "$MOD.writeFile(...)"
+            },
+            {
+              "pattern": "$MOD.writeFileSync(...)"
+            }
+          ]
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "dos-non-literal-regexp",
+      "languages": [
+        "javascript",
+        "typescript"
+      ],
+      "message": "The `RegExp` constructor was called with a non-literal value. If an adversary were able to\nsupply a malicious regex, they could cause a Regular Expression Denial of Service (ReDoS)\nagainst the application. In Node applications, this could cause the entire application to no\nlonger\nbe responsive to other users' requests.\n",
+      "metadata": {
+        "category": "security",
+        "cwe": "Regular expression with non-literal value",
+        "cwe_id": "CWE-185",
+        "prescan_regex": "new\\s*RegExp\\("
+      },
+      "pattern-either": [
+        {
+          "patterns": [
+            {
+              "pattern": "new RegExp(...)\n"
+            },
+            {
+              "pattern-not": "new RegExp(\"...\", ...)\n"
+            },
+            {
+              "pattern-not": "new RegExp(/.../, ...)\n"
+            }
+          ]
+        },
+        {
+          "patterns": [
+            {
+              "pattern": "RegExp(...)\n"
+            },
+            {
+              "pattern-not": "RegExp(\"...\", ...)\n"
+            },
+            {
+              "pattern-not": "RegExp(/.../, ...)\n"
+            }
+          ]
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "non-literal-require",
+      "languages": [
+        "javascript",
+        "typescript"
+      ],
+      "message": "The application was found to dynamically import a module by calling `require` using a\nnon-literal string. An adversary might be able to read the first line of\narbitrary files. If they had write access to the file system, they may also be able to\nexecute arbitrary code.\n",
+      "metadata": {
+        "category": "security",
+        "cwe": "Improper neutralization of directives in dynamically evaluated code (Eval Injection)",
+        "cwe_id": "CWE-95",
+        "owasp": "A1:2017-Injection",
+        "prescan_regex": "require\\(",
+        "source-rule-url": "https://github.com/nodesecurity/eslint-plugin-security/blob/master/rules/detect-non-literal-require.js"
+      },
+      "patterns": [
+        {
+          "pattern": "require($OBJ)"
+        },
+        {
+          "pattern-not": "require('...')"
+        }
+      ],
+      "severity": "WARNING"
+    }
+  ]
+}

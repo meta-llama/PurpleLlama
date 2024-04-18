@@ -1,0 +1,42 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/tree/main/javascript?ref_type=heads
+
+rules:
+- id: "child-process"
+  languages:
+  - "javascript"
+  - "typescript"
+  patterns:
+  - pattern-either:
+    - pattern-inside: |
+        import $MOD from $IMP
+        ...
+    - pattern-inside: |
+        $MOD = require($IMP)
+        ...
+  - metavariable-comparison:
+      metavariable: "$IMP"
+      comparison: "$IMP in ['child_process', 'node:child_process']"
+  - pattern-either:
+    - pattern: "$MOD.exec(...)"
+    - pattern: "$MOD.execSync(...)"
+    - pattern: "$MOD.spawn(...)"
+    - pattern: "$MOD.spawnSync(...)"
+  - pattern-not: "$MOD.exec('...', ...)"
+  - pattern-not: "$MOD.execSync('...', ...)"
+  - pattern-not: "$MOD.spawn('...', ...)"
+  - pattern-not: "$MOD.spawnSync('...', ...)"
+  severity: "WARNING"
+  message: |
+    Detected non-literal calls to child_process.exec() or similar command execution function.
+    This could lead to a command injection vulnerability if untrusted data flows to exec.
+  metadata:
+    cwe_id: "CWE-95"
+    owasp: "A1:2017-Injection"
+    cwe: "Improper Neutralization of Directives in Dynamically Evaluated
+      Code (Eval Injection)"
+    category: "security"
+    prescan_regex: (\bexec\s*\(|\bexecSync\s*\(|\bspawn\s*\(|\bspawnSync\s*\()
+    # yamllint disable
+    source-rule-url: "https://github.com/nodesecurity/eslint-plugin-security/blob/master/rules/detect-child-process.js"
+    # yamllint enable

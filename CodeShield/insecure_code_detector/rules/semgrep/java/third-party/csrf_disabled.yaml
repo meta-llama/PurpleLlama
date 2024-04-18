@@ -1,0 +1,20 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/java/csrf/rule-SpringCSRFDisabled.yml?ref_type=heads
+
+rules:
+- id: "csrf-spring-config-disabled"
+  languages:
+  - "java"
+  pattern-either:
+  - pattern: "(org.springframework.security.config.annotation.web.builders.HttpSecurity
+      $H). ... .csrf().disable();"
+  - pattern: "(org.springframework.security.config.annotation.web.configurers.CsrfConfigurer<HttpSecurity>
+      $C).disable();"
+  message: |
+    The application fails to protect against Cross-Site Request Forgery (CSRF)
+    due to disabling Spring's CSRF protection features.
+  severity: "WARNING"
+  metadata:
+    cwe: "Cross-Site Request Forgery (CSRF)"
+    cwe_id: "CWE-352"
+    prescan_regex: (csrf\(\).disable\(\)|CsrfConfigurer)

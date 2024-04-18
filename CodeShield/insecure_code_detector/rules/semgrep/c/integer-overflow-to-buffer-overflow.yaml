@@ -1,0 +1,25 @@
+rules:
+  - id: potential-integer-overflow-to-buffer-overflow
+    message: Potential integer overflow may result in buffer overflow
+    patterns:
+      - pattern: malloc($X * ...)
+      - pattern-not-inside: |
+          if($X < ...){...}
+          ...
+      - pattern-not-inside: |
+          if ($X > ...){...}
+          ...
+      - metavariable-regex:
+          metavariable: $X
+          regex: ^(?![A-Z_]+).*$
+    metadata:
+      cwe:
+      - "CWE-680: Integer Overflow to Buffer Overflow"
+      cwe_id: CWE-680
+      prescan_regex: malloc\(
+    likelihood: HIGH
+    impact: MEDIUM
+    languages:
+      - cpp
+      - c
+    severity: WARNING

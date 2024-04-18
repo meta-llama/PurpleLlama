@@ -1,0 +1,23 @@
+rules:
+  - id: unsafe-extract
+    mode: taint
+    pattern-sources:
+      - pattern: $_POST
+      - pattern: $_GET
+      - pattern: $_REQUEST
+      - pattern: $_COOKIE
+      - pattern: $_FILES
+    pattern-sanitizers:
+      - pattern: extract(..., EXTR_SKIP,...);
+    pattern-sinks:
+      - pattern: extract(...);
+    message: >
+      Do not use extract() on user controlled input (e.g. $_GET and $_POST) as it can overrite exisiting variable value with a user controlled value.
+    languages:
+      - php
+    severity: WARNING
+    metadata:
+      cwe:
+        - "CWE-621: Variable Extraction Error"
+      cwe_id: CWE-621
+      prescan_regex: (extract\()

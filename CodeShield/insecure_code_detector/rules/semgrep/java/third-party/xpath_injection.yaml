@@ -1,0 +1,30 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/java/xpathi/rule-XpathInjection.yml?ref_type=heads
+
+rules:
+- id: "xpath_injection_variable_resolver"
+  languages:
+  - "java"
+  patterns:
+  - pattern-either:
+    - pattern-inside: |-
+        import javax.xml.xpath.*; ...
+    - pattern-inside: |-
+        import javax.xml.xpath.XPath; ...
+  - pattern-either:
+    - patterns:
+      - pattern: "(XPath $X).compile($ARG)"
+      - pattern-not: "(XPath $X).compile(\"...\")"
+    - patterns:
+      - pattern: "(XPath $X).evaluate($ARG)"
+      - pattern-not: "(XPath $X).evaluate(\"...\")"
+  message: |
+    The application processes `XPath` queries with potentially malicious input.
+    An adversary who is able to control the XPath query could potentially influence the logic
+    of how data is retrieved, processed or even bypass protections.
+    To protect against XPath injection, user input should be parameterized using a variable resolver.
+  severity: "ERROR"
+  metadata:
+    cwe: "Improper neutralization of data within XPath expressions ('XPath Injection')"
+    cwe_id: "CWE-643"
+    prescan_regex: (compile\(|evaluate\()

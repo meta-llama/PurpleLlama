@@ -1,0 +1,21 @@
+rules:
+- id: md2-or-md4-hash-usage
+  message: >-
+    The MD2 and MD4 hash functions are considered insecure.
+  patterns:
+    - pattern-either:
+      - pattern: MD2_Init(...)
+      - pattern: EVP_md2(...)
+      - pattern: MD4_Init(...)
+      - pattern: EVP_md4(...)
+  metadata:
+    cwe:
+    - 'CWE-328: Use of Weak Hash'
+    cwe_id: CWE-328
+    prescan_regex: md2|md4|MD2|MD4
+    likelihood: LOW
+    impact: HIGH
+  languages:
+    - cpp
+    - c
+  severity: WARNING

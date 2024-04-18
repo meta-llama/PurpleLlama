@@ -1,0 +1,22 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/csharp/injection/rule-LdapInjection.yml?ref_type=heads
+
+rules:
+- id: "ldap-injection"
+  languages:
+  - csharp
+  patterns:
+  - pattern-either:
+    - patterns:
+      - pattern: "(DirectorySearcher $SOURCE).Filter = ..."
+      - pattern-not: "(DirectorySearcher $SOURCE).Filter = \"...\""
+    - patterns:
+      - pattern: "(DirectorySearcher $SOURCE).Path = ..."
+      - pattern-not: "(DirectorySearcher $SOURCE).Path = \"...\""
+  message: |
+    Unsanitized dynamic value passed to LDAP query can lead to LDAP Injections
+  severity: "WARNING"
+  metadata:
+    cwe: "Improper neutralization of special elements used in an LDAP query (LDAP Injection)"
+    cwe_id: "CWE-90"
+    prescan_regex: DirectorySearcher

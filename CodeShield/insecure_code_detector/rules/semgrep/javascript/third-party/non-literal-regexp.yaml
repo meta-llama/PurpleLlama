@@ -1,0 +1,35 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/tree/main/javascript?ref_type=heads
+
+rules:
+- id: "dos-non-literal-regexp"
+  languages:
+  - "javascript"
+  - "typescript"
+  message: |
+    The `RegExp` constructor was called with a non-literal value. If an adversary were able to
+    supply a malicious regex, they could cause a Regular Expression Denial of Service (ReDoS)
+    against the application. In Node applications, this could cause the entire application to no
+    longer
+    be responsive to other users' requests.
+  metadata:
+    cwe_id: "CWE-185"
+    cwe: "Regular expression with non-literal value"
+    category: "security"
+    prescan_regex: new\s*RegExp\(
+  pattern-either:
+  - patterns:
+    - pattern: |
+        new RegExp(...)
+    - pattern-not: |
+        new RegExp("...", ...)
+    - pattern-not: |
+        new RegExp(/.../, ...)
+  - patterns:
+    - pattern: |
+        RegExp(...)
+    - pattern-not: |
+        RegExp("...", ...)
+    - pattern-not: |
+        RegExp(/.../, ...)
+  severity: "WARNING"

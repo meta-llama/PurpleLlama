@@ -1,0 +1,471 @@
+{
+  "rules": [
+    {
+      "id": "deserialization_insecure_untrusted_data",
+      "languages": [
+        "java"
+      ],
+      "message": "Insecure deserialization detected. Ensure proper validation and handling of serialized data.\n",
+      "metadata": {
+        "cwe": "Deserialization of Untrusted Data",
+        "cwe_id": "CWE-502",
+        "prescan_regex": "ObjectInputStream\\("
+      },
+      "pattern": "new ObjectInputStream(...);",
+      "severity": "WARNING"
+    },
+    {
+      "id": "cors-servlet-header-injection",
+      "languages": [
+        "java"
+      ],
+      "message": "This application potentially allows user-supplied input into the value of the\n`Access-Control-Allow-Origin` response header. This header is part of the CORS\nspecification. By allowing user input to specify which domains can communicate with this\nserver, an adversary could exploit a weakness in this server to force clients to send credentials (such\nas session identifiers) to the adversary's server.\n",
+      "metadata": {
+        "cwe": "Permissive cross-domain policy with untrusted domains",
+        "cwe_id": "CWE-942",
+        "prescan_regex": "(HttpServletRequest|HttpServletResponse)"
+      },
+      "mode": "taint",
+      "pattern-sinks": [
+        {
+          "patterns": [
+            {
+              "pattern-either": [
+                {
+                  "pattern": "(HttpServletResponse $RES).setHeader(\"$HEADER\", ...)"
+                },
+                {
+                  "pattern": "(HttpServletResponse $RES).addHeader(\"$HEADER\", ...)"
+                }
+              ]
+            },
+            {
+              "metavariable-regex": {
+                "metavariable": "$HEADER",
+                "regex": "(?i)(Access-Control-Allow-Origin)"
+              }
+            }
+          ]
+        }
+      ],
+      "pattern-sources": [
+        {
+          "pattern": "(HttpServletRequest $REQ).getParamater(...)"
+        }
+      ],
+      "severity": "ERROR"
+    },
+    {
+      "id": "csrf-spring-config-disabled",
+      "languages": [
+        "java"
+      ],
+      "message": "The application fails to protect against Cross-Site Request Forgery (CSRF)\ndue to disabling Spring's CSRF protection features.\n",
+      "metadata": {
+        "cwe": "Cross-Site Request Forgery (CSRF)",
+        "cwe_id": "CWE-352",
+        "prescan_regex": "(csrf\\(\\).disable\\(\\)|CsrfConfigurer)"
+      },
+      "pattern-either": [
+        {
+          "pattern": "(org.springframework.security.config.annotation.web.builders.HttpSecurity $H). ... .csrf().disable();"
+        },
+        {
+          "pattern": "(org.springframework.security.config.annotation.web.configurers.CsrfConfigurer<HttpSecurity> $C).disable();"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "ldap-insecure_config_auth",
+      "languages": [
+        "java"
+      ],
+      "message": "The application does not provide authentication when communicating an LDAP\nserver. It is strongly recommended that the LDAP server be configured with\nauthentication and restrict what queries users can execute.\n",
+      "metadata": {
+        "cwe": "Missing authentication for critical function (LDAP)",
+        "cwe_id": "CWE-306",
+        "prescan_regex": "Context\\.SECURITY_AUTHENTICATION"
+      },
+      "patterns": [
+        {
+          "pattern-inside": "import javax.naming.Context;\n...\n"
+        },
+        {
+          "pattern": "$ENV.put(Context.SECURITY_AUTHENTICATION, \"none\");"
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "ssrf_insecure_patterns",
+      "languages": [
+        "java"
+      ],
+      "message": "Server-Side-Request-Forgery (SSRF) exploits backend systems that initiate requests to third\nparties. If user input is used in constructing or sending these requests, an attacker could supply\nmalicious data to force the request to other systems or modify request data to cause unwanted actions.\nEnsure user input is not used directly in constructing URLs or URIs when initiating requests\nto third party systems from back end systems.\n",
+      "metadata": {
+        "cwe": "Server-Side Request Forgery (SSRF)",
+        "cwe_id": "CWE-918",
+        "prescan_regex": "(connect|GetContent|openConnection|openStream|getContent)"
+      },
+      "pattern-either": [
+        {
+          "patterns": [
+            {
+              "pattern-either": [
+                {
+                  "pattern-inside": "import java.net.*\n...\n"
+                },
+                {
+                  "pattern-inside": "import java.net.URL\n...\n"
+                },
+                {
+                  "pattern-inside": "import java.net.URI\n...\n"
+                }
+              ]
+            },
+            {
+              "pattern": "new $TYPE(...). ... .$FUNC"
+            },
+            {
+              "pattern-not": "new $TYPE(\"...\"). ... .$FUNC"
+            },
+            {
+              "metavariable-pattern": {
+                "metavariable": "$FUNC",
+                "pattern-either": [
+                  {
+                    "pattern": "connect"
+                  },
+                  {
+                    "pattern": "GetContent"
+                  },
+                  {
+                    "pattern": "openConnection"
+                  },
+                  {
+                    "pattern": "openStream"
+                  },
+                  {
+                    "pattern": "getContent"
+                  }
+                ]
+              }
+            },
+            {
+              "metavariable-pattern": {
+                "metavariable": "$TYPE",
+                "pattern-either": [
+                  {
+                    "pattern": "URL"
+                  },
+                  {
+                    "pattern": "java.net.URL"
+                  },
+                  {
+                    "pattern": "URI"
+                  },
+                  {
+                    "pattern": "java.net.URI"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "patterns": [
+            {
+              "pattern-either": [
+                {
+                  "pattern-inside": "import java.net.*;\n...\n"
+                },
+                {
+                  "pattern-inside": "import java.net.InetSocketAddress;\n...\n"
+                }
+              ]
+            },
+            {
+              "pattern": "new InetSocketAddress(..., $PORT)\n"
+            },
+            {
+              "pattern-not": "new InetSocketAddress(\"...\", $PORT)\n"
+            }
+          ]
+        }
+      ],
+      "severity": "ERROR"
+    },
+    {
+      "id": "xpath_injection_variable_resolver",
+      "languages": [
+        "java"
+      ],
+      "message": "The application processes `XPath` queries with potentially malicious input.\nAn adversary who is able to control the XPath query could potentially influence the logic\nof how data is retrieved, processed or even bypass protections.\nTo protect against XPath injection, user input should be parameterized using a variable resolver.\n",
+      "metadata": {
+        "cwe": "Improper neutralization of data within XPath expressions ('XPath Injection')",
+        "cwe_id": "CWE-643",
+        "prescan_regex": "(compile\\(|evaluate\\()"
+      },
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "pattern-inside": "import javax.xml.xpath.*; ..."
+            },
+            {
+              "pattern-inside": "import javax.xml.xpath.XPath; ..."
+            }
+          ]
+        },
+        {
+          "pattern-either": [
+            {
+              "patterns": [
+                {
+                  "pattern": "(XPath $X).compile($ARG)"
+                },
+                {
+                  "pattern-not": "(XPath $X).compile(\"...\")"
+                }
+              ]
+            },
+            {
+              "patterns": [
+                {
+                  "pattern": "(XPath $X).evaluate($ARG)"
+                },
+                {
+                  "pattern-not": "(XPath $X).evaluate(\"...\")"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "severity": "ERROR"
+    },
+    {
+      "id": "xss-insecure-send-error-response",
+      "languages": [
+        "java"
+      ],
+      "message": "The application is returning user-supplied data from an HTTP request to an HTTP response's\n`sendError` method. This could lead to Cross Site Scripting (XSS) if the input were malicious\nscript code and the application server is not properly validating the output.\n",
+      "metadata": {
+        "cwe": "Improper neutralization of input during web page generation('XSS')",
+        "cwe_id": "CWE-79",
+        "prescan_regex": "(getParameter\\(|getHeader\\(|getRequestedSessionId\\(|getQueryString\\()"
+      },
+      "mode": "taint",
+      "pattern-sanitizers": [
+        {
+          "patterns": [
+            {
+              "pattern-inside": "org.owasp.encoder.Encode.forHtml($TAINTED);"
+            },
+            {
+              "pattern": "$TAINTED"
+            }
+          ]
+        }
+      ],
+      "pattern-sinks": [
+        {
+          "patterns": [
+            {
+              "pattern-inside": "$FUNC(..., HttpServletResponse $RES, ...) {...}"
+            },
+            {
+              "pattern": "$RES.sendError(..., $DATA);"
+            },
+            {
+              "pattern": "$DATA"
+            }
+          ]
+        }
+      ],
+      "pattern-sources": [
+        {
+          "patterns": [
+            {
+              "pattern-inside": "$FUNC(..., HttpServletRequest $REQ, ...) {...}"
+            },
+            {
+              "pattern-either": [
+                {
+                  "pattern": "$REQ.getParameter(...);"
+                },
+                {
+                  "pattern": "$REQ.getHeader(...);"
+                },
+                {
+                  "pattern": "$REQ.getRequestedSessionId();"
+                },
+                {
+                  "pattern": "$REQ.getQueryString();"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "xss-insecure-servlet-response",
+      "languages": [
+        "java"
+      ],
+      "message": "The application is returning user-supplied data from an HTTP request directly into an HTTP\nresponse output writer. This could lead to Cross Site Scripting (XSS) if the input were malicious\nscript code and the application server is not properly validating the output.\n",
+      "metadata": {
+        "cwe": "Improper neutralization of input during web page generation('XSS')",
+        "cwe_id": "CWE-79",
+        "prescan_regex": "(getParameter\\(|getWriter\\()"
+      },
+      "mode": "taint",
+      "pattern-sanitizers": [
+        {
+          "patterns": [
+            {
+              "pattern-inside": "org.owasp.encoder.Encode.forHtml($TAINTED);"
+            },
+            {
+              "pattern": "$TAINTED"
+            }
+          ]
+        }
+      ],
+      "pattern-sinks": [
+        {
+          "patterns": [
+            {
+              "pattern-inside": "$FUNC(..., HttpServletResponse $RES, ...) {...}"
+            },
+            {
+              "pattern-inside": "$WRITER = $RES.getWriter();\n...\n"
+            },
+            {
+              "pattern": "$WRITER.write($DATA,...);"
+            },
+            {
+              "pattern": "$DATA"
+            }
+          ]
+        },
+        {
+          "patterns": [
+            {
+              "pattern-inside": "$FUNC(..., HttpServletResponse $RES, ...) {...}"
+            },
+            {
+              "pattern": "$RES.getWriter().write($DATA,...);"
+            },
+            {
+              "pattern": "$DATA"
+            }
+          ]
+        }
+      ],
+      "pattern-sources": [
+        {
+          "patterns": [
+            {
+              "pattern-inside": "$FUNC(..., HttpServletRequest $REQ, ...) {...}"
+            },
+            {
+              "pattern": "$REQ.getParameter(...);"
+            }
+          ]
+        }
+      ],
+      "severity": "WARNING"
+    },
+    {
+      "id": "xxe-insecure-sax-parser",
+      "languages": [
+        "java"
+      ],
+      "message": "External XML entities are a feature of XML parsers that allow documents to contain references\nto other documents or data. This feature can be abused to read files, communicate with external\nhosts, exfiltrate data, or cause a Denial of Service (DoS).\nThe XMLReaderFactory has been deprecated.\nIt is recommended that the `SAXParser` is configured to disable DTD doctypes as this protects\nagainst the majority of XXE attacks.\n",
+      "metadata": {
+        "cwe": "Improper restriction of XML external entity reference ('XXE')",
+        "cwe_id": "CWE-611",
+        "prescan_regex": "parse\\("
+      },
+      "patterns": [
+        {
+          "pattern-inside": "$SF = SAXParserFactory.newInstance();\n...\n"
+        },
+        {
+          "pattern-not-inside": "$SF.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);\n...\n"
+        },
+        {
+          "pattern-not-inside": "$SF.setFeature(\"http://apache.org/xml/features/disallow-doctype-decl\", true);\n...\n"
+        },
+        {
+          "pattern-inside": "$P = $SFP.newSAXParser();\n...\n"
+        },
+        {
+          "pattern": "$P.parse(...);"
+        }
+      ],
+      "severity": "ERROR"
+    },
+    {
+      "id": "xxe-insecure-xml-input-factory",
+      "languages": [
+        "java"
+      ],
+      "message": "External XML entities are a feature of XML parsers that allow documents to contain references\nto other documents or data. This feature can be abused to read files, communicate with external\nhosts, exfiltrate data, or cause a Denial of Service (DoS).\nIn most XML parsers, the recommendation to protect against XXE is to disable the doctype feature.\nUnfortunately use of the `XMLInputFactory` requires that the doctypes feature be enabled. Instead\nthe application can set the `ACCESS_EXTERNAL_DTD` to disable supporting external entities.\n",
+      "metadata": {
+        "cwe": "Improper restriction of XML external entity reference ('XXE')",
+        "cwe_id": "CWE-611",
+        "prescan_regex": "createXMLStreamReader\\("
+      },
+      "patterns": [
+        {
+          "pattern-inside": "$SF = XMLInputFactory.newFactory();\n...\n"
+        },
+        {
+          "pattern-not-inside": "$SF.setProperty(XMLInputFactory.SUPPORT_DTD, false);\n...\n"
+        },
+        {
+          "pattern-not-inside": "$SF.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);\n...\n"
+        },
+        {
+          "pattern-not-inside": "$SF.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);\n...\n"
+        },
+        {
+          "pattern-not-inside": "$SF.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);\n...\n"
+        },
+        {
+          "pattern": "$SF.createXMLStreamReader(...)"
+        }
+      ],
+      "severity": "ERROR"
+    },
+    {
+      "id": "xxe-deprecated-xml-reader",
+      "languages": [
+        "java"
+      ],
+      "message": "External XML entities are a feature of XML parsers that allow documents to contain references\nto other documents or data. This feature can be abused to read files, communicate with external\nhosts, exfiltrate data, or cause a Denial of Service (DoS).\nThe XMLReaderFactory has been deprecated. It is recommended that\n[SAXParserFactory](https://docs.oracle.com/javase/9/docs/api/javax/xml/parsers/SAXParserFactory.html)\nbe used instead. Additionally when using the SAXParser it must be configured to disallow doctypes,\nwhich will protect against the majority of XXE attacks.\n",
+      "metadata": {
+        "cwe": "Improper restriction of XML external entity reference ('XXE')",
+        "cwe_id": "CWE-611",
+        "prescan_regex": "parse\\("
+      },
+      "patterns": [
+        {
+          "pattern-inside": "$R = XMLReaderFactory.createXMLReader();\n...\n"
+        },
+        {
+          "pattern-not-inside": "$R.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);\n...\n"
+        },
+        {
+          "pattern": "$R.parse(...);"
+        }
+      ],
+      "severity": "ERROR"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/java/ssrf/rule-SSRF.yml?ref_type=heads
+
+rules:
+- id: "ssrf_insecure_patterns"
+  languages:
+  - "java"
+  pattern-either:
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          import java.net.*
+          ...
+      - pattern-inside: |
+          import java.net.URL
+          ...
+      - pattern-inside: |
+          import java.net.URI
+          ...
+    - pattern: "new $TYPE(...). ... .$FUNC"
+    - pattern-not: "new $TYPE(\"...\"). ... .$FUNC"
+    - metavariable-pattern:
+        metavariable: "$FUNC"
+        pattern-either:
+        - pattern: "connect"
+        - pattern: "GetContent"
+        - pattern: "openConnection"
+        - pattern: "openStream"
+        - pattern: "getContent"
+    - metavariable-pattern:
+        metavariable: "$TYPE"
+        pattern-either:
+        - pattern: "URL"
+        - pattern: "java.net.URL"
+        - pattern: "URI"
+        - pattern: "java.net.URI"
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          import java.net.*;
+          ...
+      - pattern-inside: |
+          import java.net.InetSocketAddress;
+          ...
+    - pattern: |
+        new InetSocketAddress(..., $PORT)
+    - pattern-not: |
+        new InetSocketAddress("...", $PORT)
+  message: |
+    Server-Side-Request-Forgery (SSRF) exploits backend systems that initiate requests to third
+    parties. If user input is used in constructing or sending these requests, an attacker could supply
+    malicious data to force the request to other systems or modify request data to cause unwanted actions.
+    Ensure user input is not used directly in constructing URLs or URIs when initiating requests
+    to third party systems from back end systems.
+  severity: "ERROR"
+  metadata:
+    cwe: "Server-Side Request Forgery (SSRF)"
+    cwe_id: "CWE-918"
+    prescan_regex: (connect|GetContent|openConnection|openStream|getContent)

@@ -1,0 +1,33 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/java/xxe/rule-SaxParserXXE.yml?ref_type=heads
+
+rules:
+- id: "xxe-insecure-sax-parser"
+  languages:
+  - "java"
+  patterns:
+  - pattern-inside: |
+      $SF = SAXParserFactory.newInstance();
+      ...
+  - pattern-not-inside: |
+      $SF.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+      ...
+  - pattern-not-inside: |
+      $SF.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+      ...
+  - pattern-inside: |
+      $P = $SFP.newSAXParser();
+      ...
+  - pattern: "$P.parse(...);"
+  message: |
+    External XML entities are a feature of XML parsers that allow documents to contain references
+    to other documents or data. This feature can be abused to read files, communicate with external
+    hosts, exfiltrate data, or cause a Denial of Service (DoS).
+    The XMLReaderFactory has been deprecated.
+    It is recommended that the `SAXParser` is configured to disable DTD doctypes as this protects
+    against the majority of XXE attacks.
+  severity: "ERROR"
+  metadata:
+    cwe: "Improper restriction of XML external entity reference ('XXE')"
+    cwe_id: "CWE-611"
+    prescan_regex: parse\(

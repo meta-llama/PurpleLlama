@@ -1,0 +1,42 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/tree/main/javascript?ref_type=heads
+
+rules:
+- id: "xss-mustache-escape"
+  languages:
+  - "javascript"
+  - "typescript"
+  patterns:
+  - pattern-inside: |
+      $OBJ = require('mustache')
+      ...
+  - pattern-either:
+    - pattern: |
+        $OBJ.escape = function($TEXT) {
+          ...
+          return $TEXT;
+        }
+    - patterns:
+      - metavariable-regex:
+          metavariable: "$X"
+          regex: "\"\\{\\{\\{(.+?)\\}\\}\\}\""
+      - pattern: "$OBJ.render($X, ... )"
+    - patterns:
+      - metavariable-regex:
+          metavariable: "$Y"
+          regex: "\"\\{\\{\\&(.+?)\\}\\}\""
+      - pattern: "$OBJ.render($Y, ... )"
+  severity: "WARNING"
+  message: |
+    Markup escaping disabled. This can be used with some template engines to escape
+    disabling of HTML entities, which can lead to XSS attacks.
+  metadata:
+    cwe_id: "CWE-79"
+    owasp: "A7:2017-Cross-Site Scripting (XSS)"
+    category: "security"
+    cwe: "Improper neutralization of input during web page generation
+      (XSS)"
+    prescan_regex: (\.escape\s*=|\.render\s*\()
+    # yamllint disable
+    source-rule-url: "https://github.com/nodesecurity/eslint-plugin-security/blob/master/rules/detect-disable-mustache-escape.js"
+    # yamllint enable

@@ -1,0 +1,20 @@
+# Reference: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/python/deserialization/rule-pickle.yml?ref_type=heads
+
+rules:
+- id: unsafe-json-pickle-use
+  patterns:
+      - pattern-either:
+          - pattern: jsonpickle.decode(...)
+          - pattern: jsonpickle.unpickler.decode(...)
+      - pattern-not: jsonpickle.decode("...")
+      - pattern-not: jsonpickle.unpickler.decode("...")
+  message: >-
+    Potential deserialization risk due to pickle usage.
+  metadata:
+    cwe:
+    - 'CWE-502: Deserialization of Untrusted Data'
+    cwe_id: CWE-502
+    prescan_regex: \bjsonpickle\.(decode|unpickler)
+  severity: WARNING
+  languages:
+  - python

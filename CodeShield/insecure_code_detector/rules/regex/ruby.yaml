@@ -1,0 +1,10 @@
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+#
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
+- cwe_id: CWE-78
+  description: Potential command injection due to Open3.popen3 usage
+  rule: '\bOpen3\.popen3\s*\(.*\)'
+  severity: Warning
+  pattern_id: RUBY-R-001

@@ -1,0 +1,24 @@
+# License: MIT (c) GitLab Inc.
+# Source: https://gitlab.com/gitlab-org/security-products/sast-rules/-/blob/main/csharp/other/rule-UnsafeXSLTSettingUsed.yml?ref_type=heads
+
+rules:
+- id: "unsafe-xslt-setting"
+  patterns:
+  - pattern-either:
+    - pattern: "new XsltSettings() {EnableScript = true};"
+    - pattern: |
+        var $SETTINGS = new XsltSettings();
+        ...
+        $SETTINGS.EnableScript = true;
+  message: |
+    By setting `XsltSettings.EnableScript` to true, an adversary who is able to influence the
+    loaded
+    XSL document could directly inject code to compromise the system. It is strongly
+    recommended that an alternative approach is used to work with XML data.
+  languages:
+  - "csharp"
+  severity: "WARNING"
+  metadata:
+    cwe: "Improper restriction of XML external entity reference"
+    cwe_id: "CWE-611"
+    prescan_regex: XsltSettings
