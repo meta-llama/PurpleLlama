@@ -105,25 +105,26 @@ We find that there is overlap between our training set and the BeaverTails-30k t
 
 # Model Performance
 
-We evaluate the performance of Llama Guard 2 and compare it with Llama Guard and popular content moderation APIs such as Azure, OpenAI Moderation, and Perspective. 
+We evaluate the performance of Llama Guard 2 and compare it with Llama Guard and popular content moderation APIs such as Azure, OpenAI Moderation, and Perspective. We use the token probability of the first output token (i.e. safe/unsafe) as the score for classification. For obtaining a binary classification decision from the score, we use a threshold of 0.5.
 
 Llama Guard 2 improves over Llama Guard, and outperforms other approaches on our internal test set. Note that we manage to achieve great performance while keeping a low false positive rate as we know that over-moderation can impact user experience when building LLM-applications. 
 <div align="center">
 
-| **Model**                | **F1 ↑** | **AUPRC ↑** | **False Positive Rate ↓** |
+| **Model**                | **F1 ↑** | **AUPRC ↑** | **False Positive<br>Rate ↓** |
 |--------------------------|:------:|:---------:|:-----------------------:|
-| Llama Guard\*             |  0.665 |   0.854   |          0.027          |
-| Llama Guard 2            |  0.915 |   0.974   |          0.040          |
-| GPT4                     |  0.796 |    N/A    |          0.151          |
+| Llama Guard\*             |  0.665 |   <ins>0.854</ins>   |          0.027          |
+| Llama Guard 2            |  **0.915** |   **0.974**   |          0.040          |
+| GPT4                     |  <ins>0.796</ins> |    N/A    |          0.151          |
 | OpenAI Moderation API    |  0.347 |   0.669   |          0.030          |
 | Azure Content Safety API |  0.519 |    N/A    |          0.245          |
 | Perspective API          |  0.265 |   0.586   |          0.046          |
-</div>
+
 
 <small> Table 1: Comparison of performance of various approaches measured on our internal test set.
 <br><small><small>
 *The performance of Llama Guard is lower on our new test set due to expansion of the number of harm categories from 6 to 11, which is not aligned to what Llama Guard was trained on.
 </small></small></small>
+</div>
 
 <br>
 
@@ -143,11 +144,11 @@ Llama Guard 2 improves over Llama Guard, and outperforms other approaches on our
 | Sex Crimes             |            0.275           |           0.002           |
 | Self-Harm              |            0.277           |           0.002           |
 
-</div>
+
 
 <small> Table 2: Category-wise breakdown of false negative rate and false positive rate for Llama Guard 2 on our internal benchmark for response classification with safety labels from the ML Commons taxonomy.<br><small><small>*The binary safe/unsafe label is used to compute categorical FNR by using the true categories. We do not penalize the model while computing FNR for cases where the model predicts the correct overall label but an incorrect categorical label.</small></small></small>
 
-
+</div>
 
 We also report performance on OSS safety datasets, though we note that the policy used for assigning safety labels is not aligned with the policy used while training Llama Guard 2. Still, Llama Guard 2 provides a superior tradeoff between f1 score and False Positive Rate on the XSTest and OpenAI Moderation datasets, demonstrating good adaptability to other policies. 
 
@@ -200,20 +201,25 @@ The BeaverTails dataset has a lower bar for a sample to be considered unsafe com
 </tbody>
 </table>
 
-<small>Table 3: Comparison of performance of various approaches measured on our internal test set for response classification. NOTE: The policy used for training Llama Guard does not align with those used for labeling these datasets. Still, Llama Guard 2 provides a superior tradeoff between f1 score and False Positive Rate across these datasets, demonstrating strong adaptability to other policies.</small>
-
-We hope to provide developers with a high-performing moderation solution for most use cases by aligning Llama Guard 2 taxonomy with MLCommons standard. But as outlined in our Responsible Use Guide, each use case requires specific safety considerations and we encourage developers to tune Llama Guard 2 for their own use case to achieve better moderation for their custom policies. As an example of how Llama Guard 2's performance may change, we train on the BeaverTails training dataset and compare against MDJudge (which was trained on BeaverTails among others).
 <div align="center">
+<small>Table 3: Comparison of performance of various approaches measured on our internal test set for response classification. <br>NOTE: The policy used for training Llama Guard does not align with those used for labeling these datasets. Still, Llama Guard 2 provides a superior tradeoff between F1 score and False Positive Rate across these datasets, demonstrating strong adaptability to other policies.</small>
+</div>
+<br>
+We hope to provide developers with a high-performing moderation solution for most use cases by aligning Llama Guard 2 taxonomy with MLCommons standard. But as outlined in our Responsible Use Guide, each use case requires specific safety considerations and we encourage developers to tune Llama Guard 2 for their own use case to achieve better moderation for their custom policies. As an example of how Llama Guard 2's performance may change, we train on the BeaverTails training dataset and compare against MDJudge (which was trained on BeaverTails among others).
+
+
+<div align="center">
+<br>
 
 |          **Model**          | **F1 ↑** | **False Positive Rate ↓** |
 |:---------------------------:|:--------:|:-------------------------:|
 | Llama Guard 2               |   0.736  |           0.059           |
-| MDJudge                     |   0.849  |           0.098           |
-| Llama Guard 2 + BeaverTails |   0.852  |           0.101           |
-</div>
+| MDJudge                     |   <ins>0.849</ins>  |           0.098           |
+| Llama Guard 2 + BeaverTails |   **0.852**  |           0.101           |
+
 
 <small>Table 4: Comparison of performance on BeaverTails-30k.</small>
-
+</div>
 
 # Limitations
 
@@ -225,7 +231,7 @@ Lastly, as an LLM, Llama Guard 2 may be susceptible to adversarial attacks or pr
 
 **Note on Llama Guard 2's policy**
 
-Llama Guard 2 supports 11 out of the 13 categories included in the [MLCommons AI Safety](https://mlcommons.org/working-groups/ai-safety/ai-safety/) taxonomy. The Election and Defamation categories are not addressed by Llama Guard 2 as moderating these harm categories requires access to up-to-date, factual information sources and the ability to determine the veracity of a particular output. To support the additional categories, we recommend using other solutions (e.g. Retrieval Augmented Generations) in tandem with Llama Guard 2 to evaluate information correctness.
+Llama Guard 2 supports 11 out of the 13 categories included in the [MLCommons AI Safety](https://mlcommons.org/working-groups/ai-safety/ai-safety/) taxonomy. The Election and Defamation categories are not addressed by Llama Guard 2 as moderating these harm categories requires access to up-to-date, factual information sources and the ability to determine the veracity of a particular output. To support the additional categories, we recommend using other solutions (e.g. Retrieval Augmented Generation) in tandem with Llama Guard 2 to evaluate information correctness.
 
 # Citation
 
