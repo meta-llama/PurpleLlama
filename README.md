@@ -90,8 +90,8 @@ easier to adopt best practices and improve the open ecosystem.
 
 To get started and learn how to use Purple Llama components with Llama models,
 see the getting started guide [here](https://ai.meta.com/llama/get-started/).
-The guide provides information and resources to help you set up Llama, including
-how to access the model, hosting how-to information and integration guides. Additionally,
+The guide provides information and resources to help you set up Llama including
+how to access the model, hosting, how-to and integration guides. Additionally,
 you will find supplemental materials to further assist you while responsibly
 building with Llama. The guide will be updated as more Purple Llama components
 get released.
