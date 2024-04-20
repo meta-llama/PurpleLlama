@@ -30,7 +30,7 @@ for model in models:
     for language in languages:
         stat += stats[model][language]["vulnerable_suggestion_count"]
 
-# print("insecure autocomplete count from stats:")
-# print(stat)
-# print("insecure prompt count from response:")
-# print(count)
+print("insecure autocomplete count from stats:")
+print(stat)
+print("insecure prompt count from response:")
+print(count)
