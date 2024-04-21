@@ -150,7 +150,7 @@ Llama Guard 2 improves over Llama Guard, and outperforms other approaches on our
 
 </div>
 
-We also report performance on OSS safety datasets, though we note that the policy used for assigning safety labels is not aligned with the policy used while training Llama Guard 2. Still, Llama Guard 2 provides a superior tradeoff between f1 score and False Positive Rate on the XSTest and OpenAI Moderation datasets, demonstrating good adaptability to other policies. 
+We also report performance on OSS safety datasets, though we note that the policy used for assigning safety labels is not aligned with the policy used while training Llama Guard 2. Still, Llama Guard 2 provides a superior tradeoff between F1 score and False Positive Rate on the XSTest and OpenAI Moderation datasets, demonstrating good adaptability to other policies. 
 
 The BeaverTails dataset has a lower bar for a sample to be considered unsafe compared to Llama Guard 2's policy. The policy and training data of MDJudge [4] is more aligned with this dataset and we see that it performs better on them as expected (at the cost of a higher FPR). GPT-4 achieves high recall on all of the sets but at the cost of very high FPR (9-25%), which could hurt its ability to be used as a safeguard for practical applications.
 
@@ -246,7 +246,7 @@ Llama Guard 2 supports 11 out of the 13 categories included in the [MLCommons AI
 
 # References
 
-[1] [Llama 3 Model Card](https://github.com/meta-llama/llama3/blob)
+[1] [Llama 3 Model Card](https://github.com/meta-llama/llama3/blob/main/MODEL_CARD.md)
 
 [2] [Llama Guard Model Card](https://github.com/meta-llama/PurpleLlama/blob/main/Llama-Guard/MODEL_CARD.md)
 
