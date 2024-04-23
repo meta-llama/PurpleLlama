@@ -54,7 +54,7 @@ CyberSec Eval v1 was what we believe was the first industry-wide set of cybersec
 We believe these tools will reduce the frequency of LLMs suggesting insecure AI-generated code and reduce their helpfulness to cyber adversaries. Our initial results show that there are meaningful cybersecurity risks for LLMs, both with recommending insecure code and for complying with malicious requests. See our [Cybersec Eval paper](https://ai.meta.com/research/publications/purple-llama-cyberseceval-a-benchmark-for-evaluating-the-cybersecurity-risks-of-large-language-models/) for more details.
 
 #### CyberSec Eval 2
-CyberSec Eval 2 expands on its predecessor by measuring an LLM’s propensity to abuse a code interpreter, offensive cybersecurity capabilities, and susceptibility to prompt injection. You can read the paper [here](TODO).
+CyberSec Eval 2 expands on its predecessor by measuring an LLM’s propensity to abuse a code interpreter, offensive cybersecurity capabilities, and susceptibility to prompt injection. You can read the paper [here](https://ai.meta.com/research/publications/cyberseceval-2-a-wide-ranging-cybersecurity-evaluation-suite-for-large-language-models/).
 
 You can also check out the 🤗 leaderboard [here](https://huggingface.co/spaces/facebook/CyberSecEval).
 
