@@ -210,7 +210,9 @@ class ANYSCALE(LLM):
 
     def __init__(self, model: str, api_key: str) -> None:
         super().__init__(model, api_key)
-        self.client = openai.OpenAI(base_url="https://api.endpoints.anyscale.com/v1", api_key=api_key)  # noqa
+        self.client = openai.OpenAI(
+            base_url="https://api.endpoints.anyscale.com/v1", api_key=api_key
+        )
 
     @override
     def query(
