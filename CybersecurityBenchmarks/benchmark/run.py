@@ -164,11 +164,11 @@ def main(
 
     materialized_llms_under_test = []
     if not args.use_precomputed_responses:
+        if llms_under_test is None and not args.llm_under_test:
+            raise ValueError("No LLMs were specified.")
         materialized_llms_under_test = llms_under_test or [
             default_llm_creator(specification) for specification in args.llm_under_test
         ]
-        if len(materialized_llms_under_test) == 0:
-            raise ValueError("No LLMs were specified.")
 
     stat_response_path = Path(args.stat_path) if args.stat_path else None
     judge_response_path = (
