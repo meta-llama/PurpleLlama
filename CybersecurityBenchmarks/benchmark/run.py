@@ -146,7 +146,7 @@ def main(
         "--num-test-cases",
         type=int,
         default=0,
-        help="Only set this argument for testing purpose: If set to a positive value, we test the given number of cases instead of all cases.",
+        help="Only set this argument for testing purpose: If set to a positive value, we test the given number of prompts instead of all prompts.",
     )
 
     parser.add_argument(
@@ -214,6 +214,14 @@ def main(
 
     if not args.only_generate_llm_responses:
         LOG.info("Evaluating...")
+        # The variable num_test_cases is defined to specify the number of prompts that need to be evaluated. However, if we are testing multiple LLMs or if we are conducting multiple rounds of testing queries per prompt, these factors will need below steps to reflect in `num_test_cases`` during the expansion/judge step.
+        if not args.use_precomputed_responses:
+            if len(materialized_llms_under_test) > 0:
+                args.num_test_cases = (
+                    len(materialized_llms_under_test) * args.num_test_cases
+                )
+            if args.num_queries_per_prompt:
+                args.num_test_cases = args.num_test_cases * args.num_queries_per_prompt
         asyncio.run(benchmark.run(args.num_test_cases))
 
 
