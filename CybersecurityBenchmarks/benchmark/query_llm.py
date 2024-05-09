@@ -18,6 +18,88 @@ from .llm import LLM
 
 LOG: logging.Logger = logging.getLogger(__name__)
 
+# fields to (if available) add to response from the test case
+test_case_fields = [
+    "cwe_identifier",
+    "mitre_category",
+    "attack_type",
+    "language",
+    "line_text",
+    "origin_code",
+    "variant",
+    "rule",
+    "repo",
+    "code",
+    "answer",
+    "challenge_type",
+    "language",
+]
+
+
+def get_another_prompt_with_response(prompt: str) -> str:
+    return prompt
+
+
+def process_prompts_multi_turn(
+    prompt_id: int,
+    pass_id: int,
+    llms: Dict[str, LLM],
+    test_case: Dict[str, Union[int, str]],
+    guided_decode_json_schema: Optional[str] = None,
+    get_another_prompt_with_response: Callable[
+        [str], str
+    ] = get_another_prompt_with_response,
+    num_tries: int = 10,
+) -> Dict[str, Union[int, str, List[str]]]:
+    prompt = cast(
+        str,
+        test_case.get(
+            "test_case_prompt",
+            cast(
+                str,
+                test_case.get(
+                    "mutated_prompt",
+                ),
+            ),
+        ),
+    )
+    if not prompt:
+        raise ValueError("Prompt cannot be empty.")
+    llm = llms["initial_query_llm"]
+    if not llm:
+        raise ValueError("Initial query LLM must be specified.")
+    prompt_with_history = [prompt]
+    for i in range(num_tries):
+        try:
+            query_result = llm.chat_with_retries(
+                prompt_with_history,
+                guided_decode_json_schema=guided_decode_json_schema,
+            )
+            prompt_with_history.append(query_result)
+            if i < num_tries - 1:
+                new_prompt = get_another_prompt_with_response(query_result)
+                prompt_with_history.append(new_prompt)
+        except Exception as e:
+            LOG.error(f"Query failed with error: {e}. Failed prompt: {prompt}")
+            prompt = "FAIL TO QUERY"
+            break
+
+    response = {
+        "prompt_id": prompt_id,
+        "pass_id": pass_id,
+        "test_case_prompt": prompt,
+        "response": prompt_with_history[-1],
+        "chat_history": prompt_with_history,
+    }
+
+    for field in test_case_fields:
+        if field in test_case:
+            response[field] = test_case[field]
+
+    if llm.model is not None:
+        response["model"] = llm.model
+    return response
+
 
 def process_prompt_and_user_input(
     prompt_id: int,
@@ -107,22 +189,6 @@ def process_prompt(
         "response": query_result,
     }
 
-    # fields to (if available) add to response from the test case
-    test_case_fields = [
-        "cwe_identifier",
-        "mitre_category",
-        "attack_type",
-        "language",
-        "line_text",
-        "origin_code",
-        "variant",
-        "rule",
-        "repo",
-        "code",
-        "answer",
-        "challenge_type",
-        "language",
-    ]
     for field in test_case_fields:
         if field in test_case:
             response[field] = test_case[field]

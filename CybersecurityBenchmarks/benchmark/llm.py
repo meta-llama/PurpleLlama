@@ -11,7 +11,7 @@ import logging
 
 import time
 from abc import ABC, abstractmethod
-from typing import Callable, Optional, Union
+from typing import Callable, List, Optional, Union
 
 import openai
 
@@ -45,6 +45,23 @@ class LLM(ABC):
 
         Args:
             prompt (str): The prompt to send to the LLM.
+
+        Returns:
+            str: The response from the LLM.
+        """
+        pass
+
+    @abstractmethod
+    def chat(
+        self,
+        prompt_with_history: List[str],
+        guided_decode_json_schema: Optional[str] = None,
+    ) -> str:
+        """
+        Abstract method to query an LLM with a given prompt and return the response.
+
+        Args:
+            prompt_with_history ([str]): The prompt to send to the LLM along with chat history. The last string in the list is the prompt.
 
         Returns:
             str: The response from the LLM.
@@ -91,10 +108,41 @@ class LLM(ABC):
             f"Unable to query LLM after {retries} retries: {last_exception}"
         )
 
+    def _chat_with_retries(
+        self,
+        func: Callable[..., str],
+        *args: Union[List[str], bool, Optional[str]],
+        retries: int = NUM_LLM_RETRIES,
+        backoff_factor: float = 0.5,
+    ) -> str:
+        last_exception = None
+        for retry in range(retries):
+            try:
+                return func(*args)
+            except Exception as exception:
+                last_exception = exception
+                sleep_time = backoff_factor * (2**retry)
+                time.sleep(sleep_time)
+                LOG.debug(
+                    f"LLM Query failed with error: {exception}. Sleeping for {sleep_time} seconds..."
+                )
+        raise RuntimeError(
+            f"Unable to query LLM after {retries} retries: {last_exception}"
+        )
+
     def query_with_retries(
         self, prompt: str, guided_decode_json_schema: Optional[str] = None
     ) -> str:
         return self._query_with_retries(self.query, prompt, guided_decode_json_schema)
+
+    def chat_with_retries(
+        self,
+        prompt_with_history: List[str],
+        guided_decode_json_schema: Optional[str] = None,
+    ) -> str:
+        return self._chat_with_retries(
+            self.chat, prompt_with_history, guided_decode_json_schema
+        )
 
     def query_with_system_prompt_with_retries(
         self,
@@ -151,6 +199,14 @@ class OPENAI(LLM):
     def __init__(self, model: str, api_key: str) -> None:
         super().__init__(model, api_key)
         self.client = openai.OpenAI(api_key=api_key)  # noqa
+
+    @override
+    def chat(
+        self,
+        prompt_with_history: List[str],
+        guided_decode_json_schema: Optional[str] = None,
+    ) -> str:
+        raise NotImplementedError("Chat API not implemented yet.")
 
     @override
     def query(
@@ -215,6 +271,14 @@ class ANYSCALE(LLM):
         )
 
     @override
+    def chat(
+        self,
+        prompt_with_history: List[str],
+        guided_decode_json_schema: Optional[str] = None,
+    ) -> str:
+        raise NotImplementedError("Chat API not implemented yet.")
+
+    @override
     def query(
         self, prompt: str, guided_decode_json_schema: Optional[str] = None
     ) -> str:
@@ -277,6 +341,14 @@ class ANYSCALE(LLM):
 
 class TOGETHER(LLM):
     """Accessing TOGETHER"""
+
+    @override
+    def chat(
+        self,
+        prompt_with_history: List[str],
+        guided_decode_json_schema: Optional[str] = None,
+    ) -> str:
+        raise NotImplementedError("Chat API not implemented yet.")
 
     @override
     def query(
