@@ -342,6 +342,14 @@ class ANYSCALE(LLM):
 class TOGETHER(LLM):
     """Accessing TOGETHER"""
 
+    def __init__(self, model: str, api_key: str) -> None:
+        super().__init__(model, api_key)
+
+        self.client = openai.OpenAI(
+            api_key=self.api_key,
+            base_url="https://api.together.xyz/v1",
+        )
+
     @override
     def chat(
         self,
@@ -354,16 +362,21 @@ class TOGETHER(LLM):
     def query(
         self, prompt: str, guided_decode_json_schema: Optional[str] = None
     ) -> str:
-        # TODO: implement json mode
-        llm = Together(
+        response = self.client.chat.completions.create(
             model=self.model,
+            messages=[
+                {"role": "user", "content": prompt},
+            ],
+            max_tokens=MAX_TOKENS,
             temperature=0.75,
             top_p=1,
-            max_tokens=MAX_TOKENS,
-            together_api_key=self.api_key,
+            response_format=(
+                {"type": "json_object"}
+                if guided_decode_json_schema is not None
+                else None
+            ),
         )
-        response = llm(prompt)
-        return "".join(response)
+        return response.choices[0].message.content
 
     @override
     def query_with_system_prompt(
@@ -372,11 +385,7 @@ class TOGETHER(LLM):
         system_prompt: str,
         guided_decode_json_schema: Optional[str] = None,
     ) -> str:
-        client = openai.OpenAI(
-            api_key=self.api_key,
-            base_url="https://api.together.xyz/v1",
-        )
-        response = client.chat.completions.create(
+        response = self.client.chat.completions.create(
             model=self.model,
             messages=[
                 {"role": "system", "content": system_prompt},
@@ -385,6 +394,11 @@ class TOGETHER(LLM):
             max_tokens=MAX_TOKENS,
             temperature=0.75,
             top_p=1,
+            response_format=(
+                {"type": "json_object"}
+                if guided_decode_json_schema is not None
+                else None
+            ),
         )
         return response.choices[0].message.content
 
