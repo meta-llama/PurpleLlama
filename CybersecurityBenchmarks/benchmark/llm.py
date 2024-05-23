@@ -15,8 +15,6 @@ from typing import Callable, List, Optional, Union
 
 import openai
 
-from langchain_community.llms import Together
-
 from typing_extensions import override
 
 
