@@ -97,7 +97,11 @@ class LLM(ABC):
                 return func(*args)
             except Exception as exception:
                 last_exception = exception
-                sleep_time = backoff_factor * (2**retry)
+                sleep_time = (
+                    backoff_factor * (2**retry)
+                    if backoff_factor * (2**retry) <= 600
+                    else 600
+                )
                 time.sleep(sleep_time)
                 LOG.debug(
                     f"LLM Query failed with error: {exception}. Sleeping for {sleep_time} seconds..."
@@ -119,7 +123,11 @@ class LLM(ABC):
                 return func(*args)
             except Exception as exception:
                 last_exception = exception
-                sleep_time = backoff_factor * (2**retry)
+                sleep_time = (
+                    backoff_factor * (2**retry)
+                    if backoff_factor * (2**retry) <= 600
+                    else 600
+                )
                 time.sleep(sleep_time)
                 LOG.debug(
                     f"LLM Query failed with error: {exception}. Sleeping for {sleep_time} seconds..."
