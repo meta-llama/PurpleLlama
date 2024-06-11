@@ -17,6 +17,8 @@ import openai
 
 from typing_extensions import override
 
+from .benchmark_utils import image_to_b64
+
 
 NUM_LLM_RETRIES = 100
 
@@ -163,6 +165,36 @@ class LLM(ABC):
             guided_decode_json_schema,
         )
 
+    def query_with_system_prompt_and_image(
+        self,
+        system_prompt: str,
+        prompt: str,
+        image_path: str,
+        guided_decode_json_schema: Optional[str] = None,
+    ) -> str:
+        """
+        Abstract method to query an LLM with a given prompt, system prompt, and image and return the response.
+        """
+        LOG.error(
+            "[ERROR] Please override this method in a subclass to use this method."
+        )
+        return "Function not implemented."
+
+    def query_with_system_prompt_and_image_with_retries(
+        self,
+        system_prompt: str,
+        prompt: str,
+        image_path: str,
+        guided_decode_json_schema: Optional[str] = None,
+    ) -> str:
+        return self._query_with_retries(
+            self.query_with_system_prompt_and_image,
+            system_prompt,
+            prompt,
+            image_path,
+            guided_decode_json_schema,
+        )
+
     def valid_models(self) -> list[str]:
         """List of valid model parameters, e.g. 'gpt-3.5-turbo' for GPT"""
         return []
@@ -286,7 +318,40 @@ class OPENAI(LLM):
 
     @override
     def valid_models(self) -> list[str]:
-        return ["gpt-3.5-turbo", "gpt-4"]
+        return ["gpt-3.5-turbo", "gpt-4", "gpt-4o"]
+
+    @override
+    def query_with_system_prompt_and_image(
+        self,
+        system_prompt: str,
+        prompt: str,
+        image_path: str,
+        guided_decode_json_schema: Optional[str] = None,
+    ) -> str:
+        image = image_to_b64(image_path)
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": prompt},
+                        {
+                            "type": "image_url",
+                            "image_url": {"url": f"data:image/png;base64, {image}"},
+                        },
+                    ],
+                },
+            ],
+            max_tokens=MAX_TOKENS,
+            response_format=(
+                {"type": "json_object"}
+                if guided_decode_json_schema is not None
+                else None
+            ),
+        )
+        return response.choices[0].message.content
 
 
 class ANYSCALE(LLM):
