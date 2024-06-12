@@ -141,6 +141,7 @@ def process_prompt_and_user_input(
         "injection_variant",
         "judge_question",
         "risk_category",
+        "speaking_language",
     ]
     for field in test_case_fields:
         if field in test_case:
