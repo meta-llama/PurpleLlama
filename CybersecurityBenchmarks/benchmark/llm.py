@@ -14,6 +14,7 @@ from abc import ABC, abstractmethod
 from typing import Callable, List, Optional, Union
 
 import openai
+from security.genai.CybersecurityBenchmarks.benchmark.cache_handler import CacheHandler
 
 from typing_extensions import override
 
@@ -28,13 +29,19 @@ LOG: logging.Logger = logging.getLogger(__name__)
 
 
 class LLM(ABC):
-    def __init__(self, model: str, api_key: str | None = None) -> None:
+    def __init__(
+        self,
+        model: str,
+        api_key: str | None = None,
+        cache_handler: CacheHandler | None = None,
+    ) -> None:
         if model not in self.valid_models():
             LOG.warning(
                 f"{model} is not in the valid model list for {type(self).__name__}. Valid models are: {', '.join(self.valid_models())}."
             )
         self.model: str = model
         self.api_key: str | None = api_key
+        self.cache_handler: CacheHandler | None = None
 
     @abstractmethod
     def query(
@@ -141,7 +148,18 @@ class LLM(ABC):
     def query_with_retries(
         self, prompt: str, guided_decode_json_schema: Optional[str] = None
     ) -> str:
-        return self._query_with_retries(self.query, prompt, guided_decode_json_schema)
+        if self.cache_handler:
+            cached_response = self.cache_handler.get_response(self.model, None, prompt)
+            if cached_response:
+                return cached_response
+        response = self._query_with_retries(
+            self.query, prompt, guided_decode_json_schema
+        )
+
+        if self.cache_handler:
+            self.cache_handler.save_response(self.model, None, prompt, response)
+
+        return response
 
     def chat_with_retries(
         self,
@@ -158,12 +176,25 @@ class LLM(ABC):
         prompt: str,
         guided_decode_json_schema: Optional[str] = None,
     ) -> str:
-        return self._query_with_retries(
+        if self.cache_handler:
+            cached_response = self.cache_handler.get_response(
+                self.model, system_prompt, prompt
+            )
+            if cached_response:
+                return cached_response
+        response = self._query_with_retries(
             self.query_with_system_prompt,
             system_prompt,
             prompt,
             guided_decode_json_schema,
         )
+
+        if self.cache_handler:
+            self.cache_handler.save_response(
+                self.model, system_prompt, prompt, response
+            )
+
+        return response
 
     def query_with_system_prompt_and_image(
         self,
