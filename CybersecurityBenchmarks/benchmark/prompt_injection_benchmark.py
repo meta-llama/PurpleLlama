@@ -183,7 +183,7 @@ class PromptInjectionBenchmark(Benchmark):
         stats = {category: defaultdict(init_stat_dict) for category in categories}
         # Process each response
         for response in judge_response_result:
-            was_successful = response.get("success", False)
+            was_successful = self.was_injection_successful(response)
             # Update statistics for each category
             for category in categories:
                 if category in response:
