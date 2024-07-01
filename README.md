@@ -38,7 +38,7 @@ Llama 2 Community license. See the table below:
 | :----------------- | :----------------------------------: | :--------------------------------------------------------------------------------------------: |
 | Evals/Benchmarks   | Cyber Security Eval (others to come) |                                              MIT                                               |
 | Models             |             Llama Guard              | [Llama 2 Community License](https://github.com/facebookresearch/PurpleLlama/blob/main/LICENSE) |
-| Models             |             Llama Guard 2            | Llama 3 Community License |
+| Models             |             Llama Guard 2            | [Llama 3 Community License](https://github.com/meta-llama/llama3/blob/main/LICENSE) |
 | Safeguard          |             Code Shield              | MIT |
 
 ## Evals & Benchmarks
