@@ -65,7 +65,24 @@ class LLM(ABC):
         guided_decode_json_schema: Optional[str] = None,
     ) -> str:
         """
-        Abstract method to query an LLM with a given prompt and return the response.
+        Abstract method to chat with an LLM with given prompts and return the response.
+
+        Args:
+            prompt_with_history ([str]): The prompt to send to the LLM along with chat history. The last string in the list is the prompt.
+
+        Returns:
+            str: The response from the LLM.
+        """
+        pass
+
+    @abstractmethod
+    def chat_with_system_prompt(
+        self,
+        prompt_with_history: List[str],
+        guided_decode_json_schema: Optional[str] = None,
+    ) -> str:
+        """
+        Abstract method to chat with an LLM with given prompts as well as system prompt and return the response.
 
         Args:
             prompt_with_history ([str]): The prompt to send to the LLM along with chat history. The last string in the list is the prompt.
@@ -196,6 +213,20 @@ class LLM(ABC):
 
         return response
 
+    def chat_with_system_prompt_with_retries(
+        self,
+        system_prompt: str,
+        prompt_with_history: List[str],
+        guided_decode_json_schema: Optional[str] = None,
+    ) -> str:
+        # add cache handler
+        return self._chat_with_retries(
+            self.chat_with_system_prompt,
+            system_prompt,
+            prompt_with_history,
+            guided_decode_json_schema,
+        )
+
     def query_with_system_prompt_and_image(
         self,
         system_prompt: str,
@@ -276,6 +307,37 @@ class OPENAI(LLM):
         guided_decode_json_schema: Optional[str] = None,
     ) -> str:
         messages = []
+        for i in range(len(prompt_with_history)):
+            if i % 2 == 0:
+                messages.append({"role": "user", "content": prompt_with_history[i]})
+            else:
+                messages.append(
+                    {"role": "assistant", "content": prompt_with_history[i]}
+                )
+
+        level = logging.getLogger().level
+        logging.getLogger().setLevel(logging.WARNING)
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=messages,
+            max_tokens=MAX_TOKENS,
+            response_format=(
+                {"type": "json_object"}
+                if guided_decode_json_schema is not None
+                else None
+            ),
+        )
+        logging.getLogger().setLevel(level)
+        return response.choices[0].message.content
+
+    @override
+    def chat_with_system_prompt(
+        self,
+        system_prompt: str,
+        prompt_with_history: List[str],
+        guided_decode_json_schema: Optional[str] = None,
+    ) -> str:
+        messages = [{"role": "system", "content": system_prompt}]
         for i in range(len(prompt_with_history)):
             if i % 2 == 0:
                 messages.append({"role": "user", "content": prompt_with_history[i]})
@@ -425,6 +487,37 @@ class ANYSCALE(LLM):
         return response.choices[0].message.content
 
     @override
+    def chat_with_system_prompt(
+        self,
+        system_prompt: str,
+        prompt_with_history: List[str],
+        guided_decode_json_schema: Optional[str] = None,
+    ) -> str:
+        messages = [{"role": "system", "content": system_prompt}]
+        for i in range(len(prompt_with_history)):
+            if i % 2 == 0:
+                messages.append({"role": "user", "content": prompt_with_history[i]})
+            else:
+                messages.append(
+                    {"role": "assistant", "content": prompt_with_history[i]}
+                )
+
+        level = logging.getLogger().level
+        logging.getLogger().setLevel(logging.WARNING)
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=messages,
+            max_tokens=MAX_TOKENS,
+            response_format=(
+                {"type": "json_object"}
+                if guided_decode_json_schema is not None
+                else None
+            ),
+        )
+        logging.getLogger().setLevel(level)
+        return response.choices[0].message.content
+
+    @override
     def query(
         self, prompt: str, guided_decode_json_schema: Optional[str] = None
     ) -> str:
@@ -523,6 +616,37 @@ class TOGETHER(LLM):
                 else None
             ),
         )
+        return response.choices[0].message.content
+
+    @override
+    def chat_with_system_prompt(
+        self,
+        system_prompt: str,
+        prompt_with_history: List[str],
+        guided_decode_json_schema: Optional[str] = None,
+    ) -> str:
+        messages = [{"role": "system", "content": system_prompt}]
+        for i in range(len(prompt_with_history)):
+            if i % 2 == 0:
+                messages.append({"role": "user", "content": prompt_with_history[i]})
+            else:
+                messages.append(
+                    {"role": "assistant", "content": prompt_with_history[i]}
+                )
+
+        level = logging.getLogger().level
+        logging.getLogger().setLevel(logging.WARNING)
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=messages,
+            max_tokens=MAX_TOKENS,
+            response_format=(
+                {"type": "json_object"}
+                if guided_decode_json_schema is not None
+                else None
+            ),
+        )
+        logging.getLogger().setLevel(level)
         return response.choices[0].message.content
 
     @override
