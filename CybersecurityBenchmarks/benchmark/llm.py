@@ -78,6 +78,7 @@ class LLM(ABC):
     @abstractmethod
     def chat_with_system_prompt(
         self,
+        system_prompt: str,
         prompt_with_history: List[str],
         guided_decode_json_schema: Optional[str] = None,
     ) -> str:
@@ -85,6 +86,7 @@ class LLM(ABC):
         Abstract method to chat with an LLM with given prompts as well as system prompt and return the response.
 
         Args:
+            system_prompt (str): The system prompt to send to the LLM.
             prompt_with_history ([str]): The prompt to send to the LLM along with chat history. The last string in the list is the prompt.
 
         Returns:
