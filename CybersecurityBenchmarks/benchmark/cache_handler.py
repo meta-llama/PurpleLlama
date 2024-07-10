@@ -8,7 +8,7 @@
 import json
 import threading
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 
 class CacheHandler:
@@ -36,6 +36,31 @@ class CacheHandler:
         self, model: str, system_prompt: Optional[str], user_prompt: str, response: str
     ) -> None:
         key = json.dumps((model, system_prompt, user_prompt))
+        with self.lock:
+            self.cache[key] = response
+            with open(self.cache_file, "w") as file:
+                json.dump(self.cache, file, indent=4)
+
+    def get_response_chat(
+        self,
+        model: str,
+        system_prompt: Optional[str],
+        prompt_with_history: List[str],
+    ) -> Optional[str]:
+        prompt_with_history_key = "".join(prompt_with_history)
+        key = json.dumps((model, system_prompt, prompt_with_history_key))
+        with self.lock:
+            return self.cache.get(key)
+
+    def save_response_chat(
+        self,
+        model: str,
+        system_prompt: Optional[str],
+        prompt_with_history: List[str],
+        response: str,
+    ) -> None:
+        prompt_with_history_key = "".join(prompt_with_history)
+        key = json.dumps((model, system_prompt, prompt_with_history_key))
         with self.lock:
             self.cache[key] = response
             with open(self.cache_file, "w") as file:

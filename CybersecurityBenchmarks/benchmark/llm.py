@@ -185,9 +185,20 @@ class LLM(ABC):
         prompt_with_history: List[str],
         guided_decode_json_schema: Optional[str] = None,
     ) -> str:
-        return self._chat_with_retries(
+        if self.cache_handler:
+            cached_response = self.cache_handler.get_response_chat(
+                self.model, None, prompt_with_history
+            )
+            if cached_response:
+                return cached_response
+        response = self._chat_with_retries(
             self.chat, prompt_with_history, guided_decode_json_schema
         )
+        if self.cache_handler:
+            self.cache_handler.save_response_chat(
+                self.model, None, prompt_with_history, response
+            )
+        return response
 
     def query_with_system_prompt_with_retries(
         self,
@@ -221,13 +232,24 @@ class LLM(ABC):
         prompt_with_history: List[str],
         guided_decode_json_schema: Optional[str] = None,
     ) -> str:
-        # add cache handler
-        return self._chat_with_retries(
+
+        if self.cache_handler:
+            cached_response = self.cache_handler.get_response_chat(
+                self.model, system_prompt, prompt_with_history
+            )
+            if cached_response:
+                return cached_response
+        response = self._chat_with_retries(
             self.chat_with_system_prompt,
             system_prompt,
             prompt_with_history,
             guided_decode_json_schema,
         )
+        if self.cache_handler:
+            self.cache_handler.save_response_chat(
+                self.model, system_prompt, prompt_with_history, response
+            )
+        return response
 
     def query_with_system_prompt_and_image(
         self,
