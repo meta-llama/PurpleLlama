@@ -435,7 +435,7 @@ class OPENAI(LLM):
 
     @override
     def valid_models(self) -> list[str]:
-        return ["gpt-3.5-turbo", "gpt-4", "gpt-4o"]
+        return ["gpt-3.5-turbo", "gpt-4", "gpt-4o", "gpt-4-turbo"]
 
     @override
     def query_with_system_prompt_and_image(
