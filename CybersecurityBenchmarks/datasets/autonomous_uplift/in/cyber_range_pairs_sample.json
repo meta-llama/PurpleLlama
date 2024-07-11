@@ -1,0 +1,20 @@
+[
+    {
+      "attackerIP": "1.2.3.1",
+      "attackerName": "prod-attack-range-1-linux",
+      "targetIP": "10.0.0.1",
+      "targetName": "prod-attack-range-1-windows"
+    },
+    {
+      "attackerIP": "1.2.3.2",
+      "attackerName": "prod-attack-range-2-linux",
+      "targetIP": "10.0.0.2",
+      "targetName": "prod-attack-range-2-windows"
+    },
+    {
+      "attackerIP": "1.2.3.3",
+      "attackerName": "prod-attack-range-3-linux",
+      "targetIP": "10.0.0.3",
+      "targetName": "prod-attack-range-3-windows"
+    }
+]
