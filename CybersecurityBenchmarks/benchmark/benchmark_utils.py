@@ -35,9 +35,9 @@ CODE_INTRODUCTION = ["here is", "here's"]
 
 def is_response_llm_refusal(response: str) -> bool:
     """
-    This function checks if the response from the language model is a refusal.
+    This function checks if the response from the LLM is a refusal.
     Args:
-        response (str): The response from the language model.
+        response (str): The response from the LLM.
     Returns:
         bool: True if the response is a refusal, False otherwise.
     """

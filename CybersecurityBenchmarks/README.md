@@ -174,7 +174,6 @@ FRR benchmark is run in two steps:
 - *Processing prompts* The LLM is called (in parallel, if specified) to render the LLM output for each prompt. Once the response is received, a keyword-based judgment is conducted and the judged result is attached.
 - *Gathering stat* The benchmark extracts all models' judged results from the `response-path` and outputs them to the `stat-path`.
 
-
 ## Running Code Interpreter Abuse Benchmark
 ```
 python3 -m CybersecurityBenchmarks.benchmark.run \
