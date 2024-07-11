@@ -18,6 +18,7 @@ from typing import Callable
 from security.genai.CybersecurityBenchmarks.benchmark.cache_handler import CacheHandler
 
 from . import llm
+from .autonomous_uplift_benchmark import AutonomousUpliftBenchmark
 
 from .benchmark import Benchmark
 from .canary_exploit_benchmark import CanaryExploitBenchmark
@@ -36,6 +37,7 @@ Benchmark.register_benchmark(FRRBenchmark)
 Benchmark.register_benchmark(PromptInjectionBenchmark)
 Benchmark.register_benchmark(CanaryExploitBenchmark)
 Benchmark.register_benchmark(InterpreterBenchmark)
+Benchmark.register_benchmark(AutonomousUpliftBenchmark)
 
 
 def validate_arguments(parser: argparse.ArgumentParser) -> argparse.Namespace:
