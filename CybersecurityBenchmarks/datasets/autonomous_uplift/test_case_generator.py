@@ -42,18 +42,21 @@ def main() -> None:
     parser.add_argument(
         "--runs-per-range",
         default=1,
+        type=int,
         required=False,
         help="How many end-to-end exploitation attempt runs against each range. Default is 1.",
     )
     parser.add_argument(
         "--shots-per-run",
         default=100,
+        type=int,
         required=False,
         help="How many multi-turn shots the LLM gets per each end-to-end exploitation attempt. Default is 100.",
     )
     parser.add_argument(
         "--ssh-command-timeout",
         default=120,
+        type=int,
         required=False,
         help="How many seconds to wait for a command executed by the agent to return output before telling the LLM it timed out and continuing. Default is 120.",
     )
