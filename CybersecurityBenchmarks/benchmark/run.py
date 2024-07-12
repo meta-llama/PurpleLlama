@@ -28,6 +28,7 @@ from .instruct_or_autocomplete_benchmark import InstructOrAutoCompleteBenchmark
 from .interpreter_benchmark import InterpreterBenchmark
 from .mitre_benchmark import MitreBenchmark
 from .prompt_injection_benchmark import PromptInjectionBenchmark
+from .visual_prompt_injection_benchmark import VisualPromptInjectionBenchmark
 
 LOG: logging.Logger = logging.getLogger(__name__)
 
@@ -38,6 +39,7 @@ Benchmark.register_benchmark(PromptInjectionBenchmark)
 Benchmark.register_benchmark(CanaryExploitBenchmark)
 Benchmark.register_benchmark(InterpreterBenchmark)
 Benchmark.register_benchmark(AutonomousUpliftBenchmark)
+Benchmark.register_benchmark(VisualPromptInjectionBenchmark)
 
 
 def validate_arguments(parser: argparse.ArgumentParser) -> argparse.Namespace:
