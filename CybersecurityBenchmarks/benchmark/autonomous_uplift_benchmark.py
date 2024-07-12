@@ -39,16 +39,17 @@ class AutonomousUpliftAI:
         self.shots_per_run = shots_per_run
         self.run_id = run_id
         self.messages_ctx: List[str] = []
+        self.logger: logging.Logger = logging.getLogger(self.__class__.__name__)
 
     def update_message_context(self, prompt: str) -> None:
         self.messages_ctx.append(prompt)
 
     def prompt_llm(self, prompt: str) -> str:
-        logging.debug(f"[Pre-LLM prompting] Prompt: {prompt}")
+        self.logger.debug(f"[Pre-LLM prompting] Prompt: {prompt}")
 
         # Add user prompt (previous command's output) to the context
         self.messages_ctx.append(prompt)
-        logging.debug(f"[Pre-LLM prompting] Context: {self.messages_ctx}")
+        self.logger.debug(f"[Pre-LLM prompting] Context: {self.messages_ctx}")
 
         # Prompt LLM with the context
         result = self.llm.chat_with_system_prompt_with_retries(
@@ -57,21 +58,21 @@ class AutonomousUpliftAI:
 
         # Add AI's response to the context
         self.messages_ctx.append(result)
-        logging.debug(f"[Post-LLM prompting] Context: {self.messages_ctx}")
+        self.logger.debug(f"[Post-LLM prompting] Context: {self.messages_ctx}")
 
         return result
 
     def execute_llm_command(self, prompt: str) -> str:
         llm_response = self.prompt_llm(prompt)
-        logging.debug(f"LLM Response: {llm_response}")
+        self.logger.debug(f"LLM Response: {llm_response}")
 
         output = self.ssh_client.execute_command(llm_response)
-        logging.debug(f"SSH Output: {output}")
+        self.logger.debug(f"SSH Output: {output}")
 
         return output
 
     def run(self, initial_prompt: str = "") -> bool:
-        logging.debug(
+        self.logger.debug(
             f"Starting run {self.run_id} with initial prompt: {initial_prompt}"
         )
 
@@ -82,7 +83,7 @@ class AutonomousUpliftAI:
             desc=f"[Run {self.run_id}] Shots",
             unit="shot",
         ):
-            logging.debug(
+            self.logger.debug(
                 f"Starting shot {shot}/{self.shots_per_run} in run {self.run_id}"
             )
 
@@ -91,7 +92,7 @@ class AutonomousUpliftAI:
         # Before finishing, add the final command output to the context
         self.update_message_context(cmd_output)
 
-        logging.debug(f"Finished run {self.run_id}")
+        self.logger.debug(f"Finished run {self.run_id}")
 
         return True
 
@@ -113,7 +114,7 @@ class AutonomousUpliftAI:
         with open(filepath, "w") as file:
             file.write(self.get_context())
 
-        logging.debug(f"Context written to {filepath}")
+        self.logger.debug(f"Context written to {filepath}")
 
 
 def process_autonomous_run(
@@ -196,6 +197,7 @@ class AutonomousUpliftBenchmark(Benchmark):
         judge_llm: Optional[LLM] = None,
         pass_k: int = 1,
     ) -> None:
+        self.logger: logging.Logger = logging.getLogger(self.__class__.__name__)
 
         # TODO: add class validation logic here, e.g. check if judge_llm is not None. If there
         # is no such requirement, there is no need to override the __init__ function
@@ -222,7 +224,7 @@ class AutonomousUpliftBenchmark(Benchmark):
         """
         response_result = []
         for llm in self.llms_under_test:
-            logging.info(f"Querying {llm.model}")
+            self.logger.info(f"Querying {llm.model}")
             response_result.extend(
                 query_llm_to_generate_responses(
                     {"initial_query_llm": llm},
@@ -244,5 +246,5 @@ class AutonomousUpliftBenchmark(Benchmark):
         Args:
             run_llm_in_parallel (bool, optional): A flag indicating whether to run the language model in parallel. Defaults to True.
         """
-        logging.warning("Grading is not implemented yet.")
+        self.logger.warning("Grading is not implemented yet.")
         return

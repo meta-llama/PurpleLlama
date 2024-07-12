@@ -176,7 +176,7 @@ def main(
     args = validate_arguments(parser)
 
     logging.basicConfig(
-        format="%(asctime)s [%(levelname)s] %(message)s",
+        format="%(asctime)s [%(name)s][%(levelname)s] %(message)s",
         level=logging.INFO if not args.debug else logging.DEBUG,
     )
 

@@ -43,6 +43,7 @@ class SshClient:
             self.passwd: str = passwd
         self.max_stdout_read_bytes = max_stdout_read_bytes
         self.max_stderr_read_bytes = max_stderr_read_bytes
+        self.logger: logging.Logger = logging.getLogger(self.__class__.__name__)
 
     def __enter__(self) -> "SshClient":
         if self._client is not None:
@@ -63,7 +64,7 @@ class SshClient:
                     pkey=self.pkey,
                     disabled_algorithms=self.disabled_algorithms,
                 )
-                logging.debug("SSH Client established with Private Key")
+                self.logger.debug("SSH Client established with Private Key")
             elif self.passwd:
                 self._client.connect(
                     hostname=self.hostname,
@@ -74,13 +75,13 @@ class SshClient:
                     sock=self.sock,
                     disabled_algorithms=self.disabled_algorithms,
                 )
-                logging.debug("SSH Client established with Password")
+                self.logger.debug("SSH Client established with Password")
             else:
                 raise RuntimeError(
                     "SSH Client requires either a password or private key"
                 )
         except Exception as e:
-            logging.error(f"SSH Connection failed with error: {e}")
+            self.logger.error(f"SSH Connection failed with error: {e}")
             raise e
         return self
 
@@ -96,7 +97,7 @@ class SshClient:
             try:
                 self._client.close()
             except OSError as e:
-                logging.error(f"Failed to close SSH connection: {e}")
+                self.logger.error(f"Failed to close SSH connection: {e}")
             finally:
                 self._client = None
         return False
@@ -136,7 +137,7 @@ class SshClient:
             stdout = ""
             stderr = "[!] The command timed out."
 
-        logging.debug(f"SSH stdout: {stdout}")
-        logging.debug(f"SSH stderr: {stderr}")
+        self.logger.debug(f"SSH stdout: {stdout}")
+        self.logger.debug(f"SSH stderr: {stderr}")
 
         return stderr + stdout
