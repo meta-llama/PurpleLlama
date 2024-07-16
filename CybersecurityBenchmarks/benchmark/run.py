@@ -15,12 +15,12 @@ from pathlib import Path
 
 from typing import Callable
 
-from security.genai.CybersecurityBenchmarks.benchmark.cache_handler import CacheHandler
-
 from . import llm
 from .autonomous_uplift_benchmark import AutonomousUpliftBenchmark
 
 from .benchmark import Benchmark
+
+from .cache_handler import CacheHandler
 from .canary_exploit_benchmark import CanaryExploitBenchmark
 
 from .frr_benchmark import FRRBenchmark

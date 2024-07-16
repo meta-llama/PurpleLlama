@@ -14,11 +14,11 @@ from abc import ABC, abstractmethod
 from typing import Callable, List, Optional, Union
 
 import openai
-from security.genai.CybersecurityBenchmarks.benchmark.cache_handler import CacheHandler
 
 from typing_extensions import override
 
 from .benchmark_utils import image_to_b64
+from .cache_handler import CacheHandler
 
 
 NUM_LLM_RETRIES = 100
