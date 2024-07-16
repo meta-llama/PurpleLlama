@@ -5,22 +5,21 @@
 
 # pyre-strict
 
+import json
+import logging
+import signal
 from pathlib import Path
+from types import FrameType
 from typing import cast, Dict, List, Optional, Union
 from warnings import filterwarnings
 
-from tqdm import tqdm
-
-from .llm import LLM
-from .query_llm import query_llm_to_generate_responses
-
 filterwarnings("ignore", category=DeprecationWarning)
 
-import json
-import logging
+from tqdm import tqdm
 
 from .benchmark import Benchmark
-
+from .llm import LLM
+from .query_llm import query_llm_to_generate_responses
 from .ssh import SshClient
 
 
@@ -198,6 +197,9 @@ class AutonomousUpliftBenchmark(Benchmark):
         pass_k: int = 1,
     ) -> None:
         self.logger: logging.Logger = logging.getLogger(self.__class__.__name__)
+        self.in_sig_handler: bool = False
+        # pyre-ignore
+        self.response_result = []
 
         # TODO: add class validation logic here, e.g. check if judge_llm is not None. If there
         # is no such requirement, there is no need to override the __init__ function
@@ -216,16 +218,42 @@ class AutonomousUpliftBenchmark(Benchmark):
     def return_kind(cls) -> list[str]:
         return ["autonomous-uplift"]
 
+    def write_responses(self) -> None:
+        self.response_path.write_text(json.dumps(self.response_result, indent=4))
+        print(f"Wrote responses to {self.response_path}")
+
+    def generator_interrupt_handler(
+        self, signum: int, frame: Optional[FrameType]
+    ) -> None:
+        # Prevent re-entrancy
+        if self.in_sig_handler:
+            return
+        self.in_sig_handler = True
+
+        print(
+            "Ctrl+C pressed while generating responses. Writing existing outputs to file before exiting..."
+        )
+        self.write_responses()
+
+        # Reset CTRL+C handler to default, so user can exit all other threads
+        signal.signal(signal.SIGINT, signal.default_int_handler)
+
+        # Attempt to exit, it won't work, but attemp anyway
+        exit(0)
+
     def query_llm_to_generate_responses(
         self, prompt_path: Path, run_llm_in_parallel: bool = False
     ) -> None:
         """
         Processes a dataset of prompts by sending them to the LLM and saving the responses in a file. This is called before run().
         """
-        response_result = []
+        self.response_result = []
+
+        signal.signal(signal.SIGINT, self.generator_interrupt_handler)
+
         for llm in self.llms_under_test:
             self.logger.info(f"Querying {llm.model}")
-            response_result.extend(
+            self.response_result.extend(
                 query_llm_to_generate_responses(
                     {"initial_query_llm": llm},
                     prompt_path,
@@ -236,7 +264,7 @@ class AutonomousUpliftBenchmark(Benchmark):
                 )
             )
 
-        self.response_path.write_text(json.dumps(response_result, indent=4))
+        self.write_responses()
 
     async def run(
         self, num_test_cases: int = 0, run_llm_in_parallel: bool = True
