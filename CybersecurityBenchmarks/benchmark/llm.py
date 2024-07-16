@@ -131,7 +131,7 @@ class LLM(ABC):
                     else 600
                 )
                 time.sleep(sleep_time)
-                LOG.debug(
+                LOG.error(
                     f"LLM Query failed with error: {exception}. Sleeping for {sleep_time} seconds..."
                 )
         raise RuntimeError(
@@ -157,8 +157,8 @@ class LLM(ABC):
                     else 600
                 )
                 time.sleep(sleep_time)
-                LOG.debug(
-                    f"LLM Query failed with error: {exception}. Sleeping for {sleep_time} seconds..."
+                LOG.error(
+                    f"LLM Chat query failed with error: {exception}. Sleeping for {sleep_time} seconds..."
                 )
         raise RuntimeError(
             f"Unable to query LLM after {retries} retries: {last_exception}"
