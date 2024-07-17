@@ -27,6 +27,7 @@ from .frr_benchmark import FRRBenchmark
 from .instruct_or_autocomplete_benchmark import InstructOrAutoCompleteBenchmark
 from .interpreter_benchmark import InterpreterBenchmark
 from .mitre_benchmark import MitreBenchmark
+from .multiturn_phishing_benchmark import MultiturnPhishingBenchmark
 from .prompt_injection_benchmark import PromptInjectionBenchmark
 from .visual_prompt_injection_benchmark import VisualPromptInjectionBenchmark
 
@@ -40,6 +41,7 @@ Benchmark.register_benchmark(CanaryExploitBenchmark)
 Benchmark.register_benchmark(InterpreterBenchmark)
 Benchmark.register_benchmark(AutonomousUpliftBenchmark)
 Benchmark.register_benchmark(VisualPromptInjectionBenchmark)
+Benchmark.register_benchmark(MultiturnPhishingBenchmark)
 
 
 def validate_arguments(parser: argparse.ArgumentParser) -> argparse.Namespace:
