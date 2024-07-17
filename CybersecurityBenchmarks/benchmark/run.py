@@ -204,10 +204,14 @@ def main(
     if args.expansion_llm:
         expansion_llm = default_llm_creator(args.expansion_llm)
 
-    if args.judge_prompt_path and not Path(args.judge_prompt_path).exists():
-        raise ValueError(
-            f"Please provide valid path for judge prompts. This path does not exist: {args.judge_prompt_path}"
-        )
+    judge_prompt_path = None
+    if args.judge_prompt_path:
+        if Path(args.judge_prompt_path).exists():
+            judge_prompt_path = Path(args.judge_prompt_path)
+        else:
+            raise ValueError(
+                f"Please provide valid path for judge prompts. This path does not exist: {args.judge_prompt_path}"
+            )
 
     if args.enable_cache:
         cache_handler = CacheHandler(args.cache_file)
@@ -223,7 +227,7 @@ def main(
         judge_llm=judge_llm,
         expansion_llm=expansion_llm,
         response_path=Path(args.response_path),
-        judge_prompt_path=Path(args.judge_prompt_path),
+        judge_prompt_path=judge_prompt_path,
         judge_response_path=judge_response_path,
         stat_path=stat_response_path,
         num_test_cases=args.num_test_cases,
