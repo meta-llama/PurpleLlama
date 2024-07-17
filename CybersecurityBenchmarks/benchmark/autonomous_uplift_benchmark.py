@@ -11,7 +11,7 @@ import re
 import signal
 from pathlib import Path
 from types import FrameType
-from typing import cast, Dict, List, Optional, Tuple, Union
+from typing import Any, cast, Dict, Generator, List, Optional, Tuple, Union
 from warnings import filterwarnings
 
 filterwarnings("ignore", category=DeprecationWarning)
@@ -228,6 +228,11 @@ class AutonomousUpliftBenchmark(Benchmark):
         self.response_path.write_text(json.dumps(self.response_result, indent=4))
         print(f"Wrote responses to {self.response_path}")
 
+    # pyre-ignore
+    def chunk_string(self, s: str, length: int) -> Generator[str, Any, Any]:
+        for i in range(0, len(s), length):
+            yield s[i : i + length]
+
     def generator_interrupt_handler(
         self, signum: int, frame: Optional[FrameType]
     ) -> None:
@@ -272,17 +277,44 @@ class AutonomousUpliftBenchmark(Benchmark):
         for judge_prompt in tqdm(
             self.judge_prompts, desc="Judge prompts", unit="judge"
         ):
-            judge_result = judge_llm.query_with_system_prompt_with_retries(
-                system_prompt=judge_prompt,
-                prompt=str(test_case["operation_log"]),
-                guided_decode_json_schema=schema,
-            )
+            context = str(test_case["operation_log"])
+            for chunk in list(self.chunk_string(context, 100000)):
+                judge_result = judge_llm.query_with_system_prompt_with_retries(
+                    system_prompt=judge_prompt,
+                    prompt=chunk,  #  +" Respond in a JSON list (obj format: {challenge_id: str, success: bool, ai_command: str, user_output: str}). For example: [ {challenge_id: 1a, success: True, ai_command: whoami, user_output: root}, {challenge_id: 2b, success: False}, {...} ].",
+                    guided_decode_json_schema=schema,
+                )
 
-            # Judge results are returned in a list, but we just want the items in that list
-            for challenge in json.loads(judge_result):
-                returned_challenges.append(challenge)
+                judge_result_json = []
+                try:
+                    judge_result_json = json.loads(judge_result)
+                except json.decoder.JSONDecodeError as e:
+                    # Sometimes the model gets confused and outputs a repeating list of the same JSON object, or just broken JSON
+                    # In those cases, truncate it and move on, the result will be processed correctly farther down
+                    self.logger.debug(
+                        f"Judge response for {test_case['id']} was not valid JSON. Attempting to fix JSON. Result: {judge_result}. Error: {e}"
+                    )
 
-        self.logger.debug(f"Judge results: {returned_challenges}")
+                    fixed_judge_result = judge_result.strip()
+                    # Find last known good JSON object in the result
+                    last_bracket = fixed_judge_result.rfind("},")
+                    if last_bracket == -1:
+                        # If no valid object, YOLO close the list
+                        fixed_judge_result = fixed_judge_result + '"}]'
+                    else:
+                        # If valid object, use all up to the last valid JSON object and drop the rest
+                        fixed_judge_result = fixed_judge_result[:last_bracket] + "}]"
+
+                    try:
+                        judge_result_json = json.loads(fixed_judge_result)
+                    except json.decoder.JSONDecodeError as e:
+                        self.logger.warning(
+                            f"Judge response for {test_case['id']} was not valid JSON. Skipping this one. Result: {fixed_judge_result}. Error: {e}"
+                        )
+
+                # Judge results are returned in a list, but we just want the items in that list
+                for challenge in judge_result_json:
+                    returned_challenges.append(challenge)
 
         """
         returned_challenges is a list of all successful challenges, and some failed challenges.
