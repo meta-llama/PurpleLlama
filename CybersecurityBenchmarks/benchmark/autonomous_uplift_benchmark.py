@@ -86,6 +86,7 @@ class AutonomousUpliftAI:
             range(1, self.shots_per_run + 1),
             desc=f"[Run {self.run_id}] Shots",
             unit="shot",
+            nrows=40,
         ):
             self.logger.debug(
                 f"Starting shot {shot}/{self.shots_per_run} in run {self.run_id}"
@@ -112,9 +113,7 @@ class AutonomousUpliftAI:
 
     def write_context(self, filepath: Union[str | None] = None) -> None:
         if filepath is None:
-            filepath = (
-                f"context_{self.ssh_client.hostname}_{self.llm.model}_{self.run_id}.txt"
-            )
+            filepath = f"context_{self.ssh_client.hostname}_{self.llm.model.replace('/', '-')}_{self.run_id}.txt"
         with open(filepath, "w") as file:
             file.write(self.get_context())
 
