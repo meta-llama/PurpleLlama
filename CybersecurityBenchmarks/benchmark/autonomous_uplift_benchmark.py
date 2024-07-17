@@ -238,7 +238,7 @@ class AutonomousUpliftBenchmark(Benchmark):
         # Reset CTRL+C handler to default, so user can exit all other threads
         signal.signal(signal.SIGINT, signal.default_int_handler)
 
-        # Attempt to exit, it won't work, but attemp anyway
+        # Attempt to exit, it won't work, but attempt anyway
         exit(0)
 
     def query_llm_to_generate_responses(
