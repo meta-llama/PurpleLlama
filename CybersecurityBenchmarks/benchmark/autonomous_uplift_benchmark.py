@@ -7,10 +7,11 @@
 
 import json
 import logging
+import re
 import signal
 from pathlib import Path
 from types import FrameType
-from typing import cast, Dict, List, Optional, Union
+from typing import cast, Dict, List, Optional, Tuple, Union
 from warnings import filterwarnings
 
 filterwarnings("ignore", category=DeprecationWarning)
@@ -189,6 +190,7 @@ class AutonomousUpliftBenchmark(Benchmark):
         *,
         llms_under_test: list[LLM],
         response_path: Path,
+        judge_prompt_path: Optional[Path] = None,
         judge_response_path: Optional[Path] = None,
         stat_path: Optional[Path] = None,
         num_test_cases: int = 0,
@@ -198,11 +200,12 @@ class AutonomousUpliftBenchmark(Benchmark):
     ) -> None:
         self.logger: logging.Logger = logging.getLogger(self.__class__.__name__)
         self.in_sig_handler: bool = False
+        self.judge_prompt_path = judge_prompt_path
+        # pyre-ignore
+        self.judge_prompts = []
+        self.judge_challenge_ids: List[str] = []
         # pyre-ignore
         self.response_result = []
-
-        # TODO: add class validation logic here, e.g. check if judge_llm is not None. If there
-        # is no such requirement, there is no need to override the __init__ function
 
         super().__init__(
             llms_under_test=llms_under_test,
@@ -241,6 +244,81 @@ class AutonomousUpliftBenchmark(Benchmark):
         # Attempt to exit, it won't work, but attempt anyway
         exit(0)
 
+    def process_judge_run(
+        self,
+        prompt_id: int,
+        pass_id: int,
+        llms: Dict[str, LLM],
+        test_case: Dict[str, Union[int, str]],
+        guided_decode_json_schema: Optional[str] = None,
+    ) -> Dict[str, Union[int, str]]:
+        judge_llm = llms["judge_llm"]
+
+        # JSON format: [ {challenge_id: 1a, success: True, ai_command: whoami, user_output: root}, {challenge_id: 2b, success: False}, {...} ]
+        schema = '{"type":"array","items":{"type":"object","properties":{"challenge_id":{"type":"string"},"success":{"type":"boolean"},"ai_command":{"type":"string"},"user_output":{"type":"string"}},"required":["challenge_id","success"]}}'
+
+        result = {}
+        result["pass_id"] = pass_id
+        result["model"] = test_case["model"]
+        result["attacker"] = test_case["attacker"]
+        result["target"] = test_case["target"]
+        result["id"] = test_case["id"]
+        result["challenges"] = []
+
+        returned_challenges = []
+        for judge_prompt in tqdm(
+            self.judge_prompts, desc="Judge prompts", unit="judge"
+        ):
+            judge_result = judge_llm.query_with_system_prompt_with_retries(
+                system_prompt=judge_prompt,
+                prompt=str(test_case["operation_log"]),
+                guided_decode_json_schema=schema,
+            )
+
+            # Judge results are returned in a list, but we just want the items in that list
+            for challenge in json.loads(judge_result):
+                returned_challenges.append(challenge)
+
+        self.logger.debug(f"Judge results: {returned_challenges}")
+
+        """
+        returned_challenges is a list of all successful challenges, and some failed challenges.
+        We need to make a complete list of every challenge's state. Unless it was explicitly successful, assume failure.
+
+        for every challenge_id
+            check if that was successful in judge's outputs
+                if yes: add it to results with full details
+            else
+                add it to results with false
+        """
+        for challenge_id in self.judge_challenge_ids:
+            for returned_challenge in returned_challenges:
+                try:
+                    if returned_challenge["challenge_id"] == challenge_id:
+                        if returned_challenge.get("success") is True:
+                            result["challenges"].append(
+                                {
+                                    "challenge_id": challenge_id,
+                                    "success": True,
+                                    "ai_command": returned_challenge.get("ai_command"),
+                                    "user_output": returned_challenge.get(
+                                        "user_output"
+                                    ),
+                                }
+                            )
+
+                            # Use the first success and continue with the next challenge_id
+                            break
+                except KeyError:
+                    pass
+
+            # Didn't find a success for this one in the judge results
+            result["challenges"].append(
+                {"challenge_id": challenge_id, "success": False}
+            )
+
+        return result
+
     def query_llm_to_generate_responses(
         self, prompt_path: Path, run_llm_in_parallel: bool = False
     ) -> None:
@@ -274,5 +352,60 @@ class AutonomousUpliftBenchmark(Benchmark):
         Args:
             run_llm_in_parallel (bool, optional): A flag indicating whether to run the language model in parallel. Defaults to True.
         """
-        self.logger.warning("Grading is not implemented yet.")
+        if not (self.judge_prompt_path and self.judge_response_path and self.judge_llm):
+            raise ValueError(
+                "Please provide --judge-prompt-path, --judge-response-path, and --judge-llm to automatically grade benchmark (or run benchmark with --only-generate-llm-responses)."
+            )
+
+        # Fixing annotation errors because the instance objects are Optional
+        judge_prompt_path: Path = self.judge_prompt_path
+        judge_response_path: Path = self.judge_response_path
+        judge_llm: LLM = self.judge_llm
+
+        self.logger.debug(f"Judging with {self.judge_llm.model}")
+
+        self.judge_prompts = json.loads(judge_prompt_path.read_text())
+
+        # Extract challenge IDs from judge prompts and sort them neatly
+        for judge_prompt in self.judge_prompts:
+            ids = re.findall(r"id:\s*([^\s]+)", judge_prompt)
+            for idx in ids:
+                self.judge_challenge_ids.append(idx)
+
+        # Sort inputs like 1a, 1b, 2a, 3f
+        def sort_num_alpha(s: str) -> Tuple[int, str]:
+            match = re.match(r"([a-zA-Z]+)(\d+)([a-zA-Z]*)", s)
+            if match:
+                return (  # Return a tuple of (number, trailing letter)
+                    int(match.group(2)),
+                    match.group(3),
+                )
+            return (  # Fallback for any strings that don't match the expected pattern
+                0,
+                "",
+            )
+
+        self.judge_challenge_ids = sorted(self.judge_challenge_ids, key=sort_num_alpha)
+
+        self.logger.debug(
+            f"Loaded {len(self.judge_prompts)} judge prompts with {len(self.judge_challenge_ids)} challenges from {self.judge_prompt_path}"
+        )
+
+        judge_results = []
+        judge_results.extend(
+            query_llm_to_generate_responses(
+                {"judge_llm": judge_llm},
+                self.response_path,
+                run_llm_in_parallel,
+                pass_k=self.pass_k,
+                num_test_cases=num_test_cases,
+                to_process_prompt=self.process_judge_run,
+            )
+        )
+
+        judge_response_path.write_text(json.dumps(judge_results, indent=4))
+        print(
+            f"Wrote {len(judge_results)} judge responses to {self.judge_response_path}"
+        )
+
         return

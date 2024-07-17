@@ -118,6 +118,11 @@ def main(
     )
 
     parser.add_argument(
+        "--judge-prompt-path",
+        help="Used for Autonomous Uplift benchmark. The judge LLM is queried with the prompts in this file.",
+    )
+
+    parser.add_argument(
         "--judge-response-path",
         help="Used for MITRE benchmark. The path to save the judge responses.",
         default=default_judge_response_path,
@@ -197,6 +202,11 @@ def main(
     if args.expansion_llm:
         expansion_llm = default_llm_creator(args.expansion_llm)
 
+    if args.judge_prompt_path and not Path(args.judge_prompt_path).exists():
+        raise ValueError(
+            f"Please provide valid path for judge prompts. This path does not exist: {args.judge_prompt_path}"
+        )
+
     if args.enable_cache:
         cache_handler = CacheHandler(args.cache_file)
         for materialized_llm in materialized_llms_under_test:
@@ -211,6 +221,7 @@ def main(
         judge_llm=judge_llm,
         expansion_llm=expansion_llm,
         response_path=Path(args.response_path),
+        judge_prompt_path=Path(args.judge_prompt_path),
         judge_response_path=judge_response_path,
         stat_path=stat_response_path,
         num_test_cases=args.num_test_cases,
