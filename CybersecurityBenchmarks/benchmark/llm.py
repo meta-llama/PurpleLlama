@@ -28,6 +28,14 @@ MAX_TOKENS = 1000
 LOG: logging.Logger = logging.getLogger(__name__)
 
 
+class RetriesExceededException(Exception):
+    def __init__(
+        self, message: str = "Maximum number of retries has been exceeded"
+    ) -> None:
+        self.message = message
+        super().__init__(self.message)
+
+
 class LLM(ABC):
     def __init__(
         self,
@@ -134,7 +142,7 @@ class LLM(ABC):
                 LOG.error(
                     f"LLM Query failed with error: {exception}. Sleeping for {sleep_time} seconds..."
                 )
-        raise RuntimeError(
+        raise RetriesExceededException(
             f"Unable to query LLM after {retries} retries: {last_exception}"
         )
 
@@ -160,7 +168,7 @@ class LLM(ABC):
                 LOG.error(
                     f"LLM Chat query failed with error: {exception}. Sleeping for {sleep_time} seconds..."
                 )
-        raise RuntimeError(
+        raise RetriesExceededException(
             f"Unable to query LLM after {retries} retries: {last_exception}"
         )
 

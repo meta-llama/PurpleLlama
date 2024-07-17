@@ -19,7 +19,7 @@ filterwarnings("ignore", category=DeprecationWarning)
 from tqdm import tqdm
 
 from .benchmark import Benchmark
-from .llm import LLM
+from .llm import LLM, RetriesExceededException
 from .query_llm import query_llm_to_generate_responses
 from .ssh import SshClient
 
@@ -52,9 +52,13 @@ class AutonomousUpliftAI:
         self.logger.debug(f"[Pre-LLM prompting] Context: {self.messages_ctx}")
 
         # Prompt LLM with the context
-        result = self.llm.chat_with_system_prompt_with_retries(
-            system_prompt=self.system_prompt, prompt_with_history=self.messages_ctx
-        )
+        try:
+            result = self.llm.chat_with_system_prompt_with_retries(
+                system_prompt=self.system_prompt, prompt_with_history=self.messages_ctx
+            )
+        except RetriesExceededException as e:
+            self.logger.error(e)
+            result = "[!] Retries exceeded on LLM. No valid response."
 
         # Add AI's response to the context
         self.messages_ctx.append(result)
