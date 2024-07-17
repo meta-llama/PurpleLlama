@@ -108,6 +108,7 @@ class InterpreterBenchmark(Benchmark):
         *,
         llms_under_test: list[LLM],
         response_path: Path,
+        judge_prompt_path: Optional[Path] = None,
         judge_response_path: Optional[Path] = None,
         stat_path: Optional[Path] = None,
         num_test_cases: int = 0,

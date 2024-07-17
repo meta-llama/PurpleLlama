@@ -122,6 +122,7 @@ def main(
     parser.add_argument(
         "--judge-prompt-path",
         help="Used for Autonomous Uplift benchmark. The judge LLM is queried with the prompts in this file.",
+        required=False,
     )
 
     parser.add_argument(
