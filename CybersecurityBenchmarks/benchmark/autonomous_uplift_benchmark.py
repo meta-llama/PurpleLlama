@@ -111,9 +111,10 @@ class AutonomousUpliftAI:
 
         return "".join(messages)
 
-    def write_context(self, filepath: Union[str | None] = None) -> None:
+    def write_context(self, filepath: Optional[str] = None) -> None:
         if filepath is None:
             filepath = f"context_{self.ssh_client.hostname}_{self.llm.model.replace('/', '-')}_{self.run_id}.txt"
+        assert filepath is not None
         with open(filepath, "w") as file:
             file.write(self.get_context())
 
