@@ -280,7 +280,7 @@ python3 -m CybersecurityBenchmarks.benchmark.run \
    ... (rest same as above)
 ```
 
-### Running Visual Prompt Injection Benchmark
+### Visual Prompt Injection Benchmark
 
 ```
 python3 -m CybersecurityBenchmarks.benchmark.run \
@@ -329,8 +329,8 @@ can be used with this benchmark:
 
 `--num-queries-per-prompt=<N>` can be optionally specified to run each test case
 `N` times (default if unspecified is 1) in order to obtain more robust results
-due to the stochastic nature of LLM responses. In the CSE3 paper, we ran each
-test case 5 times.
+due to the stochastic nature of LLM responses.
+
 
 ## Running Code Interpreter Abuse Benchmark
 
@@ -461,6 +461,7 @@ equal to `1 - vunerable_percentage`.
 
 ### Prompt Injection Results
 
+#### Textual/Multilingual Prompt Injection Results
 Based on judge LLM, the prompt injection will be either successful or
 unsuccessful
 
@@ -505,6 +506,57 @@ follows the same structure.
     },
     "stat_per_model_per_speaking_language": {
         ..
+    }
+}
+```
+
+#### Visual Prompt Injection Results
+
+Based on the evaluation of the judge LLM, the output of visual prompt injection
+test cases will be judged as either a successful or unsuccessful injection.
+
+```
+{
+    "stat_per_model": {
+        "model_name": {
+            "injection_successful_count": ...,
+            "injection_unsuccessful_count": ...,
+            "total_count": ...,
+            "injection_successful_percentage": ...,
+            "injection_unsuccessful_percentage": ...
+        }
+    }
+}
+```
+
+In the same output file, the results are further bucketed in different
+dimensions:
+
+1.  Injection techniques
+2.  Risk category (security-violating vs. logic-violating)
+3.  Injection type (direct vs. indirect)
+
+The result of each bucket follows the same structure.
+
+```
+{
+    "stat_per_model_per_injection_technique": {
+        "model_name": {
+            "embedded_text_instructions": {
+                "injection_successful_count": ...,
+                "injection_unsuccessful_count": ...,
+                "total_count": ...,
+                "injection_successful_percentage": ...,
+                "injection_unsuccessful_percentage": ...
+            },
+            ...
+        }
+    },
+    "stat_per_model_per_injection_type": {
+        ...
+    },
+    "stat_per_model_per_risk_category": {
+        ...
     }
 }
 ```
@@ -562,57 +614,6 @@ challenge "code" with the "response" as input. The "score" is a number between
     "challenge_type": ...,
     "model": ...,
     "score": ...
-}
-```
-
-### Visual Prompt Injection Results
-
-Based on the evaluation of the judge LLM, the output of visual prompt injection
-test cases will be judged as either a successful or unsuccessful injection.
-
-```
-{
-    "stat_per_model": {
-        "model_name": {
-            "injection_successful_count": ...,
-            "injection_unsuccessful_count": ...,
-            "total_count": ...,
-            "injection_successful_percentage": ...,
-            "injection_unsuccessful_percentage": ...
-        }
-    }
-}
-```
-
-In the same output file, the results are further bucketed in different
-dimensions:
-
-1.  Injection techniques
-2.  Risk category (security-violating vs. logic-violating)
-3.  Injection type (direct vs. indirect)
-
-The result of each bucket follows the same structure.
-
-```
-{
-    "stat_per_model_per_injection_technique": {
-        "model_name": {
-            "embedded_text_instructions": {
-                "injection_successful_count": ...,
-                "injection_unsuccessful_count": ...,
-                "total_count": ...,
-                "injection_successful_percentage": ...,
-                "injection_unsuccessful_percentage": ...
-            },
-            ...
-        }
-    },
-    "stat_per_model_per_injection_type": {
-        ...
-    },
-    "stat_per_model_per_risk_category": {
-        ...
-    }
 }
 ```
 
