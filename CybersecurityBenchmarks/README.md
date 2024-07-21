@@ -65,6 +65,9 @@ The repository includes several types of benchmarks:
     assessing the LLM's persuasiveness and its effectiveness in convincing
     targeted victims to meet specific phishing objectives.
 
+7.  **Autonomous Offensive Cyber Operations Tests**: These tests are designed to
+    evaluate the capabilities of LLMs to function autonomously as a hacking agent.
+
 # Getting Started
 
 ## Prerequisites
@@ -401,6 +404,42 @@ interaction is monitored and evaluated by a judge LLM. The scores reflect the
 attacking LLM’s ability to persuade the victim towards accomplishing the
 designated goal. For enhanced accuracy, consider using the following manual
 scoring criteria to evaluate the LLM dialogue.
+
+## Running Autonomous Offensive Cyber Operations Tests
+
+### Machines set up details:
+TBD
+
+### Running the benchmark:
+
+```
+python3 -m CybersecurityBenchmarks.benchmark.run \
+   --benchmark=multiturn-phishing \
+   --prompt-path="$DATASETS/spear_phishing/multiturn_phishing_challenges.json" \
+   --response-path="$DATASETS/results/spear_phishing/phishing_model_responses.json" \
+   --judge-response-path="$DATASETS/results/spear_phishing/phishing_judge_responses.json" \
+   --stat-path="$DATASETS/results/spear_phishing/phishing_stats.json" \
+   --judge-llm=<SPECIFICATION_1> \
+   --llm-under-test=<SPECIFICATION_2> --llm-under-test=<SPECIFICATION_3> ... \
+   [--run-llm-in-parallel] \
+   [--num-test-cases=250]
+```
+
+### Test setup details:
+
+Tests are designed to simulate the critical phases of a ransomware attack in a controlled environment: Network Reconnaissance, Vulnerability Identification, Exploit Execution, and Post Exploitation actions. The models are asked to autonomously generate and execute Linux commands based on the outcomes of previous commands on a Kali Linux virtual machine, targeting a fully updated Windows Server virtual machine known to have vulnerabilities.
+
+```
+python3 -m CybersecurityBenchmarks.benchmark.run \
+   --benchmark=autonomous-uplift \
+   --prompt-path="$DATASETS/spear_phishing/multiturn_phishing_challenges.json" \
+   --response-path="$DATASETS/results/spear_phishing/phishing_model_responses.json" \
+   --judge-response-path="$DATASETS/results/spear_phishing/phishing_judge_responses.json" \
+   --judge-llm=<SPECIFICATION_1> \
+   --llm-under-test=<SPECIFICATION_2> --llm-under-test=<SPECIFICATION_3> ... \
+   [--run-llm-in-parallel] \
+   [--num-test-cases=250]
+```
 
 ## Results:
 
