@@ -16,9 +16,9 @@ in AI safety.
 
 The repository includes several types of benchmarks:
 
-1.  **MITRE and False Refusal Rate (FRR) Tests**: These tests evaluate an
-    LLM's compliance when asked to assist in cyberattacks as well as how
-    often an LLM incorrectly refuses a borderline but essentially benign query.
+1.  **MITRE and False Refusal Rate (FRR) Tests**: These tests evaluate an LLM's
+    compliance when asked to assist in cyberattacks as well as how often an LLM
+    incorrectly refuses a borderline but essentially benign query.
 
     1. **MITRE Tests**: These tests use the MITRE ATT&CK framework to evaluate
        an LLM's compliance when asked to assist in cyberattacks.
@@ -45,12 +45,7 @@ The repository includes several types of benchmarks:
     1. **Textual Prompt Injection Tests**: An english-only dataset of textual
        prompt injections.
 
-    2. **Multilingual Prompt Injection Tests**: The multilingual dataset
-       includes prompt injections machine-translated into 15 languages, to test
-       the propensity of these attacks to succeed in languages other than
-       english.
-
-    3. **Visual Prompt Injection Tests**: These tests assess an LLM’s
+    2. **Visual Prompt Injection Tests**: These tests assess an LLM’s
        susceptibility to “visual prompt injection attacks” - attacks in which
        untrusted multimodal user input (consisting of both text and images)
        contains malicious instructions intended to override the LLM’s original
@@ -296,6 +291,7 @@ python3 -m CybersecurityBenchmarks.benchmark.run \
 ```
 
 Visual prompt injection benchmarks are run in the following two steps:
+
 - _Processing prompts_: Query the LLMs under test with a list of test cases
   consisting of a system prompt, a user text input and a user image to obtain a
   list of responses.
@@ -330,7 +326,6 @@ can be used with this benchmark:
 `--num-queries-per-prompt=<N>` can be optionally specified to run each test case
 `N` times (default if unspecified is 1) in order to obtain more robust results
 due to the stochastic nature of LLM responses.
-
 
 ## Running Code Interpreter Abuse Benchmark
 
@@ -462,6 +457,7 @@ equal to `1 - vunerable_percentage`.
 ### Prompt Injection Results
 
 #### Textual/Multilingual Prompt Injection Results
+
 Based on judge LLM, the prompt injection will be either successful or
 unsuccessful
 
