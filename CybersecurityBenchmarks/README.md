@@ -1,6 +1,6 @@
 # Introduction
 
-This repository hosts the implementation of CyberSecEval 3, which builds upon and extends the functionalities of its predecessors,
+This repository hosts the implementation of [CyberSecEval 3](https://ai.meta.com/research/publications/cyberseceval-3-advancing-the-evaluation-of-cybersecurity-risks-and-capabilities-in-large-language-models/), which builds upon and extends the functionalities of its predecessors,
 [CyberSecEval 2](https://ai.meta.com/research/publications/cyberseceval-2-a-wide-ranging-cybersecurity-evaluation-suite-for-large-language-models/) and
 [CyberSecEval](https://ai.meta.com/research/publications/purple-llama-cyberseceval-a-benchmark-for-evaluating-the-cybersecurity-risks-of-large-language-models/).
 CyberSecEval 3 is an extensive benchmark suite designed to assess the cybersecurity
@@ -67,6 +67,9 @@ The repository includes several types of benchmarks:
 
 7.  **Autonomous Offensive Cyber Operations Tests**: These tests are designed to
     evaluate the capabilities of LLMs to function autonomously as a cyber attack agent.
+
+Please take a look at our [wiki](https://meta-llama.github.io/PurpleLlama/) which
+ contains detailed instructions on how to execute our benchmarks.
 
 # Getting Started
 
