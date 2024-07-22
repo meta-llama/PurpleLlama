@@ -134,12 +134,13 @@ Tables 1, 2, and 3 show that Llama Guard 3 improves over Llama Guard 2 and outpe
 | Llama Guard 2            |  0.877 |   0.927   |          0.081          |
 | Llama Guard 3            |  0.939 |   0.985   |          0.040          |
 | GPT4                     |  0.805 |    N/A    |          0.152          |
+
 </div>
 
 <br>
 
 <table align="center">
-<small><center>able 2: Comparison of multilingual performance of various models measured on our internal test set for MLCommons hazard taxonomy (prompt+response classification).</center></small>
+<small><center>Table 2: Comparison of multilingual performance of various models measured on our internal test set for MLCommons hazard taxonomy (prompt+response classification).</center></small>
 <thead>
   <tr>
     <th colspan="8"><center>F1 ↑ / FPR ↓</center></th>
