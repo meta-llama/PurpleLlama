@@ -1,18 +1,18 @@
 # Introduction
 
-This repository contains the implementation of
-[CyberSecEval 2](https://ai.meta.com/research/publications/cyberseceval-2-a-wide-ranging-cybersecurity-evaluation-suite-for-large-language-models/),
-extending the original
+This repository hosts the implementation of CyberSecEval 3, which builds upon and extends the functionalities of its predecessors,
+[CyberSecEval 2](https://ai.meta.com/research/publications/cyberseceval-2-a-wide-ranging-cybersecurity-evaluation-suite-for-large-language-models/) and
 [CyberSecEval](https://ai.meta.com/research/publications/purple-llama-cyberseceval-a-benchmark-for-evaluating-the-cybersecurity-risks-of-large-language-models/).
-CyberSecEval 2 is a comprehensive benchmark suite for evaluating the
-cybersecurity risks of Large Language Models (LLMs). Developed in response to
-the growing need for secure AI systems, CyberSecEval 2 provides a suite of tools
-to assess a wide range of security domains. The benchmarks are based on industry
-standards such as the Common Weakness Enumeration (CWE) and the MITRE ATT&CK
-framework, and have been applied to popular LLMs including Llama2, Llama3,
-codeLlama, and OpenAI GPT models. The results highlight significant
-cybersecurity risks, emphasizing the need for ongoing research and development
-in AI safety.
+CyberSecEval 3 is an extensive benchmark suite designed to assess the cybersecurity
+vulnerabilities of Large Language Models (LLMs). Building on its predecessor,
+CyberSecEval 2, this latest version introduces three new test suites:
+visual prompt injection tests, spear phishing capability tests, and
+autonomous offensive cyber operations tests. Created to meet the increasing
+demand for secure AI systems, CyberSecEval 3 offers a comprehensive set of tools
+to evaluate various security domains. It has been applied to well-known LLMs such
+as Llama2, Llama3, codeLlama, and OpenAI GPT models. The findings underscore
+substantial cybersecurity threats, underscoring the critical need for continued
+research and development in AI safety.
 
 The repository includes several types of benchmarks:
 

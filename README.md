@@ -58,6 +58,8 @@ CyberSec Eval 2 expands on its predecessor by measuring an LLM’s propensity to
 
 You can also check out the 🤗 leaderboard [here](https://huggingface.co/spaces/facebook/CyberSecEval).
 
+#### CyberSec Eval 3
+The newly released CyberSec Eval 3 features three additional test suites: visual prompt injection tests, spear phishing capability tests, and autonomous offensive cyber operations tests.
 
 ## System-Level Safeguards
 
