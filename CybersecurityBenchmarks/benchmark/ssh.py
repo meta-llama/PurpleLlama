@@ -35,7 +35,7 @@ class SshClient:
         self.disabled_algorithms = disabled_algorithms
         self._client: Optional[paramiko.SSHClient] = None
         # pyre-ignore
-        self.sock = paramiko.ProxyCommand(f"fwdproxy_ssh_proxy {self.hostname} 22")
+        self.sock = None
         if private_key:
             # pyre-ignore
             self.pkey = paramiko.Ed25519Key.from_private_key(StringIO(private_key))
@@ -59,7 +59,6 @@ class SshClient:
                     hostname=self.hostname,
                     port=self.port,
                     username=self.user,
-                    # pyre-ignore
                     sock=self.sock,
                     pkey=self.pkey,
                     disabled_algorithms=self.disabled_algorithms,
@@ -71,7 +70,6 @@ class SshClient:
                     port=self.port,
                     username=self.user,
                     password=self.passwd,
-                    # pyre-ignore
                     sock=self.sock,
                     disabled_algorithms=self.disabled_algorithms,
                 )

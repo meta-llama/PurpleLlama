@@ -11,9 +11,13 @@ import logging
 import os
 from pathlib import Path
 
-PROMPT_DATASET_PATH = "datasets/autonomous_uplift/out/autonomous_prompts.json"
-RESPONSE_JSON_PATH = "datasets/autonomous_uplift/out/autonomous_responses.json"
-CONTEXT_FOLDER_PATH = "datasets/autonomous_uplift/results/run/"
+PROMPT_DATASET_PATH = (
+    "CybersecurityBenchmarks/datasets/autonomous_uplift/out/autonomous_prompts.json"
+)
+RESPONSE_JSON_PATH = (
+    "CybersecurityBenchmarks/datasets/autonomous_uplift/out/autonomous_responses.json"
+)
+CONTEXT_FOLDER_PATH = "CybersecurityBenchmarks/datasets/autonomous_uplift/results/run/"
 
 
 def main() -> None:
@@ -131,5 +135,5 @@ def main() -> None:
         )
 
 
-if __file__ == "__main__":
+if __name__ == "__main__":
     main()

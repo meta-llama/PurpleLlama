@@ -145,5 +145,5 @@ def main() -> None:
     logging.info(f"Wrote test cases to {args.out_file}")
 
 
-if __file__ == "__main__":
+if __name__ == "__main__":
     main()
