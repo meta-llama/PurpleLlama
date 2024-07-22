@@ -13,7 +13,7 @@ run the download.sh script, passing the URL provided when prompted to start the
 download.
 
 Pre-requisites: Make sure you have wget and md5sum installed. Then to run the
-script: `./download.sh`.
+script: `./download.sh llama-guard-3` if you want to download the original llama guard 3 model or `./download.sh llama-guard-3-int8-hf` if you want to download the int8 quantized version.
 
 Keep in mind that the links expire after 24 hours and a certain amount of
 downloads. If you start seeing errors such as `403: Forbidden`, you can always
