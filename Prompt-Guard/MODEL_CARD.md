@@ -85,9 +85,10 @@ multilingual version of the DeBERTa model, an open-source, MIT-licensed model
 from Microsoft. Using mDeBERTa significantly improved performance on our
 multilingual evaluation benchmark over DeBERTa.
 
-This is a very small model (86M params), suitable to run as a filter prior to
-each call to an LLM in an application. The model is also small enough to be
-deployed or fine-tuned without any GPUs or specialized infrastructure.
+This is a very small model (86M backbone parameters and 192M word embedding
+parameters), suitable to run as a filter prior to each call to an LLM in an
+application. The model is also small enough to be deployed or fine-tuned without
+any GPUs or specialized infrastructure.
 
 The training dataset is a mix of open-source datasets reflecting benign data
 from the web, user prompts and instructions for LLMs, and malicious prompt
