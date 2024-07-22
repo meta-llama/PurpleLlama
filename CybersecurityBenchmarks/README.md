@@ -135,7 +135,7 @@ few examples:
 ### How to use a different model supported by Anyscale or Together
 
 1. Lookup the models supported by
-   [Anyscale](https://d3qavlo5goipcw.cloudfront.net/guides/models#select-a-model)
+   [Anyscale](https://docs.anyscale.com/endpoints/fine-tuning/supported-models/)
    or [Together](https://docs.together.ai/docs/fine-tuning-models)
 2. Update `valid_models` method in
    [llm.py](https://github.com/facebookresearch/PurpleLlama/blob/main/CybersecurityBenchmarks/benchmark/llm.py)
