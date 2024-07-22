@@ -1,0 +1,4 @@
+*.swp
+.DS_Store
+CybersecurityBenchmarks/datasets/mitre_responses.json
+__pycache__
