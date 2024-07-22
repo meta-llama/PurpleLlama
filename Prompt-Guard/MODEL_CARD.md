@@ -53,9 +53,8 @@ violations anywhere in longer prompts.
 
 The model uses a multilingual base model, and is trained to detect both English
 and non-English injections and jailbreaks. In addition to English, we evaluate
-the model’s performance at detecting attacks in: Spanish, German, Portuguese,
-Vietnamese, Indonesian, Hindi, Thai, French, Italian, Japanese, Korean, Arabic,
-Chinese, Malathi, and Tagalog.
+the model’s performance at detecting attacks in: English, French, German, Hindi,
+Italian, Portuguese, Spanish, Thai.
 
 ## Model Usage
 
@@ -148,9 +147,8 @@ We built several datasets to evaluate Prompt Guard:
   attacks. This attempts to capture how well the model can generalize to
   completely new settings without any fine-tuning.
 - **Multilingual Jailbreak Set:** A version of the out-of-distribution set
-  including attacks machine-translated into 15 additional languages - Spanish,
-  German, Portuguese, Vietnamese, Indonesian, Hindi, Thai, French, Italian,
-  Japanese, Korean, Arabic, Chinese, Malathi, and Tagalog.
+  including attacks machine-translated into 8 additional languages - English,
+  French, German, Hindi, Italian, Portuguese, Spanish, Thai.
 - **CyberSecEval Indirect Injections Set:** Examples of challenging indirect
   injections (both English and multilingual) extracted from the CyberSecEval
   prompt injection dataset, with a set of similar documents without embedded
@@ -183,6 +181,6 @@ Our observations:
 
 ## Other References
 
-[Prompt Guard Tutorial](https://github.com/meta-llama/llama-recipes/blob/main/recipes/responsible_ai/prompt_guard/Prompt%20Guard%20Tutorial.ipynb)
+[Prompt Guard Tutorial](https://github.com/meta-llama/llama-recipes/blob/main/recipes/responsible_ai/prompt_guard/prompt_guard_tutorial.ipynb)
 
 [Prompt Guard Inference utilities](https://github.com/meta-llama/llama-recipes/blob/main/recipes/responsible_ai/prompt_guard/inference.py)
