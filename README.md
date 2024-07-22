@@ -27,19 +27,52 @@ investment in Purple Llama will be comprehensive.
 
 ## License
 
-Components within the Purple Llama project will be licensed permissively
-enabling both research and commercial usage. We believe this is a major step
-towards enabling community collaboration and standardizing the development and
-usage of trust and safety tools for generative AI development. More concretely
-evals and benchmarks are licensed under the MIT license while any models use the
-Llama 2 Community license. See the table below:
+Components within the Purple Llama project will be licensed permissively enabling both research and commercial usage.
+We believe this is a major step towards enabling community collaboration and standardizing the development and usage of trust and safety tools for generative AI development.
+More concretely evals and benchmarks are licensed under the MIT license while any models use the corresponding Llama Community license. See the table below:
 
 | **Component Type** |            **Components**            |                                          **License**                                           |
 | :----------------- | :----------------------------------: | :--------------------------------------------------------------------------------------------: |
 | Evals/Benchmarks   | Cyber Security Eval (others to come) |                                              MIT                                               |
-| Models             |             Llama Guard              | [Llama 2 Community License](https://github.com/facebookresearch/PurpleLlama/blob/main/LICENSE) |
-| Models             |             Llama Guard 2            | Llama 3 Community License |
+| Safeguard             |             Llama Guard              | [Llama 2 Community License](https://github.com/facebookresearch/PurpleLlama/blob/main/LICENSE) |
+| Safeguard             |             Llama Guard 2            | [Llama 3 Community License](https://github.com/meta-llama/llama3/blob/main/LICENSE) |
+| Safeguard             |             Llama Guard 3            | [Llama 3.1 Community License](LICENSE) |
+| Safeguard             |             Prompt Guard            | [Llama 3.1 Community License](LICENSE) |
 | Safeguard          |             Code Shield              | MIT |
+
+
+#### CyberSec Eval 3
+The newly released CyberSec Eval 3 features three additional test suites: visual prompt injection tests, spear phishing capability tests, and autonomous offensive cyber operations tests.
+
+## System-Level Safeguards
+
+As we outlined in Llama 3’s
+[Responsible Use Guide](https://ai.meta.com/llama/responsible-use-guide/), we
+recommend that all inputs and outputs to the LLM be checked and filtered in
+accordance with content guidelines appropriate to the application.
+
+### Llama Guard
+
+Llama Guard 3 is a high-performance input and output moderation model designed to support developers to detect various common types of violating content.
+
+
+It was built by fine-tuning Meta-Llama 3.1-8B model and optimized to support the detection of the MLCommons standard hazards taxonomy, catering to a range of developer use cases.
+It supports the release of Llama 3.1 capabilities including 7 new languages and a 128k context window. Llama Guard 3 was also optimized to detect helpful cyberattack responses and prevent malicious code output by LLMs to be executed in hosting environments for Llama systems using code interpreters.
+
+
+### Prompt Guard
+Prompt Guard is a powerful tool for protecting LLM powered applications from malicious prompts to ensure their security and integrity.
+
+Categories of prompt attacks include prompt injection and jailbreaking:
+
+* Prompt Injections are inputs that exploit the inclusion of untrusted data from third parties into the context window of a model to get it to execute unintended instructions.
+* Jailbreaks are malicious instructions designed to override the safety and security features built into a model.
+
+### Code Shield
+
+Code Shield adds support for inference-time filtering of insecure code produced by LLMs. Code Shield offers mitigation of insecure code suggestions risk, code interpreter abuse prevention, and secure command execution. [CodeShield Example Notebook](https://github.com/meta-llama/PurpleLlama/blob/main/CodeShield/notebook/CodeShieldUsageDemo.ipynb).
+
+
 
 ## Evals & Benchmarks
 
@@ -57,31 +90,6 @@ We believe these tools will reduce the frequency of LLMs suggesting insecure AI-
 CyberSec Eval 2 expands on its predecessor by measuring an LLM’s propensity to abuse a code interpreter, offensive cybersecurity capabilities, and susceptibility to prompt injection. You can read the paper [here](https://ai.meta.com/research/publications/cyberseceval-2-a-wide-ranging-cybersecurity-evaluation-suite-for-large-language-models/).
 
 You can also check out the 🤗 leaderboard [here](https://huggingface.co/spaces/facebook/CyberSecEval).
-
-#### CyberSec Eval 3
-The newly released CyberSec Eval 3 features three additional test suites: visual prompt injection tests, spear phishing capability tests, and autonomous offensive cyber operations tests.
-
-## System-Level Safeguards
-
-As we outlined in Llama 3’s
-[Responsible Use Guide](https://ai.meta.com/llama/responsible-use-guide/), we
-recommend that all inputs and outputs to the LLM be checked and filtered in
-accordance with content guidelines appropriate to the application.
-
-### Llama Guard
-
-To support this, and empower the community, we released Llama Guard, an openly-available model that performs competitively on common open benchmarks and provides developers with a pretrained model to help defend against generating potentially risky outputs. As part of our ongoing commitment to open and transparent science, we also released our methodology and an extended discussion of model performance in our [Llama Guard paper](https://ai.meta.com/research/publications/llama-guard-llm-based-input-output-safeguard-for-human-ai-conversations/).
-
-We are happy to share an updated version, Meta Llama Guard 2. Llama Guard 2 was optimized to support the newly [announced](https://mlcommons.org/2024/04/mlc-aisafety-v0-5-poc/) policy published by MLCommons, expanding its coverage to a more comprehensive set of safety categories, out-of-the-box.
-
-It also comes with better classification performance than Llama Guard 1 and improved zero-shot and few shot adaptability.
-
-Ultimately, our vision is to enable developers to customize this model to support relevant use cases and to make it easier to adopt best practices and improve the open ecosystem.
-
-### Code Shield
-
-Code Shield adds support for inference-time filtering of insecure code produced by LLMs. Code Shield offers mitigation of insecure code suggestions risk, code interpreter abuse prevention, and secure command execution. [CodeShield Example Notebook](https://github.com/meta-llama/PurpleLlama/blob/main/CodeShield/notebook/CodeShieldUsageDemo.ipynb).
-
 
 
 ## Getting Started
