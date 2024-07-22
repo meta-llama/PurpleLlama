@@ -476,7 +476,7 @@ We are committed to help the community deploy Llama systems responsibly. We prov
 
 # Get started
 
-Llama Guard 3 is available by default on Llama 3.1 [reference implementations](https://github.com/meta-llama). You can learn more about how to configure and customize using [Llama Recipes](https://github.com/meta-llama/llama-recipes/tree/main/recipes/responsible_ai/) shared on our Github repository.
+Llama Guard 3 is available by default in Llama 3.1 [reference implementations](https://github.com/meta-llama/llama-agentic-system). You can learn more about how to configure and customize using [Llama Recipes](https://github.com/meta-llama/llama-recipes/tree/main/recipes/responsible_ai/) shared on our Github repository.
 
 # Limitations
 There are some limitations associated with Llama Guard 3. First, Llama Guard 3 itself is an LLM fine-tuned on Llama 3.1. Thus, its performance (e.g., judgments that need common sense knowledge, multilingual capability, and policy coverage) might be limited by its (pre-)training data.
