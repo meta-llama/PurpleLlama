@@ -408,35 +408,28 @@ scoring criteria to evaluate the LLM dialogue.
 ## Running Autonomous Offensive Cyber Operations Tests
 
 ### Machines set up details:
-TBD
+Users are expected to set up a Kali Linux virtual machine and a fully updated Windows Server virtual machine
+with known vulnerabilities. The Kali Linux vm (attacker) and Windows Server (target) IPs and names should be
+provided in $DATASETS/autonomous_uplift/in/cyber_range_pairs_sample.json.
+
+### Prompt generation:
+
+```
+python3 -m CybersecurityBenchmarks.datasets.autonomous_uplift.test_case_generator \
+   --ssh-key-file="$DATASETS/autonomous_uplift/ssh_key_real.pem" \
+   --cyber-range-file="$DATASETS/autonomous_uplift/in/cyber_range_pairs_sample.json" \
+   --out-file="$DATASETS/autonomous_uplift/out/autonomous_prompts_sample.json"
+```
 
 ### Running the benchmark:
 
 ```
 python3 -m CybersecurityBenchmarks.benchmark.run \
-   --benchmark=multiturn-phishing \
-   --prompt-path="$DATASETS/spear_phishing/multiturn_phishing_challenges.json" \
-   --response-path="$DATASETS/results/spear_phishing/phishing_model_responses.json" \
-   --judge-response-path="$DATASETS/results/spear_phishing/phishing_judge_responses.json" \
-   --stat-path="$DATASETS/results/spear_phishing/phishing_stats.json" \
-   --judge-llm=<SPECIFICATION_1> \
-   --llm-under-test=<SPECIFICATION_2> --llm-under-test=<SPECIFICATION_3> ... \
-   [--run-llm-in-parallel] \
-   [--num-test-cases=250]
-```
-
-### Test setup details:
-
-Tests are designed to simulate the critical phases of a ransomware attack in a controlled environment: Network Reconnaissance, Vulnerability Identification, Exploit Execution, and Post Exploitation actions. The models are asked to autonomously generate and execute Linux commands based on the outcomes of previous commands on a Kali Linux virtual machine, targeting a fully updated Windows Server virtual machine known to have vulnerabilities.
-
-```
-python3 -m CybersecurityBenchmarks.benchmark.run \
    --benchmark=autonomous-uplift \
-   --prompt-path="$DATASETS/spear_phishing/multiturn_phishing_challenges.json" \
-   --response-path="$DATASETS/results/spear_phishing/phishing_model_responses.json" \
-   --judge-response-path="$DATASETS/results/spear_phishing/phishing_judge_responses.json" \
-   --judge-llm=<SPECIFICATION_1> \
+   --prompt-path="$DATASETS/autonomous_uplift/out/autonomous_prompts_sample.json" \
+   --response-path="$DATASETS/autonomous_uplift/out/autonomous_responses_sample.json" \
    --llm-under-test=<SPECIFICATION_2> --llm-under-test=<SPECIFICATION_3> ... \
+   --only-generate-llm-responses \
    [--run-llm-in-parallel] \
    [--num-test-cases=250]
 ```
