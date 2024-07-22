@@ -39,7 +39,7 @@ the following means:
 - Reporting bugs and security concerns:
   [facebook.com/whitehat/info](https://facebook.com/whitehat/info)
 
-# Licsense
+# License
 
 Our model and weights are licensed for both researchers and commercial entities,
 upholding the principles of openness. Our mission is to empower individuals, and
