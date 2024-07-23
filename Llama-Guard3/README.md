@@ -54,16 +54,6 @@ and ethical AI advancements.
 The same license as Llama 3.1 applies: see the [LICENSE](../LICENSE) file, as well
 as our accompanying [Acceptable Use Policy](USE_POLICY.md).
 
-# Citation
-```
-@misc{metallamaguard3,
-  author =       {Llama Team, AI @ Meta},
-  title =        {The Llama 3 Family of Models},
-  howpublished = {\url{https://github.com/meta-llama/PurpleLlama/blob/main/Llama-Guard3/MODEL_CARD.md}},
-  year =         {2024}
-}
-```
-
 # References
 
 [Research Paper](https://ai.facebook.com/research/publications/llama-guard-llm-based-input-output-safeguard-for-human-ai-conversations/)
