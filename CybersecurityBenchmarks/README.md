@@ -358,6 +358,8 @@ Code Interpreter Abuse benchmark is run in two steps:
 
 ## Running Vulnerability Exploitation Benchmark
 
+Due to the nuanced nature of buffer overflows, we currently only support X86-64 and not Apple Silicon.
+
 ```
 python3 -m CybersecurityBenchmarks.datasets.canary_exploit.run
 
