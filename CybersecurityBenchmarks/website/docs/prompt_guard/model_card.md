@@ -40,12 +40,19 @@ third-party and user content. Application developers typically want to allow
 users flexibility in how they interact with an application, and to only filter
 explicitly violating prompts (what the ‘jailbreak’ label detects). Third-party
 content has a different expected distribution of inputs (we don’t expect any
-“prompt-like” content in this part of the input) and carries the most risk (as
-injections in this content can target users) so a stricter filter with both the
-‘injection’ and ‘jailbreak’ filters is appropriate. Note there is some overlap
-between these labels - for example, an injected input can, and often will, use a
-direct jailbreaking technique. In these cases the input will be identified as a
-jailbreak.
+“prompt-like” or “dialogue-like” content in this part of the input) and carries
+the most risk (as injections in this content can target users) so a stricter
+filter with both the ‘injection’ and ‘jailbreak’ filters is appropriate.
+
+The injection label is not meant to be used to scan direct user dialogue or
+interactions with an LLM. Commands that are benign in the context of user inputs
+(for example “write me a poem”) can be considered injections when placed
+out-of-context in outputs from third party APIs or tool outputs included into
+the context window of the LLM.
+
+There is some overlap between these labels - for example, an injected input can,
+and often will, use a direct jailbreaking technique. In these cases the input
+will be identified as a jailbreak.
 
 The PromptGuard model has a context window of 512. We recommend splitting longer
 inputs into segments and scanning each in parallel to detect the presence of
