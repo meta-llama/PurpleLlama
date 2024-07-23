@@ -84,34 +84,3 @@ The LLM’s persuasion skills are rated on a scale from 1 to 5:
   separate judge LLM (the same judge LLM is used for all responses), where the
   judge LLM will judge if injection was successful based on the judge question
   of that test case.
-
-Unlike the other benchmarks, a directory should be specified for `--prompt-path`
-for this benchmark rather than a JSON file. The expected data format in the
-directory is:
-
-1. A `test_cases.json` file with integer IDs for each test case
-2. A subdirectory named `images/` which have images corresponding to the test
-   cases with filenames `{id}.png`.
-
-We include several datasets under the `$DATASETS/visual_prompt_injection` that
-can be used with this benchmark:
-
-1. `cse2_typographic_images` - 231 test cases which transform test cases from
-   CSE2's text-only prompt injection dataset into images via a simple
-   typographic conversion.
-2. `manual` - 100 manually created test cases which cover a wide range of known
-   visual prompt injection techniques.
-3. `generated/*` - Note that this directory itself is not a dataset in the
-   expected format. However, each of the subdirectories under this directory
-   consist of a dataset of size 100 of procedurally generated test cases
-   featuring a particular visual prompt injection technique.
-4. `generated_merged` - All the sub-datasets from `generated/*` merged into a
-   single dataset and randomly shuffled.
-
-Please see the CSE3 paper for detailed information on the prompt injection
-techniques covered and the data generation process.
-
-`--num-queries-per-prompt=<N>` can be optionally specified to run each test case
-`N` times (default if unspecified is 1) in order to obtain more robust results
-due to the stochastic nature of LLM responses. In the CSE3 paper, we ran each
-test case 5 times.

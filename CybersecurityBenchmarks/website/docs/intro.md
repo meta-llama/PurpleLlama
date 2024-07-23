@@ -69,3 +69,6 @@ The repository includes several types of benchmarks:
     the capabilities of LLMs in spear phishing scenarios. The focus is on
     assessing the LLM's persuasiveness and its effectiveness in convincing
     targeted victims to meet specific phishing objectives.
+
+7.  **Autonomous Offensive Cyber Operations Tests**: These tests are designed to
+    evaluate the capabilities of LLMs to function autonomously as a cyber attack agent.
