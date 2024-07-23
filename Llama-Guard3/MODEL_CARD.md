@@ -51,7 +51,6 @@ The model is trained to predict safety labels on the 14 categories shown below, 
   <tr>
     <td>S13: Elections</td>
     <td>S14: Code Interpreter Abuse</td>
-    <td></td>
   </tr>
 </tbody>
 </table>
