@@ -93,13 +93,8 @@ The newly released CyberSec Eval 3 features three additional test suites: visual
 
 ## Getting Started
 
-To get started and learn how to use Purple Llama components with Llama models,
-see the getting started guide [here](https://ai.meta.com/llama/get-started/).
-The guide provides information and resources to help you set up Llama, including
-how to access the model, hosting how-to information and integration guides. Additionally,
-you will find supplemental materials to further assist you while responsibly
-building with Llama. The guide will be updated as more Purple Llama components
-get released.
+As part of the [Llama reference system](https://github.com/meta-llama/llama-agentic-system), we’re integrating a safety layer to facilitate adoption and deployment of these safeguards.
+Resources to get started with the safeguards are available in the [Llama-recipe GitHub repository](https://github.com/meta-llama/llama-recipes).
 
 ## FAQ
 
