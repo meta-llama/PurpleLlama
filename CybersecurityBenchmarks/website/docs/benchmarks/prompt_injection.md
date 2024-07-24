@@ -62,6 +62,10 @@ Visual prompt injection benchmarks are run in the following two steps:
   judge LLM will judge if injection was successful based on the judge question
   of that test case.
 
+`--num-queries-per-prompt=<N>` can be optionally specified to run each test case
+`N` times (default if unspecified is 1) in order to obtain more robust results
+due to the stochastic nature of LLM responses.
+
 Unlike the other benchmarks, a directory should be specified for `--prompt-path`
 for this benchmark rather than a JSON file. The expected data format in the
 directory is:
@@ -85,12 +89,14 @@ can be used with this benchmark:
 4. `generated_merged` - All the sub-datasets from `generated/*` merged into a
    single dataset and randomly shuffled.
 
-`--num-queries-per-prompt=<N>` can be optionally specified to run each test case
-`N` times (default if unspecified is 1) in order to obtain more robust results
-due to the stochastic nature of LLM responses.
+The datasets are publicly viewable in this Amazon S3 bucket:
+`s3://8d2fa3e31abfea3d-cse3`
 
+To download the visual prompt injection datasets:
 
-
+1. Install the AWS CLI: `pip install awscli`
+2. Copy the datasets:
+   `aws --no-sign-request s3 cp --recursive s3://8d2fa3e31abfea3d-cse3 $DATASETS`
 
 ## Results
 
