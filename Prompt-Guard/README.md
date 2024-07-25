@@ -32,7 +32,7 @@ and
 Please report any software bug, or other problems with the models through one of
 the following means:
 
-- Reporting issues with the Llama Guard model:
+- Reporting issues with the Prompt Guard model:
   [github.com/meta-llama/PurpleLlama](https://github.com/meta-llama/PurpleLlama)
 - Reporting issues with Llama in general:
   [github.com/meta-llama/llama3](https://github.com/meta-llama/llama3)
@@ -51,5 +51,5 @@ as our accompanying [Acceptable Use Policy](USE_POLICY.md).
 
 # References
 
-- [Llama 3 Paper](TBD)
-- [CyberSecEval 3](TBD)
+- [Llama 3 Paper](https://ai.meta.com/research/publications/the-llama-3-herd-of-models/)
+- [CyberSecEval 3](https://ai.meta.com/research/publications/cyberseceval-3-advancing-the-evaluation-of-cybersecurity-risks-and-capabilities-in-large-language-models/)

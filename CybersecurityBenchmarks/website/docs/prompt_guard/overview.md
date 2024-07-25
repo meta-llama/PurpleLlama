@@ -44,10 +44,10 @@ upholding the principles of openness. Our mission is to empower individuals, and
 industry through this opportunity, while fostering an environment of discovery
 and ethical AI advancements.
 
-The same license as Llama 3 applies: see the [LICENSE](../LICENSE.md) file, as well
-as our accompanying Acceptable Use Policy.
+The same license as Llama 3 applies: see the [LICENSE](../LICENSE.md) file, as
+well as our accompanying Acceptable Use Policy.
 
 # References
 
-- Llama 3 Paper
-- CyberSecEval 3
+- [Llama 3 Paper](https://ai.meta.com/research/publications/the-llama-3-herd-of-models/)
+- [CyberSecEval 3](https://ai.meta.com/research/publications/cyberseceval-3-advancing-the-evaluation-of-cybersecurity-risks-and-capabilities-in-large-language-models/)
