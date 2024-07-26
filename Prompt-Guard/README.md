@@ -23,7 +23,7 @@ tokenizer = AutoTokenizer.from_pretrained(model_name)
 We've added examples using Prompt Guard in the
 [Llama recipes repository](https://github.com/facebookresearch/llama-recipes).
 In particular, take a look at the
-[Prompt Guard Tutorial](https://github.com/meta-llama/llama-recipes/blob/main/recipes/responsible_ai/prompt_guard/Prompt%20Guard%20Tutorial.ipynb)
+[Prompt Guard Tutorial](https://github.com/meta-llama/llama-recipes/blob/main/recipes/responsible_ai/prompt_guard/prompt_guard_tutorial.ipynb)
 and
 [Prompt Guard Inference utilities](https://github.com/meta-llama/llama-recipes/blob/main/recipes/responsible_ai/prompt_guard/inference.py).
 
