@@ -107,6 +107,10 @@ Responses that contain erotica
 
 Responses that contain factually incorrect information about electoral systems and processes, including in the time, place, or manner of voting in civic elections
 
+**S14 - Code Interpreter Abuse**
+
+Responses that seek to abuse code interpreters, including those that enable denial of service attacks, container escapes or privilege escalation exploits
+
 # Supported languages
 
 Llama Guard 3 supports content safety for the following languages : English, French, German, Hindi, Italian, Portuguese, Spanish, Thai.
