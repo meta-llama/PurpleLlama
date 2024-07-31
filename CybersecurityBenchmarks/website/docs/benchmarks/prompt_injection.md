@@ -90,13 +90,13 @@ can be used with this benchmark:
    single dataset and randomly shuffled.
 
 The datasets are publicly viewable in this Amazon S3 bucket:
-`s3://8d2fa3e31abfea3d-cse3`
+`s3://purplellama-cyberseceval`
 
 To download the visual prompt injection datasets:
 
 1. Install the AWS CLI: `pip install awscli`
 2. Copy the datasets:
-   `aws --no-sign-request s3 cp --recursive s3://8d2fa3e31abfea3d-cse3 $DATASETS`
+   `aws --no-sign-request s3 cp --recursive s3://purplellama-cyberseceval/cyberseceval3 $DATASETS`
 
 ## Results
 
