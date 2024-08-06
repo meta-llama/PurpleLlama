@@ -56,11 +56,14 @@ as our accompanying [Acceptable Use Policy](USE_POLICY.md).
 
 # Citation
 ```
-@misc{metallamaguard3,
-  author =       {Llama Team, AI @ Meta},
-  title =        {The Llama 3 Herd of Models},
-  howpublished = {\url{https://arxiv.org/abs/2407.21783}},
-  year =         {2024}
+@misc{dubey2024llama,
+  title =         {The Llama 3 Herd of Models},
+  author =        {Llama Team, AI @ Meta},
+  year =          {2024}
+  eprint =        {2407.21783},
+  archivePrefix = {arXiv},
+  primaryClass =  {cs.AI},
+  url =           {https://arxiv.org/abs/2407.21783}
 }
 ```
 
