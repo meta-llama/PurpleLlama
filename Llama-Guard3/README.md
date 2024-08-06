@@ -56,7 +56,7 @@ as our accompanying [Acceptable Use Policy](USE_POLICY.md).
 
 # Citation
 ```
-@misc{dubey2024llama,
+@misc{dubey2024llama3herdmodels,
   title =         {The Llama 3 Herd of Models},
   author =        {Llama Team, AI @ Meta},
   year =          {2024}
