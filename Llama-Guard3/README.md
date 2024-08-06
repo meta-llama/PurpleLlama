@@ -54,6 +54,19 @@ and ethical AI advancements.
 The same license as Llama 3.1 applies: see the [LICENSE](../LICENSE) file, as well
 as our accompanying [Acceptable Use Policy](USE_POLICY.md).
 
+# Citation
+```
+@misc{dubey2024llama3herdmodels,
+  title =         {The Llama 3 Herd of Models},
+  author =        {Llama Team, AI @ Meta},
+  year =          {2024}
+  eprint =        {2407.21783},
+  archivePrefix = {arXiv},
+  primaryClass =  {cs.AI},
+  url =           {https://arxiv.org/abs/2407.21783}
+}
+```
+
 # References
 
 [Research Paper](https://ai.facebook.com/research/publications/llama-guard-llm-based-input-output-safeguard-for-human-ai-conversations/)
