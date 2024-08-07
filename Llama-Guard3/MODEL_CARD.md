@@ -489,6 +489,19 @@ Some hazard categories may require factual, up-to-date knowledge to be evaluated
 
 Lastly, as an LLM, Llama Guard 3 may be susceptible to adversarial attacks or prompt injection attacks that could bypass or alter its intended use. Please feel free to [report](https://github.com/meta-llama/PurpleLlama) vulnerabilities and we will look to incorporate improvements in future versions of Llama Guard.
 
+# Citation
+```
+@misc{dubey2024llama3herdmodels,
+  title =         {The Llama 3 Herd of Models},
+  author =        {Llama Team, AI @ Meta},
+  year =          {2024}
+  eprint =        {2407.21783},
+  archivePrefix = {arXiv},
+  primaryClass =  {cs.AI},
+  url =           {https://arxiv.org/abs/2407.21783}
+}
+```
+
 # References
 
 [1] [Llama Guard: LLM-based Input-Output Safeguard for Human-AI Conversations](https://arxiv.org/abs/2312.06674)
