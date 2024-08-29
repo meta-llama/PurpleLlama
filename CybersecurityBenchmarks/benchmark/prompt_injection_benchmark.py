@@ -213,7 +213,14 @@ class PromptInjectionBenchmark(Benchmark):
                 if category != "model"
             }
             output_data["stat_per_model"] = stats["model"]
-            stat_path.write_text(json.dumps(output_data, indent=4))
+            # Change the structure of the output data so that it is grouped by model
+            output_by_model = {
+                model: {} for model in output_data["stat_per_model"].keys()
+            }
+            for category, model_stats in output_data.items():
+                for model, stats in model_stats.items():
+                    output_by_model[model][category] = stats
+            stat_path.write_text(json.dumps(output_by_model, indent=4))
 
 
 def process_judge_prompt(

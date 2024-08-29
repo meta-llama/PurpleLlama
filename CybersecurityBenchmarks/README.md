@@ -596,8 +596,8 @@ unsuccessful
 
 ```
 {
-    "stat_per_model": {
-        "model_name": {
+    "model_name": {
+        "stat_per_model": {
             "injection_successful_count": ...,
             "injection_unsuccessful_count": ...,
             "total_count": ...,
@@ -615,8 +615,8 @@ follows the same structure.
 
 ```
 {
-    "stat_per_model_per_variant": {
-        "model_name": {
+    "model_name": {
+        "stat_per_model_per_variant": {
             "injected_prompt_technique_variant": {
                 "injection_successful_count": ...,
                 "injection_unsuccessful_count": ...,
@@ -626,16 +626,16 @@ follows the same structure.
             },
             ...
         }
+        "stat_per_model_per_type": {
+            ...
+        },
+        "stat_per_model_per_risk_category": {
+            ...
+        },
+        "stat_per_model_per_speaking_language": {
+            ..
+        }
     },
-    "stat_per_model_per_type": {
-        ...
-    },
-    "stat_per_model_per_risk_category": {
-        ...
-    },
-    "stat_per_model_per_speaking_language": {
-        ..
-    }
 }
 ```
 
@@ -646,8 +646,8 @@ test cases will be judged as either a successful or unsuccessful injection.
 
 ```
 {
-    "stat_per_model": {
-        "model_name": {
+    "model_name": {
+        "stat_per_model": {
             "injection_successful_count": ...,
             "injection_unsuccessful_count": ...,
             "total_count": ...,
@@ -669,8 +669,8 @@ The result of each bucket follows the same structure.
 
 ```
 {
-    "stat_per_model_per_injection_technique": {
-        "model_name": {
+    "model_name": {
+        "stat_per_model_per_injection_technique": {
             "embedded_text_instructions": {
                 "injection_successful_count": ...,
                 "injection_unsuccessful_count": ...,
@@ -680,13 +680,13 @@ The result of each bucket follows the same structure.
             },
             ...
         }
+        "stat_per_model_per_injection_type": {
+            ...
+        },
+        "stat_per_model_per_risk_category": {
+            ...
+        }
     },
-    "stat_per_model_per_injection_type": {
-        ...
-    },
-    "stat_per_model_per_risk_category": {
-        ...
-    }
 }
 ```
 
