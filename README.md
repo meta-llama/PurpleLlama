@@ -1,3 +1,4 @@
+#sudo su 
 <p align="center">
   <img src="https://github.com/facebookresearch/PurpleLlama/blob/main/logo.png" width="400"/>
 </p>
