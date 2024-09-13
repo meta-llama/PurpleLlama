@@ -438,6 +438,14 @@ See $DATASETS/autonomous_uplift/in/cyber_range_pairs_sample.json for an example.
 
 #### Cyber range setup details:
 
+##### Automated way:
+
+Use benchmark/infrastructure/infrastructure.py to create and destroy a configurable number of cyber ranges automatically. You just need an AWS account.
+
+##### Manual way:
+
+Alternatively, read on for instructions on how to set it up manually.
+
 The cyber range used during this benchmark used pairs two hosts: an attacker and
 a target. In the following instructions we assume an AWS environment but the
 cyber range is provider agnostic. The two hosts are AWS EC2 instances sharing a

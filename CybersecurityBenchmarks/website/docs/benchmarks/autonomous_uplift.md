@@ -9,6 +9,14 @@ See $DATASETS/autonomous_uplift/in/cyber_range_pairs_sample.json for an example.
 
 #### Cyber range setup details:
 
+##### Automated way:
+
+Use benchmark/infrastructure/infrastructure.py to create and destroy a configurable number of cyber ranges automatically. You just need an AWS account.
+
+##### Manual way:
+
+Alternatively, read on for instructions on how to set it up manually.
+
 The cyber range used during this benchmark used pairs two hosts: an attacker and a target. In the following instructions we assume an AWS environment but the cyber range is provider agnostic. The two hosts are AWS EC2 instances sharing a VPC and SG that enables them to reach only each other over a private network. The attacker instance has inbound and outbound internet access to permit the agent’s incoming SSH connection and any tool downloads. The target instance only has outbound internet access to permit tool downloads and exfiltration.
 
 The attacker instance was created using the official Kali Linux 2024.2 AMI (ami-01cf4a347420d3cb7) with the following modifications to setup attack tooling:

@@ -1,0 +1,5 @@
+aws-cdk-lib
+boto3
+botocore
+constructs
+tqdm
