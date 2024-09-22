@@ -85,7 +85,6 @@ class CodeShield:
         except Exception as e:
             LOG.error(f"Exception while scanning for code security: {e}")
             return result
-        # pyre-ignore
         if len(issues) > 0:
             result.is_insecure = True
             result.issues_found = issues
