@@ -1,26 +1,31 @@
-# Model Details
+# Llama Guard 3-8B Model Card
 
-Llama Guard 3 is a Llama-3.1-8B pretrained model, fine-tuned for content safety classification. Similar to previous versions, it can be used to classify content in both LLM inputs (prompt classification) and in LLM responses (response classification). It acts as an LLM – it generates text in its output that indicates whether a given prompt or response is safe or unsafe, and if unsafe, it also lists the content categories violated.
+## Model Details
+
+Llama Guard 3-8B is a Llama-3.1-8B pretrained model, fine-tuned for content safety classification. Similar to previous versions, it can be used to classify content in both LLM inputs (prompt classification) and in LLM responses (response classification). It acts as an LLM – it generates text in its output that indicates whether a given prompt or response is safe or unsafe, and if unsafe, it also lists the content categories violated.
 
 Llama Guard 3 was aligned to safeguard against the MLCommons standardized hazards taxonomy and designed to support Llama 3.1 capabilities. Specifically, it provides content moderation in 8 languages, and was optimized to support safety and security for search and code interpreter tool calls.
 
 Below is a response classification example for Llama Guard 3.
 
-
 <p align="center">
-  <img src="https://github.com/facebookresearch/PurpleLlama/blob/main/Llama-Guard3/llama_guard_3_figure.png" width="800"/>
+  <img src="https://github.com/facebookresearch/PurpleLlama/blob/main/Llama-Guard3/8B/llama_guard_3_8B_figure.png" width="800"/>
 </p>
 
 In order to produce classifier scores, we look at the probability for the first token, and use that as the “unsafe” class probability. We can then apply score thresholding to make binary decisions.
 
-# Hazard Taxonomy and Policy
+## Get started
 
-The model is trained to predict safety labels on the 14 categories shown below, based on the [MLCommons taxonomy](https://mlcommons.org/2024/04/mlc-aisafety-v0-5-poc/) of 13 hazards, as well as an additional category for Code Interpreter Abuse for tool calls use cases
+Once you have access to the model weights, please refer to our [documentation](https://www.llama.com/docs/model-cards-and-prompt-formats/llama-guard-3/) to get started.
+
+## Hazard Taxonomy and Policy
+
+The model is trained to predict safety labels on the 14 categories shown below, based on the [MLCommons taxonomy](https://mlcommons.org/2024/04/mlc-aisafety-v0-5-poc/) of 13 hazards, as well as an additional category for Code Interpreter Abuse for tool calls use cases.
 
 <table align="center">
 <thead>
   <tr>
-    <th colspan="2">Hazard categories</th>
+    <th colspan="2"><center><b>Hazard categories</b></center></th>
   </tr>
 </thead>
 <tbody>
@@ -111,17 +116,17 @@ Responses that contain factually incorrect information about electoral systems a
 
 Responses that seek to abuse code interpreters, including those that enable denial of service attacks, container escapes or privilege escalation exploits
 
-# Supported languages
+## Supported languages
 
 Llama Guard 3 supports content safety for the following languages : English, French, German, Hindi, Italian, Portuguese, Spanish, Thai.
 
-# Training Data
+## Training Data
 
 We use the English data used by Llama Guard [1], which are obtained by getting Llama 2 and Llama 3 generations on prompts from the hh-rlhf dataset [2]. In order to scale training data for new categories and new capabilities such as multilingual and tool use, we collect additional human and synthetically generated data. Similar to the English data, the multilingual data are Human-AI conversation data that are either single-turn or multi-turn. To reduce the model’s false positive rate, we curate a set of multilingual benign prompt and response data where LLMs likely reject the prompts.
 
 For the tool use capability, we consider search tool calls and code interpreter abuse. To develop training data for search tool use, we use Llama3 to generate responses to a collected and synthetic set of prompts. The generations are based on the query results obtained from the Brave Search API. To develop synthetic training data to detect code interpreter attacks, we use an LLM to generate safe and unsafe prompts.  Then, we use a non-safety-tuned LLM to generate code interpreter completions that comply with these instructions.  For safe data, we focus on data close to the boundary of what would be considered unsafe, to minimize false positives on such borderline examples.
 
-# Evaluation
+## Evaluation
 
 **Note on evaluations:** As discussed in the original Llama Guard paper, comparing model performance is not straightforward as each model is built on its own policy and is expected to perform better on an evaluation dataset with a policy aligned to the model. This highlights the need for industry standards. By aligning the Llama Guard family of models with the Proof of Concept MLCommons taxonomy of hazards, we hope to drive adoption of industry standards like this and facilitate collaboration and transparency in the LLM safety and content evaluation space.
 
@@ -244,11 +249,11 @@ Tables 1, 2, and 3 show that Llama Guard 3 improves over Llama Guard 2 and outpe
 </tbody>
 </table>
 
-# Application
+## Application
 
 As outlined in the Llama 3 paper, Llama Guard 3 provides industry leading system-level safety performance and is recommended to be deployed along with Llama 3.1. Note that, while deploying Llama Guard 3 will likely improve the safety of your system, it might increase refusals to benign prompts (False Positives). Violation rate improvement and impact on false positives as measured on internal benchmarks are provided in the Llama 3 paper.
 
-# Quantization
+## Quantization
 
 We are committed to help the community deploy Llama systems responsibly. We provide a quantized version of Llama Guard 3 to lower the deployment cost. We used int 8 [implementation](https://huggingface.co/docs/transformers/main/en/quantization/bitsandbytes) integrated into the hugging face ecosystem, reducing the checkpoint size by about 40% with very small impact on model performance. In Table 5, we observe that the performance quantized model is comparable to the original model.
 
@@ -257,42 +262,42 @@ We are committed to help the community deploy Llama systems responsibly. We prov
 <tbody>
 <tr>
 <td rowspan="2"><br />
-<p><span>Task</span></p>
+<p><span><b>Task</b></span></p>
 </td>
 <td rowspan="2"><br />
-<p><span>Capability</span></p>
+<p><span><b>Capability</b></span></p>
 </td>
 <td colspan="4">
-<p><center><span>Non-Quantized</span></center></p>
+<p><center><span><b>Non-Quantized</b></span></center></p>
 </td>
 <td colspan="4">
-<p><center><span>Quantized</span></center></p>
+<p><center><span><b>Quantized</b></span></center></p>
 </td>
 </tr>
 <tr>
 <td>
-<p><span>Precision</span></p>
+<p><span><b>Precision</b></span></p>
 </td>
 <td>
-<p><span>Recall</span></p>
+<p><span><b>Recall</b></span></p>
 </td>
 <td>
-<p><span>F1</span></p>
+<p><span><b>F1</b></span></p>
 </td>
 <td>
-<p><span>FPR</span></p>
+<p><span><b>FPR</b></span></p>
 </td>
 <td>
-<p><span>Precision</span></p>
+<p><span><b>Precision</b></span></p>
 </td>
 <td>
-<p><span>Recall</span></p>
+<p><span><b>Recall</b></span></p>
 </td>
 <td>
-<p><span>F1</span></p>
+<p><span><b>F1</b></span></p>
 </td>
 <td>
-<p><span>FPR</span></p>
+<p><span><b>FPR</b></span></p>
 </td>
 </tr>
 <tr>
@@ -478,18 +483,18 @@ We are committed to help the community deploy Llama systems responsibly. We prov
 </tbody>
 </table>
 
-# Get started
+## Get started
 
 Llama Guard 3 is available by default in Llama 3.1 [reference implementations](https://github.com/meta-llama/llama-agentic-system). You can learn more about how to configure and customize using [Llama Recipes](https://github.com/meta-llama/llama-recipes/tree/main/recipes/responsible_ai/) shared on our Github repository.
 
-# Limitations
+## Limitations
 There are some limitations associated with Llama Guard 3. First, Llama Guard 3 itself is an LLM fine-tuned on Llama 3.1. Thus, its performance (e.g., judgments that need common sense knowledge, multilingual capability, and policy coverage) might be limited by its (pre-)training data.
 
 Some hazard categories may require factual, up-to-date knowledge to be evaluated (for example, S5: Defamation, S8: Intellectual Property, and S13: Elections) . We believe more complex systems should be deployed to accurately moderate these categories for use cases highly sensitive to these types of hazards, but Llama Guard 3 provides a good baseline for generic use cases.
 
 Lastly, as an LLM, Llama Guard 3 may be susceptible to adversarial attacks or prompt injection attacks that could bypass or alter its intended use. Please feel free to [report](https://github.com/meta-llama/PurpleLlama) vulnerabilities and we will look to incorporate improvements in future versions of Llama Guard.
 
-# Citation
+## Citation
 ```
 @misc{dubey2024llama3herdmodels,
   title =         {The Llama 3 Herd of Models},
@@ -502,7 +507,7 @@ Lastly, as an LLM, Llama Guard 3 may be susceptible to adversarial attacks or pr
 }
 ```
 
-# References
+## References
 
 [1] [Llama Guard: LLM-based Input-Output Safeguard for Human-AI Conversations](https://arxiv.org/abs/2312.06674)
 

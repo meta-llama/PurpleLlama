@@ -36,8 +36,10 @@ More concretely evals and benchmarks are licensed under the MIT license while an
 | Evals/Benchmarks   | Cyber Security Eval (others to come) |                                              MIT                                               |
 | Safeguard             |             Llama Guard              | [Llama 2 Community License](https://github.com/facebookresearch/PurpleLlama/blob/main/LICENSE) |
 | Safeguard             |             Llama Guard 2            | [Llama 3 Community License](https://github.com/meta-llama/llama3/blob/main/LICENSE) |
-| Safeguard             |             Llama Guard 3            | [Llama 3.1 Community License](LICENSE) |
-| Safeguard             |             Prompt Guard            | [Llama 3.1 Community License](LICENSE) |
+| Safeguard             |             Llama Guard 3-8B            | [Llama 3.2 Community License](LICENSE) |
+| Safeguard             |             Llama Guard 3-1B            | [Llama 3.2 Community License](LICENSE) |
+| Safeguard             |             Llama Guard 3-11B-vision            | [Llama 3.2 Community License](LICENSE) |
+| Safeguard             |             Prompt Guard            | [Llama 3.2 Community License](LICENSE) |
 | Safeguard          |             Code Shield              | MIT |
 
 
@@ -50,11 +52,10 @@ accordance with content guidelines appropriate to the application.
 
 ### Llama Guard
 
-Llama Guard 3 is a high-performance input and output moderation model designed to support developers to detect various common types of violating content.
+Llama Guard 3 consists of a series of high-performance input and output moderation models designed to support developers to detect various common types of violating content.
 
-
-It was built by fine-tuning Meta-Llama 3.1-8B model and optimized to support the detection of the MLCommons standard hazards taxonomy, catering to a range of developer use cases.
-It supports the release of Llama 3.1 capabilities including 7 new languages and a 128k context window. Llama Guard 3 was also optimized to detect helpful cyberattack responses and prevent malicious code output by LLMs to be executed in hosting environments for Llama systems using code interpreters.
+They were built by fine-tuning Meta-Llama 3.1 and 3.2 models and optimized to support the detection of the MLCommons standard hazards taxonomy, catering to a range of developer use cases.
+They support the release of Llama 3.2 capabilities, including 7 new languages, a 128k context window, and image reasoning. Llama Guard 3 models were also optimized to detect helpful cyberattack responses and prevent malicious code output by LLMs to be executed in hosting environments for Llama systems using code interpreters.
 
 
 ### Prompt Guard
