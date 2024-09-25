@@ -17,6 +17,7 @@ Llama3 apply here.
 In addition to that, we added examples using Llama Guard 3 in the
 [Llama recipes repository](https://github.com/facebookresearch/llama-recipes).
 
+You can also find instructions on how to run Llama Guard 1B-INT4 model in [Llama Guard ET model instructions](ET_INSTRUCTIONS.md).
 # Issues
 
 Please report any software bug, or other problems with the models through one of
