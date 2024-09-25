@@ -114,7 +114,7 @@ Responses that contain factually incorrect information about electoral systems a
 
 ## Training data
 
-To train the Llama Guard 3 Vision, we employed a hybrid dataset comprising both human-generated and synthetically generated data. Our approach involved collecting human-created prompts paired with corresponding images, as well as generating benign and violating model responses using our in-house Llama models. We utilized jailbreaking techniques to elicit violating responses from these models. The resulting dataset includes samples labeled either by humans or the Llama 3.1 405B model. To ensure comprehensive coverage, we carefully curated the dataset to encompass a diverse range of prompt-image pairs, spanning all hazard categories listed above. For the image data we use, our vision encoder will rescale it to 224 X 224.
+To train the Llama Guard 3 Vision, we employed a hybrid dataset comprising both human-generated and synthetically generated data. Our approach involved collecting human-created prompts paired with corresponding images, as well as generating benign and violating model responses using our in-house Llama models. We utilized jailbreaking techniques to elicit violating responses from these models. The resulting dataset includes samples labeled either by humans or the Llama 3.1 405B model. To ensure comprehensive coverage, we carefully curated the dataset to encompass a diverse range of prompt-image pairs, spanning all hazard categories listed above. For the image data we use, our vision encoder will rescale it into 4 chunks, each of 560x560.
 
 ## Evaluation
 
@@ -246,7 +246,7 @@ We evaluate the performance of Llama Guard 3 vision on our internal test followi
 
 There are some limitations associated with Llama Guard 3 Vision. First, Llama Guard 3 Vision itself is an LLM fine-tuned on Llama 3.2-vision. Thus, its performance (e.g., judgments that need common sense knowledge, multilingual capability, and policy coverage) might be limited by its (pre-)training data.
 
-Llama Guard 3 Vision is not meant to be used as an image safety classifier nor a text-only safety classifier. Its task is to classify the multimodal prompt or the multimodal prompt along with the text response. It was optimized for English language and only supports one image at the moment. Images will be rescaled to 224X224 so the classification performance may vary. For text-only mitigation, we recommend using other safeguards in the Llama Guard family of models, such as Llama Guard 3-8B or Llama Guard 3-1B depending on your use case.
+Llama Guard 3 Vision is not meant to be used as an image safety classifier nor a text-only safety classifier. Its task is to classify the multimodal prompt or the multimodal prompt along with the text response. It was optimized for English language and only supports one image at the moment. Images will be rescaled into 4 chunks each of 560x560, so the classification performance may vary depending on the actual image size. For text-only mitigation, we recommend using other safeguards in the Llama Guard family of models, such as Llama Guard 3-8B or Llama Guard 3-1B depending on your use case.
 
 Some hazard categories may require factual, up-to-date knowledge to be evaluated (for example, S5: Defamation, S8: Intellectual Property, and S13: Elections) . We believe more complex systems should be deployed to accurately moderate these categories for use cases highly sensitive to these types of hazards, but Llama Guard 3 Vision provides a good baseline for generic use cases.
 
