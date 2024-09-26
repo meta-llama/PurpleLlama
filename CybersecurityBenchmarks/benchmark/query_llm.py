@@ -203,8 +203,7 @@ def process_prompt(
 def query_llm_to_generate_responses(
     llms: Dict[str, LLM],
     prompt_path: Path,
-    is_parallel: bool = False,
-    num_threads: int = 20,
+    run_llm_in_parallel: int = 1,
     to_process_prompt: Callable[
         [
             int,
@@ -233,8 +232,9 @@ def query_llm_to_generate_responses(
             prompt_dataset = prompt_dataset[::step][:num_test_cases]
     response_result = []
 
-    if is_parallel:
-        with ThreadPoolExecutor(max_workers=num_threads) as executor:
+    # Run the LLMs in parallel if run_llm_in_parallel > 1
+    if run_llm_in_parallel > 1:
+        with ThreadPoolExecutor(max_workers=run_llm_in_parallel) as executor:
             futures = [
                 (
                     executor.submit(

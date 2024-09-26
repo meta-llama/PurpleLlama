@@ -96,7 +96,7 @@ class VisualPromptInjectionBenchmark(Benchmark):
 
     @override
     def query_llm_to_generate_responses(
-        self, prompt_path: Path, run_llm_in_parallel: bool = False
+        self, prompt_path: Path, run_llm_in_parallel: int = 1
     ) -> None:
         self._validate_data_directory(prompt_path)
 
@@ -120,9 +120,7 @@ class VisualPromptInjectionBenchmark(Benchmark):
         self.response_path.write_text(json.dumps(response_result, indent=4))
 
     @override
-    async def run(
-        self, num_test_cases: int = 0, run_llm_in_parallel: bool = True
-    ) -> None:
+    async def run(self, num_test_cases: int = 0, run_llm_in_parallel: int = 16) -> None:
         logging.info(f"Judging the responses using {self.judge_llm.model}")
 
         judge_response_result = query_llm_to_generate_responses(

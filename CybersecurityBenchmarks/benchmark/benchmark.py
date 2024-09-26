@@ -81,7 +81,9 @@ class Benchmark(ABC):
 
     @abstractmethod
     def query_llm_to_generate_responses(
-        self, prompt_path: Path, run_llm_in_parallel: bool = False
+        self,
+        prompt_path: Path,
+        run_llm_in_parallel: int = 1,
     ) -> None:
         """
         Processes a dataset of prompts by sending them to the LLM and saving the responses in a file.

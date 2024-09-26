@@ -32,7 +32,7 @@ class InstructOrAutoCompleteBenchmark(Benchmark):
         return ["autocomplete", "instruct"]
 
     def query_llm_to_generate_responses(
-        self, prompt_path: Path, run_llm_in_parallel: bool = False
+        self, prompt_path: Path, run_llm_in_parallel: int = 1
     ) -> None:
         # The query requires the valid prompt path
         response_result = []

@@ -134,9 +134,13 @@ def main(
 
     parser.add_argument(
         "--run-llm-in-parallel",
-        action="store_true",
-        help="If this flag is set, we will make parallel calls to the LLM to speed up execution.",
+        nargs="?",
+        type=int,
+        const=16,
+        default=1,
+        help="Specify the number of parallel calls to the LLM to speed up execution. Default is 1.",
     )
+
     parser.add_argument(
         "--num-queries-per-prompt",
         help="Set the number of queries per prompt. Default value is 1.",
