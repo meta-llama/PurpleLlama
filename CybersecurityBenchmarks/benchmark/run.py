@@ -138,7 +138,12 @@ def main(
         type=int,
         const=16,
         default=1,
-        help="Specify the number of parallel calls to the LLM to speed up execution. Default is 1.",
+        help=(
+            "Specify the number of parallel calls to the LLM to speed up execution. "
+            "When not provided, it defaults to 1 thread. "
+            "When set as a flag (--run-llm-in-parallel), it defaults to 16 threads. "
+            "Users can also specify the number of threads, e.g., --run-llm-in-parallel=8."
+        ),
     )
 
     parser.add_argument(
