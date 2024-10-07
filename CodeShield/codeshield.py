@@ -37,7 +37,6 @@ class CodeShieldScanResult:
 
 
 class CodeShield:
-
     @classmethod
     async def _execute_icd(
         cls, language: languages.Language, text: str

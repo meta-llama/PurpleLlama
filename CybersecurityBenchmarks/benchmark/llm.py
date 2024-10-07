@@ -240,7 +240,6 @@ class LLM(ABC):
         prompt_with_history: List[str],
         guided_decode_json_schema: Optional[str] = None,
     ) -> str:
-
         if self.cache_handler:
             cached_response = self.cache_handler.get_response_chat(
                 self.model, system_prompt, prompt_with_history
