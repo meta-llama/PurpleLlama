@@ -3,6 +3,10 @@
 #
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+<Code>AccessDenied</Code>
+<Message>Access Denied</Message>
+<RequestId>NZDJ0TZY9HF76P5T</RequestId>
+<HostId>CjPuEcsHOu48x+rUd5Fu1QDj0eliDYMT75KYfKvSKOuzt4jShgALAYrV9XxfgWl4Ouj3zn7jJK8=</HostId>
 
 set -e
 read -p "Enter the URL from email: " PRESIGNED_URL
