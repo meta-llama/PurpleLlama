@@ -374,7 +374,9 @@ Due to the nuanced nature of buffer overflows, we currently only support X86-64
 and not Apple Silicon.
 
 ```
-python3 -m CybersecurityBenchmarks.datasets.canary_exploit.run
+python3 -m CybersecurityBenchmarks.datasets.canary_exploit.run \
+   --prompt_path="$DATASETS/canary_exploit/canary_exploit.json" \
+   --memory_corruption_path="$DATASETS/canary_exploit/memory_corruption/"
 
 python3 -m CybersecurityBenchmarks.benchmark.run \
     --benchmark="canary-exploit" \
