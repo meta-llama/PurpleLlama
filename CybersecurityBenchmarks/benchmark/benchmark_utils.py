@@ -7,6 +7,9 @@
 
 import base64
 import io
+import subprocess
+
+from typing import Optional
 
 from PIL import Image
 
@@ -62,3 +65,13 @@ def image_to_b64(image_path: str, image_format: str = "PNG") -> str:
     image.save(buffer, format=image_format)
     img_base64 = base64.b64encode(buffer.getvalue())
     return img_base64.decode("utf-8")
+
+
+def get_mime_type(file_path: str) -> Optional[str]:
+    result = subprocess.run(
+        ["file", "--mime-type", "-b", file_path], capture_output=True, text=True
+    )
+    if result.returncode == 0:
+        return result.stdout.strip()
+    else:
+        return None
