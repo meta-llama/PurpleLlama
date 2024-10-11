@@ -592,6 +592,49 @@ class OPENAI(LLM):
         )
         return response.choices[0].message.content
 
+    @override
+    def query_multimodal(
+        self,
+        system_prompt: Optional[str] = None,
+        text_prompt: Optional[str] = None,
+        image_path: Optional[str] = None,
+        audio_path: Optional[str] = None,
+        max_tokens: int = DEFAULT_MAX_TOKENS,
+        temperature: float = DEFAULT_TEMPERATURE,
+        top_p: float = DEFAULT_TOP_P,
+    ) -> str:
+        messages = []
+        if system_prompt:
+            messages.append({"role": "system", "content": system_prompt})
+
+        user_message_content = []
+        if text_prompt:
+            user_message_content.append({"type": "text", "text": text_prompt})
+
+        if image_path:
+            image_data = image_to_b64(image_path)
+            user_message_content.append(
+                {
+                    "type": "image_url",
+                    "image_url": {"url": f"data:image/png;base64, {image_data}"},
+                }
+            )
+
+        if audio_path:
+            raise NotImplementedError("Audio input in OpenAI is not yet supported")
+
+        messages.append(
+            {
+                "role": "user",
+                "content": user_message_content,
+            }
+        )
+
+        response = self.client.chat.completions.create(
+            model=self.model, messages=messages, max_tokens=max_tokens
+        )
+        return response.choices[0].message.content
+
 
 class ANYSCALE(LLM):
     """Accessing ANYSCALE"""
