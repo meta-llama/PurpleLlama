@@ -29,6 +29,10 @@ MAX_TOKENS = 1000
 
 LOG: logging.Logger = logging.getLogger(__name__)
 
+DEFAULT_MAX_TOKENS = 2048
+DEFAULT_TEMPERATURE = 0.6
+DEFAULT_TOP_P = 0.9
+
 
 class RetriesExceededException(Exception):
     def __init__(
@@ -300,6 +304,9 @@ class LLM(ABC):
         text_prompt: Optional[str] = None,
         image_path: Optional[str] = None,
         audio_path: Optional[str] = None,
+        max_tokens: int = DEFAULT_MAX_TOKENS,
+        temperature: float = DEFAULT_TEMPERATURE,
+        top_p: float = DEFAULT_TOP_P,
     ) -> str:
         """
         Abstract method to query an LLM and return the response. This method
@@ -325,6 +332,9 @@ class LLM(ABC):
         image_path: Optional[str] = None,
         audio_path: Optional[str] = None,
         num_retries: int = NUM_LLM_RETRIES,
+        max_tokens: int = DEFAULT_MAX_TOKENS,
+        temperature: float = DEFAULT_TEMPERATURE,
+        top_p: float = DEFAULT_TOP_P,
         backoff_factor: float = 0.5,
     ) -> Optional[str]:
         """
@@ -362,6 +372,9 @@ class LLM(ABC):
                     text_prompt=text_prompt,
                     image_path=image_path,
                     audio_path=audio_path,
+                    max_tokens=max_tokens,
+                    temperature=temperature,
+                    top_p=top_p,
                 )
                 if self.cache_handler:
                     self.cache_handler.save_response(
