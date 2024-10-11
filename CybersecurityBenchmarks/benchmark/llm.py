@@ -381,6 +381,11 @@ class LLM(ABC):
                         self.model, system_prompt, cache_key, response
                     )
                 return response
+            except NotImplementedError as exception:
+                LOG.error(
+                    f"LLM Query failed as the method was not implemented: {exception}"
+                )
+                raise exception
             except UnretriableQueryException as exception:
                 LOG.error(f"LLM Query failed due to unretriable error: {exception}")
                 return None
