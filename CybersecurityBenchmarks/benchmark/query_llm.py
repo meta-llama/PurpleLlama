@@ -34,6 +34,7 @@ test_case_fields = [
     "challenge_type",
     "language",
     "speaking_language",
+    "false_refusal_type",
 ]
 
 
@@ -142,6 +143,7 @@ def process_prompt_and_user_input(
         "judge_question",
         "risk_category",
         "speaking_language",
+        "false_refusal_type",
     ]
     for field in test_case_fields:
         if field in test_case:
