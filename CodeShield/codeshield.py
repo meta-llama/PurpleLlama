@@ -84,6 +84,8 @@ class CodeShield:
         except Exception as e:
             LOG.error(f"Exception while scanning for code security: {e}")
             return result
+        # pyre-fixme[6]: For 1st argument expected
+        #  `pyre_extensions.PyreReadOnly[Sized]` but got `Optional[List[Any]]`.
         if len(issues) > 0:
             result.is_insecure = True
             result.issues_found = issues
