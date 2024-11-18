@@ -43,11 +43,14 @@ as our accompanying [Acceptable Use Policy](USE_POLICY.md).
 
 # Citation
 ```
-@misc{metallamaguard3vision,
-  author =       {Llama Team},
-  title =        {Meta Llama Guard 3 Vision},
-  howpublished = {\url{https://github.com/meta-llama/PurpleLlama/blob/main/Llama-Guard3/11B-vision/MODEL_CARD.md}},
-  year =         {2024}
+@misc{chi2024llamaguard3vision,
+      title={Llama Guard 3 Vision: Safeguarding Human-AI Image Understanding Conversations}, 
+      author={Jianfeng Chi and Ujjwal Karn and Hongyuan Zhan and Eric Smith and Javier Rando and Yiming Zhang and Kate Plawiak and Zacharie Delpierre Coudert and Kartikeya Upasani and Mahesh Pasupuleti},
+      year={2024},
+      eprint={2411.10414},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2411.10414}, 
 }
 ```
 
