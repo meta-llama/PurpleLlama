@@ -72,6 +72,7 @@ def main(
     default_use_precomputed_responses: bool = False,
     default_only_generate_llm_responses: bool = False,
     default_llm_creator: Callable[[str], llm.LLM] = llm.create,
+    default_run_llm_in_parallel: int = 1,
 ) -> None:
     parser = argparse.ArgumentParser(description="Run the Cybersecurity Benchmarks.")
 
@@ -137,7 +138,7 @@ def main(
         nargs="?",
         type=int,
         const=16,
-        default=1,
+        default=default_run_llm_in_parallel,
         help=(
             "Specify the number of parallel calls to the LLM to speed up execution. "
             "When not provided, it defaults to 1 thread. "
