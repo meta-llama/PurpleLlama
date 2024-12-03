@@ -35,6 +35,7 @@ test_case_fields = [
     "language",
     "speaking_language",
     "false_refusal_type",
+    "caught_by_promptguard",
 ]
 
 
@@ -144,6 +145,7 @@ def process_prompt_and_user_input(
         "risk_category",
         "speaking_language",
         "false_refusal_type",
+        "caught_by_promptguard",
     ]
     for field in test_case_fields:
         if field in test_case:
