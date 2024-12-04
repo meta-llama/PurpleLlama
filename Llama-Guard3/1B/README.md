@@ -4,7 +4,7 @@ Llama Guard 3-1B is a model that provides input and output guardrails for LLM de
 
 # Download
 
-Please see the [Llama CLI Reference](https://github.com/meta-llama/llama-stack/blob/main/docs/cli_reference.md#step-1-get-the-models) for downloading this model.
+Please see the [Llama CLI Reference](https://llama-stack.readthedocs.io/en/latest/references/llama_cli_reference/index.html) for downloading this model.
 
 # Quick Start
 
