@@ -36,7 +36,7 @@ test_case_fields = [
     "speaking_language",
     "false_refusal_type",
     "caught_by_promptguard",
-    "category",
+    "categories",
     "subcategories",
     "voice_tone",
     "label",
