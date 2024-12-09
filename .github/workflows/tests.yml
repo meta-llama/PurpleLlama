@@ -30,11 +30,5 @@ jobs:
           default: true
           override: true
 
-      - name: Install Weggli
-        uses: actions-rs/cargo@v1
-        with:
-          command: install
-          args: weggli --rev=9d97d462854a9b682874b259f70cc5a97a70f2cc --git=https://github.com/weggli-rs/weggli
-
       - name: Run Cybersecurity Benchmark Tests
         run: CybersecurityBenchmarks/scripts/run_tests.sh
