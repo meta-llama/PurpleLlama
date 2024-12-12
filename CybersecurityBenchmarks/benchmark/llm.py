@@ -19,7 +19,7 @@ import openai
 
 from typing_extensions import override
 
-from .benchmark_utils import image_to_b64
+from .benchmark_utils import audio_to_b64, image_to_b64
 from .cache_handler import CacheHandler
 
 
@@ -625,7 +625,15 @@ class OPENAI(LLM):
             )
 
         if audio_path:
-            raise NotImplementedError("Audio input in OpenAI is not yet supported")
+            user_message_content.append(
+                {
+                    "type": "input_audio",
+                    "input_audio": {
+                        "data": audio_to_b64(str(audio_path)),
+                        "format": "wav",
+                    },
+                }
+            )
 
         messages.append(
             {

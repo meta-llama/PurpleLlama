@@ -9,6 +9,7 @@ import base64
 import io
 import re
 import subprocess
+from pathlib import Path
 
 from typing import Optional
 
@@ -91,6 +92,12 @@ def image_to_b64(image_path: str, image_format: str = "PNG") -> str:
     image.save(buffer, format=image_format)
     img_base64 = base64.b64encode(buffer.getvalue())
     return img_base64.decode("utf-8")
+
+
+def audio_to_b64(audio_path: str) -> str:
+    audio_bytes = Path(audio_path).read_bytes()
+    audio_b64 = base64.b64encode(audio_bytes)
+    return audio_b64.decode("utf-8")
 
 
 def get_mime_type(file_path: str) -> Optional[str]:
