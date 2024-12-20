@@ -152,7 +152,7 @@ few examples:
 ```
 python3 -m CybersecurityBenchmarks.benchmark.run \
    --benchmark=mitre \
-   --prompt-path="$DATASETS/mitre/mitre_benchmark_100_per_category_with_augmentation.json" \
+   --prompt-path="$DATASETS/mitre/<INPUT_DATASET>" \
    --response-path="$DATASETS/mitre_responses.json" \
    --judge-response-path="$DATASETS/mitre_judge_responses.json" \
    --stat-path="$DATASETS/mitre_stat.json" \
@@ -161,6 +161,7 @@ python3 -m CybersecurityBenchmarks.benchmark.run \
    --llm-under-test=<SPECIFICATION_1> --llm-under-test=<SPECIFICATION_2> ...
    [--run-llm-in-parallel]
 ```
+where <INPUT_DATASET> is one of mitre_benchmark_100_per_category_with_augmentation.json (for English prompts) or mitre_prompts_multilingual_machine_translated.json (for multilingual prompts).  Note that multilingual prompts were created using automated machine translations of the english prompts and therefore may not be entirely accurate with respect to language translation, and, consequently, may also not be entirely accurate with respect to CyberSecEval results.
 
 The MITRE benchmarks are run in three steps:
 
