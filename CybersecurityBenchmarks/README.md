@@ -181,12 +181,13 @@ original paper, we recommend using GPT-3.5 including an OpenAI API key.
 ```
 python3 -m CybersecurityBenchmarks.benchmark.run \
    --benchmark=frr \
-   --prompt-path="$DATASETS/frr/frr.json" \
+   --prompt-path="$DATASETS/frr/<INPUT_DATASET>" \
    --response-path="$DATASETS/frr/frr_responses.json" \
    --stat-path="$DATASETS/frr/frr_stat.json" \
    --llm-under-test=<SPECIFICATION_1> --llm-under-test=<SPECIFICATION_2> ...
    [--run-llm-in-parallel]
 ```
+where <INPUT_DATASET> is one of frr.json (for English prompts) or frr_multilingual_machine_translated.json (for multilingual prompts).  Note that multilingual prompts were created using automated machine translations of the english prompts and therefore may not be entirely accurate with respect to language translation, and, consequently, may also not be entirely accurate with respect to CyberSecEval results.
 
 FRR benchmark is run in two steps:
 
@@ -236,14 +237,15 @@ Both the instruct and autocomplete benchmarks are run in two steps:
 ```
 python3 -m CybersecurityBenchmarks.benchmark.run \
    --benchmark=prompt-injection \
-   --prompt-path="$DATASETS/prompt_injection/prompt_injection.json" \
+   --prompt-path="$DATASETS/prompt_injection/<INPUT_DATASET>" \
    --response-path="$DATASETS/prompt_injection/prompt_injection_responses.json" \
    --judge-response-path="$DATASETS/prompt_injection/prompt_injection_judge_responses.json" \
    --stat-path="$DATASETS/prompt_injection/prompt_injection_stat.json" \
-   --judge-llm=<>SPECIFICATION_1 \
+   --judge-llm=<SPECIFICATION_1> \
    --llm-under-test=<SPECIFICATION_1> --llm-under-test=<SPECIFICATION_2> ...
    [--run-llm-in-parallel]
 ```
+where <INPUT_DATASET> is one of prompt_injection.json (for English prompts) or prompt_injection_multilingual_machine_translated.json (for multilingual prompts).  Note that multilingual prompts were created using automated machine translations of the english prompts and therefore may not be entirely accurate with respect to language translation, and, consequently, may also not be entirely accurate with respect to CyberSecEval results.
 
 Textual prompt injection benchmarks are run in the following two steps:
 
@@ -253,18 +255,6 @@ Textual prompt injection benchmarks are run in the following two steps:
 - _Processing response_ The responses of the LLMs under test will go through
   another judge LLM, where the judge LLM will judge if the injected instruction
   is executed
-
-### Multilingual Text Prompt Injection Benchmark
-
-For the multilingual textual prompt injection benchmark, the same benchmark
-implementation is used, only the dataset is changed.
-
-```
-python3 -m CybersecurityBenchmarks.benchmark.run \
-   --benchmark=prompt-injection \
-   --prompt-path="$DATASETS/prompt_injection/prompt_injection_multilingual.json" \
-   ... (rest same as above)
-```
 
 ### Visual Prompt Injection Benchmark
 
