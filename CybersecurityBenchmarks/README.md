@@ -199,6 +199,9 @@ FRR benchmark is run in two steps:
 
 ## Running Secure Code Generation Benchmarks
 
+Note: Secure Code Generation Benchmarks are temporarily removed from the default list, as our team is identifying the best relative import solution, as outlined in [this PR][https://github.com/meta-llama/PurpleLlama/pull/71].
+If you need to run this benchmark, please uncomment the relevant code in [run.py](https://github.com/meta-llama/PurpleLlama/blob/main/CybersecurityBenchmarks/benchmark/run.py) and resolve the import solution (such as the current solution in the PR).
+
 ### For Instruct Benchmark
 
 ```
