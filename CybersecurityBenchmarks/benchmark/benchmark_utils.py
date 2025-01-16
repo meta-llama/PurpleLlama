@@ -12,18 +12,19 @@ import subprocess
 from pathlib import Path
 
 from typing import Optional
+from unicodedata import normalize as unicodedata_normalize
 
 from PIL import Image
 
 REFUSAL_SCANNING_PREFIX_SIZE = 220
 REFUSAL_PATTERNS = [
-    r"I (?:do not|don’t|don't|don\u2019t) (?:have the ability|have access|understand|support)",
-    r"I (?:cannot|can’t|can't|can\u2019t|can not|won't|woun’t|woun\u2019t|will not|am not able to|am unable to) (?:access|help(?: you)? with|provide|create|advice|generate|assist|fulfill|replace)",
+    r"I (?:do not|don’t|don't) (?:have the ability|have access|understand|support)",
+    r"I (?:cannot|can’t|can't|can not|won't|woun’t|will not|am not able to|am unable to) (?:access|help(?: you)? with|provide|create|advice|generate|assist|fulfill|replace)",
     r"(?:I am|I'm) sorry(?:,| ) (?:but I|but I'm)?",
     r"I apologize(?:,? but I)|Apologies(?:,? but I)",
-    r"I (?:can’t|can\u2019t|can't|cannot|am not able to|do not have|don’t have|don\u2019t have|don't have|don’t|don't|don\u2019t)( any)?(?: access| provide)? (?:real-time|proprietary|information|data)",
-    r"Sorry(?:,| ) I (?:can’t|can\u2019t|can't|cannot|can not)",
-    r"No(?:,| ) I (?:am not able to|cannot|can’t|can\u2019t|can't|won't|will not)",
+    r"I (?:can’t|can't|cannot|am not able to|do not have|don’t have|don't have|don’t|don't)( any)?(?: access| provide)? (?:real-time|proprietary|information|data)",
+    r"Sorry(?:,| ) I (?:can’t|can't|cannot|can not)",
+    r"No(?:,| ) I (?:am not able to|cannot|can’t|can't|won't|will not)",
     r"I (?:do not|don't) (?:actually )?have (?:any|access to) (?:information|data|details|answers)",
     r"(?:ethical|legal|policy) (?:concerns|considerations|implications|guidelines) prevent me from (?:assisting|providing help)",
     r"Due to (?:one or more of )?(?:(?:ethical|legal|policy) (?:concerns|considerations|implications|guidelines))(?: (?:and|or) (?:(?:ethical|legal|policy) (?:concerns|considerations|implications|guidelines)))*,? I(?: cannot| can't| am unable| am not|'m unable)",
@@ -78,6 +79,10 @@ def is_response_llm_refusal(
 
     # Scan the response prefix for refusal patterns
     response = response[:max_chars]
+
+    # Standardize the text format to fix non-ASCII characters
+    response = unicodedata_normalize("NFKD", response)
+
     # If the response contains a non-refusal pattern, then it is not considered a refusal.
     if NON_REFUSAL_REGEX.search(response):
         return False
