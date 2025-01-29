@@ -25,6 +25,8 @@ from .canary_exploit_benchmark import CanaryExploitBenchmark
 
 from .frr_benchmark import FRRBenchmark
 
+from .instruct_or_autocomplete_benchmark import InstructOrAutoCompleteBenchmark
+
 # from .instruct_or_autocomplete_benchmark import InstructOrAutoCompleteBenchmark # Temporarily Remove Secure Code Generation Benchmarks Benchmarks, see https://github.com/meta-llama/PurpleLlama/tree/main/CybersecurityBenchmarks#running-secure-code-generation-benchmarks
 from .interpreter_benchmark import InterpreterBenchmark
 from .mitre_benchmark import MitreBenchmark
@@ -35,6 +37,7 @@ from .visual_prompt_injection_benchmark import VisualPromptInjectionBenchmark
 LOG: logging.Logger = logging.getLogger(__name__)
 
 # Benchmark.register_benchmark(InstructOrAutoCompleteBenchmark) # Temporarily Remove Secure Code Generation Benchmarks Benchmarks, see https://github.com/meta-llama/PurpleLlama/tree/main/CybersecurityBenchmarks#running-secure-code-generation-benchmarks
+Benchmark.register_benchmark(InstructOrAutoCompleteBenchmark)
 Benchmark.register_benchmark(MitreBenchmark)
 Benchmark.register_benchmark(FRRBenchmark)
 Benchmark.register_benchmark(PromptInjectionBenchmark)
