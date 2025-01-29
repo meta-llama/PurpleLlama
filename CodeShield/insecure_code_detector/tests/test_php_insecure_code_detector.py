@@ -6,7 +6,8 @@
 # pyre-strict
 
 
-from ..languages import Language
+from CodeShield.insecure_code_detector.languages import Language
+
 from .insecure_code_detector_test import InsecureCodeDetectorTest
 
 PHP_TEST_CASES = [

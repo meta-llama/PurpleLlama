@@ -10,10 +10,10 @@ import logging
 
 from pathlib import Path
 
-from tqdm import tqdm
+from CodeShield.insecure_code_detector import insecure_code_detector
+from CodeShield.insecure_code_detector.languages import Language
 
-from ...CodeShield.insecure_code_detector import insecure_code_detector
-from ...CodeShield.insecure_code_detector.languages import Language
+from tqdm import tqdm
 
 from .benchmark import Benchmark
 from .bleu import compute_bleu_score

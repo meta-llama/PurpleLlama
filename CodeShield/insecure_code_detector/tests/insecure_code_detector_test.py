@@ -10,13 +10,13 @@ from __future__ import annotations
 import unittest
 from abc import ABC
 
-from .. import insecure_code_detector
-from ..languages import Language
+from CodeShield.insecure_code_detector import insecure_code_detector
+from CodeShield.insecure_code_detector.languages import Language
 
 try:
-    from ..internal import oss
+    from CodeShield.insecure_code_detector.internal import oss
 except ImportError:
-    from .. import oss
+    from CodeShield.insecure_code_detector import oss
 
 
 class InsecureCodeDetectorTest(unittest.IsolatedAsyncioTestCase, ABC):

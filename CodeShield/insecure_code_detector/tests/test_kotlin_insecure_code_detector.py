@@ -6,7 +6,8 @@
 # pyre-strict
 
 
-from ..languages import Language
+from CodeShield.insecure_code_detector.languages import Language
+
 from .insecure_code_detector_test import InsecureCodeDetectorTest
 
 # the following test cases contain an input string, and the corresponding number of expected insecure pattern matches

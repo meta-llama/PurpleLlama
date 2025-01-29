@@ -8,13 +8,13 @@
 
 import unittest
 
-from .. import insecure_code_detector
-from ..languages import Language
+from CodeShield.insecure_code_detector import insecure_code_detector
+from CodeShield.insecure_code_detector.languages import Language
 
 try:
-    from ..internal import oss
+    from CodeShield.insecure_code_detector.internal import oss
 except ImportError:
-    from .. import oss
+    from CodeShield.insecure_code_detector import oss
 
 # the following test cases contain an input string, the insecure pattern match line number, and the expected rule
 C_REGEX_TEST_CASES = [

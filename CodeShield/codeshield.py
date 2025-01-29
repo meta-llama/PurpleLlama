@@ -15,10 +15,11 @@ import enum
 import logging
 from dataclasses import dataclass
 
-from .insecure_code_detector import insecure_code_detector, languages
-from .insecure_code_detector.issues import Issue, Severity
-from .insecure_code_detector.languages import Language
-from .insecure_code_detector.usecases import UseCase
+from CodeShield.insecure_code_detector import insecure_code_detector, languages
+
+from CodeShield.insecure_code_detector.issues import Issue, Severity
+from CodeShield.insecure_code_detector.languages import Language
+from CodeShield.insecure_code_detector.usecases import UseCase
 
 LOG: logging.Logger = logging.getLogger(__name__)
 
