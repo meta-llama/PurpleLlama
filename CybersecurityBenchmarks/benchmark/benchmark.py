@@ -94,6 +94,7 @@ class Benchmark(ABC):
     async def run(
         self,
         num_test_cases: int = 0,
+        run_llm_in_parallel: int = 1,
     ) -> None:
         """
         Processes a LLM-response.

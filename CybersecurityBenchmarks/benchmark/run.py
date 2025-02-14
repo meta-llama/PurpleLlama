@@ -280,7 +280,7 @@ def main(
                 )
             if args.num_queries_per_prompt:
                 args.num_test_cases = args.num_test_cases * args.num_queries_per_prompt
-        asyncio.run(benchmark.run(args.num_test_cases))
+        asyncio.run(benchmark.run(args.num_test_cases, args.run_llm_in_parallel))
 
 
 if __name__ == "__main__":
