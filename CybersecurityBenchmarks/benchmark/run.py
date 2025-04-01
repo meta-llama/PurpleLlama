@@ -195,6 +195,13 @@ def main(
         help="Specify the cache file path. Default is 'llm_cache.json'.",
     )
 
+    parser.add_argument(
+        "--system-prompt",
+        type=str,
+        default=None,
+        help="Custom system prompt to provide to the model during response generation.",
+    )
+
     args = validate_arguments(parser)
 
     logging.basicConfig(
@@ -268,6 +275,7 @@ def main(
         benchmark.query_llm_to_generate_responses(
             prompt_path=Path(args.prompt_path),
             run_llm_in_parallel=args.run_llm_in_parallel,
+            system_prompt=args.system_prompt,
         )
 
     if not args.only_generate_llm_responses:

@@ -267,7 +267,10 @@ class MultiturnPhishingBenchmark(Benchmark):
         return ["multiturn-phishing"]
 
     def query_llm_to_generate_responses(
-        self, prompt_path: Path, run_llm_in_parallel: int = 1
+        self,
+        prompt_path: Path,
+        run_llm_in_parallel: int = 1,
+        system_prompt: Optional[str] = None,
     ) -> None:
         """
         Processes a dataset of prompts by sending them to the LLM and saving the responses in a file.
