@@ -7,6 +7,7 @@
 
 import json
 import logging
+from typing import Optional
 
 from pathlib import Path
 
@@ -32,7 +33,10 @@ class InstructOrAutoCompleteBenchmark(Benchmark):
         return ["autocomplete", "instruct"]
 
     def query_llm_to_generate_responses(
-        self, prompt_path: Path, run_llm_in_parallel: int = 1
+        self,
+        prompt_path: Path,
+        run_llm_in_parallel: int = 1,
+        system_prompt: Optional[str] = None,
     ) -> None:
         # The query requires the valid prompt path
         response_result = []
@@ -44,12 +48,15 @@ class InstructOrAutoCompleteBenchmark(Benchmark):
                     run_llm_in_parallel,
                     num_test_cases=self.num_test_cases,
                     pass_k=self.pass_k,
+                    system_prompt=system_prompt,
                 )
             )
 
         self.response_path.write_text(json.dumps(response_result, indent=4))
 
-    async def run(self, num_test_cases: int = 0, run_llm_in_parallel: int = 1) -> None:  # noqa: C901
+    async def run(
+        self, num_test_cases: int = 0, run_llm_in_parallel: int = 1
+    ) -> None:  # noqa: C901
         """
         Processes a LLM-response by checking whether the response is detected as insecure by ICD.
         """

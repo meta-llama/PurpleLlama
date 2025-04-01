@@ -7,6 +7,7 @@
 
 import json
 import logging
+import inspect
 
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -167,6 +168,7 @@ def process_prompt(
     llms: Dict[str, LLM],
     test_case: Dict[str, Union[int, str]],
     guided_decode_json_schema: Optional[str] = None,
+    system_prompt: Optional[str] = None,
 ) -> Dict[str, Union[int, str]]:
     prompt = cast(
         str,
@@ -186,10 +188,17 @@ def process_prompt(
     if not llm:
         raise ValueError("Initial query LLM must be specified.")
     try:
-        query_result = llm.query_with_retries(
-            prompt,
-            guided_decode_json_schema=guided_decode_json_schema,
-        )
+        if system_prompt:
+            query_result = llm.query_with_system_prompt_with_retries(
+                system_prompt=system_prompt,
+                prompt=prompt,
+                guided_decode_json_schema=guided_decode_json_schema,
+            )
+        else:
+            query_result = llm.query_with_retries(
+                prompt,
+                guided_decode_json_schema=guided_decode_json_schema,
+            )
     except Exception as e:
         LOG.error(f"Query failed with error: {e}. Failed prompt: {prompt}")
         query_result = "FAIL TO QUERY"
@@ -227,6 +236,7 @@ def query_llm_to_generate_responses(
     pass_k: int = 1,
     enumerate_prompt_and_pass_id: bool = True,
     guided_decode_json_schema: Optional[str] = None,
+    system_prompt: Optional[str] = None,
 ) -> List[Dict[str, Optional[str]]]:
     if not prompt_path.exists():
         raise ValueError("Please provide valid path for prompts.")
@@ -244,29 +254,36 @@ def query_llm_to_generate_responses(
     # Run the LLMs in parallel if run_llm_in_parallel > 1
     if run_llm_in_parallel > 1:
         with ThreadPoolExecutor(max_workers=run_llm_in_parallel) as executor:
-            futures = [
-                (
-                    executor.submit(
-                        to_process_prompt,
-                        idx,
-                        k,
-                        llms,
-                        test_case,
-                        guided_decode_json_schema,
-                    )
-                    if enumerate_prompt_and_pass_id
-                    else executor.submit(
-                        to_process_prompt,
-                        cast(int, test_case["prompt_id"]),
-                        cast(int, test_case["pass_id"]),
-                        llms,
-                        test_case,
-                        guided_decode_json_schema,
-                    )
-                )
-                for idx, test_case in enumerate(prompt_dataset)
-                for k in range(pass_k)
-            ]
+            futures = []
+            for k in range(pass_k):
+                for idx, test_case in enumerate(prompt_dataset):
+                    if enumerate_prompt_and_pass_id:
+                        args = [
+                            to_process_prompt,
+                            idx,
+                            k,
+                            llms,
+                            test_case,
+                            guided_decode_json_schema,
+                        ]
+                    else:
+                        args = [
+                            to_process_prompt,
+                            cast(int, test_case["prompt_id"]),
+                            cast(int, test_case["pass_id"]),
+                            llms,
+                            test_case,
+                            guided_decode_json_schema,
+                        ]
+
+                    if (
+                        "system_prompt"
+                        in inspect.getfullargspec(to_process_prompt).args
+                        and system_prompt is not None
+                    ):
+                        args.append(system_prompt)
+
+                    futures.append((executor.submit(*args)))
 
             for future in tqdm(
                 futures,
@@ -282,13 +299,18 @@ def query_llm_to_generate_responses(
         for idx, test_case in enumerate(
             tqdm(prompt_dataset * pass_k, desc="Processing prompts", unit="prompt")
         ):
-            response_result.append(
-                to_process_prompt(
-                    idx % len(prompt_dataset),
-                    idx // len(prompt_dataset),
-                    llms,
-                    test_case,
-                    guided_decode_json_schema,
-                )
-            )
+            args = [
+                idx % len(prompt_dataset),
+                idx // len(prompt_dataset),
+                llms,
+                test_case,
+                guided_decode_json_schema,
+            ]
+            if (
+                "system_prompt" in inspect.getfullargspec(to_process_prompt).args
+                and system_prompt is not None
+            ):
+                args.append(system_prompt)
+            response_result.append(to_process_prompt(*args))
+
     return response_result

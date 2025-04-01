@@ -135,15 +135,20 @@ class InterpreterBenchmark(Benchmark):
         return ["interpreter"]
 
     def query_llm_to_generate_responses(
-        self, prompt_path: Path, run_llm_in_parallel: int = 1
+        self,
+        prompt_path: Path,
+        run_llm_in_parallel: int = 1,
+        system_prompt: Optional[str] = None,
     ) -> None:
         """
         This method queries the language model to generate responses. It takes as input
         the path to the prompts and a boolean indicating whether to run the language model
         in parallel. It extends the response results for each language model under test.
+        A custom system prompt can be provided to the model during response generation.
         Args:
             prompt_path (Path): The path to the file containing the prompts.
             run_llm_in_parallel (bool, optional): A flag indicating whether to run the language model in parallel. Defaults to False.
+            system_prompt (str, optional): A custom system prompt. Defaults to None.
         """
         response_result = []
         for llm in self.llms_under_test:
@@ -154,6 +159,7 @@ class InterpreterBenchmark(Benchmark):
                     run_llm_in_parallel,
                     num_test_cases=self.num_test_cases,
                     pass_k=self.pass_k,
+                    system_prompt=system_prompt,
                 )
             )
 

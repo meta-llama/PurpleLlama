@@ -96,7 +96,10 @@ class VisualPromptInjectionBenchmark(Benchmark):
 
     @override
     def query_llm_to_generate_responses(
-        self, prompt_path: Path, run_llm_in_parallel: int = 1
+        self,
+        prompt_path: Path,
+        run_llm_in_parallel: int = 1,
+        system_prompt: Optional[str] = None,
     ) -> None:
         self._validate_data_directory(prompt_path)
 
