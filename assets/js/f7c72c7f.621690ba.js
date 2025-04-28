@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkpurplellama=self.webpackChunkpurplellama||[]).push([[1050],{3391:l=>{l.exports=JSON.parse('{"metadata":{"permalink":"/PurpleLlama/blog","page":1,"postsPerPage":10,"totalPages":1,"totalCount":4,"blogDescription":"Blog","blogTitle":"Blog"}}')}}]);
