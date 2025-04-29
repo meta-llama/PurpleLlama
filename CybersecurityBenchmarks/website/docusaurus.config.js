@@ -15,7 +15,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'CyberSecEval 3',
+  title: 'CyberSecEval 4',
   tagline: 'Advancing the Evaluation of Cybersecurity Risks and Capabilities in Large Language Models',
   // favicon: 'img/favicon.ico',
 

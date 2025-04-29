@@ -10,6 +10,8 @@ LlamaFirewall is a framework designed to detect and mitigate AI centric security
 
 Unlike traditional moderation tools that focus on filtering toxic content, LlamaFirewall provides system-level defenses tailored to modern agentic use cases—like code generation, tool orchestration, and autonomous decision-making. With modules that inspect user input, agent reasoning, and generated code, LlamaFirewall acts as a real-time guardrail framework purpose-built for production environments.
 
+Feel free to read our [LlamaFirewall: An open source guardrail system for building secure AI agents](https://ai.facebook.com/research/publications/llamafirewall-an-open-source-guardrail-system-for-building-secure-ai-agents) paper to dive deeper into design and benchmark results.
+
 Ready to get started? Check out the quick installation guide to learn how to set up LlamaFirewall in your environment.
 
 <Link

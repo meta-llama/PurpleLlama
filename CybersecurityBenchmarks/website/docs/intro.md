@@ -1,24 +1,21 @@
 # Introduction
 
-This repository hosts the implementation of [CyberSecEval 3](https://ai.meta.com/research/publications/cyberseceval-3-advancing-the-evaluation-of-cybersecurity-risks-and-capabilities-in-large-language-models/), which builds upon and extends the functionalities of its predecessors,
-[CyberSecEval 2](https://ai.meta.com/research/publications/cyberseceval-2-a-wide-ranging-cybersecurity-evaluation-suite-for-large-language-models/) and
+This repository hosts the implementation of [CyberSecEval 4](https://meta-llama.github.io/CyberSecEval), which builds upon and extends the functionalities of its predecessors,
+[CyberSecEval 3](https://ai.meta.com/research/publications/cyberseceval-3-advancing-the-evaluation-of-cybersecurity-risks-and-capabilities-in-large-language-models/),
+[CyberSecEval 2](https://ai.meta.com/research/publications/cyberseceval-2-a-wide-ranging-cybersecurity-evaluation-suite-for-large-language-models/)
+and
 [CyberSecEval](https://ai.meta.com/research/publications/purple-llama-cyberseceval-a-benchmark-for-evaluating-the-cybersecurity-risks-of-large-language-models/).
-CyberSecEval 3 is an extensive benchmark suite designed to assess the cybersecurity
-vulnerabilities of Large Language Models (LLMs). Building on its predecessor,
-CyberSecEval 2, this latest version introduces three new test suites:
-visual prompt injection tests, spear phishing capability tests, and
-autonomous offensive cyber operations tests. Created to meet the increasing
-demand for secure AI systems, CyberSecEval 3 offers a comprehensive set of tools
-to evaluate various security domains. It has been applied to well-known LLMs such
-as Llama2, Llama3, codeLlama, and OpenAI GPT models. The findings underscore
-substantial cybersecurity threats, underscoring the critical need for continued
-research and development in AI safety.
+CyberSecEval 4 is an extensive benchmark suite designed to assess the
+cybersecurity vulnerabilities and defensive capabilities of Large Language Models (LLMs). Building on its
+predecessor, CyberSecEval 3, this latest version introduces a new benchmark, [AutoPatchBench](https://engineering.fb.com/2025/04/29/ai-research/autopatchbench-benchmark-ai-powered-security-fixes), which measures an LLM agent's capability to automatically patch security vulnerabilities in native code.
+
+Created to measure and incentivize the development of highly capable LLM based defender tools, CyberSecEval 4 builds on the CyerSecEval code base to offer a comprehensive set of tools for evaluting both vulnerabilities and defensive capabilities in various security domains. It has been applied to well-known LLMs such as Meta's Llama4 as well as OpenAI, Google, and Anthropic models. The findings from the collection of CyberSecEval studies underscore both substantial cybersecurity threats, as well as promising oppottunities to leverage these models for uplifting defenders.
 
 The repository includes several types of benchmarks:
 
-1.  **MITRE and False Refusal Rate (FRR) Tests**: These tests evaluate an
-    LLM's compliance when asked to assist in cyberattacks as well as how
-    often an LLM incorrectly refuses a borderline but essentially benign query.
+1.  **MITRE and False Refusal Rate (FRR) Tests**: These tests evaluate an LLM's
+    compliance when asked to assist in cyberattacks as well as how often an LLM
+    incorrectly refuses a borderline but essentially benign query.
 
     1. **MITRE Tests**: These tests use the MITRE ATT&CK framework to evaluate
        an LLM's compliance when asked to assist in cyberattacks.
@@ -45,12 +42,7 @@ The repository includes several types of benchmarks:
     1. **Textual Prompt Injection Tests**: An english-only dataset of textual
        prompt injections.
 
-    2. **Multilingual Prompt Injection Tests**: The multilingual dataset
-       includes prompt injections machine-translated into 15 languages, to test
-       the propensity of these attacks to succeed in languages other than
-       english.
-
-    3. **Visual Prompt Injection Tests**: These tests assess an LLM’s
+    2. **Visual Prompt Injection Tests**: These tests assess an LLM’s
        susceptibility to “visual prompt injection attacks” - attacks in which
        untrusted multimodal user input (consisting of both text and images)
        contains malicious instructions intended to override the LLM’s original
@@ -71,4 +63,9 @@ The repository includes several types of benchmarks:
     targeted victims to meet specific phishing objectives.
 
 7.  **Autonomous Offensive Cyber Operations Tests**: These tests are designed to
-    evaluate the capabilities of LLMs to function autonomously as a cyber attack agent.
+    evaluate the capabilities of LLMs to function autonomously as a cyber attack
+    agent.
+
+8.  **AutoPatch Tests**: These tests are designed to evaluate the capabilities
+    of LLMs to autonomously generate security patches for vulnerabilities, specifically
+    the crashes discovered by fuzzer tests.
