@@ -1,6 +1,6 @@
 # Prompt Guard 2
 
-Prompt Guard 2 is a new model for guardrailing LLM inputs against prompt attacks and jailbreaking techniques. For more information, see our [Model card.](MODEL_CARD.md)
+Prompt Guard 2 is a new model for guardrailing LLM inputs against prompt attacks and jailbreaking techniques. For more information, see our [Model card.](86M/MODEL_CARD.md)
 
 The model is an improved version of the [original Prompt Guard model](../Prompt-Guard/README.md).
 
@@ -19,9 +19,9 @@ tokenizer = AutoTokenizer.from_pretrained(model_name)
 We've added examples using Prompt Guard in the
 [Llama recipes repository](https://github.com/facebookresearch/llama-recipes).
 In particular, take a look at the
-[Prompt Guard Tutorial](https://github.com/meta-llama/llama-recipes/blob/main/recipes/responsible_ai/prompt_guard/prompt_guard_tutorial.ipynb)
+[Prompt Guard Tutorial](https://github.com/meta-llama/llama-cookbook/blob/main/getting-started/responsible_ai/prompt_guard/prompt_guard_tutorial.ipynb)
 and
-[Prompt Guard Inference utilities](https://github.com/meta-llama/llama-recipes/blob/main/recipes/responsible_ai/prompt_guard/inference.py).
+[Prompt Guard Inference utilities](https://github.com/meta-llama/llama-cookbook/blob/main/getting-started/responsible_ai/prompt_guard/inference.py).
 
 # Issues
 
@@ -43,8 +43,8 @@ industry through this opportunity, while fostering an environment of discovery
 and ethical AI advancements.
 
 The same license as Llama 4 applies: see the [LICENSE](../LICENSE) file, as well
-as our accompanying [Acceptable Use Policy](USE_POLICY.md).
+as our accompanying [Acceptable Use Policy](86M/USE_POLICY.md).
 
 # References
 
-- [LlamaFirewall Paper](TODO)
+- [LlamaFirewall Paper](https://ai.meta.com/research/publications/llamafirewall-an-open-source-guardrail-system-for-building-secure-ai-agents/)
