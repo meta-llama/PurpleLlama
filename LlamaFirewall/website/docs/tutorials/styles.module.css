@@ -1,0 +1,19 @@
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+.jupyterCodeCell {
+    border: 1px solid #5e5e5e;
+    border-radius: 6px;
+    padding: 1rem;
+
+    margin: 1rem 0;
+    font-family: 'Courier New', Courier, monospace;
+  }
+
+.regularCode {
+    font-family: 'Courier New', Courier, monospace;
+  }

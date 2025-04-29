@@ -1,0 +1,129 @@
+The following is an example fix for a allocation-size-too-big crash. You can learn from it about how to reason about a fix, and how to format the answer.
+
+--- Example Fix Start ---
+Q:
+
+Crash stack trace:
+
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 544046171
+INFO: Loaded 1 modules   (225 inline 8-bit counters): 225 [0x5d2510, 0x5d25f1),
+INFO: Loaded 1 PC tables (225 PCs): 225 [0x5d25f8,0x5d3408),
+/tmp/AnonymousFuzzer: Running 1 inputs 1 time(s) each.
+Running: crashes/expand1-crash0/crash.bin
+=================================================================
+==2688==ERROR: AddressSanitizer: requested allocation size 0xffffffffffffffff (0x800 after adjustments for alignment, red zones etc.) exceeds maximum supported size of 0x10000000000 (thread T0)
+    #0 0x4198df in __interceptor_malloc (/path/to/AnonymousFuzzer+0x4198df) (BuildId: 3ccae)
+    #1 0x373c3a in my_deserialize path/to/my_serialize/my_serialize.c:345
+    #2 0x374a74 in my_deserialize_array_internal path/to/my_serialize/my_serialize.c:154
+    #3 0x373e10 in my_deserialize path/to/my_serialize/my_serialize.c:354
+    #4 0x372a91 in my_deserialize path/to/my_serialize/my_serialize.c:368
+    #5 0x2bc5cc in LLVMFuzzerTestOneInput path/to/harnesses/AnonymousFuzzer.cpp:13
+    #6 0x323487 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) path/to/libfuzzer/FuzzerLoop.cpp:619
+    #7 0x2c2316 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) path/to/libfuzzer/FuzzerDriver.cpp:324
+    #8 0x2dfc5d in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) path/to/libfuzzer/FuzzerDriver.cpp:861
+    #9 0x2bc806 in main path/to/libfuzzer_main.cpp:21
+    #10 0x7f11a502c656 in __libc_start_call_main path/to/libc_start_call_main.h:58:16
+    #11 0x7f11a502c717 in __libc_start_main@GLIBC_2.2.5 path/to/libc-start.c:409:3
+    #12 0x2bc3c0 in _start path/to/start.S:116
+==2688==HINT: if you don't care about these errors you may set allocator_may_return_null=1
+SUMMARY: AddressSanitizer: allocation-size-too-big (/path/to/AnonymousFuzzer+0x4198df) (BuildId: 3ccae) in __interceptor_malloc
+==2688==ABORTING
+MS: 0 ; base unit: 0000000000000000000000000000000000000000
+0x4b,0x3a,0x3a,0x22,0x22,0x3a,0x37,0x3a,0x7b,0x4b,0x3a,0x2d,0x32,0x3a,0x7b,0x4b,0x3a,0x7d,
+K::\"\":7:{K:-2:{K:}
+
+
+Source code for the function involved:
+
+static int
+my_deserialize(const char** buf, const char* end, my_val_t* res) {
+  res->type = MY_INT;
+  char type;
+  READ_CHAR(type);
+  switch (type) {
+    case 's': {
+      READ_INT(res->s.len);
+      if (res->s.len + 2 > end - *buf) {
+        return 0;
+      }
+      res->type = MY_STR;
+      res->s.str = malloc(res->s.len + 1);
+      memcpy(res->s.str, *buf, res->s.len);
+      res->s.str[res->s.len] = '\0';
+      *buf += res->s.len;
+      break;
+    }
+    case 'K': /* Map */
+    {
+      res->type = MY_OBJ;
+      res->o.fields = NULL;
+
+      /* read name */
+      READ_INT(res->o.className.len);
+      if (res->o.className.len + 2 > end - *buf) {
+        return 0;
+      }
+      res->o.className.str = malloc(res->o.className.len + 1);
+      memcpy(res->o.className.str, *buf, res->o.className.len);
+      res->o.className.str[res->o.className.len] = '\0';
+      *buf += res->o.className.len;
+      break;
+    }
+    default:
+      return 0; /* unsupported type */
+  }
+  return 1;
+}
+
+A:
+
+The allocation size being too big crash is due to integer overflow. By moving the +2 to a -2 on the other side, we avoid integer overflow. Otherwise max_int - 1 passes the bounds check (due to overflow) and then causes a huge malloc which only uses len + 1.
+
+Here is the fixed function:
+
+```cpp
+static int
+my_deserialize(const char** buf, const char* end, my_val_t* res) {
+  res->type = MY_INT;
+  char type;
+  READ_CHAR(type);
+  switch (type) {
+    case 's': {
+      READ_INT(res->s.len);
+      if (end - *buf < 2 || res->s.len > (end - *buf) - 2) {
+        return 0;
+      }
+      res->type = MY_STR;
+      res->s.str = malloc(res->s.len + 1);
+      memcpy(res->s.str, *buf, res->s.len);
+      res->s.str[res->s.len] = '\0';
+      *buf += res->s.len;
+      break;
+    }
+    case 'K': /* Map */
+    {
+      res->type = MY_OBJ;
+      res->o.fields = NULL;
+
+      /* read name */
+      READ_INT(res->o.className.len);
+      if (end - *buf < 2 || res->o.className.len > (end - *buf) - 2) {
+        return 0;
+      }
+      res->o.className.str = malloc(res->o.className.len + 1);
+      memcpy(res->o.className.str, *buf, res->o.className.len);
+      res->o.className.str[res->o.className.len] = '\0';
+      *buf += res->o.className.len;
+      break;
+    }
+    default:
+      return 0; /* unsupported type */
+  }
+  return 1;
+}
+```
+
+-- Example Fix End ---
+
+Next, try to fix the following crash:

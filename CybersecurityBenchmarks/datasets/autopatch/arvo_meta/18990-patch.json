@@ -1,0 +1,14 @@
+[
+  {
+    "filename": "src/libopensc/card-coolkey.c",
+    "patched_line_numbers": [
+      1099,
+      1101,
+      1105,
+      1106,
+      1108
+    ],
+    "patch": "-1096,8 +1096,16 @@ coolkey_get_cplc_data(sc_card_t *card, global_platform_cplc_data_t *cplc_data)\n {\n \tsize_t len = sizeof(global_platform_cplc_data_t);\n \tu8 *receive_buf = (u8 *)cplc_data;\n-\treturn coolkey_apdu_io(card, GLOBAL_PLATFORM_CLASS, ISO7816_INS_GET_DATA, 0x9f, 0x7f,\n+\tint rc;\n+\n+\trc = coolkey_apdu_io(card, GLOBAL_PLATFORM_CLASS, ISO7816_INS_GET_DATA, 0x9f, 0x7f,\n \t\t\tNULL, 0, &receive_buf, &len,  NULL, 0);\n+\t/* We expect this will fill the whole structure in the argument.\n+\t * If we got something else, report error */\n+\tif ((size_t)rc < sizeof(cplc_data)) {\n+\t\tLOG_FUNC_RETURN(card->ctx, SC_ERROR_CORRUPTED_DATA);\n+\t}\n+\tLOG_FUNC_RETURN(card->ctx, rc);\n }\n \n /* select the coolkey applet */",
+    "summary": "commit 2d02de4233a70fdad4cbf0862c83f03d9ba85d78\nAuthor: Jakub Jelen <jjelen@redhat.com>\nDate:   Mon Nov 18 12:59:03 2019 +0100\n\n    coolkey: Do not return uninitialized data if card does not return CPLP data\n    \n    Thanks oss-fuzz\n    \n    https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=18990\n"
+  }
+]

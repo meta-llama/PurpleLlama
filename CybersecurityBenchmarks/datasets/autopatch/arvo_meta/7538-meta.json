@@ -1,0 +1,33 @@
+{
+  "sample_id": 7538,
+  "arvo_metadata": {
+    "localId": 7538,
+    "project": "librawspeed",
+    "fix": "https://github.com/darktable-org/rawspeed/commit/eb99214e33cc6fcf2c9aae285d4e75358894a34d",
+    "verify": "0",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "msan",
+    "crash_type": "Use-of-uninitialized-value",
+    "severity": "Medium",
+    "fix_commit": "eb99214e33cc6fcf2c9aae285d4e75358894a34d",
+    "repo_addr": "https://github.com/darktable-org/rawspeed.git"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 115,
+    "total_lines_added": 3,
+    "total_lines_subtracted": 0,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": false
+  }
+}

@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "decoder/ihevcd_parse_slice_header.c",
+    "patched_line_numbers": [
+      329,
+      331
+    ],
+    "patch": "diff --git a/decoder/ihevcd_parse_slice_header.c b/decoder/ihevcd_parse_slice_header.c\nindex 2d6bf4c..8f8864e 100644\n--- a/decoder/ihevcd_parse_slice_header.c\n+++ b/decoder/ihevcd_parse_slice_header.c\n\n@@ -325,6 +325,12 @@\n     {\n         BITS_PARSE(\"dependent_slice_flag\", value, ps_bitstrm, 1);\n \n+        /* First slice to be decoded in the current picture can't be dependent slice */\n+        if (value && 0 == ps_codec->i4_pic_present)\n+        {\n+             return IHEVCD_IGNORE_SLICE;\n+        }\n+\n         /* If dependendent slice, copy slice header from previous slice */\n         if(value && (ps_codec->s_parse.i4_cur_slice_idx > 0))\n         {"
+  }
+]

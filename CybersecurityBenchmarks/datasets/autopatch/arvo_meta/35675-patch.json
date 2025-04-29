@@ -1,0 +1,11 @@
+[
+  {
+    "filename": "include/h2o.h",
+    "patched_line_numbers": [
+      624,
+      625
+    ],
+    "patch": "-621,6 +621,8 @@ struct st_h2o_quic_aggregated_stats_t {\n     func(num_packets.late_acked, \"num-packets.late-acked\") \\\n     func(num_bytes.received, \"num-bytes.received\") \\\n     func(num_bytes.sent, \"num-bytes.sent\") \\\n+    func(num_bytes.lost, \"num-bytes.lost\") \\\n+    func(num_bytes.resent, \"num-bytes.resent\") \\\n     func(num_frames_sent.padding, \"num-frames-sent.padding\") \\\n     func(num_frames_sent.ping, \"num-frames-sent.ping\") \\\n     func(num_frames_sent.ack, \"num-frames-sent.ack\") \\",
+    "summary": "commit 0b2425b41830e550dfc5d451b217ab4d44bd4985\nAuthor: Nabil S. Alramli <dev@nalramli.com>\nDate:   Mon Jul 26 14:11:40 2021 -0400\n\n    [quic] [stats] Implement quic.num-bytes.lost and quic.num-bytes.resent statistics\n"
+  }
+]

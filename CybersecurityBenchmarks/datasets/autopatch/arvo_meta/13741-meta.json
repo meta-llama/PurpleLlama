@@ -1,0 +1,32 @@
+{
+  "sample_id": 13741,
+  "arvo_metadata": {
+    "fix": "https://github.com/openthread/openthread/commit/fab45352f5d6b2f516fed8a86c0d197bb7c27958",
+    "verify": "0",
+    "localId": 13741,
+    "project": "openthread",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Stack-use-after-return READ 1",
+    "fix_commit": "fab45352f5d6b2f516fed8a86c0d197bb7c27958",
+    "repo_addr": "https://github.com/openthread/openthread"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 43,
+    "total_lines_added": 32,
+    "total_lines_subtracted": 4,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

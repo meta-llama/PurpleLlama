@@ -1,0 +1,35 @@
+[
+  {
+    "filename": "qemu/cputlb.c",
+    "patched_line_numbers": [
+      299,
+      300
+    ],
+    "patch": "@@ -295,6 +295,11 @@ tb_page_addr_t get_page_addr_code(CPUArchState *env1, target_ulong addr)\n \n     page_index = (addr >> TARGET_PAGE_BITS) & (CPU_TLB_SIZE - 1);\n     mmu_idx = cpu_mmu_index(env1);\n+\n+    if ((mmu_idx < 0) || (mmu_idx >= NB_MMU_MODES)) {\n+        return -1;\n+    }\n+\n     if (unlikely(env1->tlb_table[mmu_idx][page_index].addr_code !=\n                  (addr & TARGET_PAGE_MASK))) {\n         cpu_ldub_code(env1, addr);"
+  },
+  {
+    "filename": "qemu/target-i386/ops_sse.h",
+    "patched_line_numbers": [
+      1944,
+      1962,
+      1963
+    ],
+    "patch": "@@ -1941,7 +1941,7 @@ SSE_HELPER_Q(helper_pcmpgtq, FCMPGTQ)\n \n static inline int pcmp_elen(CPUX86State *env, int reg, uint32_t ctrl)\n {\n-    int val;\n+    unsigned int val;\n \n     /* Presence of REX.W is indicated by a bit higher than 7 set */\n     if (ctrl >> 8) {\n@@ -1959,6 +1959,9 @@ static inline int pcmp_elen(CPUX86State *env, int reg, uint32_t ctrl)\n             return 16;\n         }\n     }\n+    if (val == 0x80000000) {\n+        val = 0;\n+    }\n     return val;\n }\n "
+  },
+  {
+    "filename": "qemu/tcg/optimize.c",
+    "patched_line_numbers": [
+      1373,
+      1374
+    ],
+    "patch": "@@ -1370,6 +1370,9 @@ static TCGArg *tcg_constant_folding(TCGContext *s, uint16_t *tcg_opc_ptr,\n             } else {\n         do_reset_output:\n                 for (i = 0; i < nb_oargs; i++) {\n+                    if (args[i] < 0 || args[i] >= TCG_MAX_TEMPS) {\n+                        continue;\n+                    }\n                     reset_temp(s, args[i]);\n                     /* Save the corresponding known-zero bits mask for the\n                        first output argument (only one supported so far). */"
+  },
+  {
+    "filename": "qemu/tcg/tcg.c",
+    "patched_line_numbers": [
+      1722,
+      1723
+    ],
+    "patch": "@@ -1719,6 +1719,9 @@ static void tcg_liveness_analysis(TCGContext *s)\n                implies side effects */\n             if (!(def->flags & TCG_OPF_SIDE_EFFECTS) && nb_oargs != 0) {\n                 for(i = 0; i < nb_oargs; i++) {\n+                    if (args[i] < 0 || args[i] >= TCG_MAX_TEMPS) {\n+                        continue;\n+                    }\n                     arg = args[i];\n                     if (!dead_temps[arg] || mem_temps[arg]) {\n                         goto do_not_remove;"
+  }
+]

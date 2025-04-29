@@ -1,0 +1,33 @@
+{
+  "sample_id": 33340,
+  "arvo_metadata": {
+    "fix": "https://github.com/libjpeg-turbo/libjpeg-turbo/commit/4de8f6922a9be7d0a51a429e367283fd40031b26",
+    "verify": "0",
+    "localId": 33340,
+    "project": "libjpeg-turbo",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Heap-buffer-overflow READ 1",
+    "severity": "High",
+    "fix_commit": "4de8f6922a9be7d0a51a429e367283fd40031b26",
+    "repo_addr": "https://github.com/libjpeg-turbo/libjpeg-turbo"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 48,
+    "total_lines_added": 1,
+    "total_lines_subtracted": 1,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

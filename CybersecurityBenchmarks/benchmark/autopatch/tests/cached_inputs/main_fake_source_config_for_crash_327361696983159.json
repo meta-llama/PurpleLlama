@@ -1,0 +1,3 @@
+{
+    "third-party/bento4/bento4/Source/C++/Core/Ap4Atom.cpp": "AP4_NullTerminatedStringAtom::AP4_NullTerminatedStringAtom(AP4_Atom::Type  type, \n                                                           AP4_UI64        size, \n                                                           AP4_ByteStream& stream) :\n    AP4_Atom(type, size)\n{\n    AP4_Size str_size = (AP4_Size)size-AP4_ATOM_HEADER_SIZE;\n    char* str = new char[str_size];\n    stream.Read(str, str_size);\n    str[str_size-1] = '\\0'; \/\/ force null-termination\n    m_Value = str;\n}"
+}

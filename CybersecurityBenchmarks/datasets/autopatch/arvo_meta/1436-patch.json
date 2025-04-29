@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "epan/dissectors/packet-gsm_rlcmac.c",
+    "patched_line_numbers": [
+      3033
+    ],
+    "patch": "-3027,7 +3027,10 @@ CSN_DESCR_BEGIN(IU_Mode_Channel_Request_Desk_t)\n   M_NEXT_EXIST (IU_Mode_Channel_Request_Desk_t, Exist_RLC_BLOCK_COUNT, 1, &hf_egprs_prr_additionsr5_rlc_block_count_exist),\n   M_UINT       (IU_Mode_Channel_Request_Desk_t,  RLC_BLOCK_COUNT,  8, &hf_egprs_prr_additionsr5_rlc_block_count),\n \n-  M_NEXT_EXIST (IU_Mode_Channel_Request_Desk_t, Exist_Iu_Mode_ChRequestDesk, 1, &hf_iu_mode_chrequest_exist), /* Don't use M_REC_TARRAY as we don't support multiple TBFs */\n+  /* Don't use M_REC_TARRAY as we don't support multiple TBFs\n+  M_NEXT_EXIST (IU_Mode_Channel_Request_Desk_t, Exist_Iu_Mode_ChRequestDesk, 1, &hf_iu_mode_chrequest_exist),\n+  M_TYPE       (IU_Mode_Channel_Request_Desk1, IU_Mode_Channel_Request_Desk_t),*/\n+  M_UINT       (IU_Mode_Channel_Request_Desk_t, Exist_Iu_Mode_ChRequestDesk, 1, &hf_iu_mode_chrequest_exist),\n \n CSN_DESCR_END  (IU_Mode_Channel_Request_Desk_t)",
+    "summary": "commit f751918476bdde65f2289b86245a3c30dace6730\nAuthor: Pascal Quantin <pascal.quantin@gmail.com>\nDate:   Wed May 10 18:10:42 2017 +0200\n\n    GSM RLC/MAC: fix global-buffer-overflow error reported by ASAN\n    \n    After a M_NEXT_EXIST(), you should always have another variable (like\n    M_UINT, M_TYPE, ...) and not immediately end the structure with\n    CSN_DESCR_END.\n    Note that this is a workaround as the current description does not allow\n    a proper parsing anyway (as the structure is reentrant). But at least it\n    solves the buffer overflow.\n    \n    Bug: 13692\n    Change-Id: I8e607aadcced2d8cc636dc10f9690c5c679ad581\n    Reviewed-on: https://code.wireshark.org/review/21585\n    Petri-Dish: Pascal Quantin <pascal.quantin@gmail.com>\n    Tested-by: Petri Dish Buildbot <buildbot-no-reply@wireshark.org>\n    Reviewed-by: Anders Broman <a.broman58@gmail.com>\n"
+  }
+]

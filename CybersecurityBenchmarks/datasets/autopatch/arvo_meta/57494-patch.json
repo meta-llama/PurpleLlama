@@ -1,0 +1,11 @@
+[
+  {
+    "filename": "epan/dissectors/packet-oran.c",
+    "patched_line_numbers": [
+      703,
+      705
+    ],
+    "patch": "-603,6 +603,7 @@ typedef struct {\n \n \n /* Work out bundle allocation for ext 11.  Take into account ext6, ext12 or ext13 in this section before ext 11. */\n+/* Won't be called with numBundPrb=0 */\n static void ext11_work_out_bundles(guint startPrbc,\n                                    guint numPrbc,\n                                    guint numBundPrb,             /* number of PRBs pre (full) bundle */\n@@ -639,7 +640,7 @@ static void ext11_work_out_bundles(guint startPrbc,\n         settings->num_bundles = bundles_set;\n     }\n \n-    /* Allocation configured by ext 6 */\n+    /* Allocation configured by ext 12 */\n     else if (settings->ext12_set) {\n         /* First, allocate normally from startPrbc, numPrbc */\n         settings->num_bundles = (numPrbc+numBundPrb-1) / numBundPrb;\n@@ -699,6 +700,10 @@ static void ext11_work_out_bundles(guint startPrbc,\n         for (guint alloc=0; alloc < settings->ext13_num_start_prbs; alloc++) {\n             guint alloc_start = alloc * alloc_size;\n             for (guint32 n=0; n < alloc_size; n++) {\n+                if ((alloc_start+n) >= MAX_BFW_BUNDLES) {\n+                    /* ERROR */\n+                    return;\n+                }\n                 settings->bundles[alloc_start+n].start = settings->ext13_start_prbs[alloc] + startPrbc + n*numBundPrb;\n                 settings->bundles[alloc_start+n].end =   settings->bundles[alloc_start+n].start + numBundPrb-1;\n                 if (settings->bundles[alloc_start+n].end > settings->ext13_start_prbs[alloc] + numPrbc) {",
+    "summary": "commit 495fe725e0dfa2f0bf3f588ea154488d9fc0a82c\nAuthor: Martin Mathieson <martin.r.mathieson@googlemail.com>\nDate:   Wed Mar 29 09:35:44 2023 +0000\n\n    ORAN FH CUS: add another array index check\n"
+  }
+]

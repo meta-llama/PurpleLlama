@@ -1,0 +1,12 @@
+[
+  {
+    "filename": "decoder/ihevcd_decode.c",
+    "patched_line_numbers": [
+      630,
+      632,
+      633,
+      634
+    ],
+    "patch": "diff --git a/decoder/ihevcd_decode.c b/decoder/ihevcd_decode.c\nindex 16ed36b..9f634b7 100644\n--- a/decoder/ihevcd_decode.c\n+++ b/decoder/ihevcd_decode.c\n\n@@ -626,6 +626,13 @@\n \n         nal_ofst = ihevcd_nal_search_start_code(ps_codec->pu1_inp_bitsbuf,\n                                                 ps_codec->i4_bytes_remaining);\n+        /* If there is no start code found, consume the data and break */\n+        if(nal_ofst == ps_codec->i4_bytes_remaining)\n+        {\n+            ps_codec->pu1_inp_bitsbuf += nal_ofst;\n+            ps_codec->i4_bytes_remaining -= nal_ofst;\n+            break;\n+        }\n \n         ps_codec->i4_nal_ofst = nal_ofst;\n         {"
+  }
+]

@@ -1,0 +1,33 @@
+{
+  "sample_id": 11429,
+  "arvo_metadata": {
+    "localId": 11429,
+    "project": "librawspeed",
+    "fix": "https://github.com/darktable-org/rawspeed/commit/0bcf3488a4989c2724f0c4383401b0d0dcfc3dcc",
+    "verify": "It's an off-by-one vul",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Heap-buffer-overflow WRITE 2",
+    "severity": "High",
+    "fix_commit": "0bcf3488a4989c2724f0c4383401b0d0dcfc3dcc",
+    "repo_addr": "https://github.com/darktable-org/rawspeed.git"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 29,
+    "total_lines_added": 1,
+    "total_lines_subtracted": 1,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

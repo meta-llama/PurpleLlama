@@ -1,0 +1,48 @@
+# Sample settings for a multilevel data classification policy
+llama_server:
+  host: localhost
+  port: 8321
+  model: llama3.2:3b
+agent_settings:
+  agent_instructions: "You are a security analyst who reviews documents to determine the type of data they contain. Answer the following question about the provided document as best you can and respond in the format requested."
+  prompt:
+    "You have been given the task to check to classify the data sensitivity level of the following content.
+    The data sensitivity level you assign to the content should correspond to the most sensitive data seen.
+    Check thoroughly for all of the different data types mentioned in the data classification policies and
+    assign a final data sensitivity level to the following content. Return a JSON object with the content
+    category and brief explanation. For example: ```json {'category_matched': 'classification_level_1',
+    'brief_explanation': 'This document contains a public press release.'}``` or ```json {'category_matched':
+    'classification_level_4', 'brief_explanation': 'This document contains an employee performance review.'}```"
+  response_categories:
+    classification_level_1:
+      policy_title: Data Sensitivity Level 1 guidelines
+      policy_details:
+        "Data that is publicly available and does not require any special
+        access or authorization to access. This data includes things like publically available financial data, published press releases."
+    classification_level_2:
+      policy_title: Data Sensitivity Level 2 guidelines
+      policy_details:
+        "Data sensitivity level 2 guidelines includes data that should be consumed by all employees.
+        This data should generally be non-sensitive, and include things like general meeting notes, official company policies, and company benefits."
+    classification_level_3:
+      policy_title: Data Sensitivity Level 3 guidelines
+      policy_details:
+        "Data sensitivity level 3 guidelines includes data that should not be consumed by all employees and generally show a team-specific use case.
+        This data includes company intellectual property, hardware specs, unreleased projects or devices, company performance details,
+        company finance details, or other sensitive information along the same lines."
+    classification_level_4:
+      policy_title: Data Sensitivity Level 4 guidelines
+      policy_details:
+        "Data sensitivity level 4 guidelines includes employee, customer, and candidate PII.
+        This data includes employee, candidate, or customer contact information, addresses, national or taxpayer identity numbers,
+        bank account numbers and more. In addition, employee performance reviews or performance feedback or candidate feedback,
+        resumes, or interview notes should be considered sensitivity level 4 data."
+
+google_drive_label_settings:
+  label_id: 3J1dNlN7Q8tzLNDehYXliSpafrUXJLkJSzdSNNEbbFcb
+  field_id: 0526F309F1
+  selection_ids:
+    classification_level_1: BA7821B229
+    classification_level_2: 4F8E36952E
+    classification_level_3: 95F791EAE4
+    classification_level_4: 65FA2BD29E

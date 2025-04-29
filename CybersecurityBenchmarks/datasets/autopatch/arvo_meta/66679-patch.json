@@ -1,0 +1,13 @@
+[
+  {
+    "filename": "valid.c",
+    "patched_line_numbers": [
+      2329,
+      2330,
+      2331,
+      2334
+    ],
+    "patch": "-2322,15 +2322,16 @@ xmlAddIDSafe(xmlDocPtr doc, const xmlChar *value, xmlAttrPtr attr,\n         ret = xmlHashLookup(table, value);\n         if (ret != NULL) {\n             /*\n-             * Update the attribute to make entities work.\n+             * Update the attribute unless we are parsing in streaming\n+             * mode. If the attribute is copied from an entity we want\n+             * the ID reference the copy.\n              */\n-            if (!streaming) {\n-                if (ret->attr != NULL) {\n-                    ret->attr->id = NULL;\n-                    ret->attr = attr;\n-                }\n+            if (ret->attr != NULL) {\n+                ret->attr->id = NULL;\n+                ret->attr = attr;\n                 attr->id = ret;\n             }\n+            ret->lineno = xmlGetLineNo(attr->parent);\n \t    attr->atype = XML_ATTRIBUTE_ID;\n             return(0);\n         }",
+    "summary": "commit 9835ec2b9721f839af5a4e337e3cd588e0ad0208\nAuthor: Nick Wellnhofer <wellnhofer@aevum.de>\nDate:   Tue Feb 13 10:58:19 2024 +0100\n\n    valid: Fix xmlAddIDSafe in \"streaming\" mode\n    \n    Make sure that IDs and attributes never reference each other in\n    streaming (XML reader) mode, even when attributes are copied from an\n    entity.\n    \n    Also update lineno.\n    \n    Fixes a short-lived use-after-free.\n"
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "filename": "epan/dissectors/packet-dns.c",
+    "patched_line_numbers": [
+      1229,
+      1241,
+      1255
+    ],
+    "patch": "-1226,7 +1226,7 @@ expand_dns_name(tvbuff_t *tvb, int offset, int max_len, int dns_data_offset,\n             label_len = (bit_count - 1) / 8 + 1;\n \n             if (maxname > 0) {\n-              print_len = g_snprintf(np, maxname + 1, \"\\\\[x\");\n+              print_len = g_snprintf(np, maxname, \"\\\\[x\");\n               if (print_len <= maxname) {\n                 np      += print_len;\n                 maxname -= print_len;\n@@ -1238,7 +1238,7 @@ expand_dns_name(tvbuff_t *tvb, int offset, int max_len, int dns_data_offset,\n             }\n             while (label_len--) {\n               if (maxname > 0) {\n-                print_len = g_snprintf(np, maxname + 1, \"%02x\",\n+                print_len = g_snprintf(np, maxname, \"%02x\",\n                                        tvb_get_guint8(tvb, offset));\n                 if (print_len <= maxname) {\n                   np      += print_len;\n@@ -1252,7 +1252,7 @@ expand_dns_name(tvbuff_t *tvb, int offset, int max_len, int dns_data_offset,\n               offset++;\n             }\n             if (maxname > 0) {\n-              print_len = g_snprintf(np, maxname + 1, \"/%d]\", bit_count);\n+              print_len = g_snprintf(np, maxname, \"/%d]\", bit_count);\n               if (print_len <= maxname) {\n                 np      += print_len;\n                 maxname -= print_len;",
+    "summary": "commit 5a560f3f6aa2cbfad957cf6223e50c3b61ef575b\nAuthor: Peter Wu <peter@lekensteyn.nl>\nDate:   Sun Jul 8 15:10:15 2018 +0200\n\n    dns: fix off-by-one buffer overflow (write)\n    \n    \"maxname\" is the size of the buffer which also includes the \"null\n    label\" (represented by the NUL byte). Do not write this past the end.\n    \n    Bug: 14955\n    Change-Id: I51e2237741807aded7ffb82c178d7d7ce5123f78\n    Fixes: v2.9.0rc0-1142-g53e04b621c (\"DNS: fix in expand_dns_name\")\n    Reviewed-on: https://code.wireshark.org/review/28657\n    Petri-Dish: Peter Wu <peter@lekensteyn.nl>\n    Tested-by: Petri Dish Buildbot\n    Reviewed-by: Erika Szelleov\u00e1 <szelleerika@gmail.com>\n    Reviewed-by: Peter Wu <peter@lekensteyn.nl>\n"
+  }
+]

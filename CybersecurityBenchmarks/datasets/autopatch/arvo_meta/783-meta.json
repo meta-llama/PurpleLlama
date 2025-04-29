@@ -1,0 +1,33 @@
+{
+  "sample_id": 783,
+  "arvo_metadata": {
+    "fix": "https://github.com/PCRE2Project/pcre2/commit/26e92bc554db487f600a8178f9ad97b8b02e9345",
+    "verify": "0",
+    "localId": 783,
+    "project": "pcre2",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Stack-buffer-overflow WRITE {*}",
+    "severity": "High",
+    "fix_commit": "26e92bc554db487f600a8178f9ad97b8b02e9345",
+    "repo_addr": "https://github.com/PCRE2Project/pcre2"
+  },
+  "parsed_diff_data": {
+    "total_files": 4,
+    "total_hunks": 6,
+    "max_hunk_length": 5218,
+    "total_lines_added": 82,
+    "total_lines_subtracted": 46,
+    "modified_files": 4,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

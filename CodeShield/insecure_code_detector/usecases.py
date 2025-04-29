@@ -8,7 +8,7 @@
 import enum
 
 
-class UseCase(str, enum.Enum):
+class UseCase(enum.Enum):
     CODESHIELD = "codeshield"
     CYBERSECEVAL = "cyberseceval"
 

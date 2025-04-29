@@ -1,0 +1,33 @@
+{
+  "sample_id": 60605,
+  "arvo_metadata": {
+    "fix": "https://github.com/ntop/nDPI/commit/5267858b3d09fbc6a70c4bdcabdd176ea26ee72c",
+    "verify": "0",
+    "localId": 60605,
+    "project": "ndpi",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Negative-size-param",
+    "severity": "Medium",
+    "fix_commit": "5267858b3d09fbc6a70c4bdcabdd176ea26ee72c",
+    "repo_addr": "https://github.com/ntop/nDPI.git"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 149,
+    "total_lines_added": 6,
+    "total_lines_subtracted": 4,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

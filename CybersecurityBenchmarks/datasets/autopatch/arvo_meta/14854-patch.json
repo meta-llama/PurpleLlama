@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/core/net/ip6.cpp",
+    "patched_line_numbers": [
+      367
+    ],
+    "patch": "-364,6 +364,8 @@ otError Ip6::RemoveMplOption(Message &aMessage)\n             mplOffset = offset;\n             mplLength = option.GetLength();\n \n+            VerifyOrExit(mplLength <= sizeof(OptionMpl) - sizeof(OptionHeader), error = OT_ERROR_PARSE);\n+\n             if (mplOffset == sizeof(ip6Header) + sizeof(hbh) && hbh.GetLength() == 0)\n             {\n                 // first and only IPv6 Option, remove IPv6 HBH Option header",
+    "summary": "commit bcfa791912dd7bd3dd7432f9f6313b6dd5ca358b\nAuthor: Jonathan Hui <jonhui@nestlabs.com>\nDate:   Wed May 22 10:57:04 2019 -0700\n\n    [mpl] add extra validation when removing MPL Option (#3851)\n"
+  }
+]

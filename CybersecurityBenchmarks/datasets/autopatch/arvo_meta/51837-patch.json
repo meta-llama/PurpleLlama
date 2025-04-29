@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/libopensc/pkcs15.c",
+    "patched_line_numbers": [
+      2063
+    ],
+    "patch": "-2060,6 +2060,7 @@ sc_pkcs15_encode_df(struct sc_context *ctx, struct sc_pkcs15_card *p15card, stru\n \t\tbuf = p;\n \t\tmemcpy(buf + bufsize, tmp, tmpsize);\n \t\tfree(tmp);\n+\t\ttmp = NULL;\n \t\tbufsize += tmpsize;\n \t}\n \t*buf_out = buf;",
+    "summary": "commit 1e4222efcf6d889adaab9d28f32623e5e1055042\nAuthor: Veronika Hanulikova <vhanulik@redhat.com>\nDate:   Thu Sep 1 17:15:11 2022 +0200\n\n    Avoid double-free\n    \n    Thank OSS-Fuzz\n    https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=51185\n    https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=51837\n"
+  }
+]

@@ -1,0 +1,9 @@
+[
+  {
+    "filename": "ext/posix/posix.c",
+    "patched_line_numbers": [
+      303
+    ],
+    "patch": "@@ -300,6 +300,7 @@ PHP_FUNCTION(posix_getgroups)\n \tgidlist = emalloc(sizeof(gid_t) * result);\n \tif ((result = getgroups(result, gidlist)) < 0) {\n \t\tPOSIX_G(last_error) = errno;\n+\t\tefree(gidlist);\n \t\tRETURN_FALSE;\n \t}\n "
+  }
+]

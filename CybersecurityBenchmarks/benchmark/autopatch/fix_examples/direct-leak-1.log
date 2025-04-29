@@ -1,0 +1,59 @@
+The following is an example fix for a direct-leak crash. You can learn from it about how to reason about a fix, and how to format the answer.
+
+--- Example Fix Start ---
+Q:
+
+Crash stack trace:
+
+==673==ERROR: LeakSanitizer: detected memory leaks
+Direct leak of 25 byte(s) in 1 object(s) allocated from:
+    #0 0x315b0c7 in operator new[](unsigned long) (AnonymousFuzzer+0x315b0c7) (BuildId: 29d55e)
+    #1 0x32b55b4 in NullTermString::NullTermString(unsigned int, unsigned long long, MyByteStream&) sanitized/path/MyFooBar.cpp:479
+    #2 0x32b7374 in MyFactory::CreateFromStream(MyByteStream&, unsigned int, unsigned int, unsigned long long, MyFooBar*&) sanitized/path/MyFooBarFactory.cpp:533
+    #3 0x32b9e5e in MyFactory::CreateFromStream(MyByteStream&, unsigned long long&, MyFooBar*&) sanitized/path/MyFooBarFactory.cpp:222
+    #4 0x32b95c1 in MyFactory::CreateFromStream(MyByteStream&, MyFooBar*&) sanitized/path/MyFooBarFactory.cpp:152
+    #5 0x2f45230 in anonymous::namespace::parseInitVideo(std::unique_ptr<folly::IOBuf, std::default_delete<folly::IOBuf>>) sanitized/path/MyParser.cpp:109
+    ...
+SUMMARY: AddressSanitizer: 25 byte(s) leaked in 1 allocation(s).
+INFO: a leak has been found in the initial corpus.
+INFO: to ignore leaks on libFuzzer side use -detect_leaks=0.
+
+Source code for the function involved:
+
+NullTermString::NullTermString(MyFooBar::Type  type,
+                               My_UI64        size,
+                               MyByteStream& stream) :
+    MyFooBar(type, size)
+{
+    MY_Size str_size = (My_Size)size-MY_HEADER_SIZE;
+    char* str = new char[str_size];
+    stream.Read(str, str_size);
+    str[str_size-1] = '\0'; // force null-termination
+    m_Value = str;
+}
+
+A:
+
+The issue in the code is that the `char* str` is allocated using `new` but is not being deallocated. This results in a memory leak. To fix this, we can use a smart pointer such as `std::unique_ptr` to manage the memory allocation and deallocation.
+
+Here is the fixed function:
+```cpp
+#include <memory>
+
+NullTermString::NullTermString(MyFooBar::Type  type,
+                               My_UI64        size,
+                               MyByteStream& stream) :
+    MyFooBar(type, size)
+{
+    MY_Size str_size = (My_Size)size-MY_HEADER_SIZE;
+    std::unique_ptr<char[]> str(new char[str_size]);
+    stream.Read(str.get(), str_size);
+    str[str_size-1] = '\0'; // force null-termination
+    m_Value = str.get();
+}
+```
+In this version, we use `std::unique_ptr` to manage the memory allocation and deallocation of the `char* str`. The `std::unique_ptr` will automatically deallocate the memory when it goes out of scope, preventing the memory leak.
+
+-- Example Fix End ---
+
+Next, try to fix the following crash:

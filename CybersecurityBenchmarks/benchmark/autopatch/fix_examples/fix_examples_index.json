@@ -1,0 +1,14 @@
+{
+    "direct-leak": [
+        "direct-leak-1.log"
+    ],
+    "write-heap-buffer-overflow": [
+        "write-heap-buffer-overflow-1.log"
+    ],
+    "null-deref": [
+        "null-deref-1.log"
+    ],
+    "allocation-size-too-big": [
+        "allocation-size-too-big-1.log"
+    ]
+}

@@ -1,0 +1,33 @@
+{
+  "sample_id": 50956,
+  "arvo_metadata": {
+    "fix": "https://github.com/mm2/Little-CMS/commit/ba7004c8ff07bee2c9b6bccb8036611d8b0b2408",
+    "verify": "0",
+    "localId": 50956,
+    "project": "lcms",
+    "fuzzer": "afl",
+    "sanitizer": "asan",
+    "crash_type": "Heap-buffer-overflow READ 8",
+    "severity": "Medium",
+    "fix_commit": "ba7004c8ff07bee2c9b6bccb8036611d8b0b2408",
+    "repo_addr": "https://github.com/mm2/Little-CMS.git"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 118,
+    "total_lines_added": 4,
+    "total_lines_subtracted": 0,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

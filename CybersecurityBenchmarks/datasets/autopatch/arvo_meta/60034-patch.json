@@ -1,0 +1,14 @@
+[
+  {
+    "filename": "src/hunspell/affixmgr.cxx",
+    "patched_line_numbers": [
+      1678,
+      1679,
+      1686,
+      1690,
+      1691
+    ],
+    "patch": "-1675,12 +1675,21 @@ struct hentry* AffixMgr::compound_check(const std::string& word,\n         // compound words, overriding the effect of COMPOUNDPERMITFLAG\n         if ((rv) && compoundforbidflag &&\n                 TESTAFF(rv->astr, compoundforbidflag, rv->alen) && !hu_mov_rule) {\n-            // given the while conditions that continue jumps to, this situation\n-            // never ends\n-            if (!scpd && !onlycpdrule && simplifiedcpd) {\n+            bool would_continue = !onlycpdrule && simplifiedcpd;\n+            if (!scpd && would_continue) {\n+                // given the while conditions that continue jumps to, this situation\n+                // never ends\n                 HUNSPELL_WARNING(stderr, \"break infinite loop\\n\");\n                 break;\n             }\n+\n+            if (scpd > 0 && would_continue) {\n+                // under these conditions we loop again, but the assumption above\n+                // appears to be that cmin and cmax are the original values they\n+                // had in the outside loop\n+                cmin = oldcmin;\n+                cmax = oldcmax;\n+            }\n             continue;\n         }",
+    "summary": "commit ab3825969d2a78f9871242c9ce89fcd34a3ddafe\nAuthor: Caol\u00e1n McNamara <caolan.mcnamara@collabora.com>\nDate:   Sat Jun 24 21:01:01 2023 +0100\n\n    ofz#60034 restore cmin/cmax before continue\n"
+  }
+]

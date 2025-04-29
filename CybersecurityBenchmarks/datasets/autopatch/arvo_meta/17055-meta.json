@@ -1,0 +1,33 @@
+{
+  "sample_id": 17055,
+  "arvo_metadata": {
+    "fix": "https://android.googlesource.com/platform/external/libhevc/+/366a34842d67cb61d5ef57b244d95802615012c5",
+    "verify": "0",
+    "localId": 17055,
+    "project": "libhevc",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Heap-buffer-overflow READ 1",
+    "severity": "Medium",
+    "fix_commit": "366a34842d67cb61d5ef57b244d95802615012c5",
+    "repo_addr": "https://android.googlesource.com/platform/external/libhevc"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 558,
+    "total_lines_added": 13,
+    "total_lines_subtracted": 0,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/variations.cc",
+    "patched_line_numbers": [
+      81
+    ],
+    "patch": "-78,7 +78,7 @@ ParseVariationDataSubtable(const ots::Font* font, const uint8_t* data, const siz\n     }\n   }\n \n-  if (!subtable.Skip(itemCount * (shortDeltaCount + regionIndexCount))) {\n+  if (!subtable.Skip(size_t(itemCount) * size_t(shortDeltaCount) + size_t(regionIndexCount))) {\n     return OTS_FAILURE_MSG(\"Failed to read delta data\");\n   }",
+    "summary": "commit a6d8fdd0708638bf4e860c998e8ef6fbedcd24b9\nAuthor: Jonathan Kew <jfkthame@gmail.com>\nDate:   Mon Apr 2 10:33:38 2018 +0100\n\n    [variations] Promote to size_t for length computation in ParseVariationDataSubtable\n    \n    Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=7278\n"
+  }
+]

@@ -1,0 +1,13 @@
+[
+  {
+    "filename": "gdal/frmts/mrf/libLERC/CntZImage.cpp",
+    "patched_line_numbers": [
+      1180,
+      1189,
+      1190,
+      1191,
+      1192
+    ],
+    "patch": "@@ -1177,7 +1177,7 @@ bool CntZImage::readZTile(Byte** ppByte, size_t& nRemainingBytesInOut,\n       }\n \n       double invScale = 2 * maxZErrorInFile;\n-      unsigned int* srcPtr = &dataVec[0];\n+      size_t nDataVecIdx = 0;\n \n       for (int i = i0; i < i1; i++)\n       {\n@@ -1186,7 +1186,10 @@ bool CntZImage::readZTile(Byte** ppByte, size_t& nRemainingBytesInOut,\n         {\n           if (dstPtr->cnt > 0)\n           {\n-            float z = (float)(offset + *srcPtr++ * invScale);\n+            if( nDataVecIdx == dataVec.size() )\n+              return false;\n+            float z = (float)(offset + dataVec[nDataVecIdx] * invScale);\n+            nDataVecIdx ++;\n             dstPtr->z = min(z, maxZInImg);    // make sure we stay in the orig range\n           }\n           dstPtr++;"
+  }
+]

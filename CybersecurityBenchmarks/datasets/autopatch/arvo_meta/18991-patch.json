@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "decoder/ihevcd_iquant_itrans_recon_ctb.c",
+    "patched_line_numbers": [
+      545
+    ],
+    "patch": "-542,6 +542,7 @@ WORD32 ihevcd_iquant_itrans_recon_ctb(process_ctxt_t *ps_proc)\n     WORD16 *pi2_tmp;\n     WORD32 pic_strd;\n     WORD32 luma_nbr_flags;\n+    WORD32 luma_nbr_flags_4x4[4] = { 0 };\n     WORD32 chroma_nbr_flags = 0;\n     UWORD8 u1_luma_pred_mode_first_tu = 0;\n     /* Pointers for generating 2d coeffs from coeff-map */\n@@ -678,7 +679,6 @@ WORD32 ihevcd_iquant_itrans_recon_ctb(process_ctxt_t *ps_proc)\n         WORD32 tu_y_offset, tu_uv_offset;\n         WORD8 i1_chroma_pic_qp_offset, i1_chroma_slice_qp_offset;\n         UWORD8 u1_cbf = 0, u1_cbf_v = 0, u1_luma_pred_mode, u1_chroma_pred_mode;\n-        WORD32 luma_nbr_flags_4x4[4];\n         WORD32 offset;\n         WORD32 pcm_flag;\n         WORD32  chroma_yuv420sp_vu = (ps_codec->e_ref_chroma_fmt == IV_YUV_420SP_VU);",
+    "summary": "commit 445e0d8d5ec10fcb8e43117c01ec6a671246ce69\nAuthor: Akshata Jadhav <akshata.jadhav@ittiam.com>\nDate:   Mon Jan 27 18:47:45 2020 +0530\n\n    libhevcdec: iquant-itrans issue in chroma planes\n    \n    Misplaced local array on stack is resulting in color artifacts in\n    decoded yuv. It worked so far, because the array luma_nbr_flags_4x4[]\n    was always allocated on the same address and thus preserved values from\n    previous iteration.\n    \n    Bug: 148157334\n    Test: atest android.media.cts.HeifWriterTest\n    Change-Id: Ic2b1964895bf26101508ff2ac82a94192b7b74f8\n"
+  }
+]

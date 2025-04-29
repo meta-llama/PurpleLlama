@@ -1,0 +1,9 @@
+[
+  {
+    "filename": "mrbgems/mruby-bigint/core/bigint.c",
+    "patched_line_numbers": [
+      444
+    ],
+    "patch": "@@ -441,7 +441,7 @@ udiv(mrb_state *mrb, mpz_t *qq, mpz_t *rr, mpz_t *xx, mpz_t *yy)\n   size_t xd = digits(&x);\n   mpz_realloc(mrb, &q, xd);\n   mp_limb2 z = y.p[yd-1];\n-  for (size_t j=(xd-yd);; j--) {\n+  for (size_t j=xd-yd-1;; j--) {\n     mp_limb2 qhat = (((mp_limb2)x.p[j+yd] << DIG_SIZE) + x.p[j+yd-1]) / z;\n     mp_limb2s b=0;\n     if (qhat) {"
+  }
+]

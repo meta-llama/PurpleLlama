@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "decoder/impeg2d_dec_hdr.c",
+    "patched_line_numbers": [
+      1256
+    ],
+    "patch": "diff --git a/decoder/impeg2d_dec_hdr.c b/decoder/impeg2d_dec_hdr.c\nindex b60f488..3c974a5 100644\n--- a/decoder/impeg2d_dec_hdr.c\n+++ b/decoder/impeg2d_dec_hdr.c\n\n@@ -1253,6 +1253,7 @@\n     ps_dec_thd->ps_func_forw_or_back = ps_dec->ps_func_forw_or_back;\n     ps_dec_thd->pv_deinterlacer_ctxt = ps_dec->pv_deinterlacer_ctxt;\n     ps_dec_thd->ps_deint_pic = ps_dec->ps_deint_pic;\n+    ps_dec_thd->pu1_deint_fmt_buf = ps_dec->pu1_deint_fmt_buf;\n \n     return 0;\n }",
+    "summary": "commit 8ff92056d7958449e31b898bdda291cc162ec87e\nAuthor: Harish Mahendrakar <harish.mahendrakar@ittiam.com>\nDate:   Fri Jul 12 16:45:12 2019 -0700\n\n    Fix missing initialization of deinterlace intermediate buffer\n    \n    When color format is other than 420p, deinterlacer uses intermediate\n    buffer for storing chroma output.\n    For multi-threaded cases, this intermediate buffer was not initialized\n    in all thread contexts.\n    \n    Bug: 136697219\n    Test: poc in bug\n    Change-Id: I45d4e7634ed0e2c126a5508aea011617b6c6cc25\n    (cherry picked from commit 5e15457fadb59bfc75077ef9e2592f835185a32b)\n"
+  }
+]

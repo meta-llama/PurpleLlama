@@ -1,0 +1,4 @@
+{
+    "crash_output": "INFO: Running with entropic power schedule (0xFF, 100).\r\nINFO: Seed: 2157287833\r\nINFO: Loaded 1 modules   (1974 inline 8-bit counters): 1974 [0x554eb0, 0x555666), \r\nINFO: Loaded 1 PC tables (1974 PCs): 1974 [0x2555f8,0x25d158), \r\n\/lionhead\/harnesses\/6fada5b490ff2ca179013c1e54cbc7014c0d4559\/OceanCVFrameInterpolatorResize_Fuzzer: Running 1 inputs 1 time(s) each.\r\nRunning: \/lionhead\/crashes\/GP-gkgRoq6bPd88CAEHPlV-u3lcUbvlPAAAP\r\nExecuted \/lionhead\/crashes\/GP-gkgRoq6bPd88CAEHPlV-u3lcUbvlPAAAP in 721 ms\r\n***\r\n*** NOTE: fuzzing was not performed, you have only\r\n***       executed the target code on a fixed set of inputs.\r\n***\r\n",
+    "reference": "This output comes from https://foo/bar"
+}

@@ -1,0 +1,12 @@
+[
+  {
+    "filename": "lib/jxl/decode.cc",
+    "patched_line_numbers": [
+      2115,
+      2116,
+      2117
+    ],
+    "patch": "-2111,6 +2111,11 @@ JxlDecoderStatus JxlDecoderSetImageOutCallback(JxlDecoder* dec,\n         \"Cannot change from image out buffer to image out callback\");\n   }\n \n+  // Perform error checking for invalid format.\n+  size_t bits_dummy;\n+  JxlDecoderStatus status = PrepareSizeCheck(dec, format, &bits_dummy);\n+  if (status != JXL_DEC_SUCCESS) return status;\n+\n   dec->image_out_buffer_set = true;\n   dec->image_out_callback = callback;\n   dec->image_out_opaque = opaque;",
+    "summary": "commit 58e6b3f8fdd2c72f393e4bbae6c7aa2efd91abb2\nAuthor: Lode <lode@google.com>\nDate:   Thu Jun 17 21:18:01 2021 +0200\n\n    Verify JxlPixelFormat validity when setting out callback\n    \n    The format must be checked for having a supported amount of channels,\n    pixel type, etc... This was done in the size check for the image output\n    buffer setters, but was not done in the callback because buffer size\n    works differently for those.\n    \n    Now the full check is done here as well to fix that.\n"
+  }
+]

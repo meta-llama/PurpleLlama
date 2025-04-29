@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/libopensc/card-coolkey.c",
+    "patched_line_numbers": [
+      753
+    ],
+    "patch": "-750,7 +750,7 @@ coolkey_compare_id(const void * a, const void *b)\n \tif (a == NULL || b == NULL)\n \t\treturn 1;\n \treturn ((sc_cardctl_coolkey_object_t *)a)->id\n-\t    == ((sc_cardctl_coolkey_object_t *)b)->id;\n+\t    != ((sc_cardctl_coolkey_object_t *)b)->id;\n }\n \n /* For SimCList autocopy, we need to know the size of the data elements */",
+    "summary": "commit aa6d3e1d36969aa0f955b11faf9142666145a72b\nAuthor: Jakub Jelen <jjelen@redhat.com>\nDate:   Fri Nov 29 15:44:22 2019 +0100\n\n    coolkey: Fix the comparator return value\n"
+  }
+]

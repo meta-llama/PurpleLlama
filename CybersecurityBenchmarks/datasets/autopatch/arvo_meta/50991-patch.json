@@ -1,0 +1,24 @@
+[
+  {
+    "filename": "plugins/codecs/ndlz/ndlz4x4.c",
+    "patched_line_numbers": [
+      62,
+      63,
+      518,
+      519,
+      548
+    ],
+    "patch": "@@ -59,6 +59,8 @@\n int ndlz4_compress(const uint8_t *input, int32_t input_len, uint8_t *output, int32_t output_len,\n                    uint8_t meta, blosc2_cparams *cparams) {\n   BLOSC_UNUSED_PARAM(meta);\n+  BLOSC_ERROR_NULL(cparams, BLOSC2_ERROR_NULL_POINTER);\n+  BLOSC_ERROR_NULL(cparams->schunk, BLOSC2_ERROR_NULL_POINTER);\n   uint8_t *smeta;\n   int32_t smeta_len;\n \n@@ -513,6 +515,8 @@ int ndlz4_decompress(const uint8_t *input, int32_t input_len, uint8_t *output, i\n                      uint8_t meta, blosc2_dparams *dparams) {\n   BLOSC_UNUSED_PARAM(meta);\n   BLOSC_UNUSED_PARAM(dparams);\n+  BLOSC_ERROR_NULL(input, BLOSC2_ERROR_NULL_POINTER);\n+  BLOSC_ERROR_NULL(output, BLOSC2_ERROR_NULL_POINTER);\n \n   uint8_t *ip = (uint8_t *) input;\n   uint8_t *ip_limit = ip + input_len;\n@@ -541,7 +545,7 @@ int ndlz4_decompress(const uint8_t *input, int32_t input_len, uint8_t *output, i\n   eshape[0] = ((blockshape[0] + 3) / 4) * 4;\n   eshape[1] = ((blockshape[1] + 3) / 4) * 4;\n \n-  if (NDLZ_UNEXPECT_CONDITIONAL(output_len < (int32_t) (blockshape[0] * blockshape[1]))) {\n+  if (NDLZ_UNEXPECT_CONDITIONAL((int64_t)output_len < (int64_t)blockshape[0] * (int64_t)blockshape[1])) {\n     return 0;\n   }\n   memset(op, 0, blockshape[0] * blockshape[1]);"
+  },
+  {
+    "filename": "plugins/codecs/ndlz/ndlz8x8.c",
+    "patched_line_numbers": [
+      62,
+      63,
+      435,
+      436,
+      465
+    ],
+    "patch": "@@ -59,6 +59,8 @@\n int ndlz8_compress(const uint8_t *input, int32_t input_len, uint8_t *output, int32_t output_len,\n                    uint8_t meta, blosc2_cparams *cparams) {\n   BLOSC_UNUSED_PARAM(meta);\n+  BLOSC_ERROR_NULL(cparams, BLOSC2_ERROR_NULL_POINTER);\n+  BLOSC_ERROR_NULL(cparams->schunk, BLOSC2_ERROR_NULL_POINTER);\n   uint8_t *smeta;\n   int32_t smeta_len;\n \n@@ -430,6 +432,8 @@ int ndlz8_decompress(const uint8_t *input, int32_t input_len, uint8_t *output, i\n                      uint8_t meta, blosc2_dparams *dparams) {\n   BLOSC_UNUSED_PARAM(meta);\n   BLOSC_UNUSED_PARAM(dparams);\n+  BLOSC_ERROR_NULL(input, BLOSC2_ERROR_NULL_POINTER);\n+  BLOSC_ERROR_NULL(output, BLOSC2_ERROR_NULL_POINTER);\n \n   const int cell_shape = 8;\n   const int cell_size = 64;\n@@ -458,8 +462,7 @@ int ndlz8_decompress(const uint8_t *input, int32_t input_len, uint8_t *output, i\n   ip += 4;\n   eshape[0] = ((blockshape[0] + 7) / cell_shape) * cell_shape;\n   eshape[1] = ((blockshape[1] + 7) / cell_shape) * cell_shape;\n-\n-  if (NDLZ_UNEXPECT_CONDITIONAL(output_len < blockshape[0] * blockshape[1])) {\n+  if (NDLZ_UNEXPECT_CONDITIONAL((int64_t)output_len < (int64_t)blockshape[0] * (int64_t)blockshape[1])) {\n     return 0;\n   }\n   memset(op, 0, blockshape[0] * blockshape[1]);"
+  }
+]

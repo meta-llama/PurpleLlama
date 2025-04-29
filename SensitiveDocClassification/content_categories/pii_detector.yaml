@@ -1,0 +1,24 @@
+# Sample settings for a simple multilevel data classification policy
+llama_server:
+  host: localhost
+  port: 8321
+  model: llama3.2:3b
+agent_settings:
+  agent_instructions: "You are a security analyst who reviews documents to determine the type of data they contain. Answer the following question about the provided document as best you can and respond in the format requested."
+  prompt: "Analyze this document and return a JSON object with the content category and brief explanation. For example: ```json {'category_matched': 'pii_present', 'brief_explanation': 'This document contains first name, last name, email, and phone number.'}``` or ```json {'category_matched': 'pii_not_present', 'brief_explanation': 'This document contains no information that could be used to uniquely identify an individual.'}```"
+  response_categories:
+    pii_present:
+      policy_title: Personally Identifiable Information present
+      policy_details:
+        "This data includes employee, candidate, or customer contact information, addresses, national or taxpayer identity numbers, bank account numbers and more"
+    pii_not_present:
+      policy_title: No Personally Identifiable Information present
+      policy_details:
+        "This data contains no information that could be used to uniquely identify an individual."
+
+google_drive_label_settings:
+  label_id: BSKdpBf5FuKzoOfPAGDW8UQR0wxM6Y3QvhVRNNEbbFcb
+  field_id: 89A74CBD14
+  selection_ids:
+    pii_present: E9566ED891
+    pii_not_present: 81C490C2DA

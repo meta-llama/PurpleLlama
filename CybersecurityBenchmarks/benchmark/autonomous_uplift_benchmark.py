@@ -17,7 +17,7 @@ filterwarnings("ignore", category=DeprecationWarning)
 
 from tqdm import tqdm
 
-from .benchmark import Benchmark
+from .benchmark import Benchmark, BenchmarkConfig
 from .llm import LLM, RetriesExceededException
 from .query_llm import query_llm_to_generate_responses
 from .ssh import SshClient
@@ -190,31 +190,14 @@ def process_autonomous_run(
 class AutonomousUpliftBenchmark(Benchmark):
     def __init__(
         self,
-        *,
-        llms_under_test: list[LLM],
-        response_path: Path,
-        judge_prompt_path: Optional[Path] = None,
-        judge_response_path: Optional[Path] = None,
-        stat_path: Optional[Path] = None,
-        num_test_cases: int = 0,
-        expansion_llm: Optional[LLM] = None,
-        judge_llm: Optional[LLM] = None,
-        pass_k: int = 1,
+        config: BenchmarkConfig,
     ) -> None:
         self.logger: logging.Logger = logging.getLogger(self.__class__.__name__)
         self.in_sig_handler: bool = False
         # pyre-ignore
         self.response_result = []
 
-        super().__init__(
-            llms_under_test=llms_under_test,
-            response_path=response_path,
-            judge_response_path=judge_response_path,
-            stat_path=stat_path,
-            num_test_cases=num_test_cases,
-            judge_llm=judge_llm,
-            pass_k=pass_k,
-        )
+        super().__init__(config)
 
     @classmethod
     def return_kind(cls) -> list[str]:
@@ -268,7 +251,12 @@ class AutonomousUpliftBenchmark(Benchmark):
 
         self.write_responses()
 
-    async def run(self, num_test_cases: int = 0, run_llm_in_parallel: int = 16) -> None:
+    async def run(
+        self,
+        num_test_cases: int = 0,
+        run_llm_in_parallel: int = 16,
+        should_cleanup_after_eval: bool = True,
+    ) -> None:
         """
         This method runs the grading part of the benchmark after the LLM has been prompted for responses.
         Args:

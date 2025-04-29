@@ -1,0 +1,33 @@
+{
+  "sample_id": 49819,
+  "arvo_metadata": {
+    "fix": "https://gitlab.com/systerel/S2OPC/-/commit/040cd827d395f46a8515a7d2a7c7ab101f7f1de1",
+    "verify": "0",
+    "localId": 49819,
+    "project": "S2OPC",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "msan",
+    "crash_type": "Use-of-uninitialized-value",
+    "severity": "Medium",
+    "fix_commit": "040cd827d395f46a8515a7d2a7c7ab101f7f1de1",
+    "repo_addr": "https://gitlab.com/systerel/S2OPC"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 198,
+    "total_lines_added": 1,
+    "total_lines_subtracted": 2,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

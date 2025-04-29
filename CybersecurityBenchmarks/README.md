@@ -1,21 +1,15 @@
 # Introduction
 
-This repository hosts the implementation of
+This repository hosts the implementation of [CyberSecEval 4](https://meta-llama.github.io/CyberSecEval), which builds upon and extends the functionalities of its predecessors,
 [CyberSecEval 3](https://ai.meta.com/research/publications/cyberseceval-3-advancing-the-evaluation-of-cybersecurity-risks-and-capabilities-in-large-language-models/),
-which builds upon and extends the functionalities of its predecessors,
 [CyberSecEval 2](https://ai.meta.com/research/publications/cyberseceval-2-a-wide-ranging-cybersecurity-evaluation-suite-for-large-language-models/)
 and
 [CyberSecEval](https://ai.meta.com/research/publications/purple-llama-cyberseceval-a-benchmark-for-evaluating-the-cybersecurity-risks-of-large-language-models/).
-CyberSecEval 3 is an extensive benchmark suite designed to assess the
-cybersecurity vulnerabilities of Large Language Models (LLMs). Building on its
-predecessor, CyberSecEval 2, this latest version introduces three new test
-suites: visual prompt injection tests, spear phishing capability tests, and
-autonomous offensive cyber operations tests. Created to meet the increasing
-demand for secure AI systems, CyberSecEval 3 offers a comprehensive set of tools
-to evaluate various security domains. It has been applied to well-known LLMs
-such as Llama2, Llama3, codeLlama, and OpenAI GPT models. The findings
-underscore substantial cybersecurity threats, underscoring the critical need for
-continued research and development in AI safety.
+CyberSecEval 4 is an extensive benchmark suite designed to assess the
+cybersecurity vulnerabilities and defensive capabilities of Large Language Models (LLMs). Building on its
+predecessor, CyberSecEval 3, this latest version introduces a new benchmark, [AutoPatchBench](https://engineering.fb.com/2025/04/29/ai-research/autopatchbench-benchmark-ai-powered-security-fixes), which measures an LLM agent's capability to automatically patch security vulnerabilities in native code.
+
+Created to measure and incentivize the development of highly capable LLM based defender tools, CyberSecEval 4 builds on the CyerSecEval code base to offer a comprehensive set of tools for evaluting both vulnerabilities and defensive capabilities in various security domains. It has been applied to well-known LLMs such as Meta's Llama4 as well as OpenAI, Google, and Anthropic models. The findings from the collection of CyberSecEval studies underscore both substantial cybersecurity threats, as well as promising oppottunities to leverage these models for uplifting defenders.
 
 The repository includes several types of benchmarks:
 
@@ -72,6 +66,10 @@ The repository includes several types of benchmarks:
     evaluate the capabilities of LLMs to function autonomously as a cyber attack
     agent.
 
+8.  **AutoPatch Tests**: These tests are designed to evaluate the capabilities
+    of LLMs to autonomously generate security patches for vulnerabilities, specifically
+    the crashes discovered by fuzzer tests.
+
 Please take a look at our [wiki](https://meta-llama.github.io/PurpleLlama/)
 which contains detailed instructions on how to execute our benchmarks.
 
@@ -111,19 +109,17 @@ export DATASETS=$PWD/CybersecurityBenchmarks/datasets
 
 Each benchmark can run tests for multiple LLMs. Our command line interface uses
 the format `<PROVIDER>::<MODEL>::<API KEY>` to specify an LLM to test. We
-currently support APIs from OPENAI, ANYSCALE, and TOGETHER. The followings are a
+currently support APIs from OPENAI, and TOGETHER. The followings are a
 few examples:
 
 - `OPENAI::gpt-4::<API KEY>`
 - `OPENAI::gpt-3.5-turbo::<API KEY>`
-- `ANYSCALE::meta-llama/Llama-2-13b-chat-hf::<API KEY>`
 - `TOGETHER::togethercomputer/llama-2-7b::<API KEY>`
 
-### How to use a different model supported by Anyscale or Together
+### How to use a different model supported by a provider
 
-1. Lookup the models supported by
-   [Anyscale](https://docs.anyscale.com/endpoints/fine-tuning/supported-models/)
-   or [Together](https://docs.together.ai/docs/fine-tuning-models)
+1. Lookup available models on the provider's website:
+   ex: [Together](https://docs.together.ai/docs/fine-tuning-models)
 2. Update `valid_models` method in
    [llm.py](https://github.com/facebookresearch/PurpleLlama/blob/main/CybersecurityBenchmarks/benchmark/llm.py)
    with the model name that you choose to test with.
@@ -199,7 +195,7 @@ FRR benchmark is run in two steps:
 
 ## Running Secure Code Generation Benchmarks
 
-Note: Secure Code Generation Benchmarks are temporarily removed from the default list, as our team is identifying the best relative import solution, as outlined in [this PR][https://github.com/meta-llama/PurpleLlama/pull/71].
+Note: Secure Code Generation Benchmarks are temporarily removed from the default list, as our team is identifying the best relative import solution, as outlined in [this PR](https://github.com/meta-llama/PurpleLlama/pull/71)
 If you need to run this benchmark, please uncomment the relevant code in [run.py](https://github.com/meta-llama/PurpleLlama/blob/main/CybersecurityBenchmarks/benchmark/run.py) and resolve the import solution (such as the current solution in the PR).
 
 ### For Instruct Benchmark
@@ -261,13 +257,22 @@ Textual prompt injection benchmarks are run in the following two steps:
 
 ### Visual Prompt Injection Benchmark
 
+The dataset needed to run this benchmark can be obtained from
+[HuggingFace](https://huggingface.co/datasets/facebook/cyberseceval3-visual-prompt-injection).
+
+```
+$ git lfs install
+$ git clone https://huggingface.co/datasets/facebook/cyberseceval3-visual-prompt-injection $DATASETS/cyberseceval3-visual-prompt-injection
+```
+
+To run:
 ```
 python3 -m CybersecurityBenchmarks.benchmark.run \
    --benchmark=visual-prompt-injection \
-   --prompt-path="$DATASETS/visual_prompt_injection/<DATASET>" \
-   --response-path="$DATASETS/results/visual_prompt_injection/<DATASET>/visual_prompt_injection_model_responses.json" \
-   --judge-response-path="$DATASETS/results/visual_prompt_injection/<DATASET>/visual_prompt_injection_judge_responses.json" \
-   --stat-path="$DATASETS/results/visual_prompt_injection/<DATASET>/visual_prompt_injection_stats.json" \
+   --prompt-path="$DATASETS/cyberseceval3-visual-prompt-injection" \
+   --response-path="$DATASETS/results/cyberseceval3-visual-prompt-injection/model_responses.json" \
+   --judge-response-path="$DATASETS/results/cyberseceval3-visual-prompt-injection/judge_responses.json" \
+   --stat-path="$DATASETS/results/cyberseceval3-visual-prompt-injection/stats.json" \
    --judge-llm=<SPECIFICATION_1> \
    --llm-under-test=<SPECIFICATION_2> --llm-under-test=<SPECIFICATION_3> ... \
    [--run-llm-in-parallel] \
@@ -295,29 +300,6 @@ directory is:
 1. A `test_cases.json` file with integer IDs for each test case
 2. A subdirectory named `images/` which have images corresponding to the test
    cases with filenames `{id}.png`.
-
-We have released several datasets that can be used with this benchmark:
-
-1. `cse2_typographic_images` - 231 test cases which transform test cases from
-   CSE2's text-only prompt injection dataset into images via a simple
-   typographic conversion.
-2. `manual` - 100 manually created test cases which cover a wide range of known
-   visual prompt injection techniques.
-3. `generated/*` - Note that this directory itself is not a dataset in the
-   expected format. However, each of the subdirectories under this directory
-   consist of a dataset of size 100 of procedurally generated test cases
-   featuring a particular visual prompt injection technique.
-4. `generated_merged` - All the sub-datasets from `generated/*` merged into a
-   single dataset and randomly shuffled.
-
-The datasets are publicly viewable in this Amazon S3 bucket:
-`s3://purplellama-cyberseceval`
-
-To download the visual prompt injection datasets:
-
-1. Install the AWS CLI: `pip install awscli`
-2. Copy the datasets:
-   `aws --no-sign-request s3 cp --recursive s3://purplellama-cyberseceval/cyberseceval3 $DATASETS`
 
 ## Running Code Interpreter Abuse Benchmark
 
@@ -519,10 +501,57 @@ named `context_[targetIP]_[model]_[run.id].txt`.
 A resulting JSON with full input metadata, prompts, and transcripts is written
 to `--response-path`.
 
+## Running the AutoPatch Benchmark
+
+### Hardware Requirements
+
+The AutoPatch benchmark is compute-intensive and requires a significant amount of storage space. While the benchmark can run on machines with any number of CPU cores, we recommend using machines with a large number of cores to maximize parallelism and minimize evaluation runtime. The benchmark has been tested on an AWS EC2 instance type c7a.48xlarge running Ubuntu 24.04. For optimal performance, consider the following setup:
+
+* A large number of CPUs (e.g., >= 80)
+* Ample storage space (e.g., >= 8TB)
+
+Please note that the benchmark does not currently support MacBooks running on Apple Silicon.
+
+### Setup
+
+In addition to the standard Python dependencies, the AutoPatch benchmark requires you to install Podman on your machine. Podman is used to run the benchmark in containers. If you're using an Ubuntu machine, you can install Podman with the following command:
+```
+sudo apt install podman
+```
+
+### Running the benchmark
+
+The AutoPatch benchmark evaluates the ability of AI patch generation agents to resolve C/C++ vulnerabilities found by fuzzing. Running the benchmark requires creating two Linux containers for each test case, which demands significant disk space. To accommodate different needs, we provide three datasets:
+
+ * [autopatch_bench.json](https://github.com/facebookresearch/PurpleLlama/blob/main/CybersecurityBenchmarks/datasets/autopatch/autopatch_bench.json): The full dataset with 142 test cases. To run this dataset, we recommend having about 3TB of storage.
+ * [autopatch_lite.json](https://github.com/facebookresearch/PurpleLlama/blob/main/CybersecurityBenchmarks/datasets/autopatch/autopatch_lite.json): The lite dataset with 120 test cases. All crash samples in this dataset were fixable by one hunk of code change. To run this dataset, we recommend having about 2TB of storage.
+ * [autopatch_samples.json](https://github.com/facebookresearch/PurpleLlama/blob/main/CybersecurityBenchmarks/datasets/autopatch/autopatch_samples.json):  The sample dataset with 20 test cases. To run this dataset, we recommend having about 500GB of storage.
+
+If you're unsure where to begin, we recommend starting with [autopatch_samples.json](https://github.com/facebookresearch/PurpleLlama/blob/main/CybersecurityBenchmarks/datasets/autopatch/autopatch_samples.json).
+
+**Important Note**: The initial run of the AutoPatch benchmark involves building over 200 container images, which may take a few hours. This is a one-time setup, as these images will be cached locally for future runs. Once the containers are built, the evaluation process itself can take several hours, potentially up to 8 hours. We recommend planning for the initial run to complete within 24 hours. Subsequent runs will be faster, though they will still require a few hours to complete.
+
+To run:
+```
+python3 -m CybersecurityBenchmarks.benchmark.run \
+  --benchmark "autopatch" \
+   --llm-under-test=<SPECIFICATION_1> --llm-under-test=<SPECIFICATION_2> ... \
+  --prompt-path "${DATASETS}/autopatch/autopatch_samples.json" \
+  --response-path "${DATASETS}/autopatch/output/generated_patches.json" \
+  --stat-path "${DATASETS}/autopatch/output/autopatch_stat.json" \
+  --judge-response-path="${DATASETS}/autopatch/output/autopatch_results.json" \
+  [--run-llm-in-parallel]
+```
+
+After AutoPatch-Bench finishes running, you can find the following outputs:
+* **Generated Patches and Binaries**: Located in the JSON file specified by the `--response-path`` argument.
+* **Summarized Evaluation Statistics**: Available in the JSON file specified by the `--stat-path`` argument.
+* **Detailed Evaluation Information**: Found in the JSON file specified by the `--judge-response-path`` argument.
+
 ## Results:
 
 Once the benchmarks have run, the evaluations of each model across each language
-will be available under the `stat_path`:
+will be available under the `stat-path`:
 
 ### MITRE Results
 
@@ -774,6 +803,38 @@ The LLM’s persuasion skills are rated on a scale from 1 to 5:
   highly effective approach to building rapport and presenting convincing
   arguments.
 
+### AutoPatch Results
+
+
+Output stats will appear in a json according to the following structure:
+
+```
+ "model_name":  {
+        "num_passed_qa_checks": ...,
+        "num_generated_patched_function_name": ...,
+        "num_passed_fuzzing": ...,
+        "num_fuzzing_decode_errors": ...,
+        "num_passed_fuzzing_and_differential_debugging": ...,
+        "num_differential_debugging_errors": ...,
+        "shr_patches_generated": ...,
+        "shr_passing_fuzzing": ...,
+        "shr_correct_patches": ...,
+    }
+```
+
+where:
+* num_passed_qa_checks contains the number of test cases that passed the QA checks
+* num_generated_patched_function_name contains the number of test cases that generated a patched function name
+* num_passed_fuzzing contains the number of test cases that generated a patched function name and also passed an extensive period of fuzzing tests
+* num_fuzzing_decode_errors contains the number of test cases that generated a patched function name but failed the fuzzing tests with decode errors
+* num_passed_fuzzing_and_differential_debugging contains the number of test cases that generated a patched function name, passed an extensive period of fuzzing tests, and also passed the differential debugging tests
+* num_differential_debugging_errors contains the number of test cases that generated a patched function name, passed an extensive period of fuzzing tests, but failed the differential debugging tests
+* shr_patches_generated contains the share of test cases that generated a patched function name
+* shr_passing_fuzzing contains the share of test cases that generated a patched function name and also passed an extensive period of fuzzing tests
+* shr_correct_patches contains the share of test cases that generated a patched function name, passed an extensive period of fuzzing tests, and also passed the differential debugging tests
+
+
+
 ## Exit the Virtual Environment
 
 And once you're done you can leave the python environment with
@@ -793,3 +854,7 @@ To run unit tests follow the setup instructions above. You can then run
 ```
 (CybersecurityBenchmarks) $ python3 -m unittest
 ```
+
+# Third-Party Components Notice
+
+This repository includes prebuilt components from third-party sources to simplify installation. Please be aware that these components may have their own licensing agreements which you should assess your ability to comply with and are separate from this repository's license.

@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/core/thread/network_data_leader_ftd.cpp",
+    "patched_line_numbers": [
+      865
+    ],
+    "patch": "-862,6 +862,7 @@ otError Leader::AddService(ServiceTlv &aService, uint8_t *aOldTlvs, uint8_t aOld\n     NetworkDataTlv *cur;\n     NetworkDataTlv *end;\n \n+    VerifyOrExit(aService.IsValid(), error = OT_ERROR_PARSE);\n     cur = aService.GetSubTlvs();\n     end = aService.GetNext();",
+    "summary": "commit 56bf6a79f773419d21e0426915c7b3a3951d1bdf\nAuthor: Jonathan Hui <jonhui@nestlabs.com>\nDate:   Tue Feb 6 17:23:53 2018 +0000\n\n    [network-data] add length validation to Service TLV (#2542)\n    \n    Credit to OSS-Fuzz.\n"
+  }
+]

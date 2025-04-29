@@ -1,0 +1,33 @@
+{
+  "sample_id": 14620,
+  "arvo_metadata": {
+    "fix": "https://github.com/open62541/open62541/commit/cc7d2558ff2f63859ee1301b5d07b8b110f6cd6e",
+    "verify": "0",
+    "localId": 14620,
+    "project": "open62541",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "msan",
+    "crash_type": "Use-of-uninitialized-value",
+    "severity": "Medium",
+    "fix_commit": "cc7d2558ff2f63859ee1301b5d07b8b110f6cd6e",
+    "repo_addr": "https://github.com/open62541/open62541.git"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 58,
+    "total_lines_added": 3,
+    "total_lines_subtracted": 0,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

@@ -1,0 +1,15 @@
+[
+  {
+    "filename": "src/disassemble.cc",
+    "patched_line_numbers": [
+      49,
+      51
+    ],
+    "patch": "@@ -46,6 +46,11 @@ static std::string RightPad(const std::string& input, size_t size) {\n }  // anonymous namespace\n \n void DisassembleFindReferences(const DisassemblyInfo& info, RangeSink* sink) {\n+  if (info.arch != CS_ARCH_X86) {\n+    // x86 only for now.\n+    return;\n+  }\n+\n   csh handle;\n   if (cs_open(info.arch, info.mode, &handle) != CS_ERR_OK ||\n       cs_option(handle, CS_OPT_DETAIL, CS_OPT_ON) != CS_ERR_OK) {"
+  },
+  {
+    "filename": "tests/testdata/fuzz_corpus/f5d4fb20f43ef7131ed49ff29f5c1bee69070ff2",
+    "patched_line_numbers": [],
+    "patch": ""
+  }
+]

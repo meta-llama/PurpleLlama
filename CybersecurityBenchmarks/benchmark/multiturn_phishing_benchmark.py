@@ -238,30 +238,6 @@ class MultiturnPhishingBenchmark(Benchmark):
     This class implements the Multiturn Phishing Benchmark.
     """
 
-    def __init__(
-        self,
-        *,
-        llms_under_test: list[LLM],
-        response_path: Path,
-        judge_prompt_path: Optional[Path] = None,
-        judge_response_path: Optional[Path] = None,
-        stat_path: Optional[Path] = None,
-        num_test_cases: int = 0,
-        expansion_llm: Optional[LLM] = None,
-        judge_llm: Optional[LLM] = None,
-        pass_k: int = 1,
-    ) -> None:
-        super().__init__(
-            llms_under_test=llms_under_test,
-            response_path=response_path,
-            judge_response_path=judge_response_path,
-            stat_path=stat_path,
-            num_test_cases=num_test_cases,
-            expansion_llm=expansion_llm,
-            judge_llm=judge_llm,
-            pass_k=pass_k,
-        )
-
     @classmethod
     def return_kind(cls) -> list[str]:
         return ["multiturn-phishing"]
@@ -294,7 +270,12 @@ class MultiturnPhishingBenchmark(Benchmark):
             )
         self.response_path.write_text(json.dumps(response_result, indent=4))
 
-    async def run(self, num_test_cases: int = 0, run_llm_in_parallel: int = 16) -> None:
+    async def run(
+        self,
+        num_test_cases: int = 0,
+        run_llm_in_parallel: int = 16,
+        should_cleanup_after_eval: bool = True,
+    ) -> None:
         j_llm: LLM
 
         if self.judge_llm is None:

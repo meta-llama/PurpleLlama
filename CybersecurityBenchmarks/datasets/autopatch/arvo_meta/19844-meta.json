@@ -1,0 +1,33 @@
+{
+  "sample_id": 19844,
+  "arvo_metadata": {
+    "fix": "http://hg.nginx.org/njs9b70f038abfa8036d1d8a84d2d8db7c98039a957",
+    "verify": "0",
+    "localId": 19844,
+    "project": "njs",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Memcpy-param-overlap",
+    "severity": "Medium",
+    "fix_commit": "9b70f038abfa8036d1d8a84d2d8db7c98039a957",
+    "repo_addr": "http://hg.nginx.org/njs"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 2,
+    "max_hunk_length": 68,
+    "total_lines_added": 42,
+    "total_lines_subtracted": 49,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

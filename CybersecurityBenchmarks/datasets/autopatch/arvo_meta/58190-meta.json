@@ -1,0 +1,33 @@
+{
+  "sample_id": 58190,
+  "arvo_metadata": {
+    "fix": "https://github.com/ittiam-systems/libavc/commit/f8ae418b38e8ac52cf87425d27cb20925607debc",
+    "verify": "0",
+    "localId": 58190,
+    "project": "libavc",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Heap-buffer-overflow READ 4",
+    "severity": "Medium",
+    "fix_commit": "f8ae418b38e8ac52cf87425d27cb20925607debc",
+    "repo_addr": "https://github.com/ittiam-systems/libavc.git"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 48,
+    "total_lines_added": 9,
+    "total_lines_subtracted": 1,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

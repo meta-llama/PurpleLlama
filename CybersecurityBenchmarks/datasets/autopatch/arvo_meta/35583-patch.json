@@ -1,0 +1,108 @@
+[
+  {
+    "filename": "src/dec/io_dec.c",
+    "patched_line_numbers": [
+      333,
+      335,
+      336,
+      338,
+      339,
+      341,
+      342,
+      347,
+      349,
+      350,
+      526,
+      528,
+      529,
+      531,
+      532,
+      534,
+      535,
+      541,
+      543,
+      544
+    ],
+    "patch": "diff --git a/src/dec/io_dec.c b/src/dec/io_dec.c\nindex 81ffce5..6b5cb82 100644\n--- a/src/dec/io_dec.c\n+++ b/src/dec/io_dec.c\n\n@@ -330,21 +330,25 @@\n   p->scaler_v = &scalers[2];\n   p->scaler_a = has_alpha ? &scalers[3] : NULL;\n \n-  WebPRescalerInit(p->scaler_y, io->mb_w, io->mb_h,\n+  if (!WebPRescalerInit(p->scaler_y, io->mb_w, io->mb_h,\n                    buf->y, out_width, out_height, buf->y_stride, 1,\n-                   work);\n-  WebPRescalerInit(p->scaler_u, uv_in_width, uv_in_height,\n+                        work) ||\n+      !WebPRescalerInit(p->scaler_u, uv_in_width, uv_in_height,\n                    buf->u, uv_out_width, uv_out_height, buf->u_stride, 1,\n-                   work + work_size);\n-  WebPRescalerInit(p->scaler_v, uv_in_width, uv_in_height,\n+                        work + work_size) ||\n+      !WebPRescalerInit(p->scaler_v, uv_in_width, uv_in_height,\n                    buf->v, uv_out_width, uv_out_height, buf->v_stride, 1,\n-                   work + work_size + uv_work_size);\n+                        work + work_size + uv_work_size)) {\n+    return 0;\n+  }\n   p->emit = EmitRescaledYUV;\n \n   if (has_alpha) {\n-    WebPRescalerInit(p->scaler_a, io->mb_w, io->mb_h,\n+    if (!WebPRescalerInit(p->scaler_a, io->mb_w, io->mb_h,\n                      buf->a, out_width, out_height, buf->a_stride, 1,\n-                     work + work_size + 2 * uv_work_size);\n+                          work + work_size + 2 * uv_work_size)) {\n+      return 0;\n+    }\n     p->emit_alpha = EmitRescaledAlphaYUV;\n     WebPInitAlphaProcessing();\n   }\n@@ -519,22 +523,26 @@\n   p->scaler_v = &scalers[2];\n   p->scaler_a = has_alpha ? &scalers[3] : NULL;\n \n-  WebPRescalerInit(p->scaler_y, io->mb_w, io->mb_h,\n+  if (!WebPRescalerInit(p->scaler_y, io->mb_w, io->mb_h,\n                    tmp + 0 * out_width, out_width, out_height, 0, 1,\n-                   work + 0 * work_size);\n-  WebPRescalerInit(p->scaler_u, uv_in_width, uv_in_height,\n+                        work + 0 * work_size) ||\n+      !WebPRescalerInit(p->scaler_u, uv_in_width, uv_in_height,\n                    tmp + 1 * out_width, out_width, out_height, 0, 1,\n-                   work + 1 * work_size);\n-  WebPRescalerInit(p->scaler_v, uv_in_width, uv_in_height,\n+                        work + 1 * work_size) ||\n+      !WebPRescalerInit(p->scaler_v, uv_in_width, uv_in_height,\n                    tmp + 2 * out_width, out_width, out_height, 0, 1,\n-                   work + 2 * work_size);\n+                        work + 2 * work_size)) {\n+    return 0;\n+  }\n   p->emit = EmitRescaledRGB;\n   WebPInitYUV444Converters();\n \n   if (has_alpha) {\n-    WebPRescalerInit(p->scaler_a, io->mb_w, io->mb_h,\n+    if (!WebPRescalerInit(p->scaler_a, io->mb_w, io->mb_h,\n                      tmp + 3 * out_width, out_width, out_height, 0, 1,\n-                     work + 3 * work_size);\n+                          work + 3 * work_size)) {\n+      return 0;\n+    }\n     p->emit_alpha = EmitRescaledAlphaRGB;\n     if (p->output->colorspace == MODE_RGBA_4444 ||\n         p->output->colorspace == MODE_rgbA_4444) {"
+  },
+  {
+    "filename": "src/dec/vp8l_dec.c",
+    "patched_line_numbers": [
+      562,
+      563,
+      564,
+      565
+    ],
+    "patch": "diff --git a/src/dec/vp8l_dec.c b/src/dec/vp8l_dec.c\nindex 13d106f..73c3b54 100644\n--- a/src/dec/vp8l_dec.c\n+++ b/src/dec/vp8l_dec.c\n\n@@ -559,8 +559,11 @@\n   memory += work_size * sizeof(*work);\n   scaled_data = (uint32_t*)memory;\n \n-  WebPRescalerInit(dec->rescaler, in_width, in_height, (uint8_t*)scaled_data,\n-                   out_width, out_height, 0, num_channels, work);\n+  if (!WebPRescalerInit(dec->rescaler, in_width, in_height,\n+                        (uint8_t*)scaled_data, out_width, out_height,\n+                        0, num_channels, work)) {\n+    return 0;\n+  }\n   return 1;\n }\n #endif   // WEBP_REDUCE_SIZE"
+  },
+  {
+    "filename": "src/enc/picture_rescale_enc.c",
+    "patched_line_numbers": [
+      175,
+      177,
+      178,
+      185,
+      228,
+      229,
+      230,
+      237,
+      238,
+      239,
+      242,
+      243,
+      246,
+      247,
+      249,
+      261,
+      264,
+      265
+    ],
+    "patch": "diff --git a/src/enc/picture_rescale_enc.c b/src/enc/picture_rescale_enc.c\nindex 58a6ae7..d327885 100644\n--- a/src/enc/picture_rescale_enc.c\n+++ b/src/enc/picture_rescale_enc.c\n\n@@ -164,7 +164,7 @@\n //------------------------------------------------------------------------------\n // Simple picture rescaler\n \n-static void RescalePlane(const uint8_t* src,\n+static int RescalePlane(const uint8_t* src,\n                          int src_width, int src_height, int src_stride,\n                          uint8_t* dst,\n                          int dst_width, int dst_height, int dst_stride,\n@@ -172,14 +172,17 @@\n                          int num_channels) {\n   WebPRescaler rescaler;\n   int y = 0;\n-  WebPRescalerInit(&rescaler, src_width, src_height,\n+  if (!WebPRescalerInit(&rescaler, src_width, src_height,\n                    dst, dst_width, dst_height, dst_stride,\n-                   num_channels, work);\n+                        num_channels, work)) {\n+    return 0;\n+  }\n   while (y < src_height) {\n     y += WebPRescalerImport(&rescaler, src_height - y,\n                             src + y * src_stride, src_stride);\n     WebPRescalerExport(&rescaler);\n   }\n+  return 1;\n }\n \n static void AlphaMultiplyARGB(WebPPicture* const pic, int inverse) {\n@@ -222,25 +225,28 @@\n     // If present, we need to rescale alpha first (for AlphaMultiplyY).\n     if (pic->a != NULL) {\n       WebPInitAlphaProcessing();\n-      RescalePlane(pic->a, prev_width, prev_height, pic->a_stride,\n-                   tmp.a, width, height, tmp.a_stride, work, 1);\n+      if (!RescalePlane(pic->a, prev_width, prev_height, pic->a_stride,\n+                        tmp.a, width, height, tmp.a_stride, work, 1)) {\n+        return 0;\n+      }\n     }\n \n     // We take transparency into account on the luma plane only. That's not\n     // totally exact blending, but still is a good approximation.\n     AlphaMultiplyY(pic, 0);\n-    RescalePlane(pic->y, prev_width, prev_height, pic->y_stride,\n-                 tmp.y, width, height, tmp.y_stride, work, 1);\n-    AlphaMultiplyY(&tmp, 1);\n-\n-    RescalePlane(pic->u,\n+    if (!RescalePlane(pic->y, prev_width, prev_height, pic->y_stride,\n+                      tmp.y, width, height, tmp.y_stride, work, 1) ||\n+        !RescalePlane(pic->u,\n                  HALVE(prev_width), HALVE(prev_height), pic->uv_stride,\n                  tmp.u,\n-                 HALVE(width), HALVE(height), tmp.uv_stride, work, 1);\n-    RescalePlane(pic->v,\n+                      HALVE(width), HALVE(height), tmp.uv_stride, work, 1) ||\n+        !RescalePlane(pic->v,\n                  HALVE(prev_width), HALVE(prev_height), pic->uv_stride,\n                  tmp.v,\n-                 HALVE(width), HALVE(height), tmp.uv_stride, work, 1);\n+                      HALVE(width), HALVE(height), tmp.uv_stride, work, 1)) {\n+      return 0;\n+    }\n+    AlphaMultiplyY(&tmp, 1);\n   } else {\n     work = (rescaler_t*)WebPSafeMalloc(2ULL * width * 4, sizeof(*work));\n     if (work == NULL) {\n@@ -252,11 +258,12 @@\n     // the premultiplication afterward (while preserving the alpha channel).\n     WebPInitAlphaProcessing();\n     AlphaMultiplyARGB(pic, 0);\n-    RescalePlane((const uint8_t*)pic->argb, prev_width, prev_height,\n+    if (!RescalePlane((const uint8_t*)pic->argb, prev_width, prev_height,\n                  pic->argb_stride * 4,\n                  (uint8_t*)tmp.argb, width, height,\n-                 tmp.argb_stride * 4,\n-                 work, 4);\n+                      tmp.argb_stride * 4, work, 4)) {\n+      return 0;\n+    }\n     AlphaMultiplyARGB(&tmp, 1);\n   }\n   WebPPictureFree(pic);"
+  },
+  {
+    "filename": "src/utils/rescaler_utils.c",
+    "patched_line_numbers": [
+      20,
+      24,
+      25,
+      31,
+      32,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      47,
+      48,
+      49,
+      50,
+      53,
+      54,
+      55,
+      56,
+      61,
+      68,
+      70,
+      72,
+      74,
+      77,
+      78,
+      79,
+      82
+    ],
+    "patch": "diff --git a/src/utils/rescaler_utils.c b/src/utils/rescaler_utils.c\nindex 2f8c497..00dfdb9 100644\n--- a/src/utils/rescaler_utils.c\n+++ b/src/utils/rescaler_utils.c\n\n@@ -17,63 +17,69 @@\n #include <string.h>\n #include \"src/dsp/dsp.h\"\n #include \"src/utils/rescaler_utils.h\"\n+#include \"src/utils/utils.h\"\n \n //------------------------------------------------------------------------------\n \n-void WebPRescalerInit(WebPRescaler* const wrk, int src_width, int src_height,\n+int WebPRescalerInit(WebPRescaler* const rescaler,\n+                     int src_width, int src_height,\n                       uint8_t* const dst,\n                       int dst_width, int dst_height, int dst_stride,\n                       int num_channels, rescaler_t* const work) {\n   const int x_add = src_width, x_sub = dst_width;\n   const int y_add = src_height, y_sub = dst_height;\n-  wrk->x_expand = (src_width < dst_width);\n-  wrk->y_expand = (src_height < dst_height);\n-  wrk->src_width = src_width;\n-  wrk->src_height = src_height;\n-  wrk->dst_width = dst_width;\n-  wrk->dst_height = dst_height;\n-  wrk->src_y = 0;\n-  wrk->dst_y = 0;\n-  wrk->dst = dst;\n-  wrk->dst_stride = dst_stride;\n-  wrk->num_channels = num_channels;\n+  const uint64_t total_size = 2ull * dst_width * num_channels * sizeof(*work);\n+  if (!CheckSizeOverflow(total_size)) return 0;\n+\n+  rescaler->x_expand = (src_width < dst_width);\n+  rescaler->y_expand = (src_height < dst_height);\n+  rescaler->src_width = src_width;\n+  rescaler->src_height = src_height;\n+  rescaler->dst_width = dst_width;\n+  rescaler->dst_height = dst_height;\n+  rescaler->src_y = 0;\n+  rescaler->dst_y = 0;\n+  rescaler->dst = dst;\n+  rescaler->dst_stride = dst_stride;\n+  rescaler->num_channels = num_channels;\n \n   // for 'x_expand', we use bilinear interpolation\n-  wrk->x_add = wrk->x_expand ? (x_sub - 1) : x_add;\n-  wrk->x_sub = wrk->x_expand ? (x_add - 1) : x_sub;\n-  if (!wrk->x_expand) {  // fx_scale is not used otherwise\n-    wrk->fx_scale = WEBP_RESCALER_FRAC(1, wrk->x_sub);\n+  rescaler->x_add = rescaler->x_expand ? (x_sub - 1) : x_add;\n+  rescaler->x_sub = rescaler->x_expand ? (x_add - 1) : x_sub;\n+  if (!rescaler->x_expand) {  // fx_scale is not used otherwise\n+    rescaler->fx_scale = WEBP_RESCALER_FRAC(1, rescaler->x_sub);\n   }\n   // vertical scaling parameters\n-  wrk->y_add = wrk->y_expand ? y_add - 1 : y_add;\n-  wrk->y_sub = wrk->y_expand ? y_sub - 1 : y_sub;\n-  wrk->y_accum = wrk->y_expand ? wrk->y_sub : wrk->y_add;\n-  if (!wrk->y_expand) {\n+  rescaler->y_add = rescaler->y_expand ? y_add - 1 : y_add;\n+  rescaler->y_sub = rescaler->y_expand ? y_sub - 1 : y_sub;\n+  rescaler->y_accum = rescaler->y_expand ? rescaler->y_sub : rescaler->y_add;\n+  if (!rescaler->y_expand) {\n     // This is WEBP_RESCALER_FRAC(dst_height, x_add * y_add) without the cast.\n-    // Its value is <= WEBP_RESCALER_ONE, because dst_height <= wrk->y_add, and\n-    // wrk->x_add >= 1;\n+    // Its value is <= WEBP_RESCALER_ONE, because dst_height <= rescaler->y_add\n+    // and rescaler->x_add >= 1;\n     const uint64_t num = (uint64_t)dst_height * WEBP_RESCALER_ONE;\n-    const uint64_t den = (uint64_t)wrk->x_add * wrk->y_add;\n+    const uint64_t den = (uint64_t)rescaler->x_add * rescaler->y_add;\n     const uint64_t ratio = num / den;\n     if (ratio != (uint32_t)ratio) {\n       // When ratio == WEBP_RESCALER_ONE, we can't represent the ratio with the\n       // current fixed-point precision. This happens when src_height ==\n-      // wrk->y_add (which == src_height), and wrk->x_add == 1.\n+      // rescaler->y_add (which == src_height), and rescaler->x_add == 1.\n       // => We special-case fxy_scale = 0, in WebPRescalerExportRow().\n-      wrk->fxy_scale = 0;\n+      rescaler->fxy_scale = 0;\n     } else {\n-      wrk->fxy_scale = (uint32_t)ratio;\n+      rescaler->fxy_scale = (uint32_t)ratio;\n     }\n-    wrk->fy_scale = WEBP_RESCALER_FRAC(1, wrk->y_sub);\n+    rescaler->fy_scale = WEBP_RESCALER_FRAC(1, rescaler->y_sub);\n   } else {\n-    wrk->fy_scale = WEBP_RESCALER_FRAC(1, wrk->x_add);\n-    // wrk->fxy_scale is unused here.\n+    rescaler->fy_scale = WEBP_RESCALER_FRAC(1, rescaler->x_add);\n+    // rescaler->fxy_scale is unused here.\n   }\n-  wrk->irow = work;\n-  wrk->frow = work + num_channels * dst_width;\n-  memset(work, 0, 2 * dst_width * num_channels * sizeof(*work));\n+  rescaler->irow = work;\n+  rescaler->frow = work + num_channels * dst_width;\n+  memset(work, 0, (size_t)total_size);\n \n   WebPRescalerDspInit();\n+  return 1;\n }\n \n int WebPRescalerGetScaledDimensions(int src_width, int src_height,"
+  },
+  {
+    "filename": "src/utils/rescaler_utils.h",
+    "patched_line_numbers": [
+      51
+    ],
+    "patch": "diff --git a/src/utils/rescaler_utils.h b/src/utils/rescaler_utils.h\nindex ca41e42..82a607b 100644\n--- a/src/utils/rescaler_utils.h\n+++ b/src/utils/rescaler_utils.h\n\n@@ -47,7 +47,8 @@\n };\n \n // Initialize a rescaler given scratch area 'work' and dimensions of src & dst.\n-void WebPRescalerInit(WebPRescaler* const rescaler,\n+// Returns false in case of error.\n+int WebPRescalerInit(WebPRescaler* const rescaler,\n                       int src_width, int src_height,\n                       uint8_t* const dst,\n                       int dst_width, int dst_height, int dst_stride,"
+  }
+]

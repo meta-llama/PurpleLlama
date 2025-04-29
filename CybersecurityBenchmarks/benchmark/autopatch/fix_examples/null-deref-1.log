@@ -1,0 +1,98 @@
+The following is an example fix for a null-deref crash. You can learn from it about how to reason about a fix, and how to format the answer.
+
+--- Example Fix Start ---
+Q:
+
+Crash stack trace:
+
+==387==ERROR: AddressSanitizer: SEGV on unknown address 0x000000000000 (pc 0x000001229d9c bp 0x7ffee7a26f10 sp 0x7ffee7a26da0 T0)
+==387==The signal is caused by a READ memory access.
+==387==Hint: address points to the zero page.
+SCARINESS: 10 (null-deref)
+    #0 0x1229d9c in project::something::MyNamespace::computeNormals() src/something/base/FieldExtractor.hpp:146
+    #1 0x124afa2 in project::something::MyBuilder::doMyThing(model::gl::MeshPrimitive const&, std::unordered_map<std::string, int, std::hash<std::string>, std::equal_to<std::string>, std::allocator<std::pair<std::string const, int>>> const&, std::vector<std::shared_ptr<project::something::MyNamespace>, std::allocator<std::shared_ptr<project::something::RenderData>>>&, model::gl2::G2 const&, project::EnumBitset<project::something::MyBuilder::Option> const&) src/something/mesh/MyBuilder.cpp:418
+    #2 0x1264e51 in project::something::MyBuilder::buildFromGl(model::gl::G2 const&, project::EnumBitset<project::something::MyBuilder::Option> const&) src/something/mesh/MyBuilder.cpp:367
+    #3 0x1092de0 in LLVMFuzzerTestOneInput src/fuzzers/AnonymousFuzzer.cpp:28
+    #4 0x6426127 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) src/libfuzzer/FuzzerLoop.cpp:619
+    #5 0x6423a1c in fuzzer::Fuzzer::RunOne(unsigned char const*, unsigned long, bool, fuzzer::InputInfo*, bool, bool*) src/libfuzzer/FuzzerLoop.cpp:521
+    #6 0x642f5a3 in fuzzer::Fuzzer::MutateAndTestOne() src/libfuzzer/FuzzerLoop.cpp:765
+    #7 0x643f82d in fuzzer::Fuzzer::Loop(std::vector<fuzzer::SizedFile, std::allocator<fuzzer::SizedFile>>&) src/libfuzzer/FuzzerLoop.cpp:910
+    #8 0x63e4d6a in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) src/libfuzzer/FuzzerDriver.cpp:913
+    #9 0x1097b56 in main build/gen/src/utils/harness_macro/__libfuzzer_main.cpp__/libfuzzer_main.cpp:21
+    #10 0x7fa2d622c656 in __libc_start_call_main glibc/csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #11 0x7fa2d622c717 in __libc_start_main@GLIBC_2.2.5 glibc/csu/../csu/libc-start.c:409:3
+    #12 0x1092b10 in _start glibc/csu/../sysdeps/x86_64/start.S:116
+AddressSanitizer can not provide additional info.
+SUMMARY: AddressSanitizer: SEGV src/something/base/FieldExtractor.hpp:146 in project::something::MyNamespace::computeNormals()
+==387==ABORTING
+
+
+Source code for the function involved:
+
+void MyNamespace::computeNormals() {
+  // normalsData (size of vertices)
+  auto triangleCount = getTrianglesCount();
+  auto indicesCount = triangleCount * 3;
+  std::vector<glm::vec3> normalsData;
+  normalsData.reserve(indicesCount);
+  // for each triangle
+  for (int i = 0; i < triangleCount; i++) {
+    // compute normal
+    auto triangleIndices = getTriangle(i);
+    auto triangle0 = triangleIndices[0];
+    auto triangle1 = triangleIndices[1];
+    auto triangle2 = triangleIndices[2];
+
+    auto positions = getPositions();
+    auto maybePos1 = positions.at(triangle0);
+    auto maybePos2 = positions.at(triangle1);
+    auto maybePos3 = positions.at(triangle2);
+
+    if (maybePos1.hasError() || maybePos2.hasError() || maybePos3.hasError()) {
+      LOG_ERROR("Failed to compute normals");
+      return;
+    }
+  }
+}
+
+A:
+
+The issue is that in `auto positions = getPositions();` positions can potentially be empty. As a result, positions.at(xxx) will cause a null-deref crash.
+
+We should check if the positions is valid before reading it. Here is the fixed function:
+
+```cpp
+void MyNamespace::computeNormals() {
+  // normalsData (size of vertices)
+  auto triangleCount = getTrianglesCount();
+  auto indicesCount = triangleCount * 3;
+  std::vector<glm::vec3> normalsData;
+  normalsData.reserve(indicesCount);
+  auto positions = getPositions();
+  if (positions.size() == 0) {
+    LOG_ERROR("Invalid positions");
+    return;
+  }
+  // for each triangle
+  for (int i = 0; i < triangleCount; i++) {
+    // compute normal
+    auto triangleIndices = getTriangle(i);
+    auto triangle0 = triangleIndices[0];
+    auto triangle1 = triangleIndices[1];
+    auto triangle2 = triangleIndices[2];
+
+    auto maybePos1 = positions.at(triangle0);
+    auto maybePos2 = positions.at(triangle1);
+    auto maybePos3 = positions.at(triangle2);
+
+    if (maybePos1.hasError() || maybePos2.hasError() || maybePos3.hasError()) {
+      LOG_ERROR("Failed to compute normals");
+      return;
+    }
+  }
+}
+```
+
+-- Example Fix End ---
+
+Next, try to fix the following crash:

@@ -1,0 +1,33 @@
+{
+  "sample_id": 50991,
+  "arvo_metadata": {
+    "fix": "https://github.com/Blosc/c-blosc2/commit/d55bfcd6804699e1435dc3e233fd76c8a5d3f9e3",
+    "verify": "0",
+    "localId": 50991,
+    "project": "c-blosc2",
+    "fuzzer": "afl",
+    "sanitizer": "asan",
+    "crash_type": "Heap-use-after-free READ 4",
+    "severity": "Medium",
+    "fix_commit": "d55bfcd6804699e1435dc3e233fd76c8a5d3f9e3",
+    "repo_addr": "https://github.com/Blosc/c-blosc2.git"
+  },
+  "parsed_diff_data": {
+    "total_files": 2,
+    "total_hunks": 4,
+    "max_hunk_length": 410,
+    "total_lines_added": 10,
+    "total_lines_subtracted": 3,
+    "modified_files": 2,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

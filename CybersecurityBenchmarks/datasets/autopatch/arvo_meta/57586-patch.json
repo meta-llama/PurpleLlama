@@ -1,0 +1,19 @@
+[
+  {
+    "filename": "src/bits.c",
+    "patched_line_numbers": [
+      2890,
+      2891,
+      2892,
+      2905,
+      2909,
+      2911,
+      2912,
+      2913,
+      2914,
+      2915,
+      2916
+    ],
+    "patch": "@@ -2886,9 +2886,11 @@ bit_utf8_to_TU (char *restrict str, const unsigned cquoted)\n         {\n           /* ignore invalid utf8 for now */\n           if (len >= 1)\n-            wstr[i++] = ((c & 0x1f) << 6) | (str[1] & 0x3f);\n-          len--;\n-          str++;\n+            {\n+              wstr[i++] = ((c & 0x1f) << 6) | (str[1] & 0x3f);\n+              len--;\n+              str++;\n+            }\n         }\n       else if ((c & 0xf0) == 0xe0)\n         {\n@@ -2900,17 +2902,19 @@ bit_utf8_to_TU (char *restrict str, const unsigned cquoted)\n             {\n               LOG_WARN (\"utf-8: BAD_CONTINUATION_BYTE %s\", str);\n             }\n-          if (len >= 1 && c == 0xe0 && (unsigned char)str[1] < 0xa0)\n+          else if (len >= 1 && c == 0xe0 && (unsigned char)str[1] < 0xa0)\n             {\n               LOG_WARN (\"utf-8: NON_SHORTEST %s\", str);\n             }\n-          if (len >= 2)\n-            wstr[i++] = ((c & 0x0f) << 12) | ((str[1] & 0x3f) << 6)\n-                        | (str[2] & 0x3f);\n-          str++;\n-          str++;\n-          len--;\n-          len--;\n+          else if (len >= 2)\n+            {\n+              wstr[i++] = ((c & 0x0f) << 12) | ((str[1] & 0x3f) << 6)\n+                | (str[2] & 0x3f);\n+              str++;\n+              str++;\n+              len--;\n+              len--;\n+            }\n         }\n       /* everything above 0xf0 exceeds ucs-2, 4-6 byte seqs */\n     }"
+  }
+]

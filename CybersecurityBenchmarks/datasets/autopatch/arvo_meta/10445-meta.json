@@ -1,0 +1,33 @@
+{
+  "sample_id": 10445,
+  "arvo_metadata": {
+    "fix": "https://github.com/unicorn-engine/unicorn/commit/414c230b59643cf15914b7374a3b72ef00a07038",
+    "verify": "0",
+    "localId": 10445,
+    "project": "unicorn",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "UNKNOWN READ",
+    "severity": "Medium",
+    "fix_commit": "414c230b59643cf15914b7374a3b72ef00a07038",
+    "repo_addr": "https://github.com/unicorn-engine/unicorn.git"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 106,
+    "total_lines_added": 1,
+    "total_lines_subtracted": 4,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": false,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

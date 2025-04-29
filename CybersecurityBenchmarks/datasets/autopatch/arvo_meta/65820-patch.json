@@ -1,0 +1,11 @@
+[
+  {
+    "filename": "sam.c",
+    "patched_line_numbers": [
+      4696,
+      4705
+    ],
+    "patch": "-4693,7 +4693,7 @@ uint8_t *bam_aux_first(const bam1_t *b)\n {\n     uint8_t *s = bam_get_aux(b);\n     uint8_t *end = b->data + b->l_data;\n-    if (s >= end) { errno = ENOENT; return NULL; }\n+    if (end - s <= 2) { errno = ENOENT; return NULL; }\n     return s+2;\n }\n \n@@ -4702,7 +4702,7 @@ uint8_t *bam_aux_next(const bam1_t *b, const uint8_t *s)\n     uint8_t *end = b->data + b->l_data;\n     uint8_t *next = s? skip_aux((uint8_t *) s, end) : end;\n     if (next == NULL) goto bad_aux;\n-    if (next >= end) { errno = ENOENT; return NULL; }\n+    if (end - next <= 2) { errno = ENOENT; return NULL; }\n     return next+2;\n \n  bad_aux:",
+    "summary": "commit b08332d60a458f64ad4186dbe137ef528881c683\nAuthor: Rob Davies <rmd+git@sanger.ac.uk>\nDate:   Tue Jan 16 16:34:02 2024 +0000\n\n    Fix over-lenient check in bam_aux_first() / bam_aux_next()\n    \n    After calling these, bam_aux_get() expects three bytes to be\n    available (two before the returned pointer).  While a test\n    to prevent running off the end of the aux data was present, it\n    didn't account for incrementing the returned pointer by 2.  The\n    new version ensures that the expected data is available.\n    \n    The bug could lead to a read of up to two bytes beyond the end\n    of the aux data in bam_aux_get().  As a later call to skip_aux()\n    would have correctly detect that the tag is invalid, bam_aux_get()\n    should still have returned NULL, making it difficult to exploit\n    the out-of-bounds access.\n    \n    Credit to OSS-Fuzz\n    Fixes oss-fuzz 65820\n"
+  }
+]

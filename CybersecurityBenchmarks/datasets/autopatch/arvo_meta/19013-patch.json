@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/lib/lwan-template.c",
+    "patched_line_numbers": [
+      1007,
+      1033
+    ],
+    "patch": "@@ -1004,7 +1004,7 @@ static bool post_process_template(struct parser *parser)\n     LWAN_ARRAY_FOREACH (&parser->chunks, chunk) {\n         if (chunk->action == ACTION_IF_VARIABLE_NOT_EMPTY) {\n             for (prev_chunk = chunk;; chunk++) {\n-                if (chunk > last_chunk)\n+                if (chunk == last_chunk)\n                     goto error;\n                 if (chunk->action == ACTION_LAST) {\n                     lwan_status_error(\"Internal error: Could not find the end \"\n@@ -1030,7 +1030,7 @@ static bool post_process_template(struct parser *parser)\n             enum flags flags = chunk->flags;\n \n             for (prev_chunk = chunk;; chunk++) {\n-                if (chunk > last_chunk)\n+                if (chunk == last_chunk)\n                     goto error;\n                 if (chunk->action == ACTION_LAST) {\n                     lwan_status_error("
+  }
+]

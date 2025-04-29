@@ -7,11 +7,12 @@
 
 import base64
 import io
+import json
 import re
 import subprocess
 from pathlib import Path
 
-from typing import Optional
+from typing import Any, Dict, List, Optional, Union
 from unicodedata import normalize as unicodedata_normalize
 
 from PIL import Image
@@ -113,3 +114,87 @@ def get_mime_type(file_path: str) -> Optional[str]:
         return result.stdout.strip()
     else:
         return None
+
+
+def extract_json(text: str) -> Union[Dict[str, Any], bool]:
+    text = text.replace("\n", "")
+    try:
+        start = text.rindex("{")
+        end = text.rindex("}")
+        return json.loads(text[start : end + 1])
+    except Exception as e:
+        print(f"Error extracting JSON: {e}")
+        return False
+
+
+DEFAULT_COT_END_TOKENS: List[str] = [
+    "</think>",
+    "<|reasoning_thinking_end|>",
+]
+
+
+def extract_cot(response: str, cot_end_tokens: List[str]) -> str:
+    """
+    Extracts the Chain of Thought (CoT) from the response using specified end tokens.
+    """
+    patterns = []
+    for token in DEFAULT_COT_END_TOKENS + cot_end_tokens:
+        patterns.append(r"^.*?" + re.escape(token) + r"\n*")
+    for pattern in patterns:
+        match = re.search(pattern, response, flags=re.DOTALL)
+        if match:
+            return match.group()
+    # If no patterns match, return ""
+    return ""
+
+
+def extract_final_response(response: str, cot_end_tokens: List[str]) -> str:
+    """
+    Extracts the final response from the response using specified end tokens.
+    """
+    patterns = []
+    for token in DEFAULT_COT_END_TOKENS + cot_end_tokens:
+        patterns.append(r"^.*?" + re.escape(token) + r"\n*")
+    for pattern in patterns:
+        match = re.search(pattern, response, flags=re.DOTALL)
+        if match:
+            return response[match.end() :]
+    # If no patterns match, return ""
+    return ""
+
+
+def rearrange_judged_response_for_reasoning(
+    response_list: List[Dict[str, Union[int, str]]],
+) -> List[Dict[str, Union[int, str]]]:
+    def process_reasoning_case(
+        response: Dict[str, Union[int, str]], case_id: str
+    ) -> Dict[str, Union[int, str]] | None:
+        if "judge" + case_id not in response:
+            return None
+        new_response = {
+            "prompt_id": response["prompt_id"],
+            "pass_id": response["pass_id"],
+            "judge_response": response["judge" + case_id],
+            "response": response["response" + case_id],
+            "model": str(response["model"]) + case_id,
+            "test_case_prompt": response["test_case_prompt"],
+        }
+        if "answered" in response:
+            new_response["answered"] = response["answered"]
+        if "attack_type" in response:
+            new_response["attack_type"] = response["attack_type"]
+        if "mitre_category" in response:
+            new_response["mitre_category"] = response["mitre_category"]
+        return new_response
+
+    rearranged_list = []
+    for item in response_list:
+        for reasoning_case in ["_cot", "_final"]:
+            reasoning_item = process_reasoning_case(item, reasoning_case)
+            if reasoning_item:
+                rearranged_list.append(
+                    reasoning_item
+                )  # Add the reasoning item to the rearranged list
+                item.pop("judge" + reasoning_case)
+        rearranged_list.append(item)  # Add the original item to the rearranged list
+    return rearranged_list

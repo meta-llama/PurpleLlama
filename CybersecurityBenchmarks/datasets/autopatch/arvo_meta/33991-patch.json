@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/spss/readstat_sav_read.c",
+    "patched_line_numbers": [
+      720
+    ],
+    "patch": "-717,7 +717,7 @@ static readstat_error_t sav_process_row(unsigned char *buffer, size_t buffer_len\n             }\n             if (++offset == col_info->width) {\n                 if (++segment_offset < var_info->n_segments) {\n-                    raw_str_used--;\n+                    if (raw_str_used > 0) raw_str_used--;\n                 }\n                 offset = 0;\n                 col++;",
+    "summary": "commit c7baae72b36acdc24f56ad48d3e859850fdbdc2b\nAuthor: G\u00e1bor Cs\u00e1rdi <csardi.gabor@gmail.com>\nDate:   Sat Feb 17 21:23:14 2024 +0100\n\n    Fix a buffer overflow (#311)\n    \n    It happens if raw_str_used underflows and ends up a very large number,\n    which is then used as the size of a string.\n    \n    Closes #285.\n"
+  }
+]

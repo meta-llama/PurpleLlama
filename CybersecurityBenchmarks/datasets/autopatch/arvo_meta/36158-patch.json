@@ -1,0 +1,15 @@
+[
+  {
+    "filename": "lib/jxl/dec_noise.cc",
+    "patched_line_numbers": [
+      25,
+      219,
+      230,
+      231,
+      248,
+      249,
+      250
+    ],
+    "patch": "@@ -22,6 +22,7 @@\n #include \"lib/jxl/chroma_from_luma.h\"\n #include \"lib/jxl/image_ops.h\"\n #include \"lib/jxl/opsin_params.h\"\n+#include \"lib/jxl/sanitizers.h\"\n #include \"lib/jxl/xorshift128plus-inl.h\"\n HWY_BEFORE_NAMESPACE();\n namespace jxl {\n@@ -215,13 +216,19 @@ void AddNoise(const NoiseParams& noise_params, const Rect& noise_rect,\n   float ytox = cmap.YtoXRatio(0);\n   float ytob = cmap.YtoBRatio(0);\n \n+  const size_t xsize_v = RoundUpTo(xsize, Lanes(d));\n+\n   for (size_t y = 0; y < ysize; ++y) {\n     float* JXL_RESTRICT row_x = opsin_rect.PlaneRow(opsin, 0, y);\n     float* JXL_RESTRICT row_y = opsin_rect.PlaneRow(opsin, 1, y);\n     float* JXL_RESTRICT row_b = opsin_rect.PlaneRow(opsin, 2, y);\n     const float* JXL_RESTRICT row_rnd_r = noise_rect.ConstPlaneRow(noise, 0, y);\n     const float* JXL_RESTRICT row_rnd_g = noise_rect.ConstPlaneRow(noise, 1, y);\n     const float* JXL_RESTRICT row_rnd_c = noise_rect.ConstPlaneRow(noise, 2, y);\n+    // Needed by the calls to Floor() in StrengthEvalLut. Only arithmetic and\n+    // shuffles are otherwise done on the data, so this is safe.\n+    msan::UnpoisonMemory(row_x + xsize, (xsize_v - xsize) * sizeof(float));\n+    msan::UnpoisonMemory(row_y + xsize, (xsize_v - xsize) * sizeof(float));\n     for (size_t x = 0; x < xsize; x += Lanes(d)) {\n       const auto vx = Load(d, row_x + x);\n       const auto vy = Load(d, row_y + x);\n@@ -238,6 +245,9 @@ void AddNoise(const NoiseParams& noise_params, const Rect& noise_rect,\n                     noise_strength_r, ytox, ytob, row_x + x, row_y + x,\n                     row_b + x);\n     }\n+    msan::PoisonMemory(row_x + xsize, (xsize_v - xsize) * sizeof(float));\n+    msan::PoisonMemory(row_y + xsize, (xsize_v - xsize) * sizeof(float));\n+    msan::PoisonMemory(row_b + xsize, (xsize_v - xsize) * sizeof(float));\n   }\n }\n "
+  }
+]

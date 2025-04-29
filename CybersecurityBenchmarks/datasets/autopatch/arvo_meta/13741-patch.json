@@ -1,0 +1,32 @@
+[
+  {
+    "filename": "src/core/meshcop/meshcop_tlvs.cpp",
+    "patched_line_numbers": [
+      239,
+      240,
+      241,
+      243,
+      244,
+      246,
+      248,
+      250,
+      251,
+      253,
+      255,
+      256,
+      257,
+      258,
+      259,
+      260,
+      262,
+      263,
+      264,
+      265,
+      266,
+      267,
+      270
+    ],
+    "patch": "-236,11 +236,39 @@ exit:\n \n uint32_t ChannelMaskTlv::GetChannelMask(const Message &aMessage)\n {\n-    uint32_t       mask = 0;\n-    ChannelMaskTlv channelMaskTlv;\n+    uint32_t mask = 0;\n+    uint16_t offset;\n+    uint16_t end;\n \n-    SuccessOrExit(GetTlv(aMessage, kChannelMask, sizeof(channelMaskTlv), channelMaskTlv));\n-    mask = channelMaskTlv.GetChannelMask();\n+    SuccessOrExit(GetValueOffset(aMessage, kChannelMask, offset, end));\n+    end += offset;\n+\n+    while (offset + sizeof(ChannelMaskEntryBase) <= end)\n+    {\n+        ChannelMaskEntry entry;\n+\n+        aMessage.Read(offset, sizeof(ChannelMaskEntryBase), &entry);\n+        VerifyOrExit(offset + entry.GetEntrySize() <= end);\n+\n+        switch (entry.GetChannelPage())\n+        {\n+#if OPENTHREAD_CONFIG_RADIO_2P4GHZ_OQPSK_SUPPORT\n+        case OT_RADIO_CHANNEL_PAGE_0:\n+            aMessage.Read(offset, sizeof(entry), &entry);\n+            mask |= entry.GetMask() & OT_RADIO_2P4GHZ_OQPSK_CHANNEL_MASK;\n+            break;\n+#endif\n+\n+#if OPENTHREAD_CONFIG_RADIO_915MHZ_OQPSK_SUPPORT\n+        case OT_RADIO_CHANNEL_PAGE_2:\n+            aMessage.Read(offset, sizeof(entry), &entry);\n+            mask |= entry.GetMask() & OT_RADIO_915MHZ_OQPSK_CHANNEL_MASK;\n+            break;\n+#endif\n+        }\n+\n+        offset += entry.GetEntrySize();\n+    }\n \n exit:\n     return mask;",
+    "summary": "commit fab45352f5d6b2f516fed8a86c0d197bb7c27958\nAuthor: Jonathan Hui <jonhui@google.com>\nDate:   Fri Mar 15 21:46:02 2019 -0700\n\n    [meshcop] process ChannelMaskTlv in message (#3690)\n    \n    Allows arbitrary number of Channel Mask entries.\n"
+  }
+]

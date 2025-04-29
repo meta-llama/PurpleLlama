@@ -1,0 +1,33 @@
+{
+  "sample_id": 13956,
+  "arvo_metadata": {
+    "fix": "https://github.com/VirusTotal/yara/commit/462ffd339228ac57d98e8034239d122e4303f653",
+    "verify": "0",
+    "localId": 13956,
+    "project": "yara",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Heap-buffer-overflow READ 1",
+    "severity": "Medium",
+    "fix_commit": "462ffd339228ac57d98e8034239d122e4303f653",
+    "repo_addr": "https://github.com/VirusTotal/yara.git"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 48,
+    "total_lines_added": 11,
+    "total_lines_subtracted": 4,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

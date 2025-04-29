@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/hunspell/hashmgr.cxx",
+    "patched_line_numbers": [
+      762
+    ],
+    "patch": "-759,7 +759,7 @@ int HashMgr::decode_flags(unsigned short** result, const std::string& flags, Fil\n         }\n       }\n       int i = atoi(src);\n-      if (i >= DEFAULTFLAGS) {\n+      if (i >= DEFAULTFLAGS || i < 0) {\n         HUNSPELL_WARNING(stderr,\n                          \"error: line %d: flag id %d is too large (max: %d)\\n\",\n                          af->getlinenum(), i, DEFAULTFLAGS - 1);",
+    "summary": "commit 2d71200264234c2c59e3daa1a40576f794518564\nAuthor: Caol\u00e1n McNamara <caolanm@redhat.com>\nDate:   Wed Apr 19 10:29:21 2023 +0100\n\n    ofz#58133 validate flags more to avoid negative numbers\n"
+  }
+]

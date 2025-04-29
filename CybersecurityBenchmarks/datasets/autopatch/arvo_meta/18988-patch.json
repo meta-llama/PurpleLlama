@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/bin/fuzz/template_fuzzer.cc",
+    "patched_line_numbers": [
+      55,
+      62
+    ],
+    "patch": "@@ -52,13 +52,14 @@ static const struct lwan_var_descriptor file_list_desc[] = {\n     TPL_VAR_SENTINEL,\n };\n \n+static size_t min(size_t a, size_t b) { return a > b ? b : a; }\n+\n extern \"C\" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)\n {\n     static char copy[32768];\n     struct lwan_tpl *tpl;\n \n-    if (size > sizeof(copy))\n-        size = sizeof(copy) - 1;\n+    size = min(sizeof(copy) - 1, size);\n     memcpy(copy, data, size);\n     copy[size] = '\\0';\n "
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "filename": "src/librawspeed/decompressors/Cr2Decompressor.cpp",
+    "patched_line_numbers": [
+      211,
+      212,
+      213
+    ],
+    "patch": "-208,6 +208,9 @@ void Cr2Decompressor::decodeN_X_Y()\n       if (X_S_F == 1) {\n         if (destX + sliceWidth > static_cast<unsigned>(mRaw->dim.x))\n           ThrowRDE(\"Bad slice width / frame size / image size combination.\");\n+        if (((sliceId + 1) == slicing.numSlices) &&\n+            ((destX + sliceWidth) < static_cast<unsigned>(mRaw->dim.x)))\n+          ThrowRDE(\"Unsufficient slices - do not fill the entire image\");\n       } else {\n         // FIXME.\n       }",
+    "summary": "commit eb99214e33cc6fcf2c9aae285d4e75358894a34d\nAuthor: Roman Lebedev <lebedev.ri@gmail.com>\nDate:   Wed Jul 4 16:25:45 2018 +0300\n\n    Cr2Decompressor::decodeN_X_Y(): handle yet another unsufficient image size\n    \n    If we don't have enough slices, we won't fill the entire image area\n    we were supposed to, so those pixels will be uninit garbage.\n    \n    I really hate this code. It might be the ugliest in the whole library.\n    Other than the Fuji decompressor. This really needs to be rewritten,\n    without all these branches nested deep within loops.\n"
+  }
+]

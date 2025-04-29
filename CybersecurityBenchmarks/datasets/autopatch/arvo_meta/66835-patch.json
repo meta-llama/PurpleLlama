@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/in_dxf.c",
+    "patched_line_numbers": [
+      12116,
+      12125
+    ],
+    "patch": "@@ -12113,7 +12113,7 @@ dxf_tables_read (Bit_Chain *restrict dat, Dwg_Data *restrict dwg)\n                  && strEQ (pair->value.s, table))\n             {\n               Dwg_Object *obj;\n-              Dwg_Object *ctrl = &dwg->object[ctrl_id];\n+              Dwg_Object *ctrl;\n               char *dxfname = strdup (pair->value.s);\n               BITCODE_BL idx = dwg->num_objects;\n               BITCODE_H ref;\n@@ -12122,6 +12122,7 @@ dxf_tables_read (Bit_Chain *restrict dat, Dwg_Data *restrict dwg)\n               pair = new_object (table, dxfname, dat, dwg, ctrl_id,\n                                  (BITCODE_BL *)&i);\n               obj = &dwg->object[idx];\n+              ctrl = &dwg->object[ctrl_id];\n               if (!pair)\n                 {\n                   free (dxfname);"
+  }
+]

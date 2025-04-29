@@ -17,7 +17,7 @@ from typing import Optional
 from .analyzers import Analyzer
 
 
-class Severity(str, enum.Enum):
+class Severity(enum.Enum):
     ERROR = "error"
     WARNING = "warning"
     ADVICE = "advice"

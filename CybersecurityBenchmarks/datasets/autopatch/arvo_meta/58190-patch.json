@@ -1,0 +1,11 @@
+[
+  {
+    "filename": "decoder/mvc/imvcd_defs.h",
+    "patched_line_numbers": [
+      43,
+      45
+    ],
+    "patch": "-34,6 +34,14 @@\n    is still greater than any possible value of u1_pic_buf_id */\n #define IVP_PIC_BUF_ID UINT8_MAX\n \n-#define MIN_BITSTREAMS_BUF_SIZE 256000\n+/* In FGC SEI\n+   - Worst-case bits for all elements before 'num_intensity_intervals_minus1' = 47\n+   - Worst-case bits for all elements before 'film_grain_characteristics_repetition_period', not\n+     including elements from previous line = 3 * (8 + 3 + 256 * (8 + 8 + 8 * 16)) = 110625\n+   - Worst-case bits for 'film_grain_characteristics_repetition_period' = 30\n+   Total of (47 + 110625 + 30) = 110702 byte */\n+#define MAX_FGC_SEI_SIZE 110702\n+\n+#define MIN_BITSTREAMS_BUF_SIZE (MAX_FGC_SEI_SIZE + 256000)\n \n #endif",
+    "summary": "commit f8ae418b38e8ac52cf87425d27cb20925607debc\nAuthor: Ashwin Natesan <ashwin.natesan@ittiam.com>\nDate:   Thu Apr 20 15:24:28 2023 +0530\n\n    mvcdec: Bitstream buf allocation accounts for FGC SEI\n    \n    The worst case FGC SEI payload size in cojunction with the worst\n    case sizes of other NALU's can be significantly larger than the\n    default bitstream buffer size of 256000. It is now set to the sum\n    of 256000 and MAX_FGC_SEI_SIZE.\n    \n    Bug: ossFuzz:58190\n    Test: mvc_dec_fuzzer\n"
+  }
+]

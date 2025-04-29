@@ -1,0 +1,15 @@
+[
+  {
+    "filename": "src/libopensc/asn1.c",
+    "patched_line_numbers": [
+      574,
+      575,
+      581,
+      582,
+      583,
+      584
+    ],
+    "patch": "-570,16 +570,20 @@ static int decode_bit_string(const u8 * inbuf, size_t inlen, void *outbuf,\n {\n \tconst u8 *in = inbuf;\n \tu8 *out = (u8 *) outbuf;\n-\tint zero_bits = *in & 0x07;\n-\tsize_t octets_left = inlen - 1;\n \tint i, count = 0;\n+\tint zero_bits;\n+\tsize_t octets_left;\n \n-\tmemset(outbuf, 0, outlen);\n-\tin++;\n \tif (outlen < octets_left)\n \t\treturn SC_ERROR_BUFFER_TOO_SMALL;\n \tif (inlen < 1)\n \t\treturn SC_ERROR_INVALID_ASN1_OBJECT;\n+\n+\tzero_bits = *in & 0x07;\n+\toctets_left = inlen - 1;\n+\tin++;\n+\tmemset(outbuf, 0, outlen);\n+\n \twhile (octets_left) {\n \t\t/* 1st octet of input:  ABCDEFGH, where A is the MSB */\n \t\t/* 1st octet of output: HGFEDCBA, where A is the LSB */",
+    "summary": "commit 412a6142c27a5973c61ba540e33cdc22d5608e68\nAuthor: Frank Morgner <frankmorgner@gmail.com>\nDate:   Tue Aug 27 15:17:17 2019 +0200\n\n    fixed out of bounds access of ASN.1 Bitstring\n    \n    Credit to OSS-Fuzz\n"
+  }
+]

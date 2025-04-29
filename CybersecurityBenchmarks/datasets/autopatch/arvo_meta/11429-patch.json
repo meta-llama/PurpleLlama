@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/librawspeed/decompressors/VC5Decompressor.cpp",
+    "patched_line_numbers": [
+      547
+    ],
+    "patch": "-544,7 +544,7 @@ void VC5Decompressor::Wavelet::HighPassBand::decode(const Wavelet& wavelet) {\n   for (int iPixel = 0; iPixel < nPixels;) {\n     getRLV(&bits, &pixelValue, &count);\n     for (; count > 0; --count) {\n-      if (iPixel > nPixels)\n+      if (iPixel >= nPixels)\n         ThrowRDE(\"Buffer overflow\");\n       data[iPixel] = dequantize(pixelValue);\n       ++iPixel;",
+    "summary": "commit 0bcf3488a4989c2724f0c4383401b0d0dcfc3dcc\nAuthor: Roman Lebedev <lebedev.ri@gmail.com>\nDate:   Sun Nov 18 11:23:16 2018 +0300\n\n    VC5Decompressor: HighPassBand::decode(): fix off-by-one in out buffer check\n"
+  }
+]

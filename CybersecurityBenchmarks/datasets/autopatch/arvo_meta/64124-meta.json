@@ -1,0 +1,33 @@
+{
+  "sample_id": 64124,
+  "arvo_metadata": {
+    "fix": "https://github.com/seladb/PcapPlusPlus/commit/98143666674d8d50ffed878d8d91c48c9567706c",
+    "verify": "0",
+    "localId": 64124,
+    "project": "PcapPlusPlus",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Heap-buffer-overflow READ 2",
+    "severity": "Medium",
+    "fix_commit": "98143666674d8d50ffed878d8d91c48c9567706c",
+    "repo_addr": "https://github.com/seladb/PcapPlusPlus"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 20,
+    "total_lines_added": 1,
+    "total_lines_subtracted": 1,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "sample_id": 2864,
+  "arvo_metadata": {
+    "fix": "https://github.com/OSGeo/gdal/commit/e614649056c9b753594269c90b5360046cbd02bc",
+    "verify": "0",
+    "localId": 2864,
+    "project": "gdal",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Heap-use-after-free READ 4",
+    "severity": "High",
+    "fix_commit": [
+      "07ee6e26695fc4043921debb32834114026c2f39",
+      "04c816fa86eef93c506dcc53ed5ba6169becdb7d",
+      "e614649056c9b753594269c90b5360046cbd02bc"
+    ],
+    "repo_addr": "https://github.com/OSGeo/gdal"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 559,
+    "total_lines_added": 8,
+    "total_lines_subtracted": 1,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

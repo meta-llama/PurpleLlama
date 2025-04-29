@@ -1,0 +1,19 @@
+[
+  {
+    "filename": "fuzzing/PerMessageDeflate.cpp",
+    "patched_line_numbers": [
+      27
+    ],
+    "patch": "@@ -24,7 +24,7 @@ extern \"C\" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {\n         std::string_view inflation = staticData.inflationStream.inflate(&staticData.zlibContext, std::string_view((char *) data, size), 256);\r\n         if (inflation.length() > 256) {\r\n             /* Cause ASAN to freak out */\r\n-            //delete (int *) (void *) 1;\r\n+            delete (int *) (void *) 1;\r\n         }\r\n     });\r\n \r"
+  },
+  {
+    "filename": "src/PerMessageDeflate.h",
+    "patched_line_numbers": [
+      166,
+      167,
+      174,
+      175
+    ],
+    "patch": "@@ -161,9 +161,20 @@ struct InflationStream {\n \n         if (zlibContext->dynamicInflationBuffer.length()) {\n             zlibContext->dynamicInflationBuffer.append(zlibContext->inflationBuffer, LARGE_BUFFER_SIZE - inflationStream.avail_out);\n+\n+            /* Let's be strict about the max size */\n+            if (zlibContext->dynamicInflationBuffer.length() > maxPayloadLength) {\n+                return {nullptr, 0};\n+            }\n+\n             return {zlibContext->dynamicInflationBuffer.data(), zlibContext->dynamicInflationBuffer.length()};\n         }\n \n+        /* Let's be strict about the max size */\n+        if ((LARGE_BUFFER_SIZE - inflationStream.avail_out) > maxPayloadLength) {\n+            return {nullptr, 0};\n+        }\n+\n         return {zlibContext->inflationBuffer, LARGE_BUFFER_SIZE - inflationStream.avail_out};\n     }\n "
+  }
+]

@@ -1,0 +1,32 @@
+{
+  "sample_id": 62375,
+  "arvo_metadata": {
+    "fix": "https://github.com/WasmEdge/WasmEdge/commit/7d4213b3abd5360c88e9120c3bc68ffd9b8a6870",
+    "verify": "0",
+    "localId": 62375,
+    "project": "WasmEdge",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Segv on unknown address",
+    "fix_commit": "7d4213b3abd5360c88e9120c3bc68ffd9b8a6870",
+    "repo_addr": "https://github.com/WasmEdge/WasmEdge.git"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 71,
+    "total_lines_added": 6,
+    "total_lines_subtracted": 1,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": false
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

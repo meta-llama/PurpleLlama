@@ -1,0 +1,11 @@
+[
+  {
+    "filename": "src/libopensc/card-idprime.c",
+    "patched_line_numbers": [
+      304,
+      311
+    ],
+    "patch": "-301,14 +301,14 @@ static int idprime_process_containermap(sc_card_t *card, idprime_private_data_t\n \n \tfor (i = 0; i < max_entries; i++) {\n \t\tu8 *start = &buf[i * CONTAINER_OBJ_LEN];\n-\t\tidprime_container_t new_container;\n+\t\tidprime_container_t new_container = {0};\n \t\tif (start[0] == 0) /* Empty record */\n \t\t\tbreak;\n \n \t\tnew_container.index = i;\n \t\t/* Reading UNICODE characters but skipping second byte */\n \t\tint j = 0;\n-\t\tfor (j = 0; j < MAX_CONTAINER_NAME_LEN + 1; j++) {\n+\t\tfor (j = 0; j < MAX_CONTAINER_NAME_LEN; j++) {\n \t\t\tif (start[2 * j] == 0)\n \t\t\t\tbreak;\n \t\t\tnew_container.guid[j] = start[2 * j];",
+    "summary": "commit fa8ad362852dbefad5b6796c32f2a33859b8a8e0\nAuthor: Veronika Hanul\u00edkov\u00e1 <vhanulik@redhat.com>\nDate:   Fri Aug 25 16:31:03 2023 +0200\n\n    idprime: Store container guid as string\n    \n    Thanks OSS-Fuzz\n    https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=61750\n"
+  }
+]

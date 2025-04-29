@@ -1,0 +1,11 @@
+[
+  {
+    "filename": "src/libopensc/card-coolkey.c",
+    "patched_line_numbers": [
+      1949,
+      1950
+    ],
+    "patch": "-1945,6 +1945,11 @@ coolkey_add_object(coolkey_private_data_t *priv, unsigned long object_id, const\n \tnew_object.id = object_id;\n \tnew_object.length = object_length;\n \n+\t/* The object ID needs to be unique */\n+\tif (coolkey_find_object_by_id(&priv->objects_list, object_id) != NULL) {\n+\t\treturn SC_ERROR_INTERNAL;\n+\t}\n+\n \tif (object_data) {\n \t\tnew_object.data = malloc(object_length + add_v1_record);\n \t\tif (new_object.data == NULL) {",
+    "summary": "commit c246f6f69a749d4f68626b40795a4f69168008f4\nAuthor: Jakub Jelen <jjelen@redhat.com>\nDate:   Wed Dec 4 15:54:43 2019 +0100\n\n    coolkey: Make sure the object ID is unique when filling list\n    \n    Thanks to oss-fuzz\n    \n    https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=19208\n"
+  }
+]

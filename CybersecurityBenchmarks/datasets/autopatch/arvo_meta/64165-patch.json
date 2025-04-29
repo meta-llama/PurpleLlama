@@ -1,0 +1,9 @@
+[
+  {
+    "filename": "Userland/Libraries/LibGfx/Font/OpenType/Cmap.cpp",
+    "patched_line_numbers": [
+      71
+    ],
+    "patch": "@@ -68,7 +68,7 @@ Optional<Cmap::Subtable> Cmap::subtable(u32 index) const\n         return {};\n     }\n     u32 record_offset = (u32)Sizes::TableHeader + index * (u32)Sizes::EncodingRecord;\n-    if (record_offset + (u32)Offsets::EncodingRecord_Offset >= m_slice.size())\n+    if (record_offset + (u32)Offsets::EncodingRecord_Offset + sizeof(u32) > m_slice.size())\n         return {};\n     u16 platform_id = be_u16(m_slice.offset(record_offset));\n     u16 encoding_id = be_u16(m_slice.offset(record_offset + (u32)Offsets::EncodingRecord_EncodingID));"
+  }
+]

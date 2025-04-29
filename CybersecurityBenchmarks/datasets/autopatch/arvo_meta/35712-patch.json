@@ -1,0 +1,11 @@
+[
+  {
+    "filename": "src/vm.c",
+    "patched_line_numbers": [
+      2890,
+      2900,
+      2910
+    ],
+    "patch": "@@ -2887,7 +2887,7 @@ mrb_vm_exec(mrb_state *mrb, const struct RProc *proc, const mrb_code *pc)\n     CASE(OP_EXT1, Z) {\n       insn = READ_B();\n       switch (insn) {\n-#define OPCODE(insn,ops) case OP_ ## insn: FETCH_ ## ops ## _1(); goto L_OP_ ## insn ## _BODY;\n+#define OPCODE(insn,ops) case OP_ ## insn: FETCH_ ## ops ## _1(); mrb->c->ci->pc = pc; goto L_OP_ ## insn ## _BODY;\n #include \"mruby/ops.h\"\n #undef OPCODE\n       }\n@@ -2897,7 +2897,7 @@ mrb_vm_exec(mrb_state *mrb, const struct RProc *proc, const mrb_code *pc)\n     CASE(OP_EXT2, Z) {\n       insn = READ_B();\n       switch (insn) {\n-#define OPCODE(insn,ops) case OP_ ## insn: FETCH_ ## ops ## _2(); goto L_OP_ ## insn ## _BODY;\n+#define OPCODE(insn,ops) case OP_ ## insn: FETCH_ ## ops ## _2(); mrb->c->ci->pc = pc; goto L_OP_ ## insn ## _BODY;\n #include \"mruby/ops.h\"\n #undef OPCODE\n       }\n@@ -2907,7 +2907,7 @@ mrb_vm_exec(mrb_state *mrb, const struct RProc *proc, const mrb_code *pc)\n     CASE(OP_EXT3, Z) {\n       uint8_t insn = READ_B();\n       switch (insn) {\n-#define OPCODE(insn,ops) case OP_ ## insn: FETCH_ ## ops ## _3(); goto L_OP_ ## insn ## _BODY;\n+#define OPCODE(insn,ops) case OP_ ## insn: FETCH_ ## ops ## _3(); mrb->c->ci->pc = pc; goto L_OP_ ## insn ## _BODY;\n #include \"mruby/ops.h\"\n #undef OPCODE\n       }"
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "filename": "src/lib/ndpi_main.c",
+    "patched_line_numbers": [
+      4154,
+      4155,
+      4161,
+      4162
+    ],
+    "patch": "@@ -4151,13 +4151,15 @@ int ndpi_add_ip_risk_mask(struct ndpi_detection_module_struct *ndpi_str,\n   if(!is_ipv6 && ndpi_str->ip_risk_mask_ptree) {\n     struct in_addr pin;\n \n-    pin.s_addr = inet_addr(addr);\n+    if(inet_pton(AF_INET, addr, &pin) != 1)\n+      return(-1);\n     node = add_to_ptree(ndpi_str->ip_risk_mask_ptree, AF_INET,\n \t\t\t&pin, cidr ? atoi(cidr) : 32 /* bits */);\n   } else if(is_ipv6 && ndpi_str->ip_risk_mask_ptree6) {\n     struct in6_addr pin6;\n \n-    inet_pton(AF_INET6, addr, &pin6);\n+    if(inet_pton(AF_INET6, addr, &pin6) != 1)\n+      return(-1);\n     node = add_to_ptree(ndpi_str->ip_risk_mask_ptree6, AF_INET6,\n \t\t\t&pin6, cidr ? atoi(cidr) : 128 /* bits */);\n   } else {"
+  }
+]

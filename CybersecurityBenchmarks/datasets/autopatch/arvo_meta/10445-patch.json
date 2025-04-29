@@ -1,0 +1,9 @@
+[
+  {
+    "filename": "qemu/target-m68k/helper.c",
+    "patched_line_numbers": [
+      145
+    ],
+    "patch": "@@ -125,9 +125,6 @@ void cpu_m68k_flush_flags(CPUM68KState *env, int cc_op)\n     env->cc_dest = flags;\n }\n \n-/* this function is implemented in op_helper.c: void HELPER(raise_exception) */\n-void raise_exception(CPUM68KState *env, uint32_t tt);\n-\n void HELPER(movec)(CPUM68KState *env, uint32_t reg, uint32_t val)\n {\n     switch (reg) {\n@@ -145,7 +142,7 @@ void HELPER(movec)(CPUM68KState *env, uint32_t reg, uint32_t val)\n     default:\n         qemu_log(\"Unimplemented control register write 0x%x = 0x%x\\n\",\n                  reg, val);\n-        raise_exception(env, EXCP_UNSUPPORTED);\n+        helper_raise_exception(env, EXCP_UNSUPPORTED);\n     }\n }\n "
+  }
+]

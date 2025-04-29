@@ -1,0 +1,14 @@
+[
+  {
+    "filename": "mrbgems/mruby-bigint/core/bigint.c",
+    "patched_line_numbers": [
+      745,
+      750,
+      753,
+      756,
+      757,
+      759
+    ],
+    "patch": "@@ -742,17 +742,21 @@ static int\n mpz_get_int(mpz_t *y, mrb_int *v)\n {\n   mp_limb i;\n+  size_t d;\n \n   if (y->sn == 0) {\n     i = 0;\n   }\n-  else if (digits(y) > 2 || y->p[1] > 1) {\n+  else if ((d = digits(y)) > 2 || (d == 2 && y->p[1] > 1)) {\n     return FALSE;\n   }\n-  else {\n+  else if (d == 2) {\n     i = (y->sn * (y->p[0] | (y->p[1] & 1) << DIGITBITS));\n-    if (MRB_INT_MAX < i || i < MRB_INT_MIN) return FALSE;\n   }\n+  else {/* d == 1 */\n+    i = y->sn * y->p[0];\n+  }\n+  if (MRB_INT_MAX < i || i < MRB_INT_MIN) return FALSE;\n   *v = i;\n   return TRUE;\n }"
+  }
+]

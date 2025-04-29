@@ -1,0 +1,13 @@
+[
+  {
+    "filename": "epan/dissectors/packet-srvloc.c",
+    "patched_line_numbers": [
+      444,
+      445,
+      449,
+      450
+    ],
+    "patch": "-441,9 +441,13 @@ unicode_to_bytes(tvbuff_t *tvb, int offset, int length, gboolean endianness)\n         for (i = length; i > 0; i--) {\n             c_char = ascii_text[i];\n             if (c_char != 0) {\n+                if (i == 0)\n+                    break;\n                 i--;\n                 c_char1 = ascii_text[i];\n                 if (c_char1 == 0) {\n+                    if (i == 0)\n+                        break;\n                     i--;\n                     c_char1 = ascii_text[i];\n                 }",
+    "summary": "commit 8f15ebed65ceea5c856fce055b5d83fb0c4b597b\nAuthor: Dario Lombardo <lomato@gmail.com>\nDate:   Fri Mar 1 11:18:53 2019 +0100\n\n    srvloc: check buffer index to prevent heap overflow.\n    \n    Bug: 15546\n    Change-Id: I35eee1f6e1127db74339ec7218d7681bd93de59c\n    Reviewed-on: https://code.wireshark.org/review/32285\n    Petri-Dish: Alexis La Goutte <alexis.lagoutte@gmail.com>\n    Tested-by: Petri Dish Buildbot\n    Reviewed-by: Anders Broman <a.broman58@gmail.com>\n"
+  }
+]

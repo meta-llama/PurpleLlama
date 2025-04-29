@@ -1,0 +1,23 @@
+[
+  {
+    "filename": "src/tests/fuzzing/fuzz_pkcs15_reader.c",
+    "patched_line_numbers": [
+      49,
+      50,
+      61,
+      67,
+      69,
+      70,
+      72,
+      73,
+      77,
+      78,
+      79,
+      82,
+      84,
+      85
+    ],
+    "patch": "-46,6 +46,8 @@ static struct sc_reader_driver fuzz_drv = {\n void fuzz_get_chunk(sc_reader_t *reader, const uint8_t **chunk, uint16_t *chunk_size)\n {\n     struct driver_data *data;\n+    uint16_t c_size;\n+    uint8_t *c;\n \n     if (chunk)\n         *chunk = NULL;\n@@ -57,22 +59,31 @@ void fuzz_get_chunk(sc_reader_t *reader, const uint8_t **chunk, uint16_t *chunk_\n         return;\n     }\n     data = reader->drv_data;\n-    if (!data || !data->Data || data->Size < sizeof *chunk_size) {\n+    if (!data || !data->Data || data->Size < sizeof c_size) {\n         sc_debug(reader->ctx, SC_LOG_DEBUG_VERBOSE_TOOL, \"Invalid Arguments\");\n         return;\n     }\n \n-    data->Size -= sizeof *chunk_size;\n-    *chunk_size = (uint16_t) *data->Data;\n-    data->Data += sizeof *chunk_size;\n-    *chunk = data->Data;\n+    /* parse the length of the returned data on two bytes */\n+    c_size = *((uint16_t *) data->Data);\n+    /* consume two bytes from the fuzzing data */\n+    data->Size -= sizeof c_size;\n+    data->Data += sizeof c_size;\n \n-    if (data->Size < *chunk_size) {\n-        *chunk_size = data->Size;\n+    if (data->Size < c_size) {\n+        c_size = data->Size;\n     }\n \n+    /* consume the bytes from the fuzzing data */\n+    c = data->Data;\n+    data->Size -= c_size;\n+    data->Data += c_size;\n+\n     sc_debug_hex(reader->ctx, SC_LOG_DEBUG_VERBOSE_TOOL,\n-        \"Returning fuzzing chunk\", *chunk, *chunk_size);\n+        \"Returning fuzzing chunk\", c, c_size);\n+\n+    *chunk = c;\n+    *chunk_size = c_size;\n }\n \n static int fuzz_reader_release(sc_reader_t *reader)",
+    "summary": "commit 3c87ffaa021ea53a84a2fe3977ecea945b4cc5b3\nAuthor: Frank Morgner <frankmorgner@gmail.com>\nDate:   Thu Oct 31 02:34:47 2019 +0100\n\n    fuzzing: correctly consume fuzzing data\n"
+  }
+]

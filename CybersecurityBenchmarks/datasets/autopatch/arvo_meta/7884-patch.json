@@ -1,0 +1,17 @@
+[
+  {
+    "filename": "src/librawspeed/decoders/ArwDecoder.cpp",
+    "patched_line_numbers": [
+      428,
+      430,
+      431,
+      433,
+      434,
+      438,
+      439,
+      441
+    ],
+    "patch": "-425,15 +425,21 @@ void ArwDecoder::GetWB() {\n \n     // \"Decrypt\" IFD\n     const auto& ifd_crypt = priv->getRootIfdData();\n-    auto ifd_size = ifd_crypt.getSize();\n-    auto ifd_decoded = Buffer::Create(ifd_size);\n+    const auto EncryptedBuffer = ifd_crypt.getSubView(off, len);\n+    // We do have to prepend 'off' padding, because TIFF uses absolute offsets.\n+    const auto DecryptedBufferSize = off + EncryptedBuffer.getSize();\n+    auto DecryptedBuffer = Buffer::Create(DecryptedBufferSize);\n \n-    SonyDecrypt(reinterpret_cast<const uint32*>(ifd_crypt.getData(off, len)),\n-                reinterpret_cast<uint32*>(ifd_decoded.get() + off), len / 4,\n+    SonyDecrypt(reinterpret_cast<const uint32*>(EncryptedBuffer.begin()),\n+                reinterpret_cast<uint32*>(DecryptedBuffer.get() + off), len / 4,\n                 key);\n \n     NORangesSet<Buffer> ifds_decoded;\n-    Buffer decIFD(move(ifd_decoded), ifd_size);\n+    Buffer decIFD(std::move(DecryptedBuffer), DecryptedBufferSize);\n+    const Buffer Padding(decIFD.getSubView(0, off));\n+    // The Decrypted Root Ifd can not point to preceding padding buffer.\n+    ifds_decoded.emplace(Padding);\n+\n     DataBuffer dbIDD(decIFD, priv->getRootIfdData().getByteOrder());\n     TiffRootIFD encryptedIFD(nullptr, &ifds_decoded, dbIDD, off);",
+    "summary": "commit ab959c2235ab69359cdc75372c5cdf7bcc324726\nAuthor: Roman Lebedev <lebedev.ri@gmail.com>\nDate:   Wed Jun 20 20:32:11 2018 +0300\n\n    ArwDecoder::GetWB(): slightly less broken handling of IFD decryption.\n    \n    1. We should only alloc off+len bytes for the new buffer,\n       not the entire size of original IFD buffer\n       Because we only decode [off, len).\n       Otherwise we'd end up with uninitialized garbage at the end.\n    2. We do not decode [0, off), thus that contains uninitialized garbage.\n       Thus we should not allow IFD to point into that.\n"
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/hunspell/affixmgr.cxx",
+    "patched_line_numbers": [
+      1356
+    ],
+    "patch": "-1353,7 +1353,7 @@ int AffixMgr::cpdpat_check(const char* word,\n int AffixMgr::cpdcase_check(const char* word, int pos) {\n   if (utf8) {\n     const char* p;\n-    for (p = word + pos - 1; (*p & 0xc0) == 0x80; p--)\n+    for (p = word + pos - 1; p > word && (*p & 0xc0) == 0x80; p--)\n       ;\n     std::string pair(p);\n     std::vector<w_char> pair_u;",
+    "summary": "commit 7357713ba5d529f3ff70c654b703429fc9cb55a4\nAuthor: Caol\u00e1n McNamara <caolanm@redhat.com>\nDate:   Mon Oct 3 21:02:13 2022 +0100\n\n    ofz#51988 avoid going past start of invalid utf-8 sequence\n"
+  }
+]

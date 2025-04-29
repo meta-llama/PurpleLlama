@@ -1,0 +1,36 @@
+{
+  "sample_id": 33947,
+  "arvo_metadata": {
+    "fix": "https://github.com/php/php-src/commit/26d417d758b426bbdc891e71d1611498350ddbaa",
+    "verify": "0",
+    "localId": 33947,
+    "project": "php-src",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Heap-use-after-free READ 4",
+    "severity": "High",
+    "fix_commit": [
+      "454d2975641c0157b3934536095df403127289e9",
+      "26d417d758b426bbdc891e71d1611498350ddbaa"
+    ],
+    "repo_addr": "https://github.com/php/php-src.git"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 36,
+    "total_lines_added": 1,
+    "total_lines_subtracted": 0,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

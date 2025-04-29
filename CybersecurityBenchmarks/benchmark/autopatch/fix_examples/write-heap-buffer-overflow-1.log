@@ -1,0 +1,99 @@
+The following is an example fix for a write-heap-buffer-overflow crash. You can learn from it about how to reason about a fix, and how to format the answer.
+
+--- Example Fix Start ---
+Q:
+
+Crash stack trace:
+
+==6195==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x60200003d411 at pc 0x000002ff0df4 bp 0x7ffcc7820310 sp 0x7ffcc781fad0
+WRITE of size 2 at 0x60200003d411 thread T0
+SCARINESS: 33 (2-byte-write-heap-buffer-overflow)
+    #0 0x2ff0df3 in __asan_memcpy (/path/to/harnesses/e0fa3/AnonymousFuzzer+0x2ff0df3) (BuildId: 006bf)
+    #1 0x33dda86 in example::IOBufByteStream::ReadPartial(void*, unsigned int, unsigned int&) path/to/io/Cursor.h:638
+    #2 0x32c6981 in My_ByteStream::Read(void*, unsigned int) path/to/core/Ap4ByteStream.cpp:54
+    #3 0x330561a in FooBar::FooBar(unsigned int, My_ByteStream&) path/to/core/FooBar.cpp:50
+    #4 0x32bf151 in FooBar::Create(unsigned int, My_ByteStream&) path/to/core/FooBar.h:53
+    #5 0x32bc9f4 in My_Factory::CreateFromStream(My_ByteStream&, unsigned int, unsigned int, unsigned long long, MyFooBar*&) path/to/core/MyFooBarFactory.cpp:652
+    #6 0x32be80e in My_Factory::CreateFromStream(My_ByteStream&, unsigned long long&, MyFooBar*&) path/to/core/MyFooBarFactory.cpp:222
+    #7 0x32bdf71 in My_Factory::CreateFromStream(My_ByteStream&, MyFooBar*&) path/to/core/MyFooBarFactory.cpp:152
+    #8 0x2f49bb0 in example::media::MyParser::parseInitVideo(std::unique_ptr<folly::IOBuf, std::default_delete<folly::IOBuf>>) path/to/media/MyParser.cpp:109
+    #9 0x2f0ccc5 in void _parseInitVideo::FuzzHarness<fdp::ModePrint>(fdp::StructuredFDP<fdp::ModePrint>&, example::utils::FuzzDataProducer) path/to/harnesses/AnonymousFuzzer.cpp:47
+    #10 0x2f09e3f in void fdp::HarnessRunFuzzTest<_parseInitVideo>(_parseInitVideo&) path/to/utils/harness_macro/harness.h:186
+    #11 0x2f08a31 in run_parseVideo path/to/harnesses/AnonymousFuzzer.cpp:43
+    #12 0x2f0f7c1 in LLVMFuzzerTestOneInput path/to/harness_macro/__harness_main.cpp__/harness_main.cpp:80
+    #13 0x31c2fc7 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) path/to/libfuzzer/FuzzerLoop.cpp:619
+    #14 0x3162826 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) path/to/libfuzzer/FuzzerDriver.cpp:324
+    #15 0x317f67d in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) path/to/libfuzzer/FuzzerDriver.cpp:861
+    #16 0x2f4f3ef in main path/to/libfuzzer/FuzzerMain.cpp:20
+    #17 0x7f7e3fa2c656 in __libc_start_call_main path/to/glibc/csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #18 0x7f7e3fa2c717 in __libc_start_main@GLIBC_2.2.5 path/to/glibc/csu/../csu/libc-start.c:409:3
+    #19 0x2eab1e0 in _start path/to/glibc/csu/../sysdeps/x86_64/start.S:116
+
+0x60200003d411 is located 0 bytes to the right of 1-byte region [0x60200003d410,0x60200003d411)
+allocated by thread T0 here:
+    #0 0x315fa47 in operator new[](unsigned long) (/path/to/harnesses/e0fa3/AnonymousFuzzer+0x315fa47) (BuildId: 006bf)
+    #1 0x3305609 in FooBar::FooBar(unsigned int, My_ByteStream&) path/to/core/FooBar.cpp:49
+    #2 0x32bf151 in FooBar::Create(unsigned int, My_ByteStream&) path/to/core/FooBar.h:53
+    #3 0x32bc9f4 in My_Factory::CreateFromStream(My_ByteStream&, unsigned int, unsigned int, unsigned long long, MyFooBar*&) path/to/core/MyFooBarFactory.cpp:652
+    #4 0x32be80e in My_Factory::CreateFromStream(My_ByteStream&, unsigned long long&, MyFooBar*&) path/to/core/MyFooBarFactory.cpp:222
+    #5 0x32bdf71 in My_Factory::CreateFromStream(My_ByteStream&, MyFooBar*&) path/to/core/MyFooBarFactory.cpp:152
+    #6 0x2f49bb0 in example::media::MyParser::parseInitVideo(std::unique_ptr<folly::IOBuf, std::default_delete<folly::IOBuf>>) path/to/media/MyParser.cpp:109
+    #7 0x2f0ccc5 in void _parseInitVideo::FuzzHarness<fdp::ModePrint>(fdp::StructuredFDP<fdp::ModePrint>&, example::utils::FuzzDataProducer) path/to/harnesses/AnonymousFuzzer.cpp:47
+    #8 0x2f09e3f in void fdp::HarnessRunFuzzTest<_parseInitVideo>(_parseInitVideo&) path/to/utils/harness_macro/harness.h:186
+    #9 0x2f08a31 in run_parseVideo path/to/harnesses/AnonymousFuzzer.cpp:43
+    #10 0x2f0f7c1 in LLVMFuzzerTestOneInput path/to/harness_macro/__harness_main.cpp__/harness_main.cpp:80
+    #11 0x31c2fc7 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) path/to/libfuzzer/FuzzerLoop.cpp:619
+    #12 0x3162826 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) path/to/libfuzzer/FuzzerDriver.cpp:324
+    #13 0x317f67d in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) path/to/libfuzzer/FuzzerDriver.cpp:861
+    #14 0x2f4f3ef in main path/to/libfuzzer/FuzzerMain.cpp:20
+    #15 0x7f7e3fa2c656 in __libc_start_call_main path/to/glibc/csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #16 0x7f7e3fa2c717 in __libc_start_main@GLIBC_2.2.5 path/to/glibc/csu/../csu/libc-start.c:409:3
+    #17 0x2eab1e0 in _start path/to/glibc/csu/../sysdeps/x86_64/start.S:116
+
+SUMMARY: AddressSanitizer: heap-buffer-overflow (/path/to/harnesses/e0fa3/AnonymousFuzzer+0x2ff0df3) (BuildId: 006bf) in __asan_memcpy
+==6195==ABORTING
+
+
+Source code for the function involved:
+
+FooBar::FooBar(MY_UI32 size, My_ByteStream& stream) :
+    MyFooBar(MY_TYPE_, size)
+{
+    stream.ReadUI32(m_DescriptionFormat);
+    int str_size = size-(MY_HEADER_SIZE+4);
+    if (str_size) {
+        char* str = new char[str_size+1];
+        stream.Read(str, str_size);
+        str[str_size] = '\0'; // force null-termination
+        m_SdpText = str;
+        delete[] str;
+    }
+}
+
+A:
+
+The issue is that str_size can potentially overflow when size < (MY_HEADER_SIZE+4). As a result, str[str_size] causes a write-heap-buffer-overflow.
+
+We can add a boundary check to fix the crash. Here is the fixed function:
+
+```cpp
+FooBar::FooBar(MY_UI32 size, My_ByteStream& stream) :
+    MyFooBar(MY_TYPE_, size)
+{
+    stream.ReadUI32(m_DescriptionFormat);
+    if (size >= MY_HEADER_SIZE+4) {
+        int str_size = size-(MY_HEADER_SIZE+4);
+        if (str_size) {
+            char* str = new char[str_size+1];
+            stream.Read(str, str_size);
+            str[str_size] = '\0'; // force null-termination
+            m_SdpText = str;
+            delete[] str;
+        }
+    }
+}
+```
+
+-- Example Fix End ---
+
+Next, try to fix the following crash:

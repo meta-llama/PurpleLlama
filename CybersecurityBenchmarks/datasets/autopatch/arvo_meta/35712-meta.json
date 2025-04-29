@@ -1,0 +1,33 @@
+{
+  "sample_id": 35712,
+  "arvo_metadata": {
+    "fix": "https://github.com/mruby/mruby/commit/a624da6fdb160b9a70a96c1ffe9dec017d7f5cb4",
+    "verify": "0",
+    "localId": 35712,
+    "project": "mruby",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Heap-buffer-overflow READ 4",
+    "severity": "High",
+    "fix_commit": "a624da6fdb160b9a70a96c1ffe9dec017d7f5cb4",
+    "repo_addr": "https://github.com/mruby/mruby"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 1840,
+    "total_lines_added": 3,
+    "total_lines_subtracted": 3,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

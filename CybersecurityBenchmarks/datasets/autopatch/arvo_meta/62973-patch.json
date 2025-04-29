@@ -1,0 +1,14 @@
+[
+  {
+    "filename": "src/bits.c",
+    "patched_line_numbers": [
+      3197,
+      3208,
+      3256,
+      3278,
+      3279,
+      3280
+    ],
+    "patch": "@@ -3194,7 +3194,7 @@ bit_TV_to_utf8 (const char *restrict src, const BITCODE_RS codepage)\n     const bool is_asian_cp\n         = dwg_codepage_isasian ((const Dwg_Codepage)codepage);\n     const size_t srclen = strlen (src);\n-    size_t destlen = 1 + (is_asian_cp ? srclen * 3 : trunc (srclen * 1.5));\n+    size_t destlen = 1 + (is_asian_cp ? srclen * 3 : trunc (srclen * 2));\n #ifdef HAVE_ICONV\n     const char *charset = dwg_codepage_iconvstr ((Dwg_Codepage)codepage);\n     const char utf8_cs[] = \"UTF-8//TRANSLIT//IGNORE\";\n@@ -3205,7 +3205,7 @@ bit_TV_to_utf8 (const char *restrict src, const BITCODE_RS codepage)\n     if (!charset || !srclen)\n       return (char *)src;\n     osrc = (char *)src;\n-    odest = dest = (char *)malloc (odestlen);\n+    odest = dest = (char *)calloc (odestlen, 1);\n     if (!odest || destlen > 0x2FFFE)\n       {\n         loglevel |= 1;\n@@ -3253,6 +3253,7 @@ bit_TV_to_utf8 (const char *restrict src, const BITCODE_RS codepage)\n                   {\n                     odest = dest = dest_new;\n                     odestlen = destlen;\n+                    dest_new[destlen - 1] = '\\0';\n                   }\n                 else\n                   {\n@@ -3274,10 +3275,11 @@ bit_TV_to_utf8 (const char *restrict src, const BITCODE_RS codepage)\n           }\n       }\n     // flush the remains\n-    iconv (cd, NULL, (size_t *)&srclen, (char **)&dest, (size_t *)&destlen);\n-    if (errno == 0 && dest >= odest && dest <= &odest[odestlen])\n+    iconv (cd, NULL, NULL, (char **)&dest, (size_t *)&destlen);\n+    if (errno == 0 && destlen <= 0x2FFFE && (uintptr_t)dest >= (uintptr_t)odest\n+        && (uintptr_t)dest <= (uintptr_t)odest + odestlen)\n       {\n-        *dest = '\\0';\n+        //*dest = '\\0';\n         iconv_close (cd);\n         return bit_u_expand (odest);\n       }"
+  }
+]

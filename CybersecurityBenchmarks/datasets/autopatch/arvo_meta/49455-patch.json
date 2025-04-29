@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/cmslut.c",
+    "patched_line_numbers": [
+      470
+    ],
+    "patch": "-467,7 +467,7 @@ cmsUInt32Number CubeSize(const cmsUInt32Number Dims[], cmsUInt32Number b)\n     for (rv = 1; b > 0; b--) {\n \n         dim = Dims[b-1];\n-        if (dim == 0) return 0;  // Error\n+        if (dim <= 1) return 0;  // Error\n \n         rv *= dim;",
+    "summary": "commit 67736fea34fdccab2ac19391d2955d6d6808fe81\nAuthor: Marti Maria <marti.maria@littlecms.com>\nDate:   Tue Jul 26 16:30:15 2022 +0200\n\n    Fix a check bound\n    \n    A division by zero was possible in the other way\n"
+  }
+]

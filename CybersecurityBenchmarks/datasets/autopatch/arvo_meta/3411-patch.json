@@ -1,0 +1,51 @@
+[
+  {
+    "filename": "src/librawspeed/parsers/CiffParser.cpp",
+    "patched_line_numbers": [
+      25,
+      52,
+      56
+    ],
+    "patch": "@@ -22,6 +22,7 @@\n \n #include \"parsers/CiffParser.h\"\n #include \"common/Common.h\"               // for make_unique, trimSpaces\n+#include \"common/NORangesSet.h\"          // for NORangesSet\n #include \"decoders/CrwDecoder.h\"         // for CrwDecoder\n #include \"decoders/RawDecoder.h\"         // for RawDecoder\n #include \"io/ByteStream.h\"               // for ByteStream\n@@ -48,8 +49,11 @@ void CiffParser::parseData() {\n   if (magic != 0x4949)\n     ThrowCPE(\"Not a CIFF file (ID)\");\n \n+  NORangesSet<Buffer> ifds;\n+\n+  // Offset to the beginning of the CIFF\n   ByteStream subStream(bs.getSubStream(bs.getByte()));\n-  mRootIFD = std::make_unique<CiffIFD>(nullptr, &subStream);\n+  mRootIFD = std::make_unique<CiffIFD>(nullptr, &ifds, &subStream);\n }\n \n std::unique_ptr<RawDecoder> CiffParser::getDecoder(const CameraMetaData* meta) {"
+  },
+  {
+    "filename": "src/librawspeed/tiff/CiffIFD.cpp",
+    "patched_line_numbers": [
+      25,
+      31,
+      44,
+      45,
+      46,
+      65,
+      78,
+      79,
+      80,
+      81,
+      82,
+      91,
+      92,
+      99,
+      100,
+      101,
+      102,
+      105
+    ],
+    "patch": "@@ -22,11 +22,13 @@\n \n #include \"tiff/CiffIFD.h\"\n #include \"common/Common.h\"               // for uint32, ushort16\n+#include \"common/NORangesSet.h\"          // for NORangesSet\n #include \"common/RawspeedException.h\"    // for RawspeedException\n #include \"io/ByteStream.h\"               // for ByteStream\n #include \"io/IOException.h\"              // for IOException\n #include \"parsers/CiffParserException.h\" // for ThrowCPE, CiffParserException\n #include \"tiff/CiffEntry.h\"              // for CiffEntry, CiffDataType::CI...\n+#include <cassert>                       // for assert\n #include <map>                           // for map, _Rb_tree_iterator\n #include <memory>                        // for unique_ptr\n #include <string>                        // for allocator, operator==, string\n@@ -39,7 +41,10 @@ using std::unique_ptr;\n \n namespace rawspeed {\n \n-void CiffIFD::parseIFDEntry(ByteStream* bs) {\n+void CiffIFD::parseIFDEntry(NORangesSet<Buffer>* ifds, ByteStream* bs) {\n+  assert(ifds);\n+  assert(bs);\n+\n   unique_ptr<CiffEntry> t;\n \n   auto origPos = bs->getPosition();\n@@ -57,7 +62,7 @@ void CiffIFD::parseIFDEntry(ByteStream* bs) {\n     switch (t->type) {\n     case CIFF_SUB1:\n     case CIFF_SUB2: {\n-      add(std::make_unique<CiffIFD>(this, &t->data));\n+      add(std::make_unique<CiffIFD>(this, ifds, &t->data));\n       break;\n     }\n \n@@ -70,20 +75,34 @@ void CiffIFD::parseIFDEntry(ByteStream* bs) {\n   }\n }\n \n-CiffIFD::CiffIFD(const CiffIFD* parent_, ByteStream* mFile) : parent(parent_) {\n+CiffIFD::CiffIFD(const CiffIFD* parent_, NORangesSet<Buffer>* ifds,\n+                 ByteStream* mFile)\n+    : parent(parent_) {\n+  assert(ifds);\n+  assert(mFile);\n+\n   checkOverflow();\n \n   if (mFile->getSize() < 4)\n     ThrowCPE(\"File is probably corrupted.\");\n \n+  // last 4 bytes is the offset to the beginning of the [first?] IFD\n   mFile->setPosition(mFile->getSize() - 4);\n-  uint32 valuedata_size = mFile->getU32();\n+  uint32 offset = mFile->getU32();\n+  mFile->setPosition(offset);\n \n-  mFile->setPosition(valuedata_size);\n+  // count of the Directory entries in this IFD\n   ushort16 dircount = mFile->getU16();\n \n+  // 2 bytes for entry count\n+  // each entry is 10 bytes\n+  const auto IFDFullSize = 2 + 10 * dircount;\n+  const Buffer IFDBuf(mFile->getSubView(offset, IFDFullSize));\n+  if (!ifds->emplace(IFDBuf).second)\n+    ThrowCPE(\"Two IFD's overlap. Raw corrupt!\");\n+\n   for (uint32 i = 0; i < dircount; i++)\n-    parseIFDEntry(mFile);\n+    parseIFDEntry(ifds, mFile);\n }\n \n void CiffIFD::checkOverflow() const {"
+  },
+  {
+    "filename": "src/librawspeed/tiff/CiffIFD.h",
+    "patched_line_numbers": [
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      48,
+      59
+    ],
+    "patch": "@@ -21,13 +21,14 @@\n \n #pragma once\n \n-#include \"common/Common.h\"  // for uint32\n-#include \"tiff/CiffEntry.h\" // IWYU pragma: keep\n-#include \"tiff/CiffTag.h\"   // for CiffTag\n-#include <map>              // for map\n-#include <memory>           // for unique_ptr\n-#include <string>           // for string\n-#include <vector>           // for vector\n+#include \"common/Common.h\"      // for uint32\n+#include \"common/NORangesSet.h\" // for NORangesSet\n+#include \"tiff/CiffEntry.h\"     // IWYU pragma: keep\n+#include \"tiff/CiffTag.h\"       // for CiffTag\n+#include <map>                  // for map\n+#include <memory>               // for unique_ptr\n+#include <string>               // for string\n+#include <vector>               // for vector\n \n namespace rawspeed {\n \n@@ -44,7 +45,7 @@ class CiffIFD final {\n   void add(std::unique_ptr<CiffIFD> subIFD);\n   void add(std::unique_ptr<CiffEntry> entry);\n \n-  void parseIFDEntry(ByteStream* bs);\n+  void parseIFDEntry(NORangesSet<Buffer>* ifds, ByteStream* bs);\n \n   template <typename Lambda>\n   std::vector<const CiffIFD*> __attribute__((pure))\n@@ -55,7 +56,7 @@ class CiffIFD final {\n   getEntryRecursiveIf(CiffTag tag, const Lambda& f) const;\n \n public:\n-  CiffIFD(const CiffIFD* parent, ByteStream* mFile);\n+  CiffIFD(const CiffIFD* parent, NORangesSet<Buffer>* ifds, ByteStream* mFile);\n \n   std::vector<const CiffIFD*> __attribute__((pure))\n   getIFDsWithTag(CiffTag tag) const;"
+  }
+]

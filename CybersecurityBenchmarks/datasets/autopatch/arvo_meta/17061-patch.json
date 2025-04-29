@@ -1,0 +1,11 @@
+[
+  {
+    "filename": "src/sksl/ir/SkSLFunctionDeclaration.h",
+    "patched_line_numbers": [
+      96,
+      97
+    ],
+    "patch": "-93,7 +93,9 @@ struct FunctionDeclaration : public Symbol {\n             }\n         }\n         if (fReturnType.kind() == Type::kGeneric_Kind) {\n-            SkASSERT(genericIndex != -1);\n+            if (genericIndex == -1) {\n+                return false;\n+            }\n             *outReturnType = fReturnType.coercibleTypes()[genericIndex];\n         } else {\n             *outReturnType = &fReturnType;",
+    "summary": "commit 73b8376b302ac3fd61ef4010f2bcc4fc2a48b5bc\nAuthor: Ethan Nicholas <ethannicholas@google.com>\nDate:   Mon Sep 9 09:25:45 2019 -0400\n\n    Fixed skslc assertion failure discovered by fuzzer\n    \n    This particular issue probably wouldn't ever occur in hand-written code, but\n    such is fuzzing...\n    \n    Bug: oss-fuzz:17061\n    Change-Id: Ia5da7b75afef8b49bb19ddb7f1ea8696053c2e54\n    Reviewed-on: https://skia-review.googlesource.com/c/skia/+/240197\n    Reviewed-by: Brian Osman <brianosman@google.com>\n    Commit-Queue: Ethan Nicholas <ethannicholas@google.com>\n"
+  }
+]

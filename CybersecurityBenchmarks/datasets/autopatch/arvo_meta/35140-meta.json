@@ -1,0 +1,33 @@
+{
+  "sample_id": 35140,
+  "arvo_metadata": {
+    "fix": "http://hg.nginx.org/njsa0f5719c8d9a7996cec753d1156091747da30ac4",
+    "verify": "0",
+    "localId": 35140,
+    "project": "njs",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "UNKNOWN READ",
+    "severity": "Medium",
+    "fix_commit": "a0f5719c8d9a7996cec753d1156091747da30ac4",
+    "repo_addr": "http://hg.nginx.org/njs"
+  },
+  "parsed_diff_data": {
+    "total_files": 2,
+    "total_hunks": 2,
+    "max_hunk_length": 10,
+    "total_lines_added": 5,
+    "total_lines_subtracted": 1,
+    "modified_files": 2,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

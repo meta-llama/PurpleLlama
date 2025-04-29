@@ -1,0 +1,29 @@
+[
+  {
+    "filename": "src/libopensc/card-coolkey.c",
+    "patched_line_numbers": [
+      1055,
+      1056,
+      1058,
+      1060,
+      1061,
+      1062,
+      1066,
+      1068,
+      1069,
+      1070,
+      1071,
+      1073,
+      1074,
+      1076,
+      1078,
+      1079,
+      1080,
+      1081,
+      1083,
+      1084
+    ],
+    "patch": "@@ -1052,30 +1052,36 @@ coolkey_get_life_cycle(sc_card_t *card, coolkey_life_cycle_t *life_cycle)\n {\n \tcoolkey_status_t status;\n \tu8 *receive_buf;\n-\tsize_t len;\n-\tint r;\n+\tsize_t receive_len;\n+\tint len;\n \n-\tlen = sizeof(*life_cycle);\n+\treceive_len = sizeof(*life_cycle);\n \treceive_buf = (u8 *)life_cycle;\n-\tr = coolkey_apdu_io(card, COOLKEY_CLASS, COOLKEY_INS_GET_LIFE_CYCLE, 0, 0,\n-\t\t\tNULL, 0, &receive_buf, &len, NULL, 0);\n-\tif (r == sizeof(*life_cycle)) {\n+\tlen = coolkey_apdu_io(card, COOLKEY_CLASS, COOLKEY_INS_GET_LIFE_CYCLE, 0, 0,\n+\t\t\tNULL, 0, &receive_buf, &receive_len, NULL, 0);\n+\tif (len == sizeof(*life_cycle)) {\n \t\treturn SC_SUCCESS;\n \t}\n \n-\tlen = 1;\n+\treceive_len = 1;\n \treceive_buf = &life_cycle->life_cycle;\n-\tr = coolkey_apdu_io(card, COOLKEY_CLASS, COOLKEY_INS_GET_LIFE_CYCLE, 0, 0,\n-\t\t\tNULL, 0, &receive_buf, &len, NULL, 0);\n-\tif (r < 0) {\n-\t\treturn r;\n+\tlen = coolkey_apdu_io(card, COOLKEY_CLASS, COOLKEY_INS_GET_LIFE_CYCLE, 0, 0,\n+\t\t\tNULL, 0, &receive_buf, &receive_len, NULL, 0);\n+\tif (len < 0) { /* Error from the trasmittion */\n+\t\treturn len;\n \t}\n-\tlen = sizeof(status);\n+\tif (len != 1) { /* The returned data is invalid */\n+\t\treturn SC_ERROR_INTERNAL;\n+\t}\n+\treceive_len = sizeof(status);\n \treceive_buf = (u8 *)&status;\n-\tr = coolkey_apdu_io(card, COOLKEY_CLASS, COOLKEY_INS_GET_STATUS, 0, 0,\n-\t\t\tNULL, 0, &receive_buf, &len, NULL, 0);\n-\tif (r < 0) {\n-\t\treturn r;\n+\tlen = coolkey_apdu_io(card, COOLKEY_CLASS, COOLKEY_INS_GET_STATUS, 0, 0,\n+\t\t\tNULL, 0, &receive_buf, &receive_len, NULL, 0);\n+\tif (len < 0) { /* Error from the trasmittion */\n+\t\treturn len;\n+\t}\n+\tif (len != sizeof(status)) { /* The returned data is invalid */\n+\t\treturn SC_ERROR_INTERNAL;\n \t}\n \tlife_cycle->protocol_version_major = status.protocol_version_major;\n \tlife_cycle->protocol_version_minor = status.protocol_version_minor;",
+    "summary": "commit ef3e2239173cd8ab9714171f122aed24eb93b577\nAuthor: Jakub Jelen <jjelen@redhat.com>\nDate:   Mon Nov 11 13:54:26 2019 +0100\n\n    coolkey: Do not interpret empty answers as success\n    \n    Thanks to oss-fuzz\n    \n    https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=18868\n"
+  }
+]

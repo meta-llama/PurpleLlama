@@ -1,0 +1,11 @@
+[
+  {
+    "filename": "valid.c",
+    "patched_line_numbers": [
+      2376,
+      2377
+    ],
+    "patch": "-2373,7 +2373,8 @@ xmlAddIDSafe(xmlDocPtr doc, const xmlChar *value, xmlAttrPtr attr,\n     }\n \n     attr->atype = XML_ATTRIBUTE_ID;\n-    attr->id = ret;\n+    if (!streaming)\n+        attr->id = ret;\n \n     if (id != NULL)\n         *id = ret;",
+    "summary": "commit 70da4c089c8a47301697a1fc07c638d1b8f47239\nAuthor: Nick Wellnhofer <wellnhofer@aevum.de>\nDate:   Sun Feb 4 13:30:32 2024 +0100\n\n    valid: Fix use-after-free in xmlAddIDSafe\n    \n    Short-lived regression.\n"
+  }
+]

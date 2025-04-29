@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "epan/tvbuff_zlib.c",
+    "patched_line_numbers": [
+      58
+    ],
+    "patch": "-55,7 +55,7 @@ tvb_uncompress(tvbuff_t *tvb, const int offset, int comprlen)\n \tguint      bytes_in       = tvb_captured_length_remaining(tvb, offset);\n #endif\n \n-\tif (tvb == NULL) {\n+\tif (tvb == NULL || comprlen <= 0) {\n \t\treturn NULL;\n \t}",
+    "summary": "commit 9ee790e99c72ddb5b599b8076b4ecf74611b184e\nAuthor: Peter Wu <peter@lekensteyn.nl>\nDate:   Tue May 15 16:08:04 2018 +0200\n\n    tvbuff_zlib: reject negative lengths to avoid buffer overrun\n    \n    Negative lengths and empty buffers are not uncompressable, reject them.\n    A buffer overrun (read) could occur otherwise due to unsigned \"avail_in\"\n    becoming insanely large.\n    \n    Bug: 14675\n    Change-Id: I20b686cc6ad6ef8a8d1975ed3d2f52c8eb1f1c76\n    Link: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=7166\n    Reviewed-on: https://code.wireshark.org/review/27561\n    Petri-Dish: Peter Wu <peter@lekensteyn.nl>\n    Tested-by: Petri Dish Buildbot\n    Reviewed-by: Anders Broman <a.broman58@gmail.com>\n"
+  }
+]

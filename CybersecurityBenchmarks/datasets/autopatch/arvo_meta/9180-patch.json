@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/librawspeed/decoders/ArwDecoder.cpp",
+    "patched_line_numbers": [
+      422
+    ],
+    "patch": "-418,7 +418,8 @@ void ArwDecoder::GetWB() {\n     uint32 off = sony_offset->getU32();\n \n     assert(sony_length != nullptr);\n-    uint32 len = sony_length->getU32();\n+    // The Decryption is done in blocks of 4 bytes.\n+    uint32 len = roundDown(sony_length->getU32(), 4);\n \n     assert(sony_key != nullptr);\n     uint32 key = getU32LE(sony_key->getData(4));",
+    "summary": "commit 77a1a1f0b7b7367b345afd484a22d5585ee410d6\nAuthor: Roman Lebedev <lebedev.ri@gmail.com>\nDate:   Wed Jul 4 16:25:30 2018 +0300\n\n    ArwDecoder::GetWB(): round encrypted area down to multiple of 4.\n    \n    And yet another issue that is detected by MSAN, but would be\n    so much more meaningful with\n    https://github.com/google/sanitizers/issues/883\n"
+  }
+]

@@ -8,10 +8,11 @@
 from __future__ import annotations
 
 import enum
+
 from typing import Dict
 
 
-class Language(str, enum.Enum):
+class Language(enum.Enum):
     C = "c"
     CPP = "cpp"
     CSHARP = "csharp"
