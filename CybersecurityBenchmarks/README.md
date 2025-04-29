@@ -1,6 +1,6 @@
 # Introduction
 
-This repository hosts the implementation of [CyberSecEval 4](https://meta-llama.github.io/CyberSecEval), which builds upon and extends the functionalities of its predecessors,
+This repository hosts the implementation of [CyberSecEval 4](https://meta-llama.github.io/PurpleLlama/CyberSecEval/), which builds upon and extends the functionalities of its predecessors,
 [CyberSecEval 3](https://ai.meta.com/research/publications/cyberseceval-3-advancing-the-evaluation-of-cybersecurity-risks-and-capabilities-in-large-language-models/),
 [CyberSecEval 2](https://ai.meta.com/research/publications/cyberseceval-2-a-wide-ranging-cybersecurity-evaluation-suite-for-large-language-models/)
 and
