@@ -18,7 +18,7 @@ import typer
 from huggingface_hub import HfFolder, login
 
 # Default model name for PromptGuard
-DEFAULT_MODEL_NAME = "meta-llama/Prompt-Guard-86M"
+DEFAULT_MODEL_NAME = "meta-llama/Llama-Prompt-Guard-2-86M"
 
 
 def set_key_in_environment(key_name: str, key_value: str) -> bool:

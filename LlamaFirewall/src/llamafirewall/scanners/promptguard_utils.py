@@ -39,7 +39,7 @@ class PromptGuard:
 
     def _load_model_and_tokenizer(
         self,
-        model_name: str = "meta-llama/Prompt-Guard-86M",
+        model_name: str = "meta-llama/Llama-Prompt-Guard-2-86M",
     ) -> tuple[Module, PreTrainedTokenizer]:
         # Set the local linux path for the model if not already set
         if not os.environ.get("HF_HOME"):

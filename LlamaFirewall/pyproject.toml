@@ -4,11 +4,12 @@ build-backend = "hatchling.build"
 
 [project]
 name = "llamafirewall"
-version = "1.0.0"
+version = "1.0.2"
 description = "LlamaFirewall is a framework designed to detect and mitigate AI centric security risks, supporting multiple layers of inputs and outputs, such as typical LLM chat and more advanced multi-step agentic operations. It consists of a set of scanners for different security risks."
 authors = [
     { name = "LlamaFirewall Team", email = "llamafirewall@meta.com" }
 ]
+readme = "README.md"
 
 dependencies = [
     "codeshield>=1.0.1",
@@ -20,6 +21,10 @@ dependencies = [
     "typer>=0.15.2",
     "numpy>=2.1.1",
 ]
+
+[project.urls]
+Homepage = "https://github.com/meta-llama/PurpleLlama/tree/main/LlamaFirewall"
+Issues = "https://github.com/meta-llama/PurpleLlama/issues"
 
 [project.scripts]
 llamafirewall = "llamafirewall.cli:main"
