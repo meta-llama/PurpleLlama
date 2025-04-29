@@ -22,3 +22,10 @@ background: #ce5915;
 border-radius: 50%;
 opacity: 0;
 }
+
+@media screen and (max-width: 996px) {
+  .neonHero {
+    margin-top: 0;
+    margin-left: 0;
+  }
+}

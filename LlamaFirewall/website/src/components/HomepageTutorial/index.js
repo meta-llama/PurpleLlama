@@ -51,12 +51,13 @@ export default function HomepageTutorial() {
     <div className={styles.horizontalContainer}>
       <div className={styles.textContainer}>
         <p>Learn to make use of LlamaFirewall in a variety of cases, like detecting and blocking malicious prompt injections. Ready to dive deeper? Explore our tutorials to leverage the power of the Framework</p>
-        <Link
+        <div>
+          <Link
             className="button button--secondary button--lg"
             to="/docs/tutorials/prompt-guard-scanner-tutorial">
             Take me there
           </Link>
-
+        </div>
       </div>
       <div ref={codeRef} className={styles.codeContainer}>
         <CodeBlock className={styles.codeSnippet}

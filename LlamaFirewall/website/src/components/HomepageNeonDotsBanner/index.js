@@ -20,13 +20,19 @@ export default function HomepageNeonDotsBanner() {
 
       const size = randomRange(4, 12);
       const fromLeft = Math.random() < 0.5;
-      const startX = fromLeft ? -window.innerWidth * 0.15  : window.innerWidth * 1.02;
+      const smallScreen = window.innerWidth <= 996;
+      let startX = 0;
+      if (smallScreen) {
+        startX = fromLeft ? - window.innerWidth *0.01 : window.innerWidth *1.01;
+      } else {
+        startX = fromLeft ? -window.innerWidth * 0.15  : window.innerWidth * 1.02;
+      }
       const startY = Math.random() * window.innerHeight;
-      const targetOffset = window.innerWidth * 0.55;
+      const targetOffset = window.innerWidth * (smallScreen? 0.4 : 0.55);
       const endX = fromLeft ? targetOffset + randomRange(-50, 50)
         : window.innerWidth - targetOffset + randomRange(-50, 50);
 
-      const duration = randomRange(3000, 8000);
+      const duration = randomRange(smallScreen? 1000 : 3000, smallScreen ? 4000 : 8000);
       const glowStrength = randomRange(10, 40);
 
       dot.style.width = `${size}px`;
@@ -56,7 +62,7 @@ export default function HomepageNeonDotsBanner() {
       const blockerBar = document.getElementById('hero-blocker');
 
       function checkCollision() {
-        if (!dot.isConnected) return;
+        if (!dot.isConnected || smallScreen) return;
 
         const dotRect = dot.getBoundingClientRect();
         const blockerRect = blockerBar?.getBoundingClientRect();

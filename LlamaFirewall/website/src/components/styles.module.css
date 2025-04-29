@@ -30,7 +30,6 @@
   margin-top: 10px;
   margin-bottom: 25px;
   opacity: 0;
-
 }
 
 .fadeIn {
@@ -97,7 +96,8 @@
 
 .codeSnippet code:first-of-type > span {
   opacity: 0;
-  margin-left: 4rem;
+  transform: translateX(4rem);
+  display: block;
 }
 
 .codeSnippet pre:first-of-type {
@@ -111,10 +111,56 @@
 @keyframes fadeInFromRight {
   0% {
     opacity: 0;
-    margin-left: 4rem;
+    transform: translateX(4rem);
   }
   100% {
     opacity: 1;
-    margin-left: 0;
+    transform: translateX(0);
+  }
+}
+
+@media screen and (max-width: 996px) {
+  .titleContainer {
+    padding: 0 1rem;
+  }
+
+  .title {
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .footer {
+    position: relative;
+    background-color: rgba(255, 255, 255, 0.2);
+    margin-top: -7px;
+  }
+
+  .footer p {
+    margin-bottom: 0;
+    margin-top: 0;
+    padding:  4px 0;
+    font-size: 0.6rem;
+  }
+
+  .horizontalContainer {
+    flex-direction: column;
+    max-width: 100%;
+  }
+
+  .textContainer {
+    display: flex;
+    flex-direction: column;
+    font-size: small;
+    text-align: center;
+    padding: 0 1.5rem 1.5rem 1.5rem;
+    margin: 0;
+    width: 100%;
+  }
+
+  .codeContainer {
+    font-size: x-small;
+    overflow: hidden;
+    padding: 0 2rem;
+    width: auto;
   }
 }

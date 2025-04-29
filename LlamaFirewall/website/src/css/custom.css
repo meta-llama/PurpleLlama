@@ -70,6 +70,22 @@ svg {
   z-index: 1 !important;
 }
 
+@media screen and (max-width: 966px) {
+  .hero {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .heroContainer {
+    flex-direction: column-reverse;
+    text-align: center;
+    margin-left: 0;
+    padding: 2rem 0rem;
+  }
+
+  .heroContainer .left {
+    margin-top: -2rem;
+  }
+}
 .heroContainer .right {
   align-content: center;
   flex: 1;
@@ -87,16 +103,37 @@ svg {
   display: inline-block;
 }
 
+@media screen and (max-width: 966px) {
+  .heroContainer .right img {
+    max-height: 300px;
+    margin-top: 0;
+  }
+}
+
+.hero__title {
+  font-family: Helvetica, sans-serif;
+  font-weight: 100;
+  font-size: 9rem;
+}
+.hero__subtitle {
+  font-family: Helvetica, sans-serif;
+  font-weight: 100;
+  font-size: 2.0rem;
+}
+
+@media screen and (max-width: 966px) {
   .hero__title {
-    font-family: Helvetica, sans-serif;
+    font-size: 3rem;
     font-weight: 100;
-    font-size: 9rem;
+    margin: 0;
   }
   .hero__subtitle {
-    font-family: Helvetica, sans-serif;
-    font-weight: 100;
-    font-size: 2.0rem;
+    font-size: 1.2rem;
+    font-weight: 400;
+    padding: 0 1rem 1rem;
+    margin: 0;
   }
+}
 
 /* Set the size of the main logo (which as of this writing is positioned
    above the title text. */
