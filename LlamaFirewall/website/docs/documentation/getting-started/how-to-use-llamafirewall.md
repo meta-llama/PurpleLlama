@@ -121,4 +121,4 @@ print(result)
 
 This example demonstrates how to use `scan_replay` to analyze a sequence of messages for potential security issues. The `Trace` object is simply a list of messages that represents a conversation history.
 
-For more complex interactions, you can go to the [examples](https://github.com/facebookresearch/LlamaFirewall/tree/main/LlamaFirewall/examples) directory of the repository.
+For more complex interactions, you can go to the [examples](https://github.com/meta-llama/PurpleLlama/tree/main/LlamaFirewall/examples) directory of the repository.

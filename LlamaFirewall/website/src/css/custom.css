@@ -76,16 +76,23 @@ svg {
   }
 
   .heroContainer {
+    display: flex;
     flex-direction: column-reverse;
+    align-items: center;
     text-align: center;
+    width: 100%;
     margin-left: 0;
-    padding: 2rem 0rem;
   }
 
   .heroContainer .left {
     margin-top: -2rem;
   }
+
+  .heroContainer .left a {
+    margin-bottom: 1.5rem;
+  }
 }
+
 .heroContainer .right {
   align-content: center;
   flex: 1;
@@ -105,8 +112,8 @@ svg {
 
 @media screen and (max-width: 966px) {
   .heroContainer .right img {
-    max-height: 300px;
-    margin-top: 0;
+    max-height: 250px;
+    margin-top: 0.5rem;
   }
 }
 

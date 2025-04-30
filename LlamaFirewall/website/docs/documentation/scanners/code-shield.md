@@ -3,6 +3,8 @@
 ## Overview
 CodeShield is an advanced online static-analysis engine designed to enhance the security of LLM-generated code. It supports both Semgrep and regex-based rules, providing syntax-aware pattern matching across eight programming languages. Initially released as part of the Llama 3 launch, CodeShield is now integrated into the LlamaFirewall framework, addressing the need for a syntax-aware, extensible static analysis pipeline that seamlessly integrates with LLM generation workflows. This tool is engineered to detect insecure coding patterns, offering coverage for over 50 Common Weakness Enumerations (CWEs), making it applicable across diverse software stacks.
 
+Visit its [repository](https://github.com/meta-llama/PurpleLlama/blob/main/CodeShield/) to access the README and related source code.
+
 ## Design of Codeshield
 CodeShield is built on a modular framework composed of rule-based analyzers tailored to assess code security across multiple programming languages., making it broadly applicable across diverse software stacks.
 

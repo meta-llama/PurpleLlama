@@ -3,6 +3,8 @@
 ## Overview
 PromptGuard 2 is a fine-tuned BERT-style model designed to detect direct jailbreak attempts in real-time, with high accuracy and low latency. It operates on user prompts and untrusted data sources, providing an additional layer of defense when paired with other scanners. This model targets universal jailbreak attempts that may manifest as prompt injections originating from user inputs or tool outputs.
 
+Visit its [repository](https://github.com/meta-llama/PurpleLlama/blob/main/Prompt-Guard/) to access the README and related source code.
+
 ## Design of PromptGuard 2
 PromptGuard 2 is built using BERT-based architectures, specifically the DeBERTa series of models from Microsoft. This design allows for a more accurate and efficient detection of jailbreak attempts. The model has been improved through a refined model scope, which focuses solely on detecting explicit jailbreaking techniques. This means that the model is trained to recognize specific patterns and phrases that are commonly used in jailbreak attempts.
 

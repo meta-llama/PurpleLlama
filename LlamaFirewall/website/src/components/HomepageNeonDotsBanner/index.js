@@ -23,7 +23,7 @@ export default function HomepageNeonDotsBanner() {
       const smallScreen = window.innerWidth <= 996;
       let startX = 0;
       if (smallScreen) {
-        startX = fromLeft ? - window.innerWidth *0.01 : window.innerWidth *1.01;
+        startX = fromLeft ? - window.innerWidth *0.02 : window.innerWidth *1.1;
       } else {
         startX = fromLeft ? -window.innerWidth * 0.15  : window.innerWidth * 1.02;
       }

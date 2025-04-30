@@ -9,7 +9,7 @@ At its core, LlamaFirewall operates as a policy engine that orchestrates multipl
 LlamaFirewall is composed of the following primary components:
 
 ### PromptGuard 2
-A fast, lightweight BERT-style classifier that detects direct prompt injection attempts. It operates on user inputs and untrusted content such as web data, providing high precision and low latency even in high-throughput environments.
+A fast, lightweight BERT-style classifier that detects direct prompt injection attempts. It operates on user inputs and untrusted content such as web data, providing high precision and low latency even in high-throughput environments. You can read more about it in the Scanners section or visiting its [README](https://github.com/meta-llama/PurpleLlama/blob/main/Prompt-Guard/README.md).
 
 - **Use case**: Catching classic jailbreak patterns, social engineering prompts, and known injection attacks.
 - **Strengths**: Fast, production-ready, easy to update with new patterns.
@@ -27,7 +27,7 @@ A configurable scanning layer for applying regular expressions or simple LLM pro
 - **Strengths**: Easy to customize, flexible, language-agnostic.
 
 ### CodeShield
-A static analysis engine that examines LLM-generated code for security issues in real time. Supports both Semgrep and regex-based rules across 8 programming languages.
+A static analysis engine that examines LLM-generated code for security issues in real time. Supports both Semgrep and regex-based rules across 8 programming languages. You can read more about it in the Scanners section or visiting its [README](https://github.com/meta-llama/PurpleLlama/blob/main/CodeShield/README.md).
 
 - **Use case**: Preventing insecure or dangerous code from being committed or executed.
 - **Strengths**: Syntax-aware, fast, customizable, extensible for different languages and org-specific rules.
