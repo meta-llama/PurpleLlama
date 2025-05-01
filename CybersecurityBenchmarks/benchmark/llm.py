@@ -18,6 +18,8 @@ from dataclasses import dataclass
 from typing import Callable, List, Optional, Union
 
 import openai
+from google import genai
+from google.genai import types
 from openai._types import NOT_GIVEN
 
 from typing_extensions import override
@@ -67,9 +69,10 @@ class LLM(ABC):
         self.max_tokens: int = config.max_tokens
         self.cot_end_tokens: list[str] | None = config.cot_end_tokens
         if self.model not in self.valid_models():
-            LOG.warning(
-                f"{self.model} is not in the valid model list for {type(self).__name__}. Valid models are: {', '.join(self.valid_models())}."
-            )
+            if not self.valid_ft_model_syntax(self.model):
+                LOG.warning(
+                    f"{self.model} is not in the valid model list for {type(self).__name__}. Valid models are: {', '.join(self.valid_models())}."
+                )
 
     @abstractmethod
     def query(
@@ -480,6 +483,10 @@ class LLM(ABC):
     def valid_models(self) -> list[str]:
         """List of valid model parameters, e.g. 'gpt-3.5-turbo' for GPT"""
         return []
+    
+    def valid_ft_model_syntax(self, model) -> bool:
+        """Check if model provided has a valid ft syntax, e.g. OpenAI starts ft models with 'ft:'"""
+        return False
 
 
 SPECIFICATION_FORMAT: str = "<PROVIDER>::<MODEL>(::<API KEY>)?"
@@ -518,6 +525,8 @@ def create(
         return OPENAI(config)
     if provider == "TOGETHER":
         return TOGETHER(config)
+    if provider == "GEMINI":
+        return GEMINI(config)
 
     raise ValueError(f"Unknown provider: {provider}")
 
@@ -691,8 +700,16 @@ class OPENAI(LLM):
             "gpt-3.5-turbo",
             "gpt-4",
             "gpt-4o",
-            "gpt-4-turbo",
+            "gpt-4o-mini", "gpt-4-turbo",
         ] + self._reasoning_models
+    
+    @override
+    def valid_ft_model_syntax(self, model) -> bool:
+        """List of valid ft model syntax, e.g. 'ft:<model>'"""
+        if model.startswith('ft:'):
+            return True
+        else:
+            return False
 
     @override
     def query_with_system_prompt_and_image(
@@ -1003,3 +1020,224 @@ class TOGETHER(LLM):
             "togethercomputer/llama-2-70b-chat",
             "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8",
         ]
+
+
+class GEMINI(LLM):
+    """Accessing GEMINI"""
+
+    def __init__(self, config: LLMConfig) -> None:
+        super().__init__(config)
+        self.client = genai.Client(api_key=self.api_key)
+
+    @override
+    def chat(
+        self,
+        prompt_with_history: List[str],
+        guided_decode_json_schema: Optional[str] = None,
+        temperature: float = DEFAULT_TEMPERATURE,
+        top_p: float = DEFAULT_TOP_P,
+    ) -> str:
+        messages = []
+        for i in range(len(prompt_with_history)):
+            if i % 2 == 0:
+                messages.append(f'USER: {prompt_with_history[i]}')
+            else:
+                messages.append(f'MODEL: {prompt_with_history[i]}')
+
+        level = logging.getLogger().level
+        logging.getLogger().setLevel(logging.WARNING)
+        chat = self.client.chats.create(model=self.model)
+
+        response = chat.send_message(
+            message='\n'.join(messages),
+            config=types.GenerateContentConfig(
+                max_output_tokens=DEFAULT_MAX_TOKENS,
+                temperature=temperature,
+                top_p=top_p,
+                response_mime_type='application/json'
+                    if guided_decode_json_schema is not None
+                    else None
+            )
+        )
+        logging.getLogger().setLevel(level)
+        return response.text
+    
+    @override
+    def chat_with_system_prompt(
+        self,
+        system_prompt: str,
+        prompt_with_history: List[str],
+        guided_decode_json_schema: Optional[str] = None,
+        temperature: float = DEFAULT_TEMPERATURE,
+        top_p: float = DEFAULT_TOP_P,
+    ) -> str:
+        messages = [f"SYSTEM: {system_prompt}"]
+        for i in range(len(prompt_with_history)):
+            if i % 2 == 0:
+                messages.append(f'USER: {prompt_with_history[i]}')
+            else:
+                messages.append(f'MODEL: {prompt_with_history[i]}')
+
+        level = logging.getLogger().level
+        logging.getLogger().setLevel(logging.WARNING)
+        chat = self.client.chats.create(model=self.model)
+
+        response = chat.send_message(
+            message='\n'.join(messages[1:]),
+            config=types.GenerateContentConfig(
+                max_output_tokens=DEFAULT_MAX_TOKENS,
+                system_instruction=messages[0],
+                temperature=temperature,
+                top_p=top_p,
+                response_mime_type='application/json'
+                    if guided_decode_json_schema is not None
+                    else None
+            )
+        )
+        logging.getLogger().setLevel(level)
+        return response.text
+
+    @override
+    def query(
+        self,
+        prompt: str,
+        guided_decode_json_schema: Optional[str] = None,
+        temperature: float = DEFAULT_TEMPERATURE,
+        top_p: float = DEFAULT_TOP_P,
+    ) -> str:
+        level = logging.getLogger().level
+        logging.getLogger().setLevel(logging.WARNING)
+        response = self.client.models.generate_content(
+            model=self.model,
+            contents=[
+                {"role": "user", "parts": [{"text": prompt}]},
+            ],
+            config=types.GenerateContentConfig(
+                max_output_tokens=DEFAULT_MAX_TOKENS,
+                temperature=temperature,
+                top_p=top_p,
+                response_mime_type='application/json'
+                    if guided_decode_json_schema is not None
+                    else None
+            )
+        )
+        logging.getLogger().setLevel(level)
+        return response.text
+
+    @override
+    def query_with_system_prompt(
+        self,
+        system_prompt: str,
+        prompt: str,
+        guided_decode_json_schema: Optional[str] = None,
+        temperature: float = DEFAULT_TEMPERATURE,
+        top_p: float = DEFAULT_TOP_P,
+    ) -> str:
+        level = logging.getLogger().level
+        logging.getLogger().setLevel(logging.WARNING)
+        response = self.client.models.generate_content(
+            model=self.model,
+            contents=[
+                {"role": "user", "parts": [{"text": prompt}]},
+            ],
+            config=types.GenerateContentConfig(
+                system_instruction=system_prompt,
+                max_output_tokens=DEFAULT_MAX_TOKENS,
+                temperature=temperature,
+                top_p=top_p,
+                response_mime_type='application/json'
+                    if guided_decode_json_schema is not None
+                    else None
+            )
+        )
+        logging.getLogger().setLevel(level)
+        return response.text
+
+    @override
+    def valid_models(self) -> list[str]:
+        return ["gemini-2.0-flash-lite", "gemini-2.0-flash", "gemini-2.5-pro-preview-03-25"]
+
+    @override
+    def query_with_system_prompt_and_image(
+        self,
+        system_prompt: str,
+        prompt: str,
+        image_path: str,
+        guided_decode_json_schema: Optional[str] = None,
+        temperature: float = DEFAULT_TEMPERATURE,
+        top_p: float = DEFAULT_TOP_P,
+    ) -> str:
+        image = image_to_b64(image_path)
+        response = self.client.models.generate_content(
+            model=self.model,
+            contents=[
+                types.Part.from_bytes(
+                    data=image,
+                    mime_type='image/png',
+                ),
+                prompt
+            ],
+            config=types.GenerateContentConfig(
+                system_instruction=system_prompt,
+                max_output_tokens=DEFAULT_MAX_TOKENS,
+                temperature=temperature,
+                top_p=top_p,
+                response_mime_type='application/json'
+                    if guided_decode_json_schema is not None
+                    else None
+            )
+        )
+        return response.text
+
+    @override
+    def query_multimodal(
+        self,
+        system_prompt: Optional[str] = None,
+        text_prompt: Optional[str] = None,
+        image_path: Optional[str] = None,
+        audio_path: Optional[str] = None,
+        max_tokens: int = DEFAULT_MAX_TOKENS,
+        temperature: float = DEFAULT_TEMPERATURE,
+        top_p: float = DEFAULT_TOP_P,
+    ) -> str:
+        messages = {"contents": []}
+        if system_prompt:
+            messages["systemInstruction"] = {"role": "system", "parts": [{"text": system_prompt}]}
+
+        user_message_content = []
+        if text_prompt:
+            user_message_content.append({"text": text_prompt})
+
+        if image_path:
+            image_data = image_to_b64(image_path)
+            user_message_content.append(
+                types.Part.from_bytes(
+                    data=image_data,
+                    mime_type='image/png',
+                )
+            )
+
+        if audio_path:
+            user_message_content.append(
+                types.Part.from_bytes(
+                    data=audio_to_b64(str(audio_path)),
+                    mime_type='audio/wav',
+                )
+            )
+
+        messages["contents"].append(
+            {
+                "role": "user",
+                "parts": user_message_content,
+            }
+        )
+
+        response = self.client.models.generate_content(
+            model=self.model, contents=messages, 
+            config=types.GenerateContentConfig(
+                max_output_tokens=max_tokens,
+                temperature=temperature,
+                top_p=top_p
+            )
+        )
+        return response.text
