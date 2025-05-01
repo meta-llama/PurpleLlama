@@ -75,6 +75,8 @@ which contains detailed instructions on how to execute our benchmarks.
 
 # Getting Started
 
+Note that python 3.10 is required.
+
 ## Set up Virtual Environment
 
 Set up your virtual environment and install dependencies:
