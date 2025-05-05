@@ -46,7 +46,7 @@ class InstructOrAutoCompleteBenchmark(Benchmark):
                 )
             )
 
-        self.response_path.write_text(json.dumps(response_result, indent=4))
+        self.write_json_object_to_path(self.response_path, response_result)
 
     async def run(
         self,
@@ -210,6 +210,6 @@ class InstructOrAutoCompleteBenchmark(Benchmark):
                 + f"Over all languages, the average BLEU score is: {bleu_scores_avg:.2f}\n"
             )
 
-        self.response_path.write_text(json.dumps(new_response_dataset, indent=4))
+        self.write_json_object_to_path(self.response_path, new_response_dataset)
         if (stat_path := self.stat_path) is not None:
-            stat_path.write_text(json.dumps(results, indent=4))
+            self.write_json_object_to_path(stat_path, results)
