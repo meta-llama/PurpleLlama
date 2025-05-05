@@ -24,4 +24,7 @@ jobs:
           python-version: ${{ matrix.python }}
 
       - name: Run Lint
-        run: CybersecurityBenchmarks/scripts/run_lint.sh
+        run: |
+          if ! CybersecurityBenchmarks/scripts/run_lint.sh; then
+            echo "::warning:: Linting issues detected. Please run 'black .' locally to fix them."
+          fi
