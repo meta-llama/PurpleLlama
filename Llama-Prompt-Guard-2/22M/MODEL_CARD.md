@@ -41,7 +41,7 @@ For more fine-grained control, Llama Prompt Guard 2 models can also be used with
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
-model_id = "meta-llama/Llama-Prompt-Guard-2-86M"
+model_id = "meta-llama/Llama-Prompt-Guard-2-22M"
 tokenizer = AutoTokenizer.from_pretrained(model_id)
 model = AutoModelForSequenceClassification.from_pretrained(model_id)
 
