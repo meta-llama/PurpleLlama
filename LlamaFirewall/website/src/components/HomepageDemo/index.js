@@ -42,7 +42,7 @@ export default function HomepageDemo() {
           Your browser does not support the video tag.
         </video>
         <div className={styles.footer}>
-            <p>Usage of en email-based agent application without any protection in place, and with LlamaFirewall enabled.</p>
+            <p>Usage of an email-based agent application without any protection in place, and with LlamaFirewall enabled.</p>
         </div>
       </div>
     </div>
