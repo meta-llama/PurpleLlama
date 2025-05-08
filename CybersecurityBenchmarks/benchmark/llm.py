@@ -625,11 +625,19 @@ class OPENAI(LLM):
         # Likely not work well in multi-threaded environment.
         level = logging.getLogger().level
         logging.getLogger().setLevel(logging.WARNING)
+        if guided_decode_json_schema is not None:
+            message_list = [
+                {
+                    "role": "system",
+                    "content": f"""You are a helpful assistant. Always format your response in json format following this schema: {guided_decode_json_schema} """,
+                }
+            ]
+        else:
+            message_list = []
+        message_list.append({"role": "user", "content": prompt})
         response = self.client.chat.completions.create(
             model=self.model,
-            messages=[
-                {"role": "user", "content": prompt},
-            ],
+            messages=message_list,
             max_tokens=DEFAULT_MAX_TOKENS
             if (self.model not in self._reasoning_models)
             else NOT_GIVEN,
