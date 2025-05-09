@@ -1,0 +1,4 @@
+ollama:
+  url: "http://localhost:11434/v1"
+  valid-models:
+  - gemma2:9b
