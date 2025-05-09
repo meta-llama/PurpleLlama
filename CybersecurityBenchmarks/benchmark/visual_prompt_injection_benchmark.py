@@ -95,7 +95,7 @@ class VisualPromptInjectionBenchmark(Benchmark):
                 )
             )
 
-        self.response_path.write_text(json.dumps(response_result, indent=4))
+        self.write_json_object_to_path(self.response_path, response_result)
 
     @override
     async def run(
@@ -115,9 +115,7 @@ class VisualPromptInjectionBenchmark(Benchmark):
             num_test_cases=num_test_cases,
         )
         if self.judge_response_path is not None:
-            self.judge_response_path.write_text(
-                json.dumps(judge_response_result, indent=4)
-            )
+            self.write_json_object_to_path(self.judge_response_path, judge_response_result)
             self._process_judge_results()
 
     def _process_prompt_for_test_case(
@@ -393,7 +391,7 @@ class VisualPromptInjectionBenchmark(Benchmark):
                 if category != "model"
             }
             output_data["stat_per_model"] = stats["model"]
-            stat_path.write_text(json.dumps(output_data, indent=4))
+            self.write_json_object_to_path(stat_path, output_data)
             # Change the structure of the output data so that it is grouped by model
             output_by_model = {
                 model: {} for model in output_data["stat_per_model"].keys()
@@ -401,4 +399,4 @@ class VisualPromptInjectionBenchmark(Benchmark):
             for category, model_stats in output_data.items():
                 for model, stats in model_stats.items():
                     output_by_model[model][category] = stats
-            stat_path.write_text(json.dumps(output_by_model, indent=4))
+            self.write_json_object_to_path(stat_path, output_by_model)
