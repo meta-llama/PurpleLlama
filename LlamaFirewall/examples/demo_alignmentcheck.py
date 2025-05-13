@@ -28,12 +28,21 @@ from llamafirewall import (
     UserMessage,
 )
 
-from .logging_setup import init_logger
+try:
+    # Try relative import first
+    from .logging_setup import init_logger
+except ImportError:
+    try:
+        # pyre-ignore[21]
+        from LlamaFirewall.examples.logging_setup import init_logger  # @manual
+    except ImportError:
+        # pyre-ignore[21]
+        from logging_setup import init_logger  # @manual
 
 # Constants
 ENV_API_KEY: str = "TOGETHER_API_KEY"
 
-logger: logging.Logger = init_logger()
+logger: logging.Logger = init_logger(__name__)
 
 
 def get_sample_traces() -> Dict[str, Trace]:

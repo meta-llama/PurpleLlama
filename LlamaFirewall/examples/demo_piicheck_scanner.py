@@ -12,7 +12,16 @@ import os
 from llamafirewall import UserMessage
 from llamafirewall.scanners.experimental.piicheck_scanner import PIICheckScanner
 
-from .logging_setup import init_logger
+try:
+    # Try relative import first
+    from .logging_setup import init_logger
+except ImportError:
+    try:
+        # pyre-ignore[21]
+        from LlamaFirewall.examples.logging_setup import init_logger  # @manual
+    except ImportError:
+        # pyre-ignore[21]
+        from logging_setup import init_logger  # @manual
 
 logger: logging.Logger = init_logger()
 
