@@ -28,12 +28,13 @@ from llamafirewall import (
     UserMessage,
 )
 
-from .logging_setup import init_logger
+# Import the logging_setup module with an absolute import
+from logging_setup import init_logger
 
 # Constants
 ENV_API_KEY: str = "TOGETHER_API_KEY"
 
-logger: logging.Logger = init_logger()
+logger: logging.Logger = init_logger(__name__)
 
 
 def get_sample_traces() -> Dict[str, Trace]:
