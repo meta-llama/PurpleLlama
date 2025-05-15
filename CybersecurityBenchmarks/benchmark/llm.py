@@ -338,7 +338,7 @@ class LLM(ABC):
         LOG.error(
             "[ERROR] Please override this method in a subclass to use this method."
         )
-        return "Function not implemented."
+        return "Query API not implemented yet."
 
     def query_with_system_prompt_and_image_with_retries(
         self,
@@ -1103,10 +1103,10 @@ class ANTHROPIC(LLM):
         json_response = response.json()
         content = json_response.get("content", [])
         if not content:
-            return "FAILED TO QUERY"  # Anthropic didn't return a response
+            return "FAILED TO QUERY: no content in response"  # Anthropic didn't return a response
         text_value = content[0].get("text", None)
         if not text_value:
-            return "FAILED TO QUERY"  # Anthropic didn't return a response
+            return "FAILED TO QUERY: no text in response"  # Anthropic didn't return a response
         return text_value
 
     @override
@@ -1154,10 +1154,10 @@ class ANTHROPIC(LLM):
         json_response = response.json()
         content = json_response.get("content", [])
         if not content:
-            return "FAILED TO QUERY"  # Anthropic didn't return a response
+            return "FAILED TO QUERY: no content in response"  # Anthropic didn't return a response
         text_value = content[0].get("text", None)
         if not text_value:
-            return "FAILED TO QUERY"  # Anthropic didn't return a response
+            return "FAILED TO QUERY: no text in response"  # Anthropic didn't return a response
         return text_value
 
     @override
@@ -1217,14 +1217,10 @@ class ANTHROPIC(LLM):
         json_response = response.json()
         content = json_response.get("content", [])
         if not content:
-            raise UnretriableQueryException(
-                f"Failed to obtain a response for {self.model}, content was null"
-            )
+            return "FAILED TO QUERY: no content in response"  # Anthropic didn't return a response
         text_value = content[0].get("text", None)
         if not text_value:
-            raise UnretriableQueryException(
-                f"Failed to obtain a response for {self.model}, content text was null"
-            )
+            return "FAILED TO QUERY: no text in response"  # Anthropic didn't return a response
         return text_value
 
     @override
@@ -1281,7 +1277,7 @@ class GOOGLEGENAI(LLM):
         json_response = response.json()
         response_str = json.dumps(json_response)
         if '[{"finishReason": "OTHER", "index": 0}]' in response_str:
-            return "FAILED TO QUERY"  # Gemini didn't return a response
+            return "FAILED TO QUERY: no response sent"  # GoogleGenAI didn't return a response
         text_value = (
             json_response.get("candidates", [])[0]
             .get("content", {})
@@ -1320,7 +1316,7 @@ class GOOGLEGENAI(LLM):
         json_response = response.json()
         response_str = json.dumps(json_response)
         if '[{"finishReason": "OTHER", "index": 0}]' in response_str:
-            return "FAILED TO QUERY"  # Gemini didn't return a response
+            return "FAILED TO QUERY: no response sent"  # GoogleGenAI didn't return a response
         text_value = (
             json_response.get("candidates", [])[0]
             .get("content", {})
@@ -1379,13 +1375,13 @@ class GOOGLEGENAI(LLM):
         json_response = response.json()
         candidates = json_response.get("candidates", [])
         if not candidates:
-            return "FAILED TO QUERY"  # Gemini didn't return a response
+            return "FAILED TO QUERY: no candidates in response"  # GoogleGenAI didn't return a response
         parts = candidates[0].get("content", {}).get("parts", [])
         if not parts:
-            return "FAILED TO QUERY"  # Gemini didn't return a response
+            return "FAILED TO QUERY: no content parts in candidate"  # GoogleGenAI didn't return a response
         text_value = parts[0].get("text", None)
         if not text_value:
-            return "FAILED TO QUERY"  # Gemini didn't return a response
+            return "FAILED TO QUERY: no text in content parts"  # GoogleGenAI didn't return a response
         return text_value
 
     def _upload_file(
