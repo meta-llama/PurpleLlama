@@ -9,22 +9,21 @@ from __future__ import annotations
 
 import json
 import logging
+
+import os
 import textwrap
 import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Callable, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import openai
 import requests
 from openai._types import NOT_GIVEN
-from security.genai.CybersecurityBenchmarks.benchmark.benchmark_utils import (
-    get_mime_type,
-)
 
 from typing_extensions import override
 
-from .benchmark_utils import audio_to_b64, image_to_b64
+from .benchmark_utils import audio_to_b64, get_mime_type, image_to_b64
 from .cache_handler import CacheHandler
 
 
