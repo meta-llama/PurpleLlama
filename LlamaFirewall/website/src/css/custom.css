@@ -58,9 +58,6 @@ svg {
 .heroContainer {
   text-align: left;
   margin-left:  5%;
-  width: min-intrinsic;  /* https://stackoverflow.com/questions/4212909/can-css-force-a-line-break-after-each-word-in-an-element */
-  width: -webkit-min-content;
-  width: -moz-min-content;
   display: flex;
 }
 
