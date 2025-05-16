@@ -9,7 +9,7 @@ CyberSecEval 4 is an extensive benchmark suite designed to assess the
 cybersecurity vulnerabilities and defensive capabilities of Large Language Models (LLMs). Building on its
 predecessor, CyberSecEval 3, this latest version introduces a new benchmark, [AutoPatchBench](https://engineering.fb.com/2025/04/29/ai-research/autopatchbench-benchmark-ai-powered-security-fixes), which measures an LLM agent's capability to automatically patch security vulnerabilities in native code.
 
-Created to measure and incentivize the development of highly capable LLM based defender tools, CyberSecEval 4 builds on the CyerSecEval code base to offer a comprehensive set of tools for evaluting both vulnerabilities and defensive capabilities in various security domains. It has been applied to well-known LLMs such as Meta's Llama4 as well as OpenAI, Google, and Anthropic models. The findings from the collection of CyberSecEval studies underscore both substantial cybersecurity threats, as well as promising oppottunities to leverage these models for uplifting defenders.
+Created to measure and incentivize the development of highly capable LLM based defender tools, CyberSecEval 4 builds on the CyberSecEval code base to offer a comprehensive set of tools for evaluting both vulnerabilities and defensive capabilities in various security domains. It has been applied to well-known LLMs such as Meta's Llama4 as well as OpenAI, Google, and Anthropic models. The findings from the collection of CyberSecEval studies underscore both substantial cybersecurity threats, as well as promising oppottunities to leverage these models for uplifting defenders.
 
 The repository includes several types of benchmarks:
 
@@ -74,6 +74,8 @@ Please take a look at our [wiki](https://meta-llama.github.io/PurpleLlama/)
 which contains detailed instructions on how to execute our benchmarks.
 
 # Getting Started
+
+Note that python 3.10 is required.
 
 ## Set up Virtual Environment
 

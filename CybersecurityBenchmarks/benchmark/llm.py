@@ -8,21 +8,22 @@
 from __future__ import annotations
 
 import json
-
 import logging
-import textwrap
 
+import os
+import textwrap
 import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Callable, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import openai
+import requests
 from openai._types import NOT_GIVEN
 
 from typing_extensions import override
 
-from .benchmark_utils import audio_to_b64, image_to_b64
+from .benchmark_utils import audio_to_b64, get_mime_type, image_to_b64
 from .cache_handler import CacheHandler
 from .config import CONFIG
 
@@ -338,7 +339,7 @@ class LLM(ABC):
         LOG.error(
             "[ERROR] Please override this method in a subclass to use this method."
         )
-        return "Function not implemented."
+        return "Query API not implemented yet."
 
     def query_with_system_prompt_and_image_with_retries(
         self,
@@ -519,6 +520,10 @@ def create(
         return OPENAI(config)
     if provider == "TOGETHER":
         return TOGETHER(config)
+    if provider == "ANTHROPIC":
+        return ANTHROPIC(config)
+    if provider == "GOOGLEGENAI":
+        return GOOGLEGENAI(config)
     if provider == 'OLLAMA':
         return OLLAMA(config)
 
@@ -628,11 +633,19 @@ class OPENAI(LLM):
         # Likely not work well in multi-threaded environment.
         level = logging.getLogger().level
         logging.getLogger().setLevel(logging.WARNING)
+        if guided_decode_json_schema is not None:
+            message_list = [
+                {
+                    "role": "system",
+                    "content": f"""You are a helpful assistant. Always format your response in json format following this schema: {guided_decode_json_schema} """,
+                }
+            ]
+        else:
+            message_list = []
+        message_list.append({"role": "user", "content": prompt})
         response = self.client.chat.completions.create(
             model=self.model,
-            messages=[
-                {"role": "user", "content": prompt},
-            ],
+            messages=message_list,
             max_tokens=DEFAULT_MAX_TOKENS
             if (self.model not in self._reasoning_models)
             else NOT_GIVEN,
@@ -1005,6 +1018,555 @@ class TOGETHER(LLM):
             "togethercomputer/llama-2-70b",
             "togethercomputer/llama-2-70b-chat",
             "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8",
+        ]
+
+
+class ANTHROPIC(LLM):
+    """Accessing Anthropic models"""
+
+    BASE_API_URL: str = "https://api.anthropic.com/v1"
+
+    @override
+    def query(
+        self,
+        prompt: str,
+        guided_decode_json_schema: Optional[str] = None,
+        temperature: float = DEFAULT_TEMPERATURE,
+        top_p: float = DEFAULT_TOP_P,
+    ) -> str:
+        url = f"{self.BASE_API_URL}/messages"
+        # Define the headers
+        headers = {
+            "x-api-key": f"{self.api_key}",
+            "anthropic-version": "2023-06-01",
+            "content-type": "application/json",
+        }
+
+        # Define the data payload
+        data = {
+            "model": self.model,
+            "max_tokens": 2048,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": prompt,
+                }
+            ],
+        }
+
+        response = requests.post(url, headers=headers, json=data)
+        json_response = response.json()
+        content = json_response.get("content", [])
+        if not content:
+            logging.info(
+                f"Failed to extract content from Anthropic API response.  Response: {response}"
+            )
+            return "FAIL TO QUERY: no content in response"  # Anthropic didn't return a response
+        text_value = content[0].get("text", None)
+        if not text_value:
+            logging.info(
+                f"Failed to extract text from Anthropic API response content.  Content: {content}"
+            )
+            return "FAIL TO QUERY: no text in response"  # Anthropic didn't return a response
+        return text_value
+
+    @override
+    def query_with_system_prompt(
+        self,
+        system_prompt: str,
+        prompt: str,
+        guided_decode_json_schema: Optional[str] = None,
+        temperature: float = DEFAULT_TEMPERATURE,
+        top_p: float = DEFAULT_TOP_P,
+    ) -> str:
+        if guided_decode_json_schema is not None:
+            raise NotImplementedError(
+                "guided_decode_json_schema not implemented for ANTHROPIC."
+            )
+        url = f"{self.BASE_API_URL}/messages"
+        headers = {
+            "x-api-key": f"{self.api_key}",
+            "anthropic-version": "2023-06-01",
+            "content-type": "application/json",
+        }
+        data = {
+            "model": self.model,
+            "max_tokens": 2048,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": prompt},
+                    ],
+                }
+            ],
+            "system": system_prompt,
+        }
+        response = requests.post(url, headers=headers, json=data)
+        json_response = response.json()
+        content = json_response.get("content", [])
+        if not content:
+            return "FAILED TO QUERY: no content in response"  # Anthropic didn't return a response
+        text_value = content[0].get("text", None)
+        if not text_value:
+            return "FAILED TO QUERY: no text in response"  # Anthropic didn't return a response
+        return text_value
+
+    @override
+    def query_with_system_prompt_and_image(
+        self,
+        system_prompt: str,
+        prompt: str,
+        image_path: str,
+        guided_decode_json_schema: Optional[str] = None,
+        temperature: float = DEFAULT_TEMPERATURE,
+        top_p: float = DEFAULT_TOP_P,
+    ) -> str:
+        if guided_decode_json_schema is not None:
+            raise NotImplementedError(
+                "guided_decode_json_schema not implemented for ANTHROPIC."
+            )
+        url = f"{self.BASE_API_URL}/messages"
+        headers = {
+            "x-api-key": f"{self.api_key}",
+            "anthropic-version": "2023-06-01",
+            "content-type": "application/json",
+        }
+        data = {
+            "model": self.model,
+            "max_tokens": 2048,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": prompt},
+                        {
+                            "type": "image",
+                            "source": {
+                                "type": "base64",
+                                "media_type": "image/png",
+                                "data": image_to_b64(image_path),
+                            },
+                        },
+                    ],
+                }
+            ],
+            "system": system_prompt,
+        }
+        response = requests.post(url, headers=headers, json=data)
+        json_response = response.json()
+        content = json_response.get("content", [])
+        if not content:
+            return "FAILED TO QUERY: no content in response"  # Anthropic didn't return a response
+        text_value = content[0].get("text", None)
+        if not text_value:
+            return "FAILED TO QUERY: no text in response"  # Anthropic didn't return a response
+        return text_value
+
+    @override
+    def query_multimodal(
+        self,
+        system_prompt: Optional[str] = None,
+        text_prompt: Optional[str] = None,
+        image_paths: Optional[List[str]] = None,
+        audio_paths: Optional[List[str]] = None,
+        max_tokens: int = DEFAULT_MAX_TOKENS,
+        temperature: float = DEFAULT_TEMPERATURE,
+        top_p: float = DEFAULT_TOP_P,
+    ) -> str:
+        # Anthropic doesn't support audio inputs yet
+        if audio_paths:
+            raise ValueError("Anthropic does not support audio inputs yet")
+
+        url = f"{self.BASE_API_URL}/messages"
+        headers = {
+            "x-api-key": f"{self.api_key}",
+            "anthropic-version": "2023-06-01",
+            "content-type": "application/json",
+        }
+
+        content = []
+        if text_prompt:
+            content.append({"type": "text", "text": text_prompt})
+
+        if image_paths:
+            for image_path in image_paths:
+                content.append(
+                    {
+                        "type": "image",
+                        "source": {
+                            "type": "base64",
+                            "media_type": "image/png",
+                            "data": image_to_b64(image_path),
+                        },
+                    }
+                )
+
+        data = {
+            "model": self.model,
+            "max_tokens": max_tokens,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": content,
+                }
+            ],
+        }
+
+        if system_prompt:
+            data["system"] = system_prompt
+
+        response = requests.post(url, headers=headers, json=data)
+        json_response = response.json()
+        content = json_response.get("content", [])
+        if not content:
+            return "FAILED TO QUERY: no content in response"  # Anthropic didn't return a response
+        text_value = content[0].get("text", None)
+        if not text_value:
+            return "FAILED TO QUERY: no text in response"  # Anthropic didn't return a response
+        return text_value
+
+    @override
+    def chat(
+        self,
+        prompt_with_history: List[str],
+        guided_decode_json_schema: Optional[str] = None,
+        temperature: float = DEFAULT_TEMPERATURE,
+        top_p: float = DEFAULT_TOP_P,
+    ) -> str:
+        raise NotImplementedError("Chat API not implemented yet.")
+
+    @override
+    def chat_with_system_prompt(
+        self,
+        system_prompt: str,
+        prompt_with_history: List[str],
+        guided_decode_json_schema: Optional[str] = None,
+        temperature: float = DEFAULT_TEMPERATURE,
+        top_p: float = DEFAULT_TOP_P,
+    ) -> str:
+        raise NotImplementedError("System prompt not implemented yet.")
+
+    @override
+    def valid_models(self) -> list[str]:
+        return [
+            "claude-3-7-sonnet-20250219",
+            "claude-3-5-sonnet-20240620",
+            "claude-3-5-haiku-20241022",
+            "claude-3-opus-20240229",
+            "claude-3-sonnet-20240229",
+            "claude-3-haiku-20240307",
+            "claude-2.1",
+        ]
+
+
+class GOOGLEGENAI(LLM):
+    """Accessing Google Generative AI"""
+
+    BASE_API_URL: str = "https://generativelanguage.googleapis.com"
+
+    @override
+    def query(
+        self,
+        prompt: str,
+        guided_decode_json_schema: Optional[str] = None,
+        temperature: float = DEFAULT_TEMPERATURE,
+        top_p: float = DEFAULT_TOP_P,
+    ) -> str:
+        url = f"{self.BASE_API_URL}/v1beta/models/{self.model}:generateContent?key={self.api_key}"
+        headers = {"Content-Type": "application/json"}
+        data = {"contents": [{"parts": [{"text": prompt}], "role": "user"}]}
+        response = requests.post(url, headers=headers, data=json.dumps(data))
+        json_response = response.json()
+        response_str = json.dumps(json_response)
+        if '[{"finishReason": "OTHER", "index": 0}]' in response_str:
+            return "FAILED TO QUERY: no response sent"  # GoogleGenAI didn't return a response
+        text_value = (
+            json_response.get("candidates", [])[0]
+            .get("content", {})
+            .get("parts", [])[0]
+            .get("text", None)
+        )
+        return text_value
+
+    @override
+    def query_with_system_prompt(
+        self,
+        system_prompt: str,
+        prompt: str,
+        guided_decode_json_schema: Optional[str] = None,
+        temperature: float = DEFAULT_TEMPERATURE,
+        top_p: float = DEFAULT_TOP_P,
+    ) -> str:
+        if guided_decode_json_schema is not None:
+            raise NotImplementedError(
+                "guided_decode_json_schema not implemented for GOOGLEGENAI."
+            )
+
+        url = f"{self.BASE_API_URL}/v1beta/models/{self.model}:generateContent?key={self.api_key}"
+        headers = {"Content-Type": "application/json"}
+        data = {
+            "contents": [{"parts": [{"text": prompt}], "role": "user"}],
+            "systemInstruction": {
+                "parts": [{"text": system_prompt}],
+                "role": "model",
+            },
+            "generationConfig": {
+                "maxOutputTokens": 2048,
+            },
+        }
+        response = requests.post(url, headers=headers, data=json.dumps(data))
+        json_response = response.json()
+        response_str = json.dumps(json_response)
+        if '[{"finishReason": "OTHER", "index": 0}]' in response_str:
+            return "FAILED TO QUERY: no response sent"  # GoogleGenAI didn't return a response
+        text_value = (
+            json_response.get("candidates", [])[0]
+            .get("content", {})
+            .get("parts", [])[0]
+            .get("text", None)
+        )
+        return text_value
+
+    @override
+    def query_with_system_prompt_and_image(
+        self,
+        system_prompt: str,
+        prompt: str,
+        image_path: str,
+        guided_decode_json_schema: Optional[str] = None,
+        temperature: float = DEFAULT_TEMPERATURE,
+        top_p: float = DEFAULT_TOP_P,
+    ) -> str:
+        if guided_decode_json_schema is not None:
+            raise NotImplementedError(
+                "guided_decode_json_schema not implemented for GOOGLEGENAI."
+            )
+
+        url = f"{self.BASE_API_URL}/v1beta/models/{self.model}:generateContent?key={self.api_key}"
+        headers = {"Content-Type": "application/json"}
+        data = {
+            "contents": [
+                {
+                    "parts": [
+                        {
+                            "text": prompt,
+                        },
+                        {
+                            "inlineData": {
+                                "mimeType": "image/png",
+                                "data": image_to_b64(image_path),
+                            },
+                        },
+                    ],
+                    "role": "user",
+                }
+            ],
+            "systemInstruction": {
+                "parts": [
+                    {
+                        "text": system_prompt,
+                    }
+                ],
+                "role": "model",
+            },
+            "generationConfig": {
+                "maxOutputTokens": 2048,
+            },
+        }
+        response = requests.post(url, headers=headers, data=json.dumps(data))
+        json_response = response.json()
+        candidates = json_response.get("candidates", [])
+        if not candidates:
+            return "FAILED TO QUERY: no candidates in response"  # GoogleGenAI didn't return a response
+        parts = candidates[0].get("content", {}).get("parts", [])
+        if not parts:
+            return "FAILED TO QUERY: no content parts in candidate"  # GoogleGenAI didn't return a response
+        text_value = parts[0].get("text", None)
+        if not text_value:
+            return "FAILED TO QUERY: no text in content parts"  # GoogleGenAI didn't return a response
+        return text_value
+
+    def _upload_file(
+        self,
+        file_path: str,
+    ) -> str:
+        mime_type = get_mime_type(file_path)
+        num_bytes = os.path.getsize(file_path)
+        display_name = "MEDIA_FILE"
+        # Initial resumable request defining metadata
+        headers = {
+            "X-Goog-Upload-Protocol": "resumable",
+            "X-Goog-Upload-Command": "start",
+            "X-Goog-Upload-Header-Content-Length": str(num_bytes),
+            "X-Goog-Upload-Header-Content-Type": mime_type,
+            "Content-Type": "application/json",
+        }
+        data = json.dumps({"file": {"display_name": display_name}})
+
+        response = requests.post(
+            f"{self.BASE_API_URL}/upload/v1beta/files?key={self.api_key}",
+            headers=headers,
+            data=data,
+        )
+        response.raise_for_status()
+
+        upload_url = response.headers.get("X-Goog-Upload-URL")
+        if not upload_url:
+            raise Exception(f"Failed to upload file ({file_path})")
+
+        # Upload the actual bytes
+        with open(file_path, "rb") as f:
+            file_data = f.read()
+        headers = {
+            "Content-Length": str(num_bytes),
+            "X-Goog-Upload-Offset": "0",
+            "X-Goog-Upload-Command": "upload, finalize",
+        }
+        response = requests.post(upload_url, headers=headers, data=file_data)
+        file_info = response.json()
+        file_uri = file_info.get("file", {}).get("uri")
+
+        if not file_uri:
+            raise Exception("Failed to upload file.")
+
+        return file_uri
+
+    @override
+    def query_multimodal(
+        self,
+        system_prompt: Optional[str] = None,
+        text_prompt: Optional[str] = None,
+        image_paths: Optional[List[str]] = None,
+        audio_paths: Optional[List[str]] = None,
+        max_tokens: int = DEFAULT_MAX_TOKENS,
+        temperature: float = DEFAULT_TEMPERATURE,
+        top_p: float = DEFAULT_TOP_P,
+    ) -> str:
+        url = f"{self.BASE_API_URL}/v1beta/models/{self.model}:generateContent?key={self.api_key}"
+
+        headers = {"Content-Type": "application/json"}
+
+        content_parts = []
+        if text_prompt:
+            content_parts.append({"text": text_prompt})
+
+        file_uris = []
+        if image_paths:
+            for image_path in image_paths:
+                file_uri = self._upload_file(image_path)
+                file_uris.append(file_uri)
+                image_mimetype = get_mime_type(image_path)
+
+                content_parts.append(
+                    {"file_data": {"mime_type": image_mimetype, "file_uri": file_uri}}
+                )
+
+        if audio_paths:
+            for audio_path in audio_paths:
+                file_uri = self._upload_file(audio_path)
+                file_uris.append(file_uri)
+                audio_mimetype = get_mime_type(audio_path)
+                content_parts.append(
+                    {"file_data": {"mime_type": audio_mimetype, "file_uri": file_uri}}
+                )
+
+        data: Dict[str, Any] = {
+            "contents": [{"parts": content_parts, "role": "user"}],
+            "generationConfig": {
+                "maxOutputTokens": max_tokens,
+            },
+        }
+
+        if system_prompt:
+            data["systemInstruction"] = {
+                "parts": [{"text": system_prompt}],
+                "role": "model",
+            }
+
+        response = requests.post(url, headers=headers, data=json.dumps(data))
+
+        # Delete files after query
+        for file_uri in file_uris:
+            delete_url = f"{file_uri}?key={self.api_key}"
+            delete_response = requests.delete(delete_url)
+            if not delete_response.ok:
+                print(f"[WARNING] Failed to delete file: {delete_response.text}")
+
+        if not response.ok:
+            raise Exception(
+                f"Got non-200 status code when querying model: {response.status_code}"
+            )
+
+        json_response = response.json()
+
+        candidates = json_response.get("candidates", [])
+        if not candidates:
+            raise UnretriableQueryException(
+                f"Failed to query model, got no candidates: {json_response}"
+            )
+        content = candidates[0].get("content", {})
+        if not content:
+            raise UnretriableQueryException(
+                f"Failed to query model, got no content from first candidate: {candidates[0]}"
+            )
+
+        finish_reason = candidates[0].get("finishReason")
+        if finish_reason != "STOP":
+            raise UnretriableQueryException(
+                f"Failed to query model, likely due to safety violation. Got unexpected finish reason: {finish_reason}"
+            )
+
+        parts = content.get("parts", [])
+        if not parts:
+            raise UnretriableQueryException(
+                f"Failed to query model, got no content parts in first candidate content: {content}"
+            )
+        text_value = parts[0].get("text", None)
+        if not text_value:
+            raise UnretriableQueryException(
+                f"Failed to query model, candidate content parts did not return text value: {parts[0]}"
+            )
+
+        return text_value
+
+    @override
+    def chat(
+        self,
+        prompt_with_history: List[str],
+        guided_decode_json_schema: Optional[str] = None,
+        temperature: float = DEFAULT_TEMPERATURE,
+        top_p: float = DEFAULT_TOP_P,
+    ) -> str:
+        raise NotImplementedError("Chat API not implemented yet.")
+
+    @override
+    def chat_with_system_prompt(
+        self,
+        system_prompt: str,
+        prompt_with_history: List[str],
+        guided_decode_json_schema: Optional[str] = None,
+        temperature: float = DEFAULT_TEMPERATURE,
+        top_p: float = DEFAULT_TOP_P,
+    ) -> str:
+        return super().chat_with_system_prompt(
+            system_prompt,
+            prompt_with_history,
+            guided_decode_json_schema,
+            temperature,
+            top_p,
+        )
+
+    @override
+    def valid_models(self) -> list[str]:
+        return [
+            "gemini-2.5-flash-preview-04-17",
+            "gemini-2.5-pro-preview-05-06",
+            "gemini-2.0-flash",
+            "gemini-2.0-flash-lite",
+            "gemini-1.5-pro",
+            "gemini-1.5-flash",
+            "gemini-1.5-flash-8b",
         ]
 
 
