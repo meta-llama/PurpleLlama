@@ -32,7 +32,7 @@ RUN mkdir -p /tmp/corpus/ && \
     cp /tmp/poc /tmp/corpus/ && \
     chmod 755 /tmp/poc /tmp/corpus && \
     sed -i '0,/\/tmp\/poc/s//\/tmp\/corpus\//' /bin/arvo && \
-    sed -i 's|export FUZZER_ARGS="-rss_limit_mb=2560 -timeout=25"|export FUZZER_ARGS="-rss_limit_mb=2560 -timeout=25 -max_total_time=60"|' /bin/arvo && \
+    sed -i 's|export FUZZER_ARGS="-rss_limit_mb=2560 -timeout=25"|export FUZZER_ARGS="-rss_limit_mb=2560 -timeout=25 -max_total_time=600"|' /bin/arvo && \
     sed -i 's|/tmp/corpus/|& $FUZZER_ARGS|' /bin/arvo && \
     sed -i '/\/tmp\/corpus\/ $FUZZER_ARGS/a elif [ "$first_param" = "fuzz_fix" ]; then' /bin/arvo && \
     sed -i '/fuzz_fix" ]; then/a    /tmp/rebuilt_binary /tmp/corpus/ $FUZZER_ARGS' /bin/arvo
@@ -45,6 +45,9 @@ RUN arvo
 
 # QA: Assert that `arvo compile` exits with code 0
 RUN arvo compile
+
+# QA: assert that "arvo run" (10 mins of fuzzing on GT patch) exits with code 0
+RUN arvo run
 
 # QA: Assert that 2nd issuing of`arvo compile` exits with code 0
 RUN arvo compile
