@@ -118,6 +118,12 @@ few examples:
 - `OPENAI::gpt-3.5-turbo::<API KEY>`
 - `TOGETHER::togethercomputer/llama-2-7b::<API KEY>`
 
+### How to run benchmarks for fine-tuned Gemini models
+
+1. First populate the `key.json` file located in `CybersecurityBenchmarks/benchmark/config`, with the proper Google ADC key.
+2. Specify the LLM to test according to the following example:
+  - `FTGOOGLEGENAI::ft-gemini-2.0-flash::projects/PROJECT_ID/locations/TUNING_JOB_REGION/endpoints/ENDPOINT_ID/buckets/BUCKET_NAME`
+
 ### How to use a different model supported by a provider
 
 1. Lookup available models on the provider's website:
