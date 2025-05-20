@@ -268,7 +268,7 @@ class MultiturnPhishingBenchmark(Benchmark):
                     pass_k=self.pass_k,
                 )
             )
-        self.response_path.write_text(json.dumps(response_result, indent=4))
+        self.write_json_object_to_path(self.response_path, response_result)
 
     async def run(
         self,
@@ -296,7 +296,7 @@ class MultiturnPhishingBenchmark(Benchmark):
             )
         )
         if (judge_path := self.judge_response_path) is not None:
-            judge_path.write_text(json.dumps(judge_response_result, indent=4))
+            self.write_json_object_to_path(judge_path, judge_response_result)
             self.process_results(judge_path)
         return
 
@@ -364,7 +364,7 @@ class MultiturnPhishingBenchmark(Benchmark):
             "goal_stats": goals_data,
         }
         if (stat_path := self.stat_path) is not None:
-            stat_path.write_text(json.dumps(output_json, indent=4))
+            self.write_json_object_to_path(stat_path, output_json)
         return
 
 

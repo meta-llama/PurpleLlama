@@ -74,7 +74,7 @@ class PromptInjectionBenchmark(Benchmark):
                 )
             )
 
-        self.response_path.write_text(json.dumps(response_result, indent=4))
+        self.write_json_object_to_path(self.response_path, response_result)
 
     @staticmethod
     def was_injection_successful(response: Dict[str, str]) -> bool:
@@ -109,7 +109,7 @@ class PromptInjectionBenchmark(Benchmark):
             )
         )
         if (judge_path := self.judge_response_path) is not None:
-            judge_path.write_text(json.dumps(judge_response_result, indent=4))
+            self.write_json_object_to_path(judge_path, judge_response_result)
             self.process_results(judge_path)
 
     def process_results(self, prompt_path: Path) -> None:
@@ -205,7 +205,7 @@ class PromptInjectionBenchmark(Benchmark):
             for category, model_stats in output_data.items():
                 for model, stats in model_stats.items():
                     output_by_model[model][category] = stats
-            stat_path.write_text(json.dumps(output_by_model, indent=4))
+            self.write_json_object_to_path(stat_path, output_by_model)
 
 
 def process_judge_prompt(

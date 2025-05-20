@@ -139,7 +139,7 @@ class InterpreterBenchmark(Benchmark):
                 )
             )
 
-        self.response_path.write_text(json.dumps(response_result, indent=4))
+        self.write_json_object_to_path(self.response_path, response_result)
 
     async def run(
         self,
@@ -176,7 +176,7 @@ class InterpreterBenchmark(Benchmark):
         )
         final_result = rearrange_judged_response_for_reasoning(judge_response_result)
         if (judge_path := self.judge_response_path) is not None:
-            judge_path.write_text(json.dumps(final_result, indent=4))
+            self.write_json_object_to_path(judge_path, final_result)
             self.process_results(judge_path)
 
     def extract_boolean_values(self, judge: str, key: str) -> bool:
@@ -266,4 +266,4 @@ class InterpreterBenchmark(Benchmark):
                 )
 
         if (stat_path := self.stat_path) is not None:
-            stat_path.write_text(json.dumps(model_to_category_to_stat, indent=4))
+            self.write_json_object_to_path(stat_path, model_to_category_to_stat)
