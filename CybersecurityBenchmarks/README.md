@@ -93,6 +93,10 @@ source ~/.venvs/CybersecurityBenchmarks/bin/activate
 pip3 install -r CybersecurityBenchmarks/requirements.txt
 ```
 
+## Platform-based Content Filter
+Note: Some benchmarks included in this project are designed to interact with LLMs as malicious actors, which may result in input and output being blocked by the interacting platforms, such as [OpenAI's content filter](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/content-filters).
+Please ensure that your APIs have been approved and can process this content properly before running the full scale of the benchmarks.
+
 ## Running the Benchmarks
 
 The main module for benchmark is `CybersecurityBenchmarks.benchmark.run`. Run
