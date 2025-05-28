@@ -30,6 +30,8 @@ from .base_scanner import Scanner
 
 
 class CodeShieldScanner(Scanner):
+    ALLOW_REASON = "No unsafe function call detected"
+
     def __init__(
         self,
     ) -> None:
@@ -65,7 +67,7 @@ class CodeShieldScanner(Scanner):
         if len(all_issues) == 0:
             return ScanResult(
                 decision=ScanDecision.ALLOW,
-                reason="No unsafe function call detected",
+                reason=self.ALLOW_REASON,
                 score=0.0,
                 status=ScanStatus.SUCCESS,
             )

@@ -110,21 +110,55 @@ class LlamaFirewall:
         input: Message,
         trace: Trace | None = None,
     ) -> ScanResult:
-        for scanner_type in self.scanners.get(input.role, []):
+        scanners = self.scanners.get(input.role, [])
+        reasons = []
+        decisions = {}
+        last_reason = ""
+        for scanner_type in scanners:
             scanner_instance = create_scanner(scanner_type)
             LOG.debug(
                 f"[LlamaFirewall] Scanning with {scanner_instance.name}, for the input {str(input.content)[:20]}"
             )
             scanner_result = asyncio.run(scanner_instance.scan(input, trace))
-            if (
-                scanner_result.decision == ScanDecision.BLOCK
-                or scanner_result.decision == ScanDecision.HUMAN_IN_THE_LOOP_REQUIRED
-            ):
-                return scanner_result
+            reasons.append(
+                f"{scanner_type}: {scanner_result.reason.strip()} - score: {scanner_result.score}"
+            )
+            last_reason = scanner_result.reason.strip()
+
+            # Record the highest score for each found ScanDecision
+            decisions[scanner_result.decision] = max(
+                scanner_result.score,
+                decisions.get(scanner_result.decision, scanner_result.score),
+            )
+
+        if len(scanners) == 1:
+            return ScanResult(
+                decision=list(decisions.keys())[0],
+                reason=last_reason,
+                score=list(decisions.values())[0],
+                status=ScanStatus.SUCCESS,
+            )
+
+        formatted_reasons = "; ".join(set(reasons))
+        # Select BLOCK as the final decision if present in the list,
+        # otherwise select the decision with the highest score
+        final_decision = (
+            ScanDecision.BLOCK
+            if ScanDecision.BLOCK in decisions.keys()
+            else max(decisions, key=decisions.get)
+            if decisions
+            else ScanDecision.ALLOW
+        )
+        final_score = (
+            decisions[ScanDecision.BLOCK]
+            if ScanDecision.BLOCK in decisions.keys()
+            else max(list(decisions.values()) + [0.0])
+        )
+
         return ScanResult(
-            decision=ScanDecision.ALLOW,
-            reason="default",
-            score=0.0,
+            decision=final_decision,
+            reason=formatted_reasons if formatted_reasons else "default",
+            score=final_score,
             status=ScanStatus.SUCCESS,
         )
 

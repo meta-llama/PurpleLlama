@@ -37,6 +37,8 @@ class RegexScanner(Scanner):
     It uses a predefined set of regex patterns for common security concerns.
     """
 
+    ALLOW_REASON = "No regex patterns matched"
+
     def __init__(
         self,
         scanner_name: str = "Regex Scanner",
@@ -88,7 +90,7 @@ class RegexScanner(Scanner):
         # No patterns matched, allow the message
         return ScanResult(
             decision=ScanDecision.ALLOW,
-            reason="No regex patterns matched",
+            reason=self.ALLOW_REASON,
             score=0.0,
             status=ScanStatus.SUCCESS,
         )

@@ -15,6 +15,7 @@ from llamafirewall import (
     ScannerType,
     ScanStatus,
 )
+from llamafirewall.scanners.code_shield_scanner import CodeShieldScanner
 
 
 class TestCodeShieldScanner(unittest.TestCase):
@@ -57,7 +58,7 @@ class TestCodeShieldScanner(unittest.TestCase):
             result = self.lf.scan(lf_input)
             self.assertEqual(result.decision, ScanDecision.ALLOW)
             self.assertLess(result.score, 0.5)
-            self.assertIn("default", result.reason)
+            self.assertIn(CodeShieldScanner.ALLOW_REASON, result.reason)
             self.assertEqual(result.status, ScanStatus.SUCCESS)
 
 

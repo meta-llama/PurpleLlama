@@ -17,6 +17,8 @@ from .promptguard_utils import PromptGuard
 
 
 class PromptGuardScanner(Scanner):
+    ALLOW_REASON = "No prompt injection detected"
+
     def __init__(
         self,
         block_threshold: float = 0.9,
@@ -40,7 +42,7 @@ class PromptGuardScanner(Scanner):
         reason = (
             f'Received text is likely to be a prompt injection attack, with a probability of {score}.\n Full text: "{text}"'
             if score >= self.block_threshold
-            else "No prompt injection detected"
+            else self.ALLOW_REASON
         )
 
         # Return the scan result

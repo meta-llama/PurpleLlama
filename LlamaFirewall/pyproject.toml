@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "llamafirewall"
-version = "1.0.2"
+version = "1.0.3"
 description = "LlamaFirewall is a framework designed to detect and mitigate AI centric security risks, supporting multiple layers of inputs and outputs, such as typical LLM chat and more advanced multi-step agentic operations. It consists of a set of scanners for different security risks."
 authors = [
     { name = "LlamaFirewall Team", email = "llamafirewall@meta.com" }

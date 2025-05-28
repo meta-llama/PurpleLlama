@@ -16,6 +16,8 @@ from .base_scanner import Scanner
 
 
 class HiddenASCIIScanner(Scanner):
+    ALLOW_REASON = "No hidden ASCII detected"
+
     def __init__(
         self,
         scanner_name: str = "Hidden ASCII Scanner",
@@ -56,7 +58,7 @@ class HiddenASCIIScanner(Scanner):
         reason = (
             "Hidden ASCII: " + self._decode_hidden_ascii(text)
             if score >= self.block_threshold
-            else "No hidden ASCII detected"
+            else self.ALLOW_REASON
         )
 
         return ScanResult(

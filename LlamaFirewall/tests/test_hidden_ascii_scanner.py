@@ -15,6 +15,7 @@ from llamafirewall import (
     ScanStatus,
     ToolMessage,
 )
+from llamafirewall.scanners.hidden_ascii_scanner import HiddenASCIIScanner
 
 
 class TestHiddenASCIIScanner(unittest.TestCase):
@@ -52,7 +53,7 @@ class TestHiddenASCIIScanner(unittest.TestCase):
             result = self.lf.scan(lf_input)
             self.assertEqual(result.decision, ScanDecision.ALLOW)
             self.assertLess(result.score, 0.5)
-            self.assertIn("default", result.reason)
+            self.assertIn(HiddenASCIIScanner.ALLOW_REASON, result.reason)
             self.assertEqual(result.status, ScanStatus.SUCCESS)
 
 
