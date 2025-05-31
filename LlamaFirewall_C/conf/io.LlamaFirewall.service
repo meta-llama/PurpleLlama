@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=io.LlamaFirewall
+Exec=/usr/bin/llamafirewall-dbus-service
+User=root
