@@ -239,7 +239,7 @@ def query_llm_to_generate_responses(
     if not prompt_path.exists():
         raise ValueError("Please provide valid path for prompts.")
     prompt_dataset: List[Dict[str, Union[int, str]]] = json.loads(
-        prompt_path.read_text()
+        prompt_path.read_text(encoding='utf-8')
     )
     if num_test_cases > 0:
         # Select the test cases distributed evenly across the dataset

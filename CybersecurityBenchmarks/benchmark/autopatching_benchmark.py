@@ -519,7 +519,7 @@ class AutoPatchingBenchmark(Benchmark):
             reports.append(report_entry)
 
             # Rewrite the file with updated reports
-            reports_path.write_text(json.dumps(reports, indent=4))
+            self.write_json_object_to_path(reports_path, reports)
 
         logging.info(
             f"Added patch generation report for case #{report.crash_id} using {llm_under_test.model}"
@@ -577,7 +577,7 @@ class AutoPatchingBenchmark(Benchmark):
                     AutoPatchingBenchmark.RESPONSES_EXCEPTION_MESSAGE_KEY
                 ] = exception_message
             responses.append(response_entry)
-            self.response_path.write_text(json.dumps(responses, indent=4))
+            self.write_json_object_to_path(self.response_path, responses)
             logging.info(
                 f"Appended response from {llm_under_test.model} for case #{case_id} to {self.response_path}."
             )
@@ -819,10 +819,10 @@ class AutoPatchingBenchmark(Benchmark):
 
         # Write results to files if paths are provided
         if (stat_path := self.stat_path) is not None:
-            stat_path.write_text(json.dumps(evaluation_statistics, indent=4))
+            self.write_json_object_to_path(stat_path, evaluation_statistics)
 
         if (judge_response_path := self.judge_response_path) is not None:
-            judge_response_path.write_text(json.dumps(evaluation_results, indent=4))
+            self.write_json_object_to_path(judge_response_path, evaluation_results)
 
         if should_cleanup_after_eval:
             await ArvoContainer.cleanup_all_containers()

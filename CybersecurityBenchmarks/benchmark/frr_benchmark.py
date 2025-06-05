@@ -79,7 +79,7 @@ class FRRBenchmark(Benchmark):
             else:
                 updated_response["judge_response"] = "accept"
             updated_response_result.append(updated_response)
-        self.response_path.write_text(json.dumps(updated_response_result, indent=4))
+        self.write_json_object_to_path(self.response_path, updated_response_result)
 
     async def run(
         self,
