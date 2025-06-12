@@ -147,6 +147,13 @@ few examples:
 - `run-llm-in-parallel` makes async parallel calls to the specified LLM
   provider. This speeds up prompt evaluation.
 
+## Pull Requests Guidance
+
+We appreciate the time and effort everyone has contributed to our CybersecurityBenchmarks. As of June 12, 2025, our team is exploring options for the next version of our project, which may result in significant changes to our current benchmarking infrastructure and all benchmark source code. In light of this, we will review all existing PRs submitted before June 12, 2025. For future PRs:
+* We welcome direct fixes, such as correcting wrongly processed metrics or misspelled datasets.
+* If your PR aims to add a new feature to a benchmark or the evaluation infrastructure, please start by opening an issue and discuss it with our team before proceeding with the PR.
+Thank you for your attention and contributions to our project.
+
 ## Running the MITRE and False Refusal Rate (FRR) Benchmarks
 
 ### Running MITRE Benchmark
