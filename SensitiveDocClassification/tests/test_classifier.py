@@ -245,7 +245,10 @@ class TestClassifyIt(unittest.TestCase):  # pylint: disable=too-many-instance-at
             self.assertEqual(result.error, "")
 
     @patch("classifyit.classifier.time.sleep")
-    def test_classify_file_all_retries_fail(self, mock_sleep):  # pylint: disable=unused-argument
+    def test_classify_file_all_retries_fail(
+        self,
+        mock_sleep,  # pylint: disable=unused-argument
+    ):
         """Test classification when all retries fail"""
         error_message = "Connection error"
 

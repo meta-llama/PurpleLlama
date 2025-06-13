@@ -22,5 +22,5 @@ trap cleanup EXIT
 python3 -m venv "$VENV_ROOT"
 source "$VENV_ROOT/bin/activate"
 
-pip3 install black
+pip3 install black[jupyter]
 black . --check

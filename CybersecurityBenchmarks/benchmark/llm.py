@@ -557,15 +557,19 @@ class OPENAI(LLM):
         response = self.client.chat.completions.create(
             model=self.model,
             messages=messages,
-            max_tokens=DEFAULT_MAX_TOKENS
-            if (self.model not in self._reasoning_models)
-            else NOT_GIVEN,
-            max_completion_tokens=DEFAULT_MAX_TOKENS
-            if (self.model in self._reasoning_models)
-            else NOT_GIVEN,
-            temperature=temperature
-            if (self.model not in self._reasoning_models)
-            else NOT_GIVEN,
+            max_tokens=(
+                DEFAULT_MAX_TOKENS
+                if (self.model not in self._reasoning_models)
+                else NOT_GIVEN
+            ),
+            max_completion_tokens=(
+                DEFAULT_MAX_TOKENS
+                if (self.model in self._reasoning_models)
+                else NOT_GIVEN
+            ),
+            temperature=(
+                temperature if (self.model not in self._reasoning_models) else NOT_GIVEN
+            ),
             top_p=top_p if (self.model not in self._reasoning_models) else NOT_GIVEN,
             response_format=(
                 {"type": "json_object"}
@@ -599,15 +603,19 @@ class OPENAI(LLM):
         response = self.client.chat.completions.create(
             model=self.model,
             messages=messages,
-            max_tokens=DEFAULT_MAX_TOKENS
-            if (self.model not in self._reasoning_models)
-            else NOT_GIVEN,
-            max_completion_tokens=DEFAULT_MAX_TOKENS
-            if (self.model in self._reasoning_models)
-            else NOT_GIVEN,
-            temperature=temperature
-            if (self.model not in self._reasoning_models)
-            else NOT_GIVEN,
+            max_tokens=(
+                DEFAULT_MAX_TOKENS
+                if (self.model not in self._reasoning_models)
+                else NOT_GIVEN
+            ),
+            max_completion_tokens=(
+                DEFAULT_MAX_TOKENS
+                if (self.model in self._reasoning_models)
+                else NOT_GIVEN
+            ),
+            temperature=(
+                temperature if (self.model not in self._reasoning_models) else NOT_GIVEN
+            ),
             top_p=top_p if (self.model not in self._reasoning_models) else NOT_GIVEN,
             response_format=(
                 {"type": "json_object"}
@@ -643,15 +651,19 @@ class OPENAI(LLM):
         response = self.client.chat.completions.create(
             model=self.model,
             messages=message_list,
-            max_tokens=DEFAULT_MAX_TOKENS
-            if (self.model not in self._reasoning_models)
-            else NOT_GIVEN,
-            max_completion_tokens=DEFAULT_MAX_TOKENS
-            if (self.model in self._reasoning_models)
-            else NOT_GIVEN,
-            temperature=temperature
-            if (self.model not in self._reasoning_models)
-            else NOT_GIVEN,
+            max_tokens=(
+                DEFAULT_MAX_TOKENS
+                if (self.model not in self._reasoning_models)
+                else NOT_GIVEN
+            ),
+            max_completion_tokens=(
+                DEFAULT_MAX_TOKENS
+                if (self.model in self._reasoning_models)
+                else NOT_GIVEN
+            ),
+            temperature=(
+                temperature if (self.model not in self._reasoning_models) else NOT_GIVEN
+            ),
             top_p=top_p if (self.model not in self._reasoning_models) else NOT_GIVEN,
             response_format=(
                 {"type": "json_object"}
@@ -679,15 +691,19 @@ class OPENAI(LLM):
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": prompt},
             ],
-            max_tokens=DEFAULT_MAX_TOKENS
-            if (self.model not in self._reasoning_models)
-            else NOT_GIVEN,
-            max_completion_tokens=DEFAULT_MAX_TOKENS
-            if (self.model in self._reasoning_models)
-            else NOT_GIVEN,
-            temperature=temperature
-            if (self.model not in self._reasoning_models)
-            else NOT_GIVEN,
+            max_tokens=(
+                DEFAULT_MAX_TOKENS
+                if (self.model not in self._reasoning_models)
+                else NOT_GIVEN
+            ),
+            max_completion_tokens=(
+                DEFAULT_MAX_TOKENS
+                if (self.model in self._reasoning_models)
+                else NOT_GIVEN
+            ),
+            temperature=(
+                temperature if (self.model not in self._reasoning_models) else NOT_GIVEN
+            ),
             top_p=top_p if (self.model not in self._reasoning_models) else NOT_GIVEN,
             response_format=(
                 {"type": "json_object"}
@@ -733,15 +749,19 @@ class OPENAI(LLM):
                     ],
                 },
             ],
-            max_tokens=DEFAULT_MAX_TOKENS
-            if (self.model not in self._reasoning_models)
-            else NOT_GIVEN,
-            max_completion_tokens=DEFAULT_MAX_TOKENS
-            if (self.model in self._reasoning_models)
-            else NOT_GIVEN,
-            temperature=temperature
-            if (self.model not in self._reasoning_models)
-            else NOT_GIVEN,
+            max_tokens=(
+                DEFAULT_MAX_TOKENS
+                if (self.model not in self._reasoning_models)
+                else NOT_GIVEN
+            ),
+            max_completion_tokens=(
+                DEFAULT_MAX_TOKENS
+                if (self.model in self._reasoning_models)
+                else NOT_GIVEN
+            ),
+            temperature=(
+                temperature if (self.model not in self._reasoning_models) else NOT_GIVEN
+            ),
             top_p=top_p if (self.model not in self._reasoning_models) else NOT_GIVEN,
             response_format=(
                 {"type": "json_object"}
@@ -802,15 +822,19 @@ class OPENAI(LLM):
         response = self.client.chat.completions.create(
             model=self.model,
             messages=messages,
-            max_tokens=DEFAULT_MAX_TOKENS
-            if (self.model not in self._reasoning_models)
-            else NOT_GIVEN,
-            max_completion_tokens=DEFAULT_MAX_TOKENS
-            if (self.model in self._reasoning_models)
-            else NOT_GIVEN,
-            temperature=temperature
-            if (self.model not in self._reasoning_models)
-            else NOT_GIVEN,
+            max_tokens=(
+                DEFAULT_MAX_TOKENS
+                if (self.model not in self._reasoning_models)
+                else NOT_GIVEN
+            ),
+            max_completion_tokens=(
+                DEFAULT_MAX_TOKENS
+                if (self.model in self._reasoning_models)
+                else NOT_GIVEN
+            ),
+            temperature=(
+                temperature if (self.model not in self._reasoning_models) else NOT_GIVEN
+            ),
             top_p=top_p if (self.model not in self._reasoning_models) else NOT_GIVEN,
         )
         return response.choices[0].message.content

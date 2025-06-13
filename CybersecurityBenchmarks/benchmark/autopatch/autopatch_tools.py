@@ -163,7 +163,8 @@ class AutoPatchAgent:
 
 def get_autopatch_llm(llm_under_test: LLM) -> Type[LLMInterface]:
     class AutoPatchLLM(LLMInterface):
-        MAX_RETRIES: int = 11  # With a backoff rate of 2, this allows up to about an hour of retries before escalating the exception.
+        # With a backoff rate of 2, this allows up to about an hour of retries before escalating the exception.
+        MAX_RETRIES: int = 11
         INITIAL_RETRY_DELAY: int = 1  # in seconds
         RETRY_BACKOFF_RATE: int = 2
 

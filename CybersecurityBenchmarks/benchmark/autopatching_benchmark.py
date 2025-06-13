@@ -568,9 +568,11 @@ class AutoPatchingBenchmark(Benchmark):
                 AutoPatchingBenchmark.RESPONSES_REBUILT_BINARY_KEY: str(
                     binary_filepath
                 ),
-                AutoPatchingBenchmark.RESPONSES_PATCHED_FUNCTION_KEY: patched_function_name
-                if patched_function_name
-                else AutoPatchingBenchmark.RESPONSES_NOT_APPLICABLE,
+                AutoPatchingBenchmark.RESPONSES_PATCHED_FUNCTION_KEY: (
+                    patched_function_name
+                    if patched_function_name
+                    else AutoPatchingBenchmark.RESPONSES_NOT_APPLICABLE
+                ),
             }
             if exception_message:
                 response_entry[

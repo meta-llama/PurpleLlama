@@ -145,9 +145,9 @@ class LlamaFirewall:
         final_decision = (
             ScanDecision.BLOCK
             if ScanDecision.BLOCK in decisions.keys()
-            else max(decisions, key=decisions.get)
-            if decisions
-            else ScanDecision.ALLOW
+            else (
+                max(decisions, key=decisions.get) if decisions else ScanDecision.ALLOW
+            )
         )
         final_score = (
             decisions[ScanDecision.BLOCK]

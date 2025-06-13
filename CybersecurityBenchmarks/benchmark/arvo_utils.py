@@ -911,7 +911,8 @@ class ArvoContainer:
         self, filepath_on_host: str, filepath_in_container: str
     ) -> None:
         """Copy the contents of filepath_on_host to filepath_in_container in the container. If local_filepath specifies a file and dest_path ends with /, the directory must already exist on the container, and the local file will be copied there.
-        If local_filpath is a directory, dest_path will be created if needed and the contents of local_filepath copied there.  For detailed documentation, see https://docs.docker.com/reference/cli/docker/container/cp/"""
+        If local_filpath is a directory, dest_path will be created if needed and the contents of local_filepath copied there.  For detailed documentation, see https://docs.docker.com/reference/cli/docker/container/cp/
+        """
         self.logger.debug(
             f"Copying {filepath_on_host} on host to {filepath_in_container} in container."
         )
