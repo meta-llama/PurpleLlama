@@ -34,4 +34,4 @@ jobs:
         run: CybersecurityBenchmarks/scripts/run_tests.sh
 
       - name: Run LlamaFirewall Tests
-        run: python -m unittest discover -s LlamaFirewall/tests
+        run: LlamaFirewall/scripts/run_tests.sh
