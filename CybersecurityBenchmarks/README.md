@@ -122,6 +122,10 @@ few examples:
 - `OPENAI::gpt-3.5-turbo::<API KEY>`
 - `TOGETHER::togethercomputer/llama-2-7b::<API KEY>`
 
+### How to run benchmarks for additional models and inference APIs
+
+For integrating additional models and inference APIs, please refer to the dedicated documentation in the `CybersecurityBenchmarks/benchmark/llms/community_contribution` directory. This section contains examples and instructions for extending the benchmark framework with custom LLM implementations.
+
 ### How to use a different model supported by a provider
 
 1. Lookup available models on the provider's website:
