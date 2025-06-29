@@ -13,4 +13,4 @@ async_lru==2.0.5
 boto3==1.37.31
 pypdf==5.4.0
 pdf2image==1.17.0
-setuptools==70.0.0
+setuptools==78.1.1
