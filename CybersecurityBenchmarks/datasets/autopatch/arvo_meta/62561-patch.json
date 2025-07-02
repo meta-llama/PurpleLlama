@@ -1,0 +1,13 @@
+[
+  {
+    "filename": "src/in_dxf.c",
+    "patched_line_numbers": [
+      12195,
+      12197,
+      12212,
+      12214,
+      12215
+    ],
+    "patch": "@@ -12192,8 +12192,9 @@ dxf_entities_read (Bit_Chain *restrict dat, Dwg_Data *restrict dwg)\n              && (is_dwg_entity (name) || strEQc (name, \"DIMENSION\")))\n         {\n           char *dxfname = strdup (pair->value.s);\n+          BITCODE_BL idx = dwg->num_objects;\n           // LOG_HANDLE (\"dxfname = strdup (%s)\\n\", dxfname);\n-          if (dwg->num_objects)\n+          if (idx)\n             {\n               Dwg_Object *obj = &dwg->object[dwg->num_objects - 1];\n               if (!obj->handle.value)\n@@ -12208,7 +12209,10 @@ dxf_entities_read (Bit_Chain *restrict dat, Dwg_Data *restrict dwg)\n           pair = new_object (name, dxfname, dat, dwg, 0, NULL);\n           if (!pair)\n             {\n+              Dwg_Object *obj = &dwg->object[idx];\n               free (dxfname);\n+              if (idx != dwg->num_objects)\n+                obj->dxfname = NULL;\n               return DWG_ERR_INVALIDDWG;\n             }\n           if (pair->code == 0 && pair->value.s)"
+  }
+]

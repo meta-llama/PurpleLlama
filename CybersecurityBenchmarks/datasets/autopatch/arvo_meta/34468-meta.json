@@ -1,0 +1,33 @@
+{
+  "sample_id": 34468,
+  "arvo_metadata": {
+    "fix": "https://github.com/videolan/vlc/commit/bf1ba89a400038deee7742c97327037bbd58f1d3",
+    "verify": "0",
+    "localId": 34468,
+    "project": "vlc",
+    "fuzzer": "afl",
+    "sanitizer": "asan",
+    "crash_type": "Heap-buffer-overflow WRITE 2",
+    "severity": "High",
+    "fix_commit": "bf1ba89a400038deee7742c97327037bbd58f1d3",
+    "repo_addr": "https://github.com/videolan/vlc"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 86,
+    "total_lines_added": 7,
+    "total_lines_subtracted": 2,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

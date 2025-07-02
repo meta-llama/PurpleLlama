@@ -1,0 +1,43 @@
+[
+  {
+    "filename": "include/muParserDef.h",
+    "patched_line_numbers": [
+      419,
+      420
+    ],
+    "patch": "@@ -416,8 +416,8 @@ namespace mu\n \n \tstatic const int MaxLenExpression = 5000;\n \tstatic const int MaxLenIdentifier = 100;\n-\tstatic const string_type ParserVersion = string_type(_T(\"2.3.3 (Development Snapshot)\"));\n-\tstatic const string_type ParserVersionDate = string_type(_T(\"20200809\"));\n+\tstatic const string_type ParserVersion = string_type(_T(\"2.3.3 (Unstable Development Build!)\"));\n+\tstatic const string_type ParserVersionDate = string_type(_T(\"20200917\"));\n } // end of namespace\n \n #if defined(_MSC_VER)"
+  },
+  {
+    "filename": "samples/example1/example1.cpp",
+    "patched_line_numbers": [
+      383,
+      389
+    ],
+    "patch": "@@ -380,13 +380,13 @@ static int CheckKeywords(const mu::char_type* a_szLine, mu::Parser& a_Parser)\n \t}\n \telse if (sLine == _T(\"dbg\"))\n \t{\n-\t\tstring_type dbg = _T(R\"(avg(0>3?4:(\"\"),0^3?4:(\"\")))\");\n+\t\tstring_type dbg = _T(\"((\\\"\\\")), 7\");\n \t\ta_Parser.SetExpr(dbg);\n \t\tmu::console() << dbg;\n \n \t\tint stackSize;\n \t\tdouble* v = a_Parser.Eval(stackSize);\n-\t\tmu::console() << *v << std::endl;\n+\t\tmu::console() << \"=\" <<  *v << std::endl;\n \t\treturn 1;\n \t}\n "
+  },
+  {
+    "filename": "src/muParserBase.cpp",
+    "patched_line_numbers": [
+      1493,
+      1495,
+      1496,
+      1498
+    ],
+    "patch": "@@ -1487,8 +1487,16 @@ namespace mu\n \t\tif (stVal.size() == 0)\n \t\t\tError(ecEMPTY_EXPRESSION);\n \n-\t\tif (stVal.top().GetType() != tpDBL)\n-\t\t\tError(ecSTR_RESULT);\n+\t\t// 2020-09-17; fix for https://oss-fuzz.com/testcase-detail/5758791700971520\n+\t\t// I don't need the value stack any more. Destructively check if all values in the value \n+\t\t// stack represent floating point values\n+\t\twhile (stVal.size())\n+\t\t{\n+\t\t\tif (stVal.top().GetType() != tpDBL)\n+\t\t\t\tError(ecSTR_RESULT);\n+\n+\t\t\tstVal.pop();\n+\t\t}\n \n \t\tm_vStackBuffer.resize(m_vRPN.GetMaxStackSize() * s_MaxNumOpenMPThreads);\n \t}"
+  },
+  {
+    "filename": "src/muParserTest.cpp",
+    "patched_line_numbers": [
+      154,
+      155
+    ],
+    "patch": "@@ -149,6 +149,16 @@ namespace mu\n \n \t\t\t// from oss-fuzz: https://oss-fuzz.com/testcase-detail/5106868061208576\n \t\t\tiStat += ThrowTest(_T(R\"(\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",8)\"), ecSTR_RESULT);\n+\t\t\t\n+\t\t\t// derived from oss-fuzz: https://oss-fuzz.com/testcase-detail/5758791700971520\n+\t\t\tiStat += ThrowTest(_T(\"(\\\"\\\"), 7\"), ecSTR_RESULT);\n+\t\t\tiStat += ThrowTest(_T(\"((\\\"\\\")), 7\"), ecSTR_RESULT);\n+\t\t\t//iStat += ThrowTest(_T(\"(\\\"\\\"),(\\\" \\\"), 7, (3)\"), ecSTR_RESULT);\n+\t\t\t//iStat += ThrowTest(_T(\"(\\\"\\\"),(\\\"\\\"), 7, (3)\"), ecSTR_RESULT);\n+\t\t\t//iStat += ThrowTest(_T(\"(\\\"\\\"),(\\\"\\\"), (3)\"), ecSTR_RESULT);\n+\t\t\t//iStat += ThrowTest(_T(\"(\\\"\\\"),(\\\"\\\"), 7\"), ecSTR_RESULT);\n+\n+\t\t\t\n \t\t\t// variations:\n \t\t\tiStat += ThrowTest(_T(R\"(\"\",\"\",9)\"), ecSTR_RESULT);\n "
+  },
+  {
+    "filename": "src/muParserTokenReader.cpp",
+    "patched_line_numbers": [
+      447
+    ],
+    "patch": "@@ -443,9 +443,6 @@ namespace mu\n \t\t\t\tcase cmDIV:\n \t\t\t\tcase cmPOW:\n \t\t\t\tcase cmASSIGN:\n-\t\t\t\t\t//if (len!=sTok.length())\n-\t\t\t\t\t//  continue;\n-\n \t\t\t\t\t// The assignment operator need special treatment\n \t\t\t\t\tif (i == cmASSIGN && m_iSynFlags & noASSIGN)\n \t\t\t\t\t\tError(ecUNEXPECTED_OPERATOR, m_iPos, pOprtDef[i]);"
+  }
+]

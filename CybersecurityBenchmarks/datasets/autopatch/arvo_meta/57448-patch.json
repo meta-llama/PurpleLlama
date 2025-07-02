@@ -1,0 +1,9 @@
+[
+  {
+    "filename": "src/lib/protocols/tls.c",
+    "patched_line_numbers": [
+      676
+    ],
+    "patch": "@@ -673,7 +673,7 @@ void processCertificateElements(struct ndpi_detection_module_struct *ndpi_struct\n \t\t    if(flow->protos.tls_quic.server_names == NULL)\n \t\t      flow->protos.tls_quic.server_names = ndpi_strdup(dNSName),\n \t\t\tflow->protos.tls_quic.server_names_len = strlen(dNSName);\n-\t\t    else {\n+\t\t    else if((u_int16_t)(flow->protos.tls_quic.server_names_len + dNSName_len + 1) > flow->protos.tls_quic.server_names_len) {\n \t\t      u_int16_t newstr_len = flow->protos.tls_quic.server_names_len + dNSName_len + 1;\n \t\t      char *newstr = (char*)ndpi_realloc(flow->protos.tls_quic.server_names,\n \t\t\t\t\t\t\t flow->protos.tls_quic.server_names_len+1, newstr_len+1);"
+  }
+]

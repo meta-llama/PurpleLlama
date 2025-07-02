@@ -1,0 +1,11 @@
+[
+  {
+    "filename": "encoder/ixheaace_api.c",
+    "patched_line_numbers": [
+      3082,
+      3083
+    ],
+    "patch": "-3079,7 +3079,8 @@ static IA_ERRORCODE iusace_process(ixheaace_api_struct *pstr_api_struct) {\n           &(pstr_api_struct->pstr_state->num_anc_data_bytes[0][0]),\n           pstr_api_struct->pstr_state->anc_data_bytes[0],\n           &(pstr_api_struct->spectral_band_replication_tabs), &(pstr_api_struct->common_tabs),\n-          &(mps_extension_payload.p_data[0]), mps_extension_payload.data_size, 0, NULL);\n+          &(mps_extension_payload.p_data[0]), mps_extension_payload.data_size, 0,\n+          &pstr_api_struct->pstr_state->str_usac_enc_data.num_sbr_bits);\n       if (error != IA_NO_ERROR) {\n         return error;\n       }",
+    "summary": "commit cd91e1af765486ea6aad21e258b3a23294fa291d\nAuthor: Shreyas Talwekar <shreyas.talwekar@ittiam.com>\nDate:   Wed Aug 30 19:33:21 2023 +0530\n\n    Fix for the Heap-buffer-overflow in ixheaace_process\n    \n    This change handles the Heap-buffer-overflow by\n    considering the bits used by the SBR encoder for\n    USAC mono streams.\n    \n    Bug: ossFuzz:61825\n    Test: poc in bug\n"
+  }
+]

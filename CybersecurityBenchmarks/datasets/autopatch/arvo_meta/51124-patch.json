@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/hunspell/affixmgr.cxx",
+    "patched_line_numbers": [
+      4823
+    ],
+    "patch": "-4820,7 +4820,7 @@ int AffixMgr::redundant_condition(char ft,\n                              linenum);\n             return 0;\n           }\n-        } else {\n+        } else if (j > 0) {\n           in = 0;\n           do {\n             j--;",
+    "summary": "commit ebf0e2ce8d903815a6e8d828286394b6f8830860\nAuthor: Caol\u00e1n McNamara <caolanm@redhat.com>\nDate:   Thu Sep 8 15:53:42 2022 +0100\n\n    ofz#51124 negative array index with malformed .aff\n"
+  }
+]

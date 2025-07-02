@@ -1,0 +1,20 @@
+[
+  {
+    "filename": "src/cmsio0.c",
+    "patched_line_numbers": [
+      695,
+      696,
+      698,
+      700,
+      702,
+      703,
+      705,
+      707,
+      710,
+      823,
+      824,
+      826
+    ],
+    "patch": "@@ -689,6 +689,27 @@ cmsBool CMSEXPORT cmsIsTag(cmsHPROFILE hProfile, cmsTagSignature sig)\n        return _cmsSearchTag(Icc, sig, FALSE) >= 0;\n }\n \n+\n+\n+// Checks for link compatibility\n+static\n+cmsBool CompatibleTypes(const cmsTagDescriptor* desc1, const cmsTagDescriptor* desc2)\n+{\n+    cmsUInt32Number i;\n+\n+    if (desc1 == NULL || desc2 == NULL) return FALSE;\n+\n+    if (desc1->nSupportedTypes != desc2->nSupportedTypes) return FALSE;\n+    if (desc1->ElemCount != desc2->ElemCount) return FALSE;\n+\n+    for (i = 0; i < desc1->nSupportedTypes; i++)\n+    {\n+        if (desc1->SupportedTypes[i] != desc2->SupportedTypes[i]) return FALSE;\n+    }\n+\n+    return TRUE;\n+}\n+\n // Enforces that the profile version is per. spec.\n // Operates on the big endian bytes from the profile.\n // Called before converting to platform endianness.\n@@ -798,7 +819,12 @@ cmsBool _cmsReadHeader(_cmsICCPROFILE* Icc)\n             if ((Icc ->TagOffsets[j] == Tag.offset) &&\n                 (Icc ->TagSizes[j]   == Tag.size)) {\n \n-                Icc ->TagLinked[Icc ->TagCount] = Icc ->TagNames[j];\n+                // Check types. Abort whole profile if a forged link is found\n+                if (CompatibleTypes(_cmsGetTagDescriptor(Icc->ContextID, Icc->TagNames[j]),\n+                                    _cmsGetTagDescriptor(Icc->ContextID, Tag.sig))) {\n+\n+                    Icc->TagLinked[Icc->TagCount] = Icc->TagNames[j];\n+                }\n             }\n \n         }"
+  }
+]

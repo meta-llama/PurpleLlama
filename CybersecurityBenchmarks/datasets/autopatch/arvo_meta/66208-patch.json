@@ -1,0 +1,32 @@
+[
+  {
+    "filename": "src/string.c",
+    "patched_line_numbers": [
+      577,
+      603,
+      608,
+      609,
+      611,
+      612,
+      614,
+      615,
+      617,
+      618,
+      620,
+      626,
+      627,
+      628,
+      629,
+      638,
+      642,
+      643,
+      644,
+      645,
+      646,
+      647,
+      648,
+      649
+    ],
+    "patch": "@@ -574,6 +574,7 @@ str_index_str_by_char(mrb_state *mrb, mrb_value str, mrb_value sub, mrb_int pos)\n    * returns mrb_int\n    * alignment adjustment added\n    * support bigendian CPU\n+   * fixed potential buffer overflow\n */\n static inline mrb_int\n mrb_memsearch_ss(const unsigned char *xs, long m, const unsigned char *ys, long n)\n@@ -599,22 +600,33 @@ mrb_memsearch_ss(const unsigned char *xs, long m, const unsigned char *ys, long\n #define MASK4 0x80\n #endif\n \n+#define MAX(a,b) ((a) > (b) ? (a) : (b))\n+\n   const bitint first = MASK1 * (uint8_t)xs[0];\n   const bitint last  = MASK1 * (uint8_t)xs[m-1];\n \n-  bitint *s0 = (bitint*)(ys);\n-  bitint *s1 = (bitint*)(ys+m-1);\n+  const unsigned char *s0 = ys;\n+  const unsigned char *s1 = ys+m-1;\n+\n+  const mrb_int lim = n - MAX(m, (mrb_int)sizeof(bitint));\n+  mrb_int i;\n+\n+  for (i=0; i < lim; i+=sizeof(bitint)) {\n+    bitint t0, t1;\n \n-  for (mrb_int i=0; i < n; i+=sizeof(bitint), s0++, s1++) {\n-    const bitint eq = (*s0 ^ first) | (*s1 ^ last);\n+    memcpy(&t0, s0+i, sizeof(bitint));\n+    memcpy(&t1, s1+i, sizeof(bitint));\n+\n+    const bitint eq = (t0 ^ first) | (t1 ^ last);\n     bitint zeros = ((~eq & MASK2) + MASK1) & (~eq & MASK3);\n     size_t j = 0;\n \n     while (zeros) {\n       if (zeros & MASK4) {\n-        const char* substr = (char*)s0 + j + 1;\n-        if (memcmp(substr, xs + 1, m - 2) == 0) {\n-          return i + j;\n+        const mrb_int idx = i + j;\n+        const unsigned char* p = s0 + idx + 1;\n+        if (memcmp(p, xs + 1, m - 2) == 0) {\n+          return idx;\n         }\n       }\n \n@@ -623,9 +635,21 @@ mrb_memsearch_ss(const unsigned char *xs, long m, const unsigned char *ys, long\n #else\n       zeros >>= 8;\n #endif\n-      j += 1;\n+      j++;\n     }\n   }\n+\n+  if (i+m < n) {\n+    const unsigned char *p = s0;\n+    const unsigned char *e = ys + n;\n+    for (;p<e;) {\n+      p = (const unsigned char*)memchr(p, *xs, e-p);\n+      if (p == NULL) break;\n+      if (memcmp(p+1, xs+1, m-1) == 0) return (mrb_int)(p - ys);\n+      p++;\n+    }\n+  }\n+\n   return -1;\n }\n "
+  }
+]

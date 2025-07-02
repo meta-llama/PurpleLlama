@@ -51,7 +51,7 @@ upholding the principles of openness. Our mission is to empower individuals, and
 industry through this opportunity, while fostering an environment of discovery
 and ethical AI advancements.
 
-The same license as Llama 3 applies: see the [LICENSE](../LICENSE) file, as well
+The same license as Llama 3 applies: see the [LICENSE](LICENSE) file, as well
 as our accompanying [Acceptable Use Policy](USE_POLICY.md).
 
 # Citation

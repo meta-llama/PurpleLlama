@@ -1,0 +1,53 @@
+FROM docker.io/n132/arvo:{ARVO_ID}-fix
+
+# Set environment variables to avoid interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install Python 3.7, LLDB 13, and dependencies
+COPY ./differential-debugging-deps-16.04.deb /tmp/differential-debugging-deps-16.04.deb
+COPY ./differential-debugging-deps-20.04.deb /tmp/differential-debugging-deps-20.04.deb
+
+RUN OSVER=$(cat /etc/os-release |grep VERSION_ID | cut -c13-17) && \
+    case "$OSVER" in \
+        "16.04") ln -s /tmp/differential-debugging-deps-16.04.deb /tmp/differential-debugging-deps.deb ;; \
+        "20.04") ln -s /tmp/differential-debugging-deps-20.04.deb /tmp/differential-debugging-deps.deb && \
+                 apt update && \
+                 apt install -y --no-install-recommends libssl-dev \
+                 libexpat1-dev \
+                 libfreetype-dev  ;; \
+        *) echo "Unknown OS VERSION: $OSVER" ;; \
+    esac
+
+RUN apt -f -y install /tmp/differential-debugging-deps.deb && echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf && ldconfig
+
+RUN rm /tmp/differential-debugging-deps.deb /tmp/differential-debugging-deps-20.04.deb /tmp/differential-debugging-deps-16.04.deb
+
+# Configure LLDB
+RUN echo "settings set target.disable-aslr false" > ~/.lldbinit && \
+    echo "settings set target.inherit-env true" >> ~/.lldbinit && \
+    echo "settings set target.process.thread.step-avoid-regexp ''" >> ~/.lldbinit
+
+# Prepare /tmp/corpus and modify /bin/arvo
+RUN mkdir -p /tmp/corpus/ && \
+    cp /tmp/poc /tmp/corpus/ && \
+    chmod 755 /tmp/poc /tmp/corpus && \
+    sed -i '0,/\/tmp\/poc/s//\/tmp\/corpus\//' /bin/arvo && \
+    sed -i 's|export FUZZER_ARGS="-rss_limit_mb=2560 -timeout=25"|export FUZZER_ARGS="-rss_limit_mb=2560 -timeout=25 -max_total_time=600"|' /bin/arvo && \
+    sed -i 's|/tmp/corpus/|& $FUZZER_ARGS|' /bin/arvo && \
+    sed -i '/\/tmp\/corpus\/ $FUZZER_ARGS/a elif [ "$first_param" = "fuzz_fix" ]; then' /bin/arvo && \
+    sed -i '/fuzz_fix" ]; then/a    /tmp/rebuilt_binary /tmp/corpus/ $FUZZER_ARGS' /bin/arvo
+
+# Provision files for differential debugging
+COPY ./microsnapshots/ /microsnapshots/
+
+# QA: Assert that `arvo` exits with code 0
+RUN arvo
+
+# QA: Assert that `arvo compile` exits with code 0
+RUN arvo compile
+
+# QA: assert that "arvo run" (10 mins of fuzzing on GT patch) exits with code 0
+RUN arvo run
+
+# QA: Assert that 2nd issuing of`arvo compile` exits with code 0
+RUN arvo compile

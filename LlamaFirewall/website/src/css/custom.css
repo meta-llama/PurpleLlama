@@ -1,0 +1,198 @@
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+/* :root {
+  --ifm-color-primary: #25c2a0;
+  --ifm-color-primary-dark: rgb(33, 175, 144);
+  --ifm-color-primary-darker: rgb(31, 165, 136);
+  --ifm-color-primary-darkest: rgb(26, 136, 112);
+  --ifm-color-primary-light: rgb(70, 203, 174);
+  --ifm-color-primary-lighter: rgb(102, 212, 189);
+  --ifm-color-primary-lightest: rgb(146, 224, 208);
+  --ifm-code-font-size: 95%;
+} */
+
+:root {
+  --prt-paf-primary: rgb(249, 71, 58);
+  --prt-prt-primary:  rgb(255, 175, 0);
+  --prt-mwe-primary: rgb(250, 222, 166);
+  --prt-maroon: rgb(87, 0, 42);
+  --ifm-color-primary: var(--prt-mwe-primary);
+  --ifm-color-primary-dark: rgb(231, 191, 134);
+  --ifm-color-secondary-dark: var(--ifm-color-primary);
+}
+
+/* Color (almost) all the SVGs! See `paf_logo.svg` for the one exception. */
+svg {
+  fill: var(--ifm-color-primary);
+}
+
+/* For the colored letters in the main title text. */
+.primary_color {
+  color: var(--ifm-color-primary);
+}
+
+/* Background image for main title area. */
+.hero {
+  display: block;
+  padding: 0;
+  background-image: url("/static/img/background.png");
+  background-size: cover;
+  background-position-y: center;
+  background-color: rgba(0, 0, 0, 0.2);  /* https://linuxhint.com/different-methods-to-darken-background-image-css/ */
+  background-blend-mode: multiply;
+  color: var(--ifm-font-color-base)
+}
+
+.heroContainer {
+  text-align: left;
+  margin-left:  5%;
+  display: flex;
+}
+
+.heroContainer .left {
+  align-content: center;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+@media screen and (max-width: 966px) {
+  .hero {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .heroContainer {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .heroContainer .left {
+    margin-top: -2rem;
+  }
+
+  .heroContainer .left a {
+    margin-bottom: 1.5rem;
+  }
+}
+
+.heroContainer .right {
+  align-content: center;
+  flex: 1;
+  text-align: center;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.heroContainer .right img {
+  max-height: 450px;
+  width: auto;
+  height: auto;
+  max-width: 100%; /* ensures it doesn’t overflow its container */
+  margin-top: -15px;
+  display: inline-block;
+}
+
+@media screen and (max-width: 966px) {
+  .heroContainer .right img {
+    max-height: 250px;
+    margin-top: 0.5rem;
+  }
+}
+
+.hero__title {
+  font-family: Helvetica, sans-serif;
+  font-weight: 100;
+  font-size: 9rem;
+}
+.hero__subtitle {
+  font-family: Helvetica, sans-serif;
+  font-weight: 100;
+  font-size: 2.0rem;
+}
+
+@media screen and (max-width: 966px) {
+  .hero__title {
+    font-size: 3rem;
+    font-weight: 100;
+    margin: 0;
+  }
+  .hero__subtitle {
+    font-size: 1.2rem;
+    font-weight: 400;
+    padding: 0 1rem 1rem;
+    margin: 0;
+  }
+}
+
+/* Set the size of the main logo (which as of this writing is positioned
+   above the title text. */
+.mainLogo {
+  height: 200px;
+  width:200px;
+}
+
+.featureIcon {
+  height: 80px;
+  width:80px;
+}
+
+/* Center the logo on screen, like the title text. */
+.mainLogoDiv {
+  text-align: center;
+}
+
+/* START Get the title text left-aligned, but centered on screen. */
+.titleDiv {
+  justify-content: center;
+  display: flex;
+  text-align: left;
+  display: flex; align-items: center; /* Align title vertically in div. https://stackoverflow.com/questions/10968726/how-to-vertically-align-into-the-center-of-the-content-of-a-div-with-defined-wid */
+}
+
+.titleChildDiv {
+  width: min-content;
+}
+/* END Get the title text left-aligned, but centered on screen. */
+
+/* Center the subtitle/tagline, like everything else (logo, title text). */
+.subtitleDiv {
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Not actually 100% sure this is necessary anymore, but this helped to
+   force the title text to be one-word on each line, so the colored letters
+   lined up. */
+
+
+/* "Features" section */
+/* main {
+  padding: 64px;
+} */
+
+/* Boilerplate that was here when the site template was first generated. */
+.docusaurus-highlight-code-line {
+  background-color: rgba(0, 0, 0, 0.1);
+  display: block;
+  margin: 0 calc(-1 * var(--ifm-pre-padding));
+  padding: 0 var(--ifm-pre-padding);
+}
+
+html[data-theme='dark'] .docusaurus-highlight-code-line {
+  background-color: rgba(0, 0, 0, 0.3);
+}

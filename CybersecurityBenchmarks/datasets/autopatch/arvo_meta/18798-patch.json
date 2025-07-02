@@ -1,0 +1,11 @@
+[
+  {
+    "filename": "src/libopensc/card-setcos.c",
+    "patched_line_numbers": [
+      790,
+      792
+    ],
+    "patch": "-787,9 +787,9 @@ static void parse_sec_attr_44(sc_file_t *file, const u8 *buf, size_t len)\n \tconst int*\tp_idx;\n \n \t/* Check all sub-AC definitions within the total AC */\n-\twhile (len > 1) {\t\t\t\t/* minimum length = 2 */\n+\twhile (len > 1 && (size_t)iOffset < len) {\t/* minimum length = 2 */\n \t\tsize_t iACLen   = buf[iOffset] & 0x0F;\n-\t\tif (iACLen > len)\n+\t\tif (iACLen >= len)\n \t\t\tbreak;\n \n \t\tiMethod = SC_AC_NONE;\t\t/* default no authentication required */",
+    "summary": "commit e50bc29bd9519c9f4c43e9f3cf34b5b8a9aa38da\nAuthor: Jakub Jelen <jjelen@redhat.com>\nDate:   Fri Nov 8 09:31:37 2019 +0100\n\n    card-setcos.c: Avoid unsigned integer underflow\n    \n    Thanks oss-fuzz\n    \n    https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=18798\n"
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "filename": "mrbgems/mruby-bigint/core/bigint.c",
+    "patched_line_numbers": [
+      462,
+      463,
+      464,
+      465,
+      467,
+      468,
+      469,
+      470,
+      471,
+      472,
+      473,
+      474,
+      475,
+      476,
+      478,
+      480,
+      481,
+      482,
+      483,
+      484,
+      485,
+      487,
+      489,
+      490
+    ],
+    "patch": "@@ -459,34 +459,36 @@ udiv(mrb_state *mrb, mpz_t *qq, mpz_t *rr, mpz_t *xx, mpz_t *yy)\n   size_t xd = digits(&x);\n   mpz_realloc(mrb, &q, xd);\n   mp_dbl_limb z = y.p[yd-1];\n-  for (size_t j=xd-yd;; j--) {\n-    mp_dbl_limb_signed b=0;\n-    mp_dbl_limb qhat;\n-\n-    if (j+yd == xd)\n-      qhat = x.p[j+yd-1] / z;\n-    else\n-      qhat = (((mp_dbl_limb)x.p[j+yd] << DIG_SIZE) + x.p[j+yd-1]) / z;\n-    if (qhat) {\n-      for (i=0; i<yd; i++) {\n-        mp_dbl_limb zz = qhat * y.p[i];\n-        mp_dbl_limb_signed u = LOW(b)+x.p[i+j]-LOW(zz);\n-        x.p[i+j] = LOW(u);\n-        b = HIGH(b) - HIGH(zz) + HIGH(u);\n+  if (xd>=yd) {\n+    for (size_t j=xd-yd;; j--) {\n+      mp_dbl_limb_signed b=0;\n+      mp_dbl_limb qhat;\n+\n+      if (j+yd == xd)\n+        qhat = x.p[j+yd-1] / z;\n+      else\n+        qhat = (((mp_dbl_limb)x.p[j+yd] << DIG_SIZE) + x.p[j+yd-1]) / z;\n+      if (qhat) {\n+        for (i=0; i<yd; i++) {\n+          mp_dbl_limb zz = qhat * y.p[i];\n+          mp_dbl_limb_signed u = LOW(b)+x.p[i+j]-LOW(zz);\n+          x.p[i+j] = LOW(u);\n+          b = HIGH(b) - HIGH(zz) + HIGH(u);\n+        }\n+        b += x.p[i+j];\n       }\n-      b += x.p[i+j];\n-    }\n-    for (; b!=0; qhat--) {\n-      mp_dbl_limb c = 0;\n-      for (i=0; i<yd; i++) {\n-        c += (mp_dbl_limb)x.p[i+j] + (mp_dbl_limb)y.p[i];\n-        x.p[i+j] = LOW(c);\n-        c = HIGH(c);\n+      for (; b!=0; qhat--) {\n+        mp_dbl_limb c = 0;\n+        for (i=0; i<yd; i++) {\n+          c += (mp_dbl_limb)x.p[i+j] + (mp_dbl_limb)y.p[i];\n+          x.p[i+j] = LOW(c);\n+          c = HIGH(c);\n+        }\n+        b += c;\n       }\n-      b += c;\n+      q.p[j] = (mp_limb)qhat;\n+      if (j == 0) break;\n     }\n-    q.p[j] = (mp_limb)qhat;\n-    if (j == 0) break;\n   }\n   x.sz = yy->sz;\n   urshift(mrb, rr, &x, ns);"
+  }
+]

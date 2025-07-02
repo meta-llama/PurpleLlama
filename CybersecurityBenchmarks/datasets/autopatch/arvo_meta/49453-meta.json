@@ -1,0 +1,32 @@
+{
+  "sample_id": 49453,
+  "arvo_metadata": {
+    "fix": "https://github.com/mruby/mruby/commit/26ce85bd5de515906e01fdeeac774316628ad599",
+    "verify": "0",
+    "localId": 49453,
+    "project": "mruby",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Segv on unknown address",
+    "fix_commit": "26ce85bd5de515906e01fdeeac774316628ad599",
+    "repo_addr": "https://github.com/mruby/mruby"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 14,
+    "total_lines_added": 1,
+    "total_lines_subtracted": 0,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

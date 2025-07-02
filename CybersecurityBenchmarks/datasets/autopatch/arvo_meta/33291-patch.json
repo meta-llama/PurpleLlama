@@ -1,0 +1,75 @@
+[
+  {
+    "filename": "blosc/blosc2.c",
+    "patched_line_numbers": [
+      3993,
+      4037
+    ],
+    "patch": "@@ -3982,10 +3982,12 @@ int register_filter_private(blosc2_filter *filter) {\n         BLOSC_TRACE_ERROR(\"The id must be greater or equal than %d\", BLOSC2_GLOBAL_REGISTERED_FILTERS_START);\n         return BLOSC2_ERROR_FAILURE;\n     }\n+    /* This condition can never be fulfilled\n     if (filter->id > BLOSC2_USER_REGISTERED_FILTERS_STOP) {\n         BLOSC_TRACE_ERROR(\"The id must be lower or equal than %d\", BLOSC2_USER_REGISTERED_FILTERS_STOP);\n         return BLOSC2_ERROR_FAILURE;\n     }\n+    */\n \n     // Check if the filter is already registered\n     for (uint64_t i = 0; i < g_nfilters; ++i) {\n@@ -4024,10 +4026,12 @@ int register_codec_private(blosc2_codec *codec) {\n         BLOSC_TRACE_ERROR(\"The id must be greater or equal than %d\", BLOSC2_GLOBAL_REGISTERED_CODECS_START);\n         return BLOSC2_ERROR_FAILURE;\n     }\n+    /* This condition can never be fulfilled\n     if (codec->compcode > BLOSC2_USER_REGISTERED_CODECS_STOP) {\n         BLOSC_TRACE_ERROR(\"The id must be lower or equal to %d\", BLOSC2_USER_REGISTERED_CODECS_STOP);\n         return BLOSC2_ERROR_FAILURE;\n     }\n+     */\n \n     // Check if the code is already registered\n     for (int i = 0; i < g_ncodecs; ++i) {"
+  },
+  {
+    "filename": "blosc/schunk.c",
+    "patched_line_numbers": [
+      478,
+      479,
+      480,
+      481
+    ],
+    "patch": "@@ -474,6 +474,12 @@ blosc2_schunk* blosc2_schunk_from_buffer(uint8_t *cframe, int64_t len, bool copy\n   if (frame == NULL) {\n     return NULL;\n   }\n+  // Check that the buffer actually comes from a cframe\n+  char *magic_number = (char *)cframe;\n+  magic_number += FRAME_HEADER_MAGIC;\n+  if (strcmp(magic_number, \"b2frame\\0\") != 0) {\n+    return NULL;\n+  }\n   blosc2_schunk* schunk = frame_to_schunk(frame, copy, &BLOSC2_IO_DEFAULTS);\n   if (schunk && copy) {\n     // Super-chunk has its own copy of frame"
+  },
+  {
+    "filename": "examples/multithread.c",
+    "patched_line_numbers": [
+      83
+    ],
+    "patch": "@@ -80,7 +80,7 @@ int main(void) {\n       return csize;\n     }\n \n-    printf(\"Compression: %zu -> %d (%.1fx)\\n\", isize, csize, (1. * (double)isize) /\n+    printf(\"Compression: %lld -> %d (%.1fx)\\n\", (int64_t)isize, csize, (1. * (double)isize) /\n             csize);\n \n     /* Decompress  */"
+  },
+  {
+    "filename": "examples/simple.c",
+    "patched_line_numbers": [
+      63,
+      64
+    ],
+    "patch": "@@ -60,8 +60,8 @@ int main(void) {\n     return csize;\n   }\n \n-  printf(\"Compression: %zu -> %d (%.1fx)\\n\",\n-         isize, csize, (1. * (double)isize) / csize);\n+  printf(\"Compression: %lld -> %d (%.1fx)\\n\",\n+         (int64_t)isize, csize, (1. * (double)isize) / csize);\n \n   ret = blosc_getitem(data_out, 5, 5, data_subset);\n   if (ret < 0) {"
+  },
+  {
+    "filename": "plugins/codecs/ndlz/ndlz4x4.c",
+    "patched_line_numbers": [
+      557,
+      558
+    ],
+    "patch": "@@ -554,8 +554,8 @@ int ndlz4_decompress(const uint8_t *input, int32_t input_len, uint8_t *output, i\n \n   /* main loop */\n   uint32_t ii[2];\n-  uint32_t padding[2];\n-  uint32_t ind;\n+  uint32_t padding[2] = {0};\n+  uint32_t ind = 0;\n   uint8_t cell_aux[16];\n   for (ii[0] = 0; ii[0] < i_stop[0]; ++ii[0]) {\n     for (ii[1] = 0; ii[1] < i_stop[1]; ++ii[1]) {      // for each cell"
+  },
+  {
+    "filename": "plugins/codecs/ndlz/ndlz8x8.c",
+    "patched_line_numbers": [
+      475
+    ],
+    "patch": "@@ -472,7 +472,7 @@ int ndlz8_decompress(const uint8_t *input, int32_t input_len, uint8_t *output, i\n \n   /* main loop */\n   int32_t ii[2];\n-  int32_t padding[2];\n+  int32_t padding[2] = {0};\n   int32_t ind = 0;\n   uint8_t* local_buffer = malloc(cell_size);\n   uint8_t* cell_aux = malloc(cell_size);"
+  },
+  {
+    "filename": "plugins/filters/ndcell/ndcell.c",
+    "patched_line_numbers": [
+      194,
+      196
+    ],
+    "patch": "@@ -191,9 +191,9 @@ int ndcell_decoder(const uint8_t* input, uint8_t* output, int32_t length, uint8_\n     }\n \n     /* main loop */\n-    int64_t pad_shape[NDCELL_MAX_DIM];\n+    int64_t pad_shape[NDCELL_MAX_DIM] = {0};\n     int64_t ii[NDCELL_MAX_DIM];\n-    int32_t ind;\n+    int32_t ind = 0;\n     for (int cell_ind = 0; cell_ind < ncells; cell_ind++) {      // for each cell\n \n         if (ip > ip_limit) {"
+  },
+  {
+    "filename": "plugins/filters/ndmean/ndmean.c",
+    "patched_line_numbers": [
+      259,
+      261
+    ],
+    "patch": "@@ -256,9 +256,9 @@ int ndmean_decoder(const uint8_t* input, uint8_t* output, int32_t length, uint8_\n     }\n \n     /* main loop */\n-    int64_t pad_shape[NDMEAN_MAX_DIM];\n+    int64_t pad_shape[NDMEAN_MAX_DIM] = {0};\n     int64_t ii[NDMEAN_MAX_DIM];\n-    int32_t ind;\n+    int32_t ind = 0;\n     for (int cell_ind = 0; cell_ind < ncells; cell_ind++) {      // for each cell\n \n         if (ip > ip_limit) {"
+  },
+  {
+    "filename": "tests/cutest.h",
+    "patched_line_numbers": [
+      167,
+      172,
+      173
+    ],
+    "patch": "@@ -164,11 +164,13 @@ int _cutest_run(int (*test)(void *), void *test_data, char *name) {\n   uint8_t count = 0;\n   int num = niters;\n   do { count++; num /= 10;} while(num != 0);\n+  char aux[MAXLEN_TESTNAME];\n   for (int niter = 0; niter < niters; ++niter) {\n     sprintf(test_name, \"[%0*d/%d] %s(\", count, niter + 1, niters, name);\n     for (int i = 0; i < nparams; ++i) {\n       cutest_params_ind[i] = (int8_t) (niter / params_strides[i] % cutest_params[i].params_len);\n-      snprintf(test_name, MAXLEN_TESTNAME, \"%s%s[%d], \", test_name, cutest_params[i].name,\n+      strcpy(aux, test_name);\n+      snprintf(test_name, MAXLEN_TESTNAME, \"%s%s[%d], \", aux, cutest_params[i].name,\n                cutest_params_ind[i]);\n     }\n     test_name[strlen(test_name) - 1] = 0;"
+  }
+]

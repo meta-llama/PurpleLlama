@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "mrbgems/mruby-compiler/core/codegen.c",
+    "patched_line_numbers": [
+      452,
+      453
+    ],
+    "patch": "@@ -444,15 +444,13 @@ genjmp2(codegen_scope *s, mrb_code i, uint16_t a, uint32_t pc, int val)\n     gen_B(s, OP_EXT1);\n     gen_B(s, i);\n     gen_S(s, a);\n-    pos = s->pc;\n-    gen_S(s, pc);\n   }\n   else {\n     gen_B(s, i);\n     gen_B(s, (uint8_t)a);\n-    pos = s->pc;\n-    gen_jmpdst(s, pc);\n   }\n+  pos = s->pc;\n+  gen_jmpdst(s, pc);\n   return pos;\n }\n "
+  }
+]

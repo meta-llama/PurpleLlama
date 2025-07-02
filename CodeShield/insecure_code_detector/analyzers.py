@@ -8,7 +8,7 @@
 import enum
 
 
-class Analyzer(str, enum.Enum):
+class Analyzer(enum.Enum):
     REGEX = "regex"
     SEMGREP = "semgrep"
 

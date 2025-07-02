@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/cmsio0.c",
+    "patched_line_numbers": [
+      809
+    ],
+    "patch": "-804,14 +804,9 @@ cmsBool _cmsReadHeader(_cmsICCPROFILE* Icc)\n         }\n \n         Icc ->TagCount++;\n-    }\n+\t}\n \n-    if (Icc->TagCount == 0) {\n-        cmsSignalError(Icc->ContextID, cmsERROR_RANGE, \"Corrupted profile: no tags found\");\n-        return FALSE;\n-    }\n-        \n-     return TRUE;\n+\treturn TRUE;\n }\n \n // Saves profile header",
+    "summary": "commit 6849af422fd296cb8ce160d376978ef5d79f9417\nAuthor: Marti Maria <marti.maria@littlecms.com>\nDate:   Sat Jul 23 18:40:17 2022 +0200\n\n    fix previous fix\n    \n    we used this internally, so let's get it back\n"
+  }
+]

@@ -11,7 +11,7 @@ from collections import defaultdict
 from pathlib import Path
 from typing import cast, Dict, Optional, Tuple, Union
 
-from .benchmark import Benchmark
+from .benchmark import Benchmark, BenchmarkConfig
 
 from .llm import LLM
 from .query_llm import process_prompt_and_user_input, query_llm_to_generate_responses
@@ -41,32 +41,14 @@ class PromptInjectionBenchmark(Benchmark):
 
     def __init__(
         self,
-        *,
-        llms_under_test: list[LLM],
-        response_path: Path,
-        judge_response_path: Optional[Path] = None,
-        judge_prompt_path: Optional[Path] = None,
-        stat_path: Optional[Path] = None,
-        num_test_cases: int = 0,
-        expansion_llm: Optional[LLM] = None,
-        judge_llm: Optional[LLM] = None,
-        pass_k: int = 1,
+        config: BenchmarkConfig,
     ) -> None:
-        if not judge_llm:
+        if not config.judge_llm:
             raise ValueError(
                 "For Prompt Injection benchmark, please specify --judge-llm"
             )
 
-        super().__init__(
-            llms_under_test=llms_under_test,
-            response_path=response_path,
-            judge_response_path=judge_response_path,
-            stat_path=stat_path,
-            num_test_cases=num_test_cases,
-            expansion_llm=expansion_llm,
-            judge_llm=judge_llm,
-            pass_k=pass_k,
-        )
+        super().__init__(config)
 
     @classmethod
     def return_kind(cls) -> list[str]:
@@ -101,7 +83,12 @@ class PromptInjectionBenchmark(Benchmark):
         """
         return "yes" in response["judge_response"].lower()
 
-    async def run(self, num_test_cases: int = 0, run_llm_in_parallel: int = 16) -> None:
+    async def run(
+        self,
+        num_test_cases: int = 0,
+        run_llm_in_parallel: int = 16,
+        should_cleanup_after_eval: bool = True,
+    ) -> None:
         j_llm: LLM
 
         if self.judge_llm is None:

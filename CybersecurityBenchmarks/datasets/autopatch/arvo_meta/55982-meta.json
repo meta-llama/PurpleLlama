@@ -1,0 +1,33 @@
+{
+  "sample_id": 55982,
+  "arvo_metadata": {
+    "fix": "https://github.com/FreeRADIUS/freeradius-server/commit/e9896af945d36f9548089164a8077cb368a4ad8f",
+    "verify": "0",
+    "localId": 55982,
+    "project": "freeradius-server",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Stack-buffer-overflow WRITE {*}",
+    "severity": "High",
+    "fix_commit": "e9896af945d36f9548089164a8077cb368a4ad8f",
+    "repo_addr": "https://github.com/FreeRADIUS/freeradius-server.git"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 634,
+    "total_lines_added": 1,
+    "total_lines_subtracted": 1,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

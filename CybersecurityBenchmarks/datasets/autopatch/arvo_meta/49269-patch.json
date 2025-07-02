@@ -1,0 +1,9 @@
+[
+  {
+    "filename": "mrbgems/mruby-bigint/core/bigint.c",
+    "patched_line_numbers": [
+      94
+    ],
+    "patch": "@@ -90,6 +90,8 @@ static size_t\n digits(mpz_t *x)\n {\n   size_t i;\n+\n+  if (x->sz == 0) return 0;\n   for (i = (x->sz) - 1; (x->p)[i] == 0 ; i--)\n     if (i == 0) break;\n   return i+1;"
+  }
+]

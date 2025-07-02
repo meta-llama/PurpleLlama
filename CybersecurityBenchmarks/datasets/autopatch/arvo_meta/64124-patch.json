@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "Packet++/src/SSLHandshake.cpp",
+    "patched_line_numbers": [
+      1405
+    ],
+    "patch": "-1402,7 +1402,7 @@ uint16_t SSLClientHelloMessage::getCipherSuiteID(int index, bool& isValid) const\n \t}\n \n \tsize_t cipherSuiteStartOffset = sizeof(ssl_tls_client_server_hello) + sizeof(uint8_t) + getSessionIDLength() + sizeof(uint16_t);\n-\tif (cipherSuiteStartOffset + sizeof(uint16_t) > m_DataLen)\n+\tif (cipherSuiteStartOffset + sizeof(uint16_t) * (index + 1) > m_DataLen)\n \t{\n \t\tisValid = false;\n \t\treturn 0;",
+    "summary": "commit 98143666674d8d50ffed878d8d91c48c9567706c\nAuthor: Alex <aleksandrosansan@gmail.com>\nDate:   Mon Nov 13 01:56:02 2023 +0100\n\n    Fix oss-fuzz issue 64124\n    \n    https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=64124 (#1238)\n"
+  }
+]

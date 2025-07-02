@@ -1,0 +1,33 @@
+{
+  "sample_id": 17084,
+  "arvo_metadata": {
+    "fix": "https://android.googlesource.com/platform/external/libmpeg2/+/8ff92056d7958449e31b898bdda291cc162ec87e",
+    "verify": "0",
+    "localId": 17084,
+    "project": "libmpeg2",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "UNKNOWN WRITE",
+    "severity": "High",
+    "fix_commit": "8ff92056d7958449e31b898bdda291cc162ec87e",
+    "repo_addr": "https://android.googlesource.com/platform/external/libmpeg2"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 125,
+    "total_lines_added": 1,
+    "total_lines_subtracted": 0,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

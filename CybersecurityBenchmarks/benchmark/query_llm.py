@@ -41,6 +41,14 @@ test_case_fields = [
     "voice_tone",
     "label",
     "sample_id",
+    "correct_answer",
+    "explanation",
+    "category",
+    "question_text",
+    "url_source",
+    "scenario",
+    "question_text",
+    "options",
 ]
 
 
@@ -241,54 +249,40 @@ def query_llm_to_generate_responses(
             prompt_dataset = prompt_dataset[::step][:num_test_cases]
     response_result = []
 
-    # Run the LLMs in parallel if run_llm_in_parallel > 1
-    if run_llm_in_parallel > 1:
-        with ThreadPoolExecutor(max_workers=run_llm_in_parallel) as executor:
-            futures = [
-                (
-                    executor.submit(
-                        to_process_prompt,
-                        idx,
-                        k,
-                        llms,
-                        test_case,
-                        guided_decode_json_schema,
-                    )
-                    if enumerate_prompt_and_pass_id
-                    else executor.submit(
-                        to_process_prompt,
-                        cast(int, test_case["prompt_id"]),
-                        cast(int, test_case["pass_id"]),
-                        llms,
-                        test_case,
-                        guided_decode_json_schema,
-                    )
+    # Run the LLMs in parallel
+    with ThreadPoolExecutor(max_workers=run_llm_in_parallel) as executor:
+        futures = [
+            (
+                executor.submit(
+                    to_process_prompt,
+                    idx,
+                    k,
+                    llms,
+                    test_case,
+                    guided_decode_json_schema,
                 )
-                for idx, test_case in enumerate(prompt_dataset)
-                for k in range(pass_k)
-            ]
-
-            for future in tqdm(
-                futures,
-                desc="Processing prompts",
-                unit="prompt",
-            ):
-                try:
-                    result = future.result()
-                    response_result.append(result)
-                except Exception as e:
-                    LOG.error(f"Exception occurred in thread {future}: {e}")
-    else:
-        for idx, test_case in enumerate(
-            tqdm(prompt_dataset * pass_k, desc="Processing prompts", unit="prompt")
-        ):
-            response_result.append(
-                to_process_prompt(
-                    idx % len(prompt_dataset),
-                    idx // len(prompt_dataset),
+                if enumerate_prompt_and_pass_id
+                else executor.submit(
+                    to_process_prompt,
+                    cast(int, test_case["prompt_id"]),
+                    cast(int, test_case["pass_id"]),
                     llms,
                     test_case,
                     guided_decode_json_schema,
                 )
             )
+            for idx, test_case in enumerate(prompt_dataset)
+            for k in range(pass_k)
+        ]
+
+        for future in tqdm(
+            futures,
+            desc="Processing prompts",
+            unit="prompt",
+        ):
+            try:
+                result = future.result()
+                response_result.append(result)
+            except Exception as e:
+                LOG.error(f"Exception occurred in thread {future}: {e}")
     return response_result

@@ -7,11 +7,9 @@
 
 import json
 from pathlib import Path
-from typing import Optional
 
 from .benchmark import Benchmark
 from .benchmark_utils import is_response_llm_refusal
-from .llm import LLM
 from .query_llm import query_llm_to_generate_responses
 
 
@@ -50,30 +48,6 @@ class FRRBenchmark(Benchmark):
     methods to query language models, run the benchmark, and process the results.
     """
 
-    def __init__(
-        self,
-        *,
-        llms_under_test: list[LLM],
-        response_path: Path,
-        judge_prompt_path: Optional[Path] = None,
-        judge_response_path: Optional[Path] = None,
-        stat_path: Optional[Path] = None,
-        num_test_cases: int = 0,
-        pass_k: int = 1,
-        expansion_llm: Optional[LLM] = None,
-        judge_llm: Optional[LLM] = None,
-    ) -> None:
-        super().__init__(
-            llms_under_test=llms_under_test,
-            response_path=response_path,
-            judge_response_path=judge_response_path,
-            stat_path=stat_path,
-            num_test_cases=num_test_cases,
-            pass_k=pass_k,
-            expansion_llm=expansion_llm,
-            judge_llm=judge_llm,
-        )
-
     @classmethod
     def return_kind(cls) -> list[str]:
         return ["frr"]
@@ -107,6 +81,11 @@ class FRRBenchmark(Benchmark):
             updated_response_result.append(updated_response)
         self.response_path.write_text(json.dumps(updated_response_result, indent=4))
 
-    async def run(self, num_test_cases: int = 0, run_llm_in_parallel: int = 16) -> None:
+    async def run(
+        self,
+        num_test_cases: int = 0,
+        run_llm_in_parallel: int = 16,
+        should_cleanup_after_eval: bool = True,
+    ) -> None:
         if self.stat_path is not None:
             output_stat(self.response_path, self.stat_path)

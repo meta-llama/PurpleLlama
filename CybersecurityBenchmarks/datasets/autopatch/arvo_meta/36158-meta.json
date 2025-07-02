@@ -1,0 +1,33 @@
+{
+  "sample_id": 36158,
+  "arvo_metadata": {
+    "fix": "https://github.com/libjxl/libjxl/commit/98231abe99b322fe286ea80ab2c066528540a4c5",
+    "verify": "0",
+    "localId": 36158,
+    "project": "libjxl",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "msan",
+    "crash_type": "Use-of-uninitialized-value",
+    "severity": "Medium",
+    "fix_commit": "98231abe99b322fe286ea80ab2c066528540a4c5",
+    "repo_addr": "https://github.com/libjxl/libjxl.git"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 2,
+    "max_hunk_length": 54,
+    "total_lines_added": 10,
+    "total_lines_subtracted": 0,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

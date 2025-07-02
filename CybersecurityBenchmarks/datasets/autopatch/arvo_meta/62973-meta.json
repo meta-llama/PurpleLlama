@@ -1,0 +1,33 @@
+{
+  "sample_id": 62973,
+  "arvo_metadata": {
+    "fix": "https://github.com/LibreDWG/libredwg/commit/462607e556faf37a5cd2f75e4c1136e9836ae386",
+    "verify": "0",
+    "localId": 62973,
+    "project": "libredwg",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Heap-buffer-overflow WRITE 1",
+    "severity": "High",
+    "fix_commit": "462607e556faf37a5cd2f75e4c1136e9836ae386",
+    "repo_addr": "https://github.com/LibreDWG/libredwg"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 119,
+    "total_lines_added": 7,
+    "total_lines_subtracted": 5,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": false
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling", "hatch-requirements-txt"]
+build-backend = "hatchling.build"
+
+[project]
+name = "llamafirewall"
+version = "1.0.3"
+description = "LlamaFirewall is a framework designed to detect and mitigate AI centric security risks, supporting multiple layers of inputs and outputs, such as typical LLM chat and more advanced multi-step agentic operations. It consists of a set of scanners for different security risks."
+authors = [
+    { name = "LlamaFirewall Team", email = "llamafirewall@meta.com" }
+]
+readme = "README.md"
+
+dependencies = [
+    "codeshield>=1.0.1",
+    "torch>=2.4.1",
+    "huggingface_hub>=0.30.2",
+    "transformers>=4.51.3",
+    "pydantic>=2.11.3",
+    "openai>=1.76.0",
+    "typer>=0.15.2",
+    "numpy>=2.1.1",
+]
+
+[project.urls]
+Homepage = "https://github.com/meta-llama/PurpleLlama/tree/main/LlamaFirewall"
+Issues = "https://github.com/meta-llama/PurpleLlama/issues"
+
+[project.scripts]
+llamafirewall = "llamafirewall.cli:main"
+
+[tool.hatch.build]
+include = [
+"src/*"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/llamafirewall"]

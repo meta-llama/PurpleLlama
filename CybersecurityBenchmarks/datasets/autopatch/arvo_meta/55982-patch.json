@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/protocols/tacacs/decode.c",
+    "patched_line_numbers": [
+      584
+    ],
+    "patch": "-581,7 +581,7 @@ ssize_t fr_tacacs_decode(TALLOC_CTX *ctx, fr_pair_list_t *out, uint8_t const *bu\n \t\t\t\tbreak;\n \n \t\t\tcase FR_AUTHENTICATION_TYPE_VALUE_MSCHAPV2:\n-\t\t\t\twant = 1 + 16 + 49; /* id + HOPEFULLY 16 octets of challenge + 49 MS-CHAP stuff */\n+\t\t\t\twant = 1 + 49; /* id + HOPEFULLY 16 octets of challenge + 49 MS-CHAP stuff */\n \t\t\t\tda = attr_tacacs_mschap2_response;\n \t\t\t\tchallenge = attr_tacacs_mschap_challenge;\n \t\t\t\tbreak;",
+    "summary": "commit e9896af945d36f9548089164a8077cb368a4ad8f\nAuthor: Alan T. DeKok <aland@freeradius.org>\nDate:   Tue Feb 14 17:41:16 2023 -0500\n\n    don't include the challenge\n"
+  }
+]

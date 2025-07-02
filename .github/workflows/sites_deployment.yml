@@ -1,0 +1,73 @@
+name: Deploy multiple PurpleLlama sites
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+env:
+  DEFAULT_SITE: CyberSecEval
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies and build CyberSecEval
+        run: |
+          cd CybersecurityBenchmarks/website
+          npm ci --legacy-peer-deps
+          npm run build
+          mkdir -p ../../_site/CyberSecEval
+          mv build/* ../../_site/CyberSecEval
+          cd ../../
+
+      - name: Install dependencies and build LlamaFirewall
+        run: |
+          cd LlamaFirewall/website
+          npm ci --legacy-peer-deps
+          npm run build
+          mkdir -p ../../_site/LlamaFirewall
+          mv build/* ../../_site/LlamaFirewall
+          cd ../../
+
+      - name: Create redirect index.html
+        run: |
+          echo '<!DOCTYPE html><html><head><meta http-equiv="Refresh" content="0; url=/PurpleLlama/${{ env.DEFAULT_SITE }}/" /><script>window.location.href="/PurpleLlama/${{ env.DEFAULT_SITE }}/";</script><title>Redirecting...</title></head><body>Redirecting to <a href="/PurpleLlama/${{ env.DEFAULT_SITE }}/">${{ env.DEFAULT_SITE }}</a>...</body></html>' > _site/index.html
+
+      - name: Upload site artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

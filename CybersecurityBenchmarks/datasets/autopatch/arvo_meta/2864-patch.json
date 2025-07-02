@@ -1,0 +1,14 @@
+[
+  {
+    "filename": "gdal/ogr/ogr_srs_esri.cpp",
+    "patched_line_numbers": [
+      1672,
+      1673,
+      1681,
+      1682,
+      1789,
+      1791
+    ],
+    "patch": "@@ -1669,13 +1669,17 @@ OGRErr OGRSpatialReference::morphToESRI()\n     if( pszProjection != NULL && EQUAL(pszProjection, SRS_PT_MERCATOR_2SP) )\n     {\n         SetNode( \"PROJCS|PROJECTION\", \"Mercator\" );\n+        if( (poProjCS = GetAttrNode( \"PROJCS\" )) != NULL )\n+            poProjCSNodeChild = poProjCS->GetChild(0);\n     }\n \n     // See #4861.\n     else if( pszProjection != NULL &&\n              EQUAL(pszProjection, SRS_PT_MERCATOR_1SP) )\n     {\n         SetNode( \"PROJCS|PROJECTION\", \"Mercator\" );\n+        if( (poProjCS = GetAttrNode( \"PROJCS\" )) != NULL )\n+            poProjCSNodeChild = poProjCS->GetChild(0);\n \n         const double dfK0 = GetNormProjParm(SRS_PP_SCALE_FACTOR, 1.0);\n \n@@ -1782,7 +1786,10 @@ OGRErr OGRSpatialReference::morphToESRI()\n         CPLFree( newGcsName );\n         pszGcsName = GetAttrValue( \"GEOGCS\" );\n       }\n-      RemapGeogCSName(this, pszGcsName);\n+      if( pszGcsName != NULL )\n+      {\n+        RemapGeogCSName(this, pszGcsName);\n+      }\n \n       // Specific processing and remapping\n       pszProjection = GetAttrValue(\"PROJECTION\");"
+  }
+]

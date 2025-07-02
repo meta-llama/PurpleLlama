@@ -13,13 +13,13 @@ import logging
 
 from pathlib import Path
 
-from typing import Callable
+from typing import Callable, Optional
 
 from . import llm
 from .autonomous_uplift_benchmark import AutonomousUpliftBenchmark
+from .autopatching_benchmark import AutoPatchingBenchmark
 
-from .benchmark import Benchmark
-
+from .benchmark import Benchmark, BenchmarkConfig
 from .cache_handler import CacheHandler
 from .canary_exploit_benchmark import CanaryExploitBenchmark
 
@@ -27,16 +27,16 @@ from .frr_benchmark import FRRBenchmark
 
 from .instruct_or_autocomplete_benchmark import InstructOrAutoCompleteBenchmark
 
-# from .instruct_or_autocomplete_benchmark import InstructOrAutoCompleteBenchmark # Temporarily Remove Secure Code Generation Benchmarks Benchmarks, see https://github.com/meta-llama/PurpleLlama/tree/main/CybersecurityBenchmarks#running-secure-code-generation-benchmarks
 from .interpreter_benchmark import InterpreterBenchmark
 from .mitre_benchmark import MitreBenchmark
 from .multiturn_phishing_benchmark import MultiturnPhishingBenchmark
+
 from .prompt_injection_benchmark import PromptInjectionBenchmark
+
 from .visual_prompt_injection_benchmark import VisualPromptInjectionBenchmark
 
 LOG: logging.Logger = logging.getLogger(__name__)
 
-# Benchmark.register_benchmark(InstructOrAutoCompleteBenchmark) # Temporarily Remove Secure Code Generation Benchmarks Benchmarks, see https://github.com/meta-llama/PurpleLlama/tree/main/CybersecurityBenchmarks#running-secure-code-generation-benchmarks
 Benchmark.register_benchmark(InstructOrAutoCompleteBenchmark)
 Benchmark.register_benchmark(MitreBenchmark)
 Benchmark.register_benchmark(FRRBenchmark)
@@ -46,6 +46,7 @@ Benchmark.register_benchmark(InterpreterBenchmark)
 Benchmark.register_benchmark(AutonomousUpliftBenchmark)
 Benchmark.register_benchmark(VisualPromptInjectionBenchmark)
 Benchmark.register_benchmark(MultiturnPhishingBenchmark)
+Benchmark.register_benchmark(AutoPatchingBenchmark)
 
 
 def validate_arguments(parser: argparse.ArgumentParser) -> argparse.Namespace:
@@ -75,8 +76,12 @@ def main(
     default_stat_path: str | None = None,
     default_use_precomputed_responses: bool = False,
     default_only_generate_llm_responses: bool = False,
-    default_llm_creator: Callable[[str], llm.LLM] = llm.create,
+    default_llm_creator: Callable[
+        [str, int, Optional[list[str]]], llm.LLM
+    ] = llm.create,
     default_run_llm_in_parallel: int = 1,
+    default_should_cleanup_after_eval: bool = True,
+    default_container_repository: Optional[str] = None,
 ) -> None:
     parser = argparse.ArgumentParser(description="Run the Cybersecurity Benchmarks.")
 
@@ -152,6 +157,20 @@ def main(
     )
 
     parser.add_argument(
+        "--truncate-input",
+        action="store_true",
+        default=False,
+        help="Set this argument to truncate the input provided to the LLM.",
+    )
+
+    parser.add_argument(
+        "--should-cleanup-after-eval",
+        action="store_true",
+        default=default_should_cleanup_after_eval,
+        help="Set this argument to configure post-evaluation cleanup.",
+    )
+
+    parser.add_argument(
         "--num-queries-per-prompt",
         help="Set the number of queries per prompt. Default value is 1.",
         type=int,
@@ -195,19 +214,74 @@ def main(
         help="Specify the cache file path. Default is 'llm_cache.json'.",
     )
 
+    parser.add_argument(
+        "--agent",
+        type=str,
+        help="For agentic benchmarks - which agent implementation to use.",
+    )
+
+    parser.add_argument(
+        "--enable-lf",
+        type=str,
+        default=None,
+        help="Optional keyword to enable LlamaFirewall on all input and output layers.",
+    )
+
+    parser.add_argument(
+        "--max-tokens",
+        type=int,
+        default=2048,
+        help="Set the max token size for querying LLMs.",
+    )
+
+    parser.add_argument(
+        "--cot-end-tokens",
+        nargs="*",
+        default=[],
+        help="A list of strings that should be used to locate the end of the CoT.",
+    )
+
+    # NOTE: this argument will be saved in `BenchmarkConfig.additional_args`
+    # which can be used by any individual benchmark to pass additional arguments
+    # specific to that benchmark. For example, the `AutoPatchingBenchmark` uses
+    # this argument to pass the `--test-mode` flag. The command line argument
+    # looks like: `--additional-args \'--test-mode\'`. The synatx for quote
+    # escaping may be shell-specific.
+    parser.add_argument(
+        "--additional-args",
+        type=str,
+        help="Additional arguments to pass to the benchmark.",
+    )
+
+    parser.add_argument(
+        "--container-repository",
+        type=str,
+        help="Specify a reference to a container repository containing images used in this benchmark to avoid rebuilding images locally. Ensure this does not point to ARVO images, but rather images produced by our benchmark.",
+        default=default_container_repository,
+    )
+
+    parser.add_argument(
+        "--input-modality",
+        type=str,
+        help="Optional keyword to specify the input modality/modialities for the benchmark. Currently supported modalities are: text, image, text_and_image for ThreatIntelReasoning benchmark.",
+        default=None,
+    )
+
     args = validate_arguments(parser)
 
     logging.basicConfig(
         format="%(asctime)s [%(name)s][%(levelname)s] %(message)s",
         level=logging.INFO if not args.debug else logging.DEBUG,
     )
+    AutoPatchingBenchmark.set_log_level(logging.DEBUG if args.debug else logging.INFO)
 
     materialized_llms_under_test = []
     if not args.use_precomputed_responses:
         if llms_under_test is None and not args.llm_under_test:
             raise ValueError("No LLMs were specified.")
         materialized_llms_under_test = llms_under_test or [
-            default_llm_creator(specification) for specification in args.llm_under_test
+            default_llm_creator(specification, args.max_tokens, args.cot_end_tokens)
+            for specification in args.llm_under_test
         ]
 
     stat_response_path = Path(args.stat_path) if args.stat_path else None
@@ -215,9 +289,9 @@ def main(
         Path(args.judge_response_path) if args.judge_response_path else None
     )
     if args.judge_llm:
-        judge_llm = default_llm_creator(args.judge_llm)
+        judge_llm = default_llm_creator(args.judge_llm, 2048, None)
     if args.expansion_llm:
-        expansion_llm = default_llm_creator(args.expansion_llm)
+        expansion_llm = default_llm_creator(args.expansion_llm, 2048, None)
 
     judge_prompt_path = None
     if args.judge_prompt_path:
@@ -236,8 +310,7 @@ def main(
         for materialized_llm in materialized_llms_under_test:
             materialized_llm.cache_handler = None
 
-    benchmark: Benchmark = Benchmark.create_instance(
-        args.benchmark,
+    config: BenchmarkConfig = BenchmarkConfig(
         llms_under_test=materialized_llms_under_test,
         judge_llm=judge_llm,
         expansion_llm=expansion_llm,
@@ -247,7 +320,18 @@ def main(
         stat_path=stat_response_path,
         num_test_cases=args.num_test_cases,
         pass_k=args.num_queries_per_prompt,
+        agent=args.agent,
+        enable_lf=args.enable_lf,
+        cot_end_tokens=args.cot_end_tokens,
+        additional_args=(args.additional_args or "").strip("'\""),
+        container_repository=args.container_repository,
+        prompt_path=args.prompt_path,
+        max_concurrency=args.run_llm_in_parallel,
+        truncate_input=args.truncate_input,
+        input_modality=args.input_modality,
     )
+
+    benchmark: Benchmark = Benchmark.create_instance(args.benchmark, config)
 
     if args.use_precomputed_responses:
         # Using precomputed responses require a valid response path.
@@ -280,7 +364,13 @@ def main(
                 )
             if args.num_queries_per_prompt:
                 args.num_test_cases = args.num_test_cases * args.num_queries_per_prompt
-        asyncio.run(benchmark.run(args.num_test_cases, args.run_llm_in_parallel))
+        asyncio.run(
+            benchmark.run(
+                args.num_test_cases,
+                args.run_llm_in_parallel,
+                args.should_cleanup_after_eval,
+            )
+        )
 
 
 if __name__ == "__main__":

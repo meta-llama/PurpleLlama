@@ -1,0 +1,39 @@
+{
+  "sample_id": 33197,
+  "arvo_metadata": {
+    "fix": "https://svn.code.sf.net/p/freeimage/svn1895",
+    "verify": "0",
+    "localId": 33197,
+    "project": "freeimage-svn",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "UNKNOWN READ",
+    "severity": "High",
+    "fix_commit": [
+      "1891",
+      "1892",
+      "1893",
+      "1894",
+      "1895"
+    ],
+    "repo_addr": "https://svn.code.sf.net/p/freeimage/svn"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 8,
+    "total_lines_added": 1,
+    "total_lines_subtracted": 1,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

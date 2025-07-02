@@ -1,0 +1,33 @@
+{
+  "sample_id": 33291,
+  "arvo_metadata": {
+    "fix": "https://github.com/Blosc/c-blosc2/commit/7f4574f51ad7db56fc13de89e13e7893b1a82189",
+    "verify": "0",
+    "localId": 33291,
+    "project": "c-blosc2",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "msan",
+    "crash_type": "Use-of-uninitialized-value",
+    "severity": "Medium",
+    "fix_commit": "7f4574f51ad7db56fc13de89e13e7893b1a82189",
+    "repo_addr": "https://github.com/Blosc/c-blosc2.git"
+  },
+  "parsed_diff_data": {
+    "total_files": 9,
+    "total_hunks": 10,
+    "max_hunk_length": 192,
+    "total_lines_added": 23,
+    "total_lines_subtracted": 11,
+    "modified_files": 9,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

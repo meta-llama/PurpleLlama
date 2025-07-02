@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/cmscgats.c",
+    "patched_line_numbers": [
+      1674
+    ],
+    "patch": "-1671,7 +1671,7 @@ char* GetData(cmsIT8* it8, int nSet, int nField)\n     int nSamples    = t -> nSamples;\n     int nPatches    = t -> nPatches;\n \n-    if (nSet >= nPatches || nField >= nSamples)\n+    if (nSet < 0 || nSet >= nPatches || nField < 0 || nField >= nSamples)\n         return NULL;\n \n     if (!t->Data) return NULL;",
+    "summary": "commit c3c1ec2e0ad166586dda191a9aba268d7ce98e3b\nAuthor: Marti Maria <marti.maria@littlecms.com>\nDate:   Wed Nov 8 09:22:33 2023 +0100\n\n    Another check to cgats\n    \n    Again, pointless but for fuzzer hapiness.\n"
+  }
+]

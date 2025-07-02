@@ -1,0 +1,11 @@
+[
+  {
+    "filename": "src/librawspeed/decompressors/Cr2Decompressor.cpp",
+    "patched_line_numbers": [
+      198,
+      199
+    ],
+    "patch": "-195,8 +195,8 @@ void Cr2Decompressor::decodeN_X_Y()\n       // Those would overflow, hence the break.\n       // see FIX_CANON_FRAME_VS_IMAGE_SIZE_MISMATCH\n       unsigned destY = processedLineSlices % mRaw->dim.y;\n-      unsigned destX = processedLineSlices / mRaw->dim.y * slicing.sliceWidth /\n-                       mRaw->getCpp();\n+      unsigned destX = processedLineSlices / mRaw->dim.y *\n+                       slicing.widthOfSlice(0) / mRaw->getCpp();\n       if (destX >= static_cast<unsigned>(mRaw->dim.x))\n         break;\n       auto dest =",
+    "summary": "commit bb585d942661d6e7173eb493c172a463e5378922\nAuthor: Roman Lebedev <lebedev.ri@gmail.com>\nDate:   Wed Mar 28 21:48:34 2018 +0300\n\n    Cr2Decompressor::decodeN_X_Y(): really use the width of the first slice.\n    \n    Clearly, it did not matter for the real raws, but this is the correct\n    thing to do. It only matters when there is only one slice,\n    which i guess is not sliceWidth, but lastSliceWidth.\n"
+  }
+]

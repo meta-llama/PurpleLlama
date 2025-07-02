@@ -1,0 +1,33 @@
+[
+  {
+    "filename": "src/lib/krb5/krb/pac.c",
+    "patched_line_numbers": [
+      31,
+      322,
+      323,
+      357,
+      358
+    ],
+    "patch": "@@ -28,6 +28,8 @@\n #include \"int-proto.h\"\n #include \"authdata.h\"\n \n+#define MAX_BUFFERS 4096\n+\n /* draft-brezak-win2k-krb-authz-00 */\n \n /*\n@@ -317,6 +319,9 @@ krb5_pac_parse(krb5_context context,\n     if (version != 0)\n         return EINVAL;\n \n+    if (cbuffers < 1 || cbuffers > MAX_BUFFERS)\n+        return ERANGE;\n+\n     header_len = PACTYPE_LENGTH + (cbuffers * PAC_INFO_BUFFER_LENGTH);\n     if (len < header_len)\n         return ERANGE;\n@@ -349,8 +354,8 @@ krb5_pac_parse(krb5_context context,\n             krb5_pac_free(context, pac);\n             return EINVAL;\n         }\n-        if (buffer->Offset < header_len ||\n-            buffer->Offset + buffer->cbBufferSize > len) {\n+        if (buffer->Offset < header_len || buffer->Offset > len ||\n+            buffer->cbBufferSize > len - buffer->Offset) {\n             krb5_pac_free(context, pac);\n             return ERANGE;\n         }"
+  },
+  {
+    "filename": "src/lib/krb5/krb/t_pac.c",
+    "patched_line_numbers": [
+      434,
+      435,
+      436,
+      437,
+      439,
+      440,
+      441,
+      442,
+      842,
+      843,
+      844,
+      845,
+      846,
+      847
+    ],
+    "patch": "@@ -431,6 +431,16 @@ static const unsigned char s4u_pac_ent_xrealm[] = {\n     0x8a, 0x81, 0x9c, 0x9c, 0x00, 0x00, 0x00, 0x00\n };\n \n+static const unsigned char fuzz1[] = {\n+    0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x00,\n+    0x06, 0xff, 0xff, 0xff, 0x00, 0x00, 0xf5\n+};\n+\n+static const unsigned char fuzz2[] = {\n+    0x00, 0x00, 0x00, 0x20, 0x00, 0x00, 0x00, 0x00,\n+    0x20, 0x20\n+};\n+\n static const char *s4u_principal = \"w2k8u@ACME.COM\";\n static const char *s4u_enterprise = \"w2k8u@abc@ACME.COM\";\n \n@@ -828,6 +838,14 @@ main(int argc, char **argv)\n         krb5_free_principal(context, sep);\n     }\n \n+    /* Check problematic PACs found by fuzzing. */\n+    ret = krb5_pac_parse(context, fuzz1, sizeof(fuzz1), &pac);\n+    if (!ret)\n+        err(context, ret, \"krb5_pac_parse should have failed\");\n+    ret = krb5_pac_parse(context, fuzz2, sizeof(fuzz2), &pac);\n+    if (!ret)\n+        err(context, ret, \"krb5_pac_parse should have failed\");\n+\n     /*\n      * Test empty free\n      */"
+  }
+]

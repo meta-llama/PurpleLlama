@@ -1,0 +1,19 @@
+[
+  {
+    "filename": "fuzz/clusterfuzz-testcase-request_fuzzer-5675545829834752",
+    "patched_line_numbers": [],
+    "patch": ""
+  },
+  {
+    "filename": "src/lib/lwan-request.c",
+    "patched_line_numbers": [
+      613,
+      615,
+      616,
+      619,
+      622,
+      623
+    ],
+    "patch": "@@ -610,15 +610,17 @@ static bool parse_headers(struct lwan_request_parser_helper *helper,\n #undef HEADER_LENGTH\n #undef HEADER\n \n-static void\n-parse_if_modified_since(struct lwan_request_parser_helper *helper)\n+static void parse_if_modified_since(struct lwan_request_parser_helper *helper)\n {\n+    static const size_t header_len =\n+        sizeof(\"Wed, 17 Apr 2019 13:59:27 GMT\") - 1;\n     time_t parsed;\n \n-    if (UNLIKELY(!helper->if_modified_since.raw.len))\n+    if (UNLIKELY(helper->if_modified_since.raw.len != header_len))\n         return;\n \n-    if (UNLIKELY(lwan_parse_rfc_time(helper->if_modified_since.raw.value, &parsed) < 0))\n+    if (UNLIKELY(lwan_parse_rfc_time(helper->if_modified_since.raw.value,\n+                                     &parsed) < 0))\n         return;\n \n     helper->if_modified_since.parsed = parsed;"
+  }
+]

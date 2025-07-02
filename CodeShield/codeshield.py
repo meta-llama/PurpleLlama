@@ -24,7 +24,7 @@ from CodeShield.insecure_code_detector.usecases import UseCase
 LOG: logging.Logger = logging.getLogger(__name__)
 
 
-class Treatment(str, enum.Enum):
+class Treatment(enum.Enum):
     BLOCK = "block"
     WARN = "warn"
     IGNORE = "ignore"

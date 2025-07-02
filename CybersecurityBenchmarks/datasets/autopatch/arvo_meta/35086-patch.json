@@ -1,0 +1,12 @@
+[
+  {
+    "filename": "blosc/frame.c",
+    "patched_line_numbers": [
+      1294,
+      1310,
+      1464,
+      1480
+    ],
+    "patch": "@@ -1291,7 +1291,7 @@ static int get_meta_from_header(blosc2_frame_s* frame, blosc2_schunk* schunk, ui\n     }\n     // Go to offset and see if we have the correct marker\n     uint8_t* content_marker = header + offset;\n-    if (header_len < offset + 1 + 4) {\n+    if (header_len < (size_t)offset + 1 + 4) {\n       return BLOSC2_ERROR_READ_BUFFER;\n     }\n     if (*content_marker != 0xc6) {\n@@ -1307,7 +1307,7 @@ static int get_meta_from_header(blosc2_frame_s* frame, blosc2_schunk* schunk, ui\n     metalayer->content_len = content_len;\n \n     // Finally, read the content\n-    if (header_len < offset + 1 + 4 + content_len) {\n+    if (header_len < (size_t)offset + 1 + 4 + content_len) {\n       return BLOSC2_ERROR_READ_BUFFER;\n     }\n     char* content = malloc((size_t)content_len);\n@@ -1461,7 +1461,7 @@ static int get_vlmeta_from_trailer(blosc2_frame_s* frame, blosc2_schunk* schunk,\n     }\n     // Go to offset and see if we have the correct marker\n     uint8_t* content_marker = trailer + offset;\n-    if (trailer_len < offset + 1 + 4) {\n+    if (trailer_len < (size_t)offset + 1 + 4) {\n       return BLOSC2_ERROR_READ_BUFFER;\n     }\n     if (*content_marker != 0xc6) {\n@@ -1477,7 +1477,7 @@ static int get_vlmeta_from_trailer(blosc2_frame_s* frame, blosc2_schunk* schunk,\n     metalayer->content_len = content_len;\n \n     // Finally, read the content\n-    if (trailer_len < offset + 1 + 4 + content_len) {\n+    if (trailer_len < (size_t)offset + 1 + 4 + content_len) {\n       return BLOSC2_ERROR_READ_BUFFER;\n     }\n     char* content = malloc((size_t)content_len);"
+  }
+]

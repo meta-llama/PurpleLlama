@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "decoder/drc_src/impd_drc_selection_process_drcset_selection.c",
+    "patched_line_numbers": [
+      726
+    ],
+    "patch": "-723,7 +723,7 @@ WORD32 impd_drc_set_preselection(\n   WORD32 peak_info_count;\n   WORD32 eq_set_id_Peak[16];\n   FLOAT32 signal_peak_level[16];\n-  WORD32 explicit_peak_information_present[16];\n+  WORD32 explicit_peak_information_present[16] = { 0 };\n \n   ia_uni_drc_coeffs_struct* str_p_loc_drc_coefficients_uni_drc = NULL;\n   ia_drc_instructions_struct* str_drc_instruction_str = NULL;",
+    "summary": "commit 5b0bee231b0a1e5ce0e87b2681147fb35bc5518a\nAuthor: Yash Patil <yash.patil@ittiam.com>\nDate:   Fri Sep 22 17:30:42 2023 +0530\n\n    Fix for Use-of-uninitialized-value in impd_drc_set_preselection\n    \n    These changes handles the runtime error reported when\n    one of the buffer was not initialized correctly.\n    \n    Bug: ossFuzz:62388\n    Test: poc in bug\n"
+  }
+]

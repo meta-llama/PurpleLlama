@@ -1,0 +1,33 @@
+{
+  "sample_id": 17061,
+  "arvo_metadata": {
+    "fix": "https://skia.googlesource.com/skia.git/+/73b8376b302ac3fd61ef4010f2bcc4fc2a48b5bc%5E%21/",
+    "verify": "0",
+    "localId": 17061,
+    "project": "skia",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Heap-buffer-overflow READ 8",
+    "severity": "Medium",
+    "fix_commit": "73b8376b302ac3fd61ef4010f2bcc4fc2a48b5bc",
+    "repo_addr": "https://skia.googlesource.com/skia.git"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 99,
+    "total_lines_added": 3,
+    "total_lines_subtracted": 1,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

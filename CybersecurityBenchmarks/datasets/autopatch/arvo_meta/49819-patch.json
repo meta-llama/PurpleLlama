@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/PubSub/network/sopc_network_layer.c",
+    "patched_line_numbers": [
+      1282
+    ],
+    "patch": "-1279,10 +1279,9 @@ static inline SOPC_ReturnStatus Decode_Message_V1(SOPC_Buffer* buffer,\n             if (SOPC_STATUS_OK == status)\n             {\n                 SOPC_Dataset_LL_DataSetMsg_Set_WriterId(dsm, writer_id);\n+                dsmReaders[i] = readerConf->callbacks.pGetReader_Func(group, conf, writer_id, (uint8_t) i);\n             }\n \n-            dsmReaders[i] = readerConf->callbacks.pGetReader_Func(group, conf, writer_id, (uint8_t) i);\n-\n             // Check if there is at last one DSM to read, otherwise decoding can be canceled\n             if (dsmReaders[i] != NULL)\n             {",
+    "summary": "commit 040cd827d395f46a8515a7d2a7c7ab101f7f1de1\nAuthor: Pierre-Antoine <brameret@systerel.fr>\nDate:   Fri Aug 19 11:58:02 2022 +0200\n\n    Ticket #999: Fix use of unitialized variable\n    \n    Credit to OSS-Fuzz\n"
+  }
+]

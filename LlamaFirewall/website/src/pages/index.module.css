@@ -1,0 +1,52 @@
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * CSS files with the .module.css suffix will be treated as CSS modules
+ * and scoped locally.
+ */
+
+.heroBanner {
+  padding: 2rem 0 1rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+@media screen and (max-width: 996px) {
+  .heroBanner {
+    padding: 0;
+  }
+}
+
+.logoWrapper {
+  position: relative;
+  display: inline-block;
+  align-content: center;
+  text-align: center;
+}
+
+.blocker {
+  position: absolute;
+  top: 43%;
+  left: 52%;
+  width: 2px;
+  height: 82%;
+  transform: translate(-50%, -50%);
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.separator {
+  margin: 0 10rem;
+  height: 2px;
+  background-image: linear-gradient(to right, transparent, #565656, transparent);
+}

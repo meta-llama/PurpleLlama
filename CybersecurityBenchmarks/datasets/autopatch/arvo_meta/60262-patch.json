@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "Userland/Libraries/LibVideo/VP9/Context.h",
+    "patched_line_numbers": [
+      64,
+      65
+    ],
+    "patch": "@@ -61,6 +61,9 @@ struct FrameContext {\n \n     DecoderErrorOr<BooleanDecoder> create_range_decoder(size_t size)\n     {\n+        if (size > stream->remaining())\n+            return DecoderError::corrupted(\"Range decoder size invalid\"sv);\n+\n         auto compressed_header_data = ReadonlyBytes(stream_data.data() + stream->offset(), size);\n \n         // 9.2.1: The Boolean decoding process specified in section 9.2.2 is invoked to read a marker syntax element from the"
+  }
+]

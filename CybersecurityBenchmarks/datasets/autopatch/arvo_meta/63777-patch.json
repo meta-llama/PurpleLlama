@@ -1,0 +1,11 @@
+[
+  {
+    "filename": "Userland/Libraries/LibGfx/Font/OpenType/Font.cpp",
+    "patched_line_numbers": [
+      390,
+      421,
+      430
+    ],
+    "patch": "@@ -387,7 +387,7 @@ ErrorOr<NonnullRefPtr<Font>> Font::try_load_from_offset(ReadonlyBytes buffer, u3\n     if (Checked<u32>::addition_would_overflow(offset, (u32)Sizes::OffsetTable))\n         return Error::from_string_literal(\"Invalid offset in font header\");\n \n-    if (buffer.size() < offset + (u32)Sizes::OffsetTable)\n+    if (buffer.size() <= offset + (u32)Sizes::OffsetTable)\n         return Error::from_string_literal(\"Font file too small\");\n \n     Optional<ReadonlyBytes> opt_head_slice = {};\n@@ -418,7 +418,7 @@ ErrorOr<NonnullRefPtr<Font>> Font::try_load_from_offset(ReadonlyBytes buffer, u3\n     Optional<GPOS> gpos;\n \n     auto num_tables = be_u16(buffer.offset(offset + (u32)Offsets::NumTables));\n-    if (buffer.size() < offset + (u32)Sizes::OffsetTable + num_tables * (u32)Sizes::TableRecord)\n+    if (buffer.size() <= offset + (u32)Sizes::OffsetTable + num_tables * (u32)Sizes::TableRecord)\n         return Error::from_string_literal(\"Font file too small\");\n \n     for (auto i = 0; i < num_tables; i++) {\n@@ -427,7 +427,7 @@ ErrorOr<NonnullRefPtr<Font>> Font::try_load_from_offset(ReadonlyBytes buffer, u3\n         u32 table_offset = be_u32(buffer.offset(record_offset + (u32)Offsets::TableRecord_Offset));\n         u32 table_length = be_u32(buffer.offset(record_offset + (u32)Offsets::TableRecord_Length));\n \n-        if (Checked<u32>::addition_would_overflow(table_offset, table_length))\n+        if (table_length == 0 || Checked<u32>::addition_would_overflow(table_offset, table_length))\n             return Error::from_string_literal(\"Invalid table offset or length in font\");\n \n         if (buffer.size() < table_offset + table_length)"
+  }
+]

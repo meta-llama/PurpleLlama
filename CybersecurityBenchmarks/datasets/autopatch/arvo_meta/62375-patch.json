@@ -1,0 +1,13 @@
+[
+  {
+    "filename": "lib/loader/shared_library.cpp",
+    "patched_line_numbers": [
+      99,
+      100,
+      101,
+      122,
+      123
+    ],
+    "patch": "@@ -96,7 +96,10 @@ Expect<void> SharedLibrary::load(const AST::AOTSection &AOTSec) noexcept {\n     const auto Offset = std::get<1>(Section);\n     const auto Size = std::get<2>(Section);\n     const auto &Content = std::get<3>(Section);\n-    assuming(Content.size() <= Size);\n+    if (Size > BinarySize || Offset > BinarySize ||\n+        Offset + Size > BinarySize || Content.size() > Size) {\n+      return Unexpect(ErrCode::Value::IntegerTooLarge);\n+    }\n     std::copy(Content.begin(), Content.end(), Binary + Offset);\n     switch (std::get<0>(Section)) {\n     case 1: { // Text\n@@ -116,6 +119,8 @@ Expect<void> SharedLibrary::load(const AST::AOTSection &AOTSec) noexcept {\n           static_cast<uint32_t>(Size / sizeof(winapi::RUNTIME_FUNCTION_));\n       break;\n #endif\n+    default:\n+      return Unexpect(ErrCode::Value::IntegerTooLarge);\n     }\n   }\n "
+  }
+]

@@ -1,0 +1,15 @@
+[
+  {
+    "filename": "tcmalloc/internal/profile_builder.cc",
+    "patched_line_numbers": [
+      207,
+      208
+    ],
+    "patch": "@@ -201,10 +201,11 @@ std::string GetBuildId(const dl_phdr_info* const info) {\n       const ElfW(Word) size =\n           desc_start + ((nhdr->n_descsz + align - 1) & -align);\n \n-      // Beware of overflows / wrap-around.\n+      // Beware of wrap-around.\n       if (nhdr->n_namesz >= static_cast<ElfW(Word)>(-align) ||\n           nhdr->n_descsz >= static_cast<ElfW(Word)>(-align) ||\n-          size < sizeof(*nhdr) || note + size > last) {\n+          desc_start < sizeof(*nhdr) || size < desc_start ||\n+          size > last - note) {\n         // Corrupt PT_NOTE\n         break;\n       }"
+  },
+  {
+    "filename": "tcmalloc/internal/testdata/profile_builder_fuzz/clusterfuzz-testcase-minimized-profile_builder_fuzz-5915530833559552",
+    "patched_line_numbers": [],
+    "patch": ""
+  }
+]

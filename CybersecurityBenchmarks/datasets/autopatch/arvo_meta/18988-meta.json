@@ -1,0 +1,32 @@
+{
+  "sample_id": 18988,
+  "arvo_metadata": {
+    "fix": "https://github.com/lpereira/lwan/commit/d7fc0d27fbea5c68d61444033517d0e962e822e6",
+    "verify": "0",
+    "localId": 18988,
+    "project": "lwan",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Global-buffer-overflow WRITE 1",
+    "fix_commit": "d7fc0d27fbea5c68d61444033517d0e962e822e6",
+    "repo_addr": "https://github.com/lpereira/lwan.git"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 23,
+    "total_lines_added": 3,
+    "total_lines_subtracted": 2,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

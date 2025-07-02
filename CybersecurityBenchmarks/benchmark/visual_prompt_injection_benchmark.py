@@ -13,7 +13,7 @@ from typing import cast, Dict, Optional, Tuple, Union
 
 from typing_extensions import override
 
-from .benchmark import Benchmark
+from .benchmark import Benchmark, BenchmarkConfig
 
 from .llm import LLM
 from .query_llm import query_llm_to_generate_responses
@@ -45,50 +45,28 @@ class VisualPromptInjectionBenchmark(Benchmark):
     methods to query language models, run the benchmark, and process the results.
     """
 
-    judge_llm: LLM
-
     data_dir: Optional[Path] = None
     images_dir: Optional[Path] = None
     test_cases_path: Optional[Path] = None
 
     def __init__(
         self,
-        *,
-        llms_under_test: list[LLM],
-        response_path: Path,
-        judge_response_path: Optional[Path] = None,
-        judge_prompt_path: Optional[Path] = None,
-        stat_path: Optional[Path] = None,
-        num_test_cases: int = 0,
-        expansion_llm: Optional[LLM] = None,
-        judge_llm: Optional[LLM] = None,
-        pass_k: int = 1,
+        config: BenchmarkConfig,
     ) -> None:
-        if not judge_llm:
+        super().__init__(config)
+        if not self.judge_llm:
             raise ValueError(
                 "For Visual Prompt Injection benchmark, please specify --judge-llm"
             )
+        self.judge_llm: LLM = self.judge_llm
 
-        super().__init__(
-            llms_under_test=llms_under_test,
-            response_path=response_path,
-            judge_response_path=judge_response_path,
-            stat_path=stat_path,
-            num_test_cases=num_test_cases,
-            expansion_llm=expansion_llm,
-            judge_llm=judge_llm,
-            pass_k=pass_k,
-        )
+        config.response_path.parent.mkdir(parents=True, exist_ok=True)
 
-        self.judge_llm = judge_llm
+        if config.judge_response_path:
+            config.judge_response_path.parent.mkdir(parents=True, exist_ok=True)
 
-        response_path.parent.mkdir(parents=True, exist_ok=True)
-
-        if judge_response_path:
-            judge_response_path.parent.mkdir(parents=True, exist_ok=True)
-
-        if stat_path:
-            stat_path.parent.mkdir(parents=True, exist_ok=True)
+        if config.stat_path:
+            config.stat_path.parent.mkdir(parents=True, exist_ok=True)
 
     @classmethod
     def return_kind(cls) -> list[str]:
@@ -120,7 +98,12 @@ class VisualPromptInjectionBenchmark(Benchmark):
         self.response_path.write_text(json.dumps(response_result, indent=4))
 
     @override
-    async def run(self, num_test_cases: int = 0, run_llm_in_parallel: int = 16) -> None:
+    async def run(
+        self,
+        num_test_cases: int = 0,
+        run_llm_in_parallel: int = 16,
+        should_cleanup_after_eval: bool = True,
+    ) -> None:
         logging.info(f"Judging the responses using {self.judge_llm.model}")
 
         judge_response_result = query_llm_to_generate_responses(

@@ -1,0 +1,18 @@
+[
+  {
+    "filename": "src/server/ua_services_session.c",
+    "patched_line_numbers": [
+      263,
+      266,
+      267,
+      268,
+      269,
+      270,
+      271,
+      272,
+      273
+    ],
+    "patch": "-260,8 +260,19 @@ Service_ActivateSession(UA_Server *server, UA_SecureChannel *channel,\n         UA_LOG_INFO_SESSION(server->config.logger, session,\n                             \"ActivateSession: Detach from old channel\");\n         UA_Session_detachFromSecureChannel(session);\n+        session->activated = false;\n     }\n \n+    if (session->activated) {\n+        UA_LOG_INFO_SESSION(server->config.logger, session,\n+                            \"ActivateSession: SecureChannel %i wants \"\n+                                    \"to activate, but the session is already activated\",\n+                            channel->securityToken.channelId);\n+        response->responseHeader.serviceResult =\n+                UA_STATUSCODE_BADSESSIONIDINVALID;\n+        return;\n+\n+    }\n     /* Attach to the SecureChannel and activate */\n     UA_Session_attachToSecureChannel(session, channel);\n     session->activated = true;",
+    "summary": "commit 3d4b8666b02ecea0045c2ba8ae4c46a3f766c765\nAuthor: Stefan Profanter <git@s.profanter.me>\nDate:   Tue Jan 23 10:47:49 2018 +0100\n\n    Do not allow to activate session multiple times\n    \n    Otherwise it will add the session to the channel multiple times\n    which leads to an infinite loop during cleanup.\n    \n    See https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=5576\n    \n    Credit to oss-fuzz\n"
+  }
+]

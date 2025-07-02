@@ -1,0 +1,11 @@
+[
+  {
+    "filename": "encoder/ih264e_encode.c",
+    "patched_line_numbers": [
+      218,
+      219
+    ],
+    "patch": "-215,8 +215,8 @@ WORD32 ih264e_encode(iv_obj_t *ps_codec_obj, void *pv_api_ip, void *pv_api_op)\n     ih264e_video_encode_op_t *ps_video_encode_op = pv_api_op;\n \n     /* i/o structures */\n-    inp_buf_t s_inp_buf;\n-    out_buf_t s_out_buf;\n+    inp_buf_t s_inp_buf = {};\n+    out_buf_t s_out_buf = {};\n \n     /* temp var */\n     WORD32 ctxt_sel = 0, i, i4_rc_pre_enc_skip;",
+    "summary": "commit ba34616a119952074bf32bbb8ae2b93e1d8500c2\nAuthor: Harish Mahendrakar <harish.mahendrakar@ittiam.com>\nDate:   Mon Apr 3 19:05:29 2023 -0700\n\n    encoder: Initialize s_inp_buf and s_out_buf to zero in ih264e_encode\n    \n    In some cases, s_inp_buf and s_out_buf on stack in ih264e_encode()\n    can be accessed unininitialized. This is fixed by initializing these\n    two structures.\n    \n    Bug: oss-fuzz:57333\n    Bug: 274906999\n    Test: avc_enc_fuzzer\n"
+  }
+]

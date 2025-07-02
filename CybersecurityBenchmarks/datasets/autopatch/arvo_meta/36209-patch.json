@@ -1,0 +1,16 @@
+[
+  {
+    "filename": "lib/jxl/modular/transform/squeeze.cc",
+    "patched_line_numbers": [
+      238,
+      239,
+      240,
+      242,
+      243,
+      244,
+      245
+    ],
+    "patch": "-235,6 +235,15 @@ Status MetaSqueeze(Image &image, std::vector<SqueezeParams> *parameters) {\n     uint32_t endc = (*parameters)[i].begin_c + (*parameters)[i].num_c - 1;\n \n     uint32_t offset;\n+    if (beginc < image.nb_meta_channels) {\n+      if (endc >= image.nb_meta_channels) {\n+        return JXL_FAILURE(\"Invalid squeeze: mix of meta and nonmeta channels\");\n+      }\n+      if (!in_place)\n+        return JXL_FAILURE(\n+            \"Invalid squeeze: meta channels require in-place residuals\");\n+      image.nb_meta_channels += (*parameters)[i].num_c;\n+    }\n     if (in_place) {\n       offset = endc + 1;\n     } else {",
+    "summary": "commit 84c6421732054399e9b8046f1cdf2e999dbaaab2\nAuthor: Jon Sneyers <jon@cloudinary.com>\nDate:   Sun Jul 18 21:46:04 2021 +0200\n\n    fuzz / bitstream bug: squeezing meta-channnels\n"
+  }
+]

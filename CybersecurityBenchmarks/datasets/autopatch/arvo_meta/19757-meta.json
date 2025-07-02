@@ -1,0 +1,33 @@
+{
+  "sample_id": 19757,
+  "arvo_metadata": {
+    "fix": "https://github.com/uNetworking/uWebSockets/commit/bbbe3bda1856d98153b7a533a691ec43e58d9c4d",
+    "verify": "0",
+    "localId": 19757,
+    "project": "uWebSockets",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "UNKNOWN WRITE",
+    "severity": "High",
+    "fix_commit": "bbbe3bda1856d98153b7a533a691ec43e58d9c4d",
+    "repo_addr": "https://github.com/uNetworking/uWebSockets.git"
+  },
+  "parsed_diff_data": {
+    "total_files": 2,
+    "total_hunks": 2,
+    "max_hunk_length": 66,
+    "total_lines_added": 12,
+    "total_lines_subtracted": 1,
+    "modified_files": 2,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

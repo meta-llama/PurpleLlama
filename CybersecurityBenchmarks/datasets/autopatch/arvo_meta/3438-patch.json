@@ -1,0 +1,19 @@
+[
+  {
+    "filename": "src/librawspeed/decompressors/UncompressedDecompressor.cpp",
+    "patched_line_numbers": [
+      41,
+      62,
+      68
+    ],
+    "patch": "@@ -38,7 +38,7 @@ using std::min;\n \n namespace rawspeed {\n \n-void UncompressedDecompressor::sanityCheck(uint32* h, int bpl) {\n+void UncompressedDecompressor::sanityCheck(const uint32* h, int bpl) {\n   assert(h != nullptr);\n   assert(*h > 0);\n   assert(bpl > 0);\n@@ -59,10 +59,13 @@ void UncompressedDecompressor::sanityCheck(uint32* h, int bpl) {\n   assert(min_h < *h);\n   assert(input.getRemainSize() >= bpl * min_h);\n \n-  *h = min_h;\n+  ThrowIOE(\"Image truncated, only %u of %u lines found\", min_h, *h);\n+  // FIXME: need to come up with some common variable to allow proceeding here\n+\n+  // *h = min_h;\n }\n \n-void UncompressedDecompressor::sanityCheck(uint32 w, uint32* h, int bpp) {\n+void UncompressedDecompressor::sanityCheck(uint32 w, const uint32* h, int bpp) {\n   assert(w > 0);\n   assert(bpp > 0);\n "
+  },
+  {
+    "filename": "src/librawspeed/decompressors/UncompressedDecompressor.h",
+    "patched_line_numbers": [
+      42,
+      45
+    ],
+    "patch": "@@ -39,10 +39,10 @@ class UncompressedDecompressor final : public AbstractDecompressor {\n   RawImage mRaw;\n \n   // check buffer size, throw, or compute minimal height that can be decoded\n-  void sanityCheck(uint32* h, int bpl);\n+  void sanityCheck(const uint32* h, int bpl);\n \n   // check buffer size, throw, or compute minimal height that can be decoded\n-  void sanityCheck(uint32 w, uint32* h, int bpp);\n+  void sanityCheck(uint32 w, const uint32* h, int bpp);\n \n   // for special packed formats\n   int bytesPerLine(int w, bool skips);"
+  }
+]

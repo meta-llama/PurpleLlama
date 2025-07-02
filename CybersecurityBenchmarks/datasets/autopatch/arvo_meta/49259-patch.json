@@ -1,0 +1,9 @@
+[
+  {
+    "filename": "mrbgems/mruby-compiler/core/codegen.c",
+    "patched_line_numbers": [
+      1959
+    ],
+    "patch": "@@ -1956,6 +1956,7 @@ gen_assignment(codegen_scope *s, node *tree, node *rhs, int sp, int val)\n         pop();\n         genop_2(s, OP_ARYPUSH, cursp(), 1);\n       }\n+      push(); pop();\n       s->sp = call;\n       if (mid == MRB_OPSYM_2(s->mrb, aref) && n == 2) {\n         genop_1(s, OP_SETIDX, cursp());"
+  }
+]

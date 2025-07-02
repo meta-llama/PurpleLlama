@@ -1,0 +1,11 @@
+[
+  {
+    "filename": "src/hunspell/affentry.cxx",
+    "patched_line_numbers": [
+      102,
+      103
+    ],
+    "patch": "-99,7 +99,8 @@ std::string PfxEntry::add(const char* word, size_t len) {\n   std::string result;\n   if ((len > strip.size() || (len == 0 && pmyMgr->get_fullstrip())) &&\n       (len >= numconds) && test_condition(word) &&\n-      (!strip.size() || (strncmp(word, strip.c_str(), strip.size()) == 0))) {\n+      (!strip.size() ||\n+      (len >= strip.size() && strncmp(word, strip.c_str(), strip.size()) == 0))) {\n     /* we have a match so add prefix */\n     result.assign(appnd);\n     result.append(word + strip.size());",
+    "summary": "commit 810859c7e74830d606140a1d28d24ff02977fded\nAuthor: Caol\u00e1n McNamara <caolanm@redhat.com>\nDate:   Thu Sep 15 14:49:20 2022 +0100\n\n    ofz#51390 invalid offset with bad .aff\n"
+  }
+]

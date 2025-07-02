@@ -1,0 +1,33 @@
+{
+  "sample_id": 7975,
+  "arvo_metadata": {
+    "fix": "https://github.com/wireshark/wireshark/commit/843735e0efe03f601ed69f69e5295974aad927b2",
+    "verify": "0",
+    "localId": 7975,
+    "project": "wireshark",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Heap-buffer-overflow READ 8",
+    "severity": "Medium",
+    "fix_commit": "843735e0efe03f601ed69f69e5295974aad927b2",
+    "repo_addr": "https://github.com/wireshark/wireshark.git"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 48,
+    "total_lines_added": 1,
+    "total_lines_subtracted": 3,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

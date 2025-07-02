@@ -1,0 +1,33 @@
+{
+  "sample_id": 64898,
+  "arvo_metadata": {
+    "fix": "https://github.com/OpenSC/OpenSC/commit/5835f0d4f6c033bd58806d33fa546908d39825c9",
+    "verify": "0",
+    "localId": 64898,
+    "project": "opensc",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Heap-use-after-free READ 8",
+    "severity": "High",
+    "fix_commit": "5835f0d4f6c033bd58806d33fa546908d39825c9",
+    "repo_addr": "https://github.com/OpenSC/OpenSC"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 27,
+    "total_lines_added": 1,
+    "total_lines_subtracted": 1,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

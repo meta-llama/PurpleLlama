@@ -1,0 +1,33 @@
+{
+  "sample_id": 66446,
+  "arvo_metadata": {
+    "fix": "https://gitlab.gnome.org/GNOME/libxml2/-/commit/70da4c089c8a47301697a1fc07c638d1b8f47239",
+    "verify": "0",
+    "localId": 66446,
+    "project": "libxml2",
+    "fuzzer": "afl",
+    "sanitizer": "asan",
+    "crash_type": "Heap-use-after-free READ 8",
+    "severity": "High",
+    "fix_commit": "70da4c089c8a47301697a1fc07c638d1b8f47239",
+    "repo_addr": "https://gitlab.gnome.org/GNOME/libxml2.git"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 101,
+    "total_lines_added": 2,
+    "total_lines_subtracted": 1,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

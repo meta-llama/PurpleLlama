@@ -1,0 +1,33 @@
+{
+  "sample_id": 66066,
+  "arvo_metadata": {
+    "fix": "https://github.com/zeek/zeek/commit/9a510b8035e6a83fb149cc447a61f847e786140f",
+    "verify": "0",
+    "localId": 66066,
+    "project": "zeek",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Heap-buffer-overflow READ 1",
+    "severity": "Medium",
+    "fix_commit": "9a510b8035e6a83fb149cc447a61f847e786140f",
+    "repo_addr": "https://github.com/zeek/zeek"
+  },
+  "parsed_diff_data": {
+    "total_files": 2,
+    "total_hunks": 6,
+    "max_hunk_length": 338,
+    "total_lines_added": 14,
+    "total_lines_subtracted": 13,
+    "modified_files": 2,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

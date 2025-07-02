@@ -1,0 +1,33 @@
+{
+  "sample_id": 49422,
+  "arvo_metadata": {
+    "fix": "https://github.com/assimp/assimp/commit/d5294be00b0f89486b3459d5835045dbf26444b5",
+    "verify": "0",
+    "localId": 49422,
+    "project": "assimp",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Heap-buffer-overflow READ 1",
+    "severity": "Medium",
+    "fix_commit": "d5294be00b0f89486b3459d5835045dbf26444b5",
+    "repo_addr": "https://github.com/assimp/assimp.git"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 231,
+    "total_lines_added": 4,
+    "total_lines_subtracted": 3,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

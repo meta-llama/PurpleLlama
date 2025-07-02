@@ -1,0 +1,32 @@
+{
+  "sample_id": 12803,
+  "arvo_metadata": {
+    "fix": "https://github.com/google/libprotobuf-mutator/commit/3d1ea5f9eb5fc90f9f8e28447541929482cfb049",
+    "verify": "0",
+    "localId": 12803,
+    "project": "libprotobuf-mutator",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Stack-use-after-return WRITE 8",
+    "fix_commit": "3d1ea5f9eb5fc90f9f8e28447541929482cfb049",
+    "repo_addr": "https://github.com/google/libprotobuf-mutator.git"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 28,
+    "total_lines_added": 0,
+    "total_lines_subtracted": 14,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

@@ -1,0 +1,17 @@
+[
+  {
+    "filename": "libyara/modules/elf.c",
+    "patched_line_numbers": [
+      84,
+      85,
+      86,
+      87,
+      90,
+      92,
+      93,
+      103
+    ],
+    "patch": "-81,11 +81,16 @@ static bool is_valid_ptr(\n // Returns a string table entry for the index or NULL if the entry is out\n // of bounds. A non-null return value will be a null-terminated C string.\n //\n-static const char* str_table_entry(const char* str_table_base,\n-                                   const char* str_table_limit,\n-                                   int index) {\n+static const char* str_table_entry(\n+    const char* str_table_base,\n+    const char* str_table_limit,\n+    int index)\n+{\n   size_t len;\n-  const char* str_entry = str_table_base + index;\n+  const char* str_entry;\n+\n+  if (str_table_base >= str_table_limit)\n+    return NULL;\n \n   // The first entry in the string table must be a null character, if not the\n   // string table is probably corrupted.\n@@ -95,6 +100,8 @@ static const char* str_table_entry(const char* str_table_base,\n   if (index < 0)\n     return NULL;\n \n+  str_entry = str_table_base + index;\n+\n   if (str_entry >= str_table_limit)\n     return NULL;",
+    "summary": "commit 462ffd339228ac57d98e8034239d122e4303f653\nAuthor: Victor M. Alvarez <vmalvarez@virustotal.com>\nDate:   Fri Mar 29 10:32:39 2019 +0100\n\n    Fix buffer overflow in str_table_entry.\n"
+  }
+]

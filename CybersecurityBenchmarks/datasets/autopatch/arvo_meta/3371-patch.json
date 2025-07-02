@@ -1,0 +1,15 @@
+[
+  {
+    "filename": "src/librawspeed/decoders/RawDecoder.cpp",
+    "patched_line_numbers": [
+      69,
+      70,
+      71,
+      72,
+      73,
+      74
+    ],
+    "patch": "-66,6 +66,14 @@ void RawDecoder::decodeUncompressed(const TiffIFD *rawIFD, BitOrder order) {\n   if (width == 0 || height == 0 || width > 5632 || height > 3720)\n     ThrowRDE(\"Unexpected image dimensions found: (%u; %u)\", width, height);\n \n+  switch (bitPerPixel) {\n+  case 12:\n+  case 14:\n+    break;\n+  default:\n+    ThrowRDE(\"Unexpected bits per pixel: %u.\", bitPerPixel);\n+  };\n+\n   vector<RawSlice> slices;\n   uint32 offY = 0;",
+    "summary": "commit c011c960917abacc3bc429a9f756ec99558fb933\nAuthor: Roman Lebedev <lebedev.ri@gmail.com>\nDate:   Thu Sep 14 17:09:35 2017 +0300\n\n    RawDecoder::decodeUncompressed(): sanitize bpp\n"
+  }
+]

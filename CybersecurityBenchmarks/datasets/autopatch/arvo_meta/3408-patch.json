@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "epan/dissectors/packet-zbee-security.c",
+    "patched_line_numbers": [
+      1253
+    ],
+    "patch": "-1250,7 +1250,7 @@ void zbee_sec_add_key_to_keyring(packet_info *pinfo, const guint8 *key)\n \n         if ( nwk_keyring ) {\n             if ( !*nwk_keyring ||\n-                    memcmp( ((key_record_t *)((GSList *)(*nwk_keyring))->data)->key, &key,\n+                    memcmp( ((key_record_t *)((GSList *)(*nwk_keyring))->data)->key, key,\n                         ZBEE_APS_CMD_KEY_LENGTH) ) {\n                 /* Store a new or different key in the key ring */\n                 key_record.frame_num = pinfo->num;",
+    "summary": "commit b40ad7c2ffb3776c7002ce7b3c4aade42de319c7\nAuthor: Peter Wu <peter@lekensteyn.nl>\nDate:   Sun Sep 17 18:51:06 2017 +0100\n\n    ZigBee: fix buffer overrun in zbee_sec_add_key_to_keyring\n    \n    \"key\" is a guint8 array of ZBEE_APS_CMD_KEY_LENGTH, compare its value\n    and not the pointer.\n    \n    Bug: 14070\n    Change-Id: I8add2bbcc04f9bbbc9502a07aa34d35b5a67e1c1\n    Fixes: v2.5.0rc0-1007-gf63fc33362 (\"ZigBee: implemented a dissector for ZBOSS key dump\")\n    Link: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=3408\n    Reviewed-on: https://code.wireshark.org/review/23588\n    Petri-Dish: Peter Wu <peter@lekensteyn.nl>\n    Tested-by: Petri Dish Buildbot <buildbot-no-reply@wireshark.org>\n    Reviewed-by: Michael Mann <mmann78@netscape.net>\n"
+  }
+]

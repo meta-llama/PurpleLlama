@@ -1,0 +1,24 @@
+[
+  {
+    "filename": "src/analyzer/protocol/smtp/SMTP.cc",
+    "patched_line_numbers": [
+      87,
+      205,
+      594,
+      599,
+      621,
+      878,
+      888,
+      889
+    ],
+    "patch": "@@ -84,7 +84,7 @@ void SMTP_Analyzer::Undelivered(uint64_t seq, int len, bool is_orig) {\n \n     Unexpected(is_orig, \"content gap\", buf_len, buf);\n \n-    if ( state == detail::SMTP_IN_DATA ) {\n+    if ( state == detail::SMTP_IN_DATA || state == detail::SMTP_CMD_BDAT ) {\n         // Record the SMTP data gap and terminate the\n         // ongoing mail transaction.\n         if ( mail )\n@@ -202,7 +202,7 @@ void SMTP_Analyzer::ProcessLine(int length, const char* line, bool orig) {\n             expect_recver = true;\n         }\n \n-        else if ( state == detail::SMTP_IN_DATA && ! bdat ) {\n+        else if ( state == detail::SMTP_IN_DATA ) {\n             // Check \".\" for end of data for non-BDAT transfers.\n             expect_recver = false; // ?? MAY server respond to mail data?\n \n@@ -591,21 +591,21 @@ void SMTP_Analyzer::UpdateState(int cmd_code, int reply_code, bool orig) {\n                         UnexpectedCommand(cmd_code, reply_code);\n \n                     assert(bdat);\n-                    state = detail::SMTP_IN_DATA;\n+                    state = detail::SMTP_IN_BDAT;\n                     break;\n \n                 case 250: break; // server accepted BDAT transfer.\n \n-                case 421: state = detail::SMTP_QUIT; break;\n-\n+                case 421:\n                 case 500:\n                 case 501:\n                 case 503:\n                 case 451:\n                 case 554:\n-                    // Client may continue sending chunks if pipelined. We don't\n-                    // call EndData() here as it might be interesting what the\n-                    // client does send, even if the server isn't accepting it.\n+                    // Client will continue completing the inflight chunk no matter\n+                    // what the server replies, so we don't call EndData() here as\n+                    // it might be interesting what the client does actually send,\n+                    // even if the server isn't accepting it.\n                     break;\n \n                 default:\n@@ -618,7 +618,7 @@ void SMTP_Analyzer::UpdateState(int cmd_code, int reply_code, bool orig) {\n         case detail::SMTP_CMD_END_OF_DATA:\n             switch ( reply_code ) {\n                 case 0:\n-                    if ( st != detail::SMTP_IN_DATA )\n+                    if ( st != detail::SMTP_IN_DATA && st != detail::SMTP_IN_BDAT )\n                         UnexpectedCommand(cmd_code, reply_code);\n                     EndData();\n                     state = detail::SMTP_AFTER_DATA;\n@@ -875,7 +875,7 @@ bool SMTP_Analyzer::ProcessBdatArg(int arg_len, const char* arg, bool orig) {\n \n     if ( ! bdat ) {\n         // This is the first BDAT chunk.\n-        BeginData(orig);\n+        BeginData(orig, detail::SMTP_IN_BDAT);\n         bdat = std::make_unique<detail::SMTP_BDAT_Analyzer>(Conn(), mail, zeek::BifConst::SMTP::bdat_max_line_length);\n     }\n \n@@ -885,8 +885,8 @@ bool SMTP_Analyzer::ProcessBdatArg(int arg_len, const char* arg, bool orig) {\n     return true;\n }\n \n-void SMTP_Analyzer::BeginData(bool orig) {\n-    state = detail::SMTP_IN_DATA;\n+void SMTP_Analyzer::BeginData(bool orig, detail::SMTP_State new_state) {\n+    state = new_state;\n     skip_data = false; // reset the flag at the beginning of the mail\n     if ( mail != nullptr ) {\n         Weird(\"smtp_nested_mail_transaction\");"
+  },
+  {
+    "filename": "src/analyzer/protocol/smtp/SMTP.h",
+    "patched_line_numbers": [
+      38,
+      67
+    ],
+    "patch": "@@ -35,6 +35,7 @@ enum SMTP_State {\n     SMTP_QUIT,          // 10: after QUIT\n     SMTP_AFTER_GAP,     // 11: after a gap is detected\n     SMTP_GAP_RECOVERY,  // 12: after the first reply after a gap\n+    SMTP_IN_BDAT,       // 13: receiving BDAT chunk via plain delivery\n };\n \n } // namespace detail\n@@ -63,7 +64,7 @@ class SMTP_Analyzer final : public analyzer::tcp::TCP_ApplicationAnalyzer {\n \n     void UpdateState(int cmd_code, int reply_code, bool orig);\n \n-    void BeginData(bool orig);\n+    void BeginData(bool orig, detail::SMTP_State new_state = detail::SMTP_IN_DATA);\n     void EndData();\n \n     int ParseCmd(int cmd_len, const char* cmd);"
+  }
+]

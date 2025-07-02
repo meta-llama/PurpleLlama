@@ -1,0 +1,9 @@
+[
+  {
+    "filename": "src/text_format.cc",
+    "patched_line_numbers": [
+      29
+    ],
+    "patch": "@@ -24,22 +24,8 @@ bool ParseTextMessage(const uint8_t* data, size_t size, Message* output) {\n   return ParseTextMessage({data, data + size}, output);\n }\n \n-// TODO(vitalybuka): Add real check into protobuf::TextFormat and remove this.\n-static bool IsNestingTooDeep(const std::string& data) {\n-  int i = 101;\n-  for (auto c : data) {\n-    if (c == '{')\n-      --i;\n-    else if (c == '}')\n-      ++i;\n-    if (!i) return true;\n-  }\n-  return false;\n-}\n-\n bool ParseTextMessage(const std::string& data, protobuf::Message* output) {\n   output->Clear();\n-  if (IsNestingTooDeep(data)) return false;\n   TextFormat::Parser parser;\n   parser.AllowPartialMessage(true);\n   if (!parser.ParseFromString(data, output)) {"
+  }
+]

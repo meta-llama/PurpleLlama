@@ -1,0 +1,5 @@
+breakpoint set --name some_fn
+run
+command script import microsnapshot.py
+dump_struct (*x) rules.json out.json
+quit

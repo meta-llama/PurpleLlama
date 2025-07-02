@@ -1,0 +1,33 @@
+{
+  "sample_id": 33991,
+  "arvo_metadata": {
+    "fix": "https://github.com/WizardMac/ReadStat/commit/c7baae72b36acdc24f56ad48d3e859850fdbdc2b",
+    "verify": "0",
+    "localId": 33991,
+    "project": "readstat",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Heap-buffer-overflow READ 1",
+    "severity": "Medium",
+    "fix_commit": "c7baae72b36acdc24f56ad48d3e859850fdbdc2b",
+    "repo_addr": "https://github.com/WizardMac/ReadStat"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 81,
+    "total_lines_added": 1,
+    "total_lines_subtracted": 1,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

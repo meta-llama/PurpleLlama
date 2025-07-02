@@ -1,0 +1,33 @@
+{
+  "sample_id": 63777,
+  "arvo_metadata": {
+    "fix": "https://github.com/SerenityOS/serenity/commit/a6f9ad60124c4dd355084240019abc1e7d62baba",
+    "verify": "0",
+    "localId": 63777,
+    "project": "serenity",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Heap-buffer-overflow READ 1",
+    "severity": "Medium",
+    "fix_commit": "a6f9ad60124c4dd355084240019abc1e7d62baba",
+    "repo_addr": "https://github.com/SerenityOS/serenity"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 190,
+    "total_lines_added": 3,
+    "total_lines_subtracted": 3,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": false
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

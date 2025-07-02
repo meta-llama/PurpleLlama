@@ -1,0 +1,13 @@
+[
+  {
+    "filename": "src/lib/protocols/http.c",
+    "patched_line_numbers": [
+      298,
+      299,
+      300,
+      301,
+      302
+    ],
+    "patch": "@@ -295,10 +295,12 @@ static ndpi_protocol_category_t ndpi_http_check_content(struct ndpi_detection_mo\n \tif(packet->content_disposition_line.ptr[attachment_len] == '\\\"') {\n \t  if(packet->content_disposition_line.ptr[packet->content_disposition_line.len-1] != '\\\"') {\n \t    //case: filename=\"file_name\n-\t    flow->http.filename = ndpi_malloc(filename_len);\n-\t    if(flow->http.filename != NULL) {\n-\t      strncpy(flow->http.filename, (char*)packet->content_disposition_line.ptr+attachment_len+1, filename_len-1);\n-\t      flow->http.filename[filename_len-1] = '\\0';\n+\t    if(filename_len >= 2) {\n+\t      flow->http.filename = ndpi_malloc(filename_len);\n+\t      if(flow->http.filename != NULL) {\n+\t        strncpy(flow->http.filename, (char*)packet->content_disposition_line.ptr+attachment_len+1, filename_len-1);\n+\t        flow->http.filename[filename_len-1] = '\\0';\n+\t      }\n \t    }\n \t  }\n \t  else if(filename_len >= 2) {"
+  }
+]

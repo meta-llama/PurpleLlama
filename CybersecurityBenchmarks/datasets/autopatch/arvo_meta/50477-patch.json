@@ -1,0 +1,34 @@
+[
+  {
+    "filename": "epan/dissectors/packet-afp.h",
+    "patched_line_numbers": [
+      106
+    ],
+    "patch": "@@ -97,14 +97,12 @@ extern value_string_ext afp_server_addr_type_vals_ext;\n  *                              DSI             ATP/ASP\n  * atp_asp_dsi_info.reply       dsi.flags       atp.function == 0x80\n  * atp_asp_dsi_info.release                     atp.function == 0xc0\n- * atp_asp_dsi_info.command     dsi.command     asp.function\n  * atp_asp_dsi_info.tid         dsi.requestid   atp.tid\n  * atp_asp_dsi_info.code        dsi.code\n  */\n struct atp_asp_dsi_info {\n \tguint8\treply;\t\t\t/* 0 query  1 reply */\n \tguint8  release;\n-\tguint16\tcommand;\t\t/* 2  6 write */\n \tguint16\ttid;\t\t\t/* request/transaction ID */\n \tgint32  code;\t\t\t/* error code/ offset NU */\n };"
+  },
+  {
+    "filename": "epan/dissectors/packet-atalk.c",
+    "patched_line_numbers": [
+      1003,
+      1029,
+      1037,
+      1050,
+      1051,
+      1052,
+      1055,
+      1224,
+      1240,
+      1241,
+      1242,
+      1245
+    ],
+    "patch": "@@ -1000,7 +1000,7 @@ dissect_pap(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void *data _U_)\n /* -----------------------------\n    ASP protocol cf. inside appletalk chap. 11\n */\n-static struct atp_asp_dsi_info *\n+static asp_request_val *\n get_transaction(tvbuff_t *tvb, packet_info *pinfo, struct atp_asp_dsi_info *atp_asp_dsi_info)\n {\n   conversation_t  *conversation;\n@@ -1026,18 +1026,15 @@ get_transaction(tvbuff_t *tvb, packet_info *pinfo, struct atp_asp_dsi_info *atp_\n     wmem_map_insert(asp_request_hash, new_request_key, request_val);\n   }\n \n-  if (!request_val)\n-    return NULL;\n-\n-  atp_asp_dsi_info->command = request_val->value;\n-  return atp_asp_dsi_info;\n+  return request_val;\n }\n \n \n static int\n dissect_asp(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void *data)\n {\n   struct atp_asp_dsi_info *atp_asp_dsi_info;\n+  asp_request_val *request_val;\n   int             offset   = 0;\n   proto_tree     *asp_tree = NULL;\n   proto_item     *ti;\n@@ -1050,11 +1047,12 @@ dissect_asp(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void *data)\n   col_set_str(pinfo->cinfo, COL_PROTOCOL, \"ASP\");\n   col_clear(pinfo->cinfo, COL_INFO);\n \n-  atp_asp_dsi_info = get_transaction(tvb, pinfo, (struct atp_asp_dsi_info *)data);\n-  if (!atp_asp_dsi_info)\n+  atp_asp_dsi_info = (struct atp_asp_dsi_info *)data;\n+  request_val = get_transaction(tvb, pinfo, atp_asp_dsi_info);\n+  if (!request_val)\n      return 0;\n \n-  fn = (guint8) atp_asp_dsi_info->command;\n+  fn = (guint8) request_val->value;\n \n   if (atp_asp_dsi_info->reply)\n     col_add_fstr(pinfo->cinfo, COL_INFO, \"Reply tid %u\",atp_asp_dsi_info->tid);\n@@ -1223,6 +1221,7 @@ static int\n dissect_atp_zip(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void* data)\n {\n   struct atp_asp_dsi_info *atp_asp_dsi_info;\n+  asp_request_val *request_val;\n   int             offset = 0;\n   proto_tree     *zip_tree;\n   proto_tree     *sub_tree;\n@@ -1238,11 +1237,12 @@ dissect_atp_zip(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void* data)\n   col_set_str(pinfo->cinfo, COL_PROTOCOL, \"ZIP\");\n   col_clear(pinfo->cinfo, COL_INFO);\n \n-  atp_asp_dsi_info = get_transaction(tvb, pinfo, (struct atp_asp_dsi_info *)data);\n-  if (!atp_asp_dsi_info)\n+  atp_asp_dsi_info = (struct atp_asp_dsi_info *)data;\n+  request_val = get_transaction(tvb, pinfo, atp_asp_dsi_info);\n+  if (!request_val)\n      return tvb_reported_length(tvb);\n \n-  fn = (guint8) atp_asp_dsi_info->command;\n+  fn = (guint8) request_val->value;\n \n   if (atp_asp_dsi_info->reply)\n     col_add_fstr(pinfo->cinfo, COL_INFO, \"Reply tid %u\",atp_asp_dsi_info->tid);"
+  },
+  {
+    "filename": "epan/dissectors/packet-dsi.c",
+    "patched_line_numbers": [
+      298
+    ],
+    "patch": "@@ -25,15 +25,21 @@\n \n http://developer.apple.com/DOCUMENTATION/macos8/pdf/ASAppleTalkFiling2.1_2.2.pdf\n \n+  which is no longer available and does not appear to be in the Wayback Machine.\n+\n   The netatalk source code by Wesley Craig & Adrian Sun\n \n   The Data Stream Interface description from\n-  http://developer.apple.com/documentation/Networking/Conceptual/AFPClient/AFPClient-6.html\n \n-(no longer available, apparently)\n+http://developer.apple.com/documentation/Networking/Conceptual/AFPClient/AFPClient-6.html\n+\n+  which is no longer available, but is archived at\n+\n+https://web.archive.org/web/20040924082047/http://developer.apple.com/documentation/Networking/Conceptual/AFPClient/AFPClient-6.html\n \n   Also, AFP 3.3 documents parts of DSI at:\n-  http://developer.apple.com/mac/library/documentation/Networking/Conceptual/AFP/Introduction/Introduction.html\n+\n+http://developer.apple.com/mac/library/documentation/Networking/Conceptual/AFP/Introduction/Introduction.html\n \n  * What a Data Stream Interface packet looks like:\n  * 0                               32\n@@ -289,7 +295,6 @@ dissect_dsi_packet(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, void* da\n \t\t\ttvbuff_t   *new_tvb;\n \n \t\t\tatp_asp_dsi_info.reply = (dsi_flags == DSIFL_REPLY);\n-\t\t\tatp_asp_dsi_info.command = dsi_command;\n \t\t\tatp_asp_dsi_info.tid = dsi_requestid;\n \t\t\tatp_asp_dsi_info.code = dsi_code;\n \t\t\tproto_item_set_len(dsi_ti, DSI_BLOCKSIZ);"
+  }
+]

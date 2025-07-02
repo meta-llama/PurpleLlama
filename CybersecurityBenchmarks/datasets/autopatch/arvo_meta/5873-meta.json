@@ -1,0 +1,33 @@
+{
+  "sample_id": 5873,
+  "arvo_metadata": {
+    "localId": 5873,
+    "project": "bloaty",
+    "fix": "https://github.com/google/bloaty/commit/18384d6c6cbb666d08d08c0dabc4a0d1b7623f6f",
+    "verify": "0",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Heap-buffer-overflow READ 4",
+    "severity": "Medium",
+    "fix_commit": "18384d6c6cbb666d08d08c0dabc4a0d1b7623f6f",
+    "repo_addr": "https://github.com/google/bloaty.git"
+  },
+  "parsed_diff_data": {
+    "total_files": 2,
+    "total_hunks": 1,
+    "max_hunk_length": 48,
+    "total_lines_added": 5,
+    "total_lines_subtracted": 0,
+    "modified_files": 1,
+    "added_files": 1,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

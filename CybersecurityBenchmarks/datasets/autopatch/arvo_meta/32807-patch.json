@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/libopensc/pkcs15-oberthur.c",
+    "patched_line_numbers": [
+      976
+    ],
+    "patch": "-973,7 +973,7 @@ sc_pkcs15emu_oberthur_add_data(struct sc_pkcs15_card *p15card,\n \t\tfree(info_blob);\n \t\tLOG_TEST_RET(ctx, SC_ERROR_UNKNOWN_DATA_RECEIVED, \"Invalid length of 'oid' received\");\n \t}\n-\tif (oid_len)   {\n+\tif (oid_len > 2) {\n \t\toid = info_blob + offs + 2;\n \t\tif (*oid != 0x06 || (*(oid + 1) != oid_len - 2)) {\n \t\t\tfree(info_blob);",
+    "summary": "commit cae5c71f90cc5b364efe14040923fd5aa3b5dd90\nAuthor: Jakub Jelen <jjelen@redhat.com>\nDate:   Tue Apr 6 12:45:24 2021 +0200\n\n    oberthur: Handle 1B OIDs\n    \n    Thanks oss-fuzz\n    \n    https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=32807\n"
+  }
+]

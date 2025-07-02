@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/protocols/radius/decode.c",
+    "patched_line_numbers": [
+      890
+    ],
+    "patch": "-887,7 +887,7 @@ static ssize_t decode_extended_fragments(TALLOC_CTX *ctx, fr_pair_list_t *out,\n \tlast_frag = false;\n \n \twhile (frag < end) {\n-\t\tif (last_frag ||\n+\t\tif (last_frag || ((end - frag) < 2) ||\n \t\t    (frag[0] != attr[0]) ||\n \t\t    (frag[1] < 4) ||\t\t       /* too short for long-extended */\n \t\t    (frag[2] != attr[2]) ||",
+    "summary": "commit dbac50e667c70419625ce52eebb8b928f1ee6dfa\nAuthor: Alan T. DeKok <aland@freeradius.org>\nDate:   Fri Feb 9 09:49:50 2024 -0500\n\n    check for fragment with insufficient room for header\n"
+  }
+]

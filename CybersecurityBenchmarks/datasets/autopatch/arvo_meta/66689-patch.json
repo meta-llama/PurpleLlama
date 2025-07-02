@@ -1,0 +1,11 @@
+[
+  {
+    "filename": "src/string.c",
+    "patched_line_numbers": [
+      581,
+      644,
+      646
+    ],
+    "patch": "@@ -578,7 +578,7 @@ str_index_str_by_char(mrb_state *mrb, mrb_value str, mrb_value sub, mrb_int pos)\n    * fixed potential buffer overflow\n */\n static inline mrb_int\n-memsearch_swar(const char *xs, long m, const char *ys, long n)\n+memsearch_swar(const char *xs, mrb_int m, const char *ys, mrb_int n)\n {\n #ifdef MRB_64BIT\n #define bitint uint64_t\n@@ -641,9 +641,9 @@ memsearch_swar(const char *xs, long m, const char *ys, long n)\n     const char *p = s0;\n     const char *e = ys + n;\n     for (;p<e;) {\n-      size_t len = e-p;\n+      size_t len = e - p;\n       p = (const char*)memchr(p, *xs, len);\n-      if (p == NULL || len < m) break;\n+      if (p == NULL || (e - p) < m) break;\n       if (memcmp(p+1, xs+1, m-1) == 0) return (mrb_int)(p - ys);\n       p++;\n     }"
+  }
+]

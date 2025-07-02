@@ -1,0 +1,31 @@
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+.neonHero {
+    position:absolute;
+    width: 110%;
+    height: 110%;
+    overflow: hidden;
+    pointer-events: none;
+    margin-top: -4rem;
+    margin-left: -5rem;
+    z-index: 1;
+  }
+
+.dot {
+position: absolute;
+background: #ce5915;
+border-radius: 50%;
+opacity: 0;
+}
+
+@media screen and (max-width: 996px) {
+  .neonHero {
+    margin-top: 0;
+    margin-left: 0;
+  }
+}

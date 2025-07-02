@@ -1,0 +1,12 @@
+[
+  {
+    "filename": "lib/jxl/dec_modular.cc",
+    "patched_line_numbers": [
+      452,
+      453,
+      454
+    ],
+    "patch": "-449,7 +449,9 @@ Status ModularFrameDecoder::FinalizeDecoding(PassesDecoderState* dec_state,\n     const bool fp = metadata->m.bit_depth.floating_point_sample;\n \n     for (; c < 3; c++) {\n-      float factor = 1.f / ((1u << full_image.bitdepth) - 1);\n+      float factor = full_image.bitdepth < 32\n+                         ? 1.f / ((1u << full_image.bitdepth) - 1)\n+                         : 0;\n       int c_in = c;\n       if (frame_header.color_transform == ColorTransform::kXYB) {\n         factor = dec_state->shared->matrices.DCQuants()[c];",
+    "summary": "commit 552a7cae109df2b264ede8e1f85ec66505175cc8\nAuthor: Jon Sneyers <jon@cloudinary.com>\nDate:   Sat Jun 12 14:58:48 2021 +0200\n\n    avoid << 32 also in decoder\n"
+  }
+]

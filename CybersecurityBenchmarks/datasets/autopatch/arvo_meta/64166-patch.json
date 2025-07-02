@@ -1,0 +1,14 @@
+[
+  {
+    "filename": "src/cmsps2.c",
+    "patched_line_numbers": [
+      1317,
+      1323,
+      1324,
+      1325,
+      1326
+    ],
+    "patch": "-1314,12 +1314,17 @@ int WriteOutputLUT(cmsIOHANDLER* m, cmsHPROFILE hProfile, cmsUInt32Number Intent\n     DeviceLink = cmsPipelineDup(v ->Lut);\n     if (DeviceLink == NULL) {\n         cmsDeleteTransform(xform);\n+        cmsSignalError(m->ContextID, cmsERROR_CORRUPTION_DETECTED, \"Cannot access link for CRD\");\n         return 0;\n     }\n \n      // We need a CLUT\n     dwFlags |= cmsFLAGS_FORCE_CLUT;\n-    _cmsOptimizePipeline(m->ContextID, &DeviceLink, RelativeEncodingIntent, &InFrm, &OutputFormat, &dwFlags);\n+    if (!_cmsOptimizePipeline(m->ContextID, &DeviceLink, RelativeEncodingIntent, &InFrm, &OutputFormat, &dwFlags)) {\n+        cmsDeleteTransform(xform);\n+        cmsSignalError(m->ContextID, cmsERROR_CORRUPTION_DETECTED, \"Cannot create CLUT table for CRD\");\n+        return 0;\n+    }\n \n     _cmsIOPrintf(m, \"<<\\n\");\n     _cmsIOPrintf(m, \"/ColorRenderingType 1\\n\");",
+    "summary": "commit 1176e61afea4b58c5f92c6f226cdb7b1c76797d5\nAuthor: Marti Maria <marti.maria@littlecms.com>\nDate:   Thu Apr 11 18:44:45 2024 +0200\n\n    Add a check for wrong CRD parameters\n    \n    Detect wrong parameters on CRD creation\n"
+  }
+]

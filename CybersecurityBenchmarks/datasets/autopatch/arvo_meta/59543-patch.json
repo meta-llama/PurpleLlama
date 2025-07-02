@@ -1,0 +1,9 @@
+[
+  {
+    "filename": "encoder/ih264e_process.c",
+    "patched_line_numbers": [
+      2624
+    ],
+    "patch": "@@ -2621,7 +2621,7 @@ WORD32 ih264e_process_thread(void *pv_proc)\n                 /* entropy code all mbs enlisted under the current job */\n                 error_status = ih264e_entropy(ps_proc);\n \n-                if ((s_job.i2_mb_y == ps_proc->i4_ht_mbs - 1) || error_status != IH264_SUCCESS)\n+                if (s_job.i2_mb_y == ps_proc->i4_ht_mbs - 1)\n                 {\n                     error_status |= ih264e_update_rc_post_enc(ps_codec, ctxt_sel,\n                                                               (ps_codec->i4_poc == 0));"
+  }
+]

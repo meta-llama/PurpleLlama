@@ -1,0 +1,22 @@
+FROM docker.io/n132/arvo:{ARVO_ID}-vul
+
+# Set environment variables to avoid interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Prepare /tmp/corpus and modify /bin/arvo
+RUN mkdir -p /tmp/corpus/ && \
+    cp /tmp/poc /tmp/corpus/ && \
+    chmod 755 /tmp/poc /tmp/corpus && \
+    sed -i '0,/\/tmp\/poc/s//\/tmp\/corpus\//' /bin/arvo && \
+    sed -i 's|export FUZZER_ARGS="-rss_limit_mb=2560 -timeout=25"|export FUZZER_ARGS="-rss_limit_mb=2560 -timeout=25 -max_total_time=60"|' /bin/arvo && \
+    sed -i 's|/tmp/corpus/|& $FUZZER_ARGS|' /bin/arvo && \
+    sed -i '/\/tmp\/corpus\/ $FUZZER_ARGS/a elif [ "$first_param" = "fuzz_fix" ]; then \\n    /tmp/rebuilt_binary /tmp/corpus/ $FUZZER_ARGS' /bin/arvo
+
+# QA: Assert that `arvo` exits with non-zero code
+RUN ! arvo
+
+# QA: Assert that `arvo compile` exits with code 0
+RUN arvo compile
+
+# QA: Assert that `arvo compile` works for a second time
+RUN arvo compile

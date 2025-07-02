@@ -1,0 +1,43 @@
+[
+  {
+    "filename": "lib/jxl/decode.cc",
+    "patched_line_numbers": [
+      1823,
+      1824,
+      1865,
+      1866,
+      1867,
+      1868,
+      1892,
+      1893,
+      1898
+    ],
+    "patch": "@@ -1820,9 +1820,8 @@ JXL_EXPORT JxlDecoderStatus JxlDecoderPreviewOutBufferSize(\n   JxlDecoderStatus status = PrepareSizeCheck(dec, format, &bits);\n   if (status != JXL_DEC_SUCCESS) return status;\n \n-  const auto& metadata = dec->metadata.m;\n-  size_t xsize = metadata.preview_size.xsize();\n-  size_t ysize = metadata.preview_size.ysize();\n+  size_t xsize = dec->metadata.oriented_preview_xsize(dec->keep_orientation);\n+  size_t ysize = dec->metadata.oriented_preview_ysize(dec->keep_orientation);\n \n   size_t row_size =\n       jxl::DivCeil(xsize * format->num_channels * bits, jxl::kBitsPerByte);\n@@ -1863,8 +1862,10 @@ JXL_EXPORT JxlDecoderStatus JxlDecoderDCOutBufferSize(\n   JxlDecoderStatus status = PrepareSizeCheck(dec, format, &bits);\n   if (status != JXL_DEC_SUCCESS) return status;\n \n-  size_t xsize = jxl::DivCeil(dec->metadata.size.xsize(), jxl::kBlockDim);\n-  size_t ysize = jxl::DivCeil(dec->metadata.size.ysize(), jxl::kBlockDim);\n+  size_t xsize = jxl::DivCeil(\n+      dec->metadata.oriented_xsize(dec->keep_orientation), jxl::kBlockDim);\n+  size_t ysize = jxl::DivCeil(\n+      dec->metadata.oriented_ysize(dec->keep_orientation), jxl::kBlockDim);\n \n   size_t row_size =\n       jxl::DivCeil(xsize * format->num_channels * bits, jxl::kBitsPerByte);\n@@ -1888,12 +1889,13 @@ JXL_EXPORT JxlDecoderStatus JxlDecoderImageOutBufferSize(\n   if (status != JXL_DEC_SUCCESS) return status;\n \n   size_t row_size =\n-      jxl::DivCeil(dec->metadata.size.xsize() * format->num_channels * bits,\n+      jxl::DivCeil(dec->metadata.oriented_xsize(dec->keep_orientation) *\n+                       format->num_channels * bits,\n                    jxl::kBitsPerByte);\n   if (format->align > 1) {\n     row_size = jxl::DivCeil(row_size, format->align) * format->align;\n   }\n-  *size = row_size * dec->metadata.size.ysize();\n+  *size = row_size * dec->metadata.oriented_ysize(dec->keep_orientation);\n \n   return JXL_DEC_SUCCESS;\n }"
+  },
+  {
+    "filename": "lib/jxl/image_metadata.h",
+    "patched_line_numbers": [
+      380,
+      381,
+      382,
+      383,
+      384,
+      387,
+      388,
+      389,
+      390,
+      391,
+      394,
+      395,
+      396,
+      397,
+      398,
+      401,
+      402,
+      403,
+      404,
+      405
+    ],
+    "patch": "@@ -377,6 +377,34 @@ struct CodecMetadata {\n \n   size_t xsize() const { return size.xsize(); }\n   size_t ysize() const { return size.ysize(); }\n+  size_t oriented_xsize(bool keep_orientation) const {\n+    if (static_cast<uint32_t>(m.GetOrientation()) > 4 && !keep_orientation) {\n+      return ysize();\n+    } else {\n+      return xsize();\n+    }\n+  }\n+  size_t oriented_preview_xsize(bool keep_orientation) const {\n+    if (static_cast<uint32_t>(m.GetOrientation()) > 4 && !keep_orientation) {\n+      return m.preview_size.ysize();\n+    } else {\n+      return m.preview_size.xsize();\n+    }\n+  }\n+  size_t oriented_ysize(bool keep_orientation) const {\n+    if (static_cast<uint32_t>(m.GetOrientation()) > 4 && !keep_orientation) {\n+      return xsize();\n+    } else {\n+      return ysize();\n+    }\n+  }\n+  size_t oriented_preview_ysize(bool keep_orientation) const {\n+    if (static_cast<uint32_t>(m.GetOrientation()) > 4 && !keep_orientation) {\n+      return m.preview_size.xsize();\n+    } else {\n+      return m.preview_size.ysize();\n+    }\n+  }\n };\n \n }  // namespace jxl"
+  }
+]

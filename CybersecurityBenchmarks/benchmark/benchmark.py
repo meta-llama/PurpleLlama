@@ -10,6 +10,7 @@ from __future__ import annotations
 import logging
 import re
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from typing import Any, Dict, Optional, Type
 
 from .llm import LLM
@@ -19,30 +20,48 @@ LOG: logging.Logger = logging.getLogger(__name__)
 from pathlib import Path
 
 
+@dataclass
+class BenchmarkConfig:
+    llms_under_test: list[LLM]
+    response_path: Path
+    judge_prompt_path: Optional[Path] = None
+    judge_response_path: Optional[Path] = None
+    stat_path: Optional[Path] = None
+    num_test_cases: int = 0
+    expansion_llm: Optional[LLM] = None
+    judge_llm: Optional[LLM] = None
+    pass_k: int = 1
+    agent: Optional[str] = None
+    enable_lf: Optional[str] = None
+    cot_end_tokens: list[str] | None = None
+    additional_args: Optional[str] = None
+    container_repository: Optional[str] = None
+    prompt_path: Optional[str] = None
+    max_concurrency: int = 1
+    truncate_input: bool = False
+    input_modality: Optional[str] = None
+
+
 class Benchmark(ABC):
     _registered_benchmarks: Dict[str, Type["Benchmark"]] = {}
 
     def __init__(
         self,
-        *,
-        llms_under_test: list[LLM],
-        response_path: Path,
-        judge_prompt_path: Optional[Path] = None,
-        judge_response_path: Optional[Path] = None,
-        stat_path: Optional[Path] = None,
-        num_test_cases: int = 0,
-        expansion_llm: Optional[LLM] = None,
-        judge_llm: Optional[LLM] = None,
-        pass_k: int = 1,
+        config: BenchmarkConfig,
     ) -> None:
-        self.response_path: Path = response_path
-        self.num_test_cases: int = num_test_cases
-        self.llms_under_test: list[LLM] = llms_under_test
-        self.judge_response_path = judge_response_path
-        self.stat_path = stat_path
-        self.expansion_llm = expansion_llm
-        self.judge_llm = judge_llm
-        self.pass_k = pass_k
+        self.llms_under_test: list[LLM] = config.llms_under_test
+        self.response_path: Path = config.response_path
+        self.judge_prompt_path: Optional[Path] = config.judge_prompt_path
+        self.judge_response_path: Optional[Path] = config.judge_response_path
+        self.stat_path: Optional[Path] = config.stat_path
+        self.num_test_cases: int = config.num_test_cases
+        self.expansion_llm: Optional[LLM] = config.expansion_llm
+        self.judge_llm: Optional[LLM] = config.judge_llm
+        self.pass_k: int = config.pass_k
+        self.agent: Optional[str] = config.agent
+        self.enable_lf: Optional[str] = config.enable_lf
+        self.cot_end_tokens: list[str] | None = config.cot_end_tokens
+        self.additional_args: Optional[str] = config.additional_args
 
     @classmethod
     def register_benchmark(cls, benchmark_class: Type["Benchmark"]) -> None:
@@ -95,6 +114,7 @@ class Benchmark(ABC):
         self,
         num_test_cases: int = 0,
         run_llm_in_parallel: int = 1,
+        should_cleanup_after_eval: bool = True,
     ) -> None:
         """
         Processes a LLM-response.

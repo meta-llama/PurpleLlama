@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/libopensc/pkcs15-pubkey.c",
+    "patched_line_numbers": [
+      314
+    ],
+    "patch": "-311,9 +311,6 @@ int sc_pkcs15_decode_pukdf_entry(struct sc_pkcs15_card *p15card,\n \tmemset(gostr3410_params, 0, sizeof(gostr3410_params));\n \n \tr = sc_asn1_decode(ctx, asn1_pubkey, *buf, *buflen, buf, buflen);\n-\tif (r < 0) {\n-\t\tfree(der->value);\n-\t}\n \tif (r == SC_ERROR_ASN1_END_OF_CONTENTS)\n \t\tgoto err;\n \tLOG_TEST_GOTO_ERR(ctx, r, \"ASN.1 decoding failed\");",
+    "summary": "commit 5557f34f5ef86cbf2d2de0ff39b591d4c836defb\nAuthor: Frank Morgner <frankmorgner@gmail.com>\nDate:   Tue Nov 12 11:57:08 2019 +0100\n\n    Revert \"pkcs15-pubkey: Avoid memory leaks\"\n    \n    This reverts commit 0977b5496ad7f35f6575555714e2c352ce85285e.\n"
+  }
+]

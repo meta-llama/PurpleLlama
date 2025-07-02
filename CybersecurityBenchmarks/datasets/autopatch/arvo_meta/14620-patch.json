@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/ua_types_encoding_json.c",
+    "patched_line_numbers": [
+      2262,
+      2264
+    ],
+    "patch": "@@ -2259,6 +2259,9 @@ searchObjectForKeyRec(const char *searchKey, CtxJson *ctx,\n                 if(jsoneq((char*)ctx->pos, &parseCtx->tokenArray[parseCtx->index], searchKey) == 0) {\n                     /*found*/\n                     parseCtx->index++; /*We give back a pointer to the value of the searched key!*/\n+                    if (parseCtx->index >= parseCtx->tokenCount)\n+                        /* We got invalid json. See https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=14620 */\n+                        return UA_STATUSCODE_BADOUTOFRANGE;\n                     *resultIndex = parseCtx->index;\n                     return UA_STATUSCODE_GOOD;\n                 }"
+  }
+]

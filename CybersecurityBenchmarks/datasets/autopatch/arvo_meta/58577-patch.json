@@ -1,0 +1,12 @@
+[
+  {
+    "filename": "src/gc.c",
+    "patched_line_numbers": [
+      1245,
+      1246,
+      1247,
+      1248
+    ],
+    "patch": "@@ -1240,14 +1240,12 @@ clear_all_old(mrb_state *mrb, mrb_gc *gc)\n     /* finish the half baked GC */\n     incremental_gc_finish(mrb, gc);\n   }\n-  else {\n-    /* Sweep the dead objects, then reset all the live objects\n-     * (including all the old objects, of course) to white. */\n-    gc->generational = FALSE;\n-    prepare_incremental_sweep(mrb, gc);\n-    incremental_gc_finish(mrb, gc);\n-    gc->generational = TRUE;\n-  }\n+  /* Sweep the dead objects, then reset all the live objects\n+   * (including all the old objects, of course) to white. */\n+  gc->generational = FALSE;\n+  prepare_incremental_sweep(mrb, gc);\n+  incremental_gc_finish(mrb, gc);\n+  gc->generational = TRUE;\n   /* The gray objects have already been painted as white */\n   gc->atomic_gray_list = gc->gray_list = NULL;\n }"
+  }
+]

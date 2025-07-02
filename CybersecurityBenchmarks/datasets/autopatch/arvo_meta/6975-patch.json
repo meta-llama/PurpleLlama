@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/librawspeed/decompressors/Cr2Decompressor.cpp",
+    "patched_line_numbers": [
+      180
+    ],
+    "patch": "-177,7 +177,7 @@ void Cr2Decompressor::decodeN_X_Y()\n   }\n \n   if (frame.h * std::accumulate(slicesWidths.begin(), slicesWidths.end(), 0) <\n-      mRaw->dim.area())\n+      mRaw->getCpp() * mRaw->dim.area())\n     ThrowRDE(\"Incorrrect slice height / slice widths! Less than image size.\");\n \n   unsigned processedPixels = 0;",
+    "summary": "commit d24332f4f33029ddb5a5d9ab3f07461f60905390\nAuthor: Roman Lebedev <lebedev.ri@gmail.com>\nDate:   Mon Mar 19 20:41:20 2018 +0300\n\n    Cr2Decompressor::decodeN_X_Y(): use c-p-p when checking slice widths\n"
+  }
+]

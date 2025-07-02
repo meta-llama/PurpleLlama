@@ -1,0 +1,14 @@
+[
+  {
+    "filename": "qemu/util/getauxval.c",
+    "patched_line_numbers": [
+      102,
+      103,
+      105,
+      107,
+      108,
+      109
+    ],
+    "patch": "@@ -99,6 +99,16 @@ unsigned long qemu_getauxval(unsigned long type)\n     return 0;\n }\n \n+#elif defined(__FreeBSD__)\n+#include <sys/auxv.h>\n+\n+unsigned long qemu_getauxval(unsigned long type)\n+{\n+    unsigned long aux = 0;\n+    elf_aux_info(type, &aux, sizeof(aux));\n+    return aux;\n+}\n+\n #else\n \n unsigned long qemu_getauxval(unsigned long type)"
+  }
+]

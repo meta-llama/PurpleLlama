@@ -1,0 +1,12 @@
+[
+  {
+    "filename": "src/pkcs15init/pkcs15-setcos.c",
+    "patched_line_numbers": [
+      352,
+      353,
+      354
+    ],
+    "patch": "-349,6 +349,10 @@ setcos_create_key(sc_profile_t *profile, sc_pkcs15_card_t *p15card,\n \n \t/* Replace the path of instantiated key template by the path from the object data. */\n \tmemcpy(&file->path, &key_info->path, sizeof(file->path));\n+\tif (file->path.len < 2) {\n+\t\tsc_file_free(file);\n+\t\tLOG_TEST_RET(ctx, SC_ERROR_INVALID_DATA, \"Invalid path\");\n+\t}\n \tfile->id = file->path.value[file->path.len - 2] * 0x100\n \t\t\t+ file->path.value[file->path.len - 1];",
+    "summary": "commit 440ca666eff10cc7011901252d20f3fc4ea23651\nAuthor: Jakub Jelen <jjelen@redhat.com>\nDate:   Thu Aug 17 13:41:36 2023 +0200\n\n    setcos: Avoid buffer underflow\n    \n    Thanks oss-fuzz\n    \n    https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=60672\n"
+  }
+]

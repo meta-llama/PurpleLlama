@@ -1,0 +1,17 @@
+[
+  {
+    "filename": "src/librawspeed/decompressors/LJpegDecompressor.cpp",
+    "patched_line_numbers": [
+      62,
+      63,
+      64,
+      65,
+      67,
+      68,
+      69,
+      70
+    ],
+    "patch": "-59,6 +59,16 @@ void LJpegDecompressor::decode(uint32 offsetX, uint32 offsetY, uint32 width,\n   if (offsetY >= static_cast<unsigned>(mRaw->dim.y))\n     ThrowRDE(\"Y offset outside of image\");\n \n+  if (width > static_cast<unsigned>(mRaw->dim.x))\n+    ThrowRDE(\"Tile wider than image\");\n+  if (height > static_cast<unsigned>(mRaw->dim.y))\n+    ThrowRDE(\"Tile taller than image\");\n+\n+  if (offsetX + width > static_cast<unsigned>(mRaw->dim.x))\n+    ThrowRDE(\"Tile overflows image horizontally\");\n+  if (offsetY + height > static_cast<unsigned>(mRaw->dim.y))\n+    ThrowRDE(\"Tile overflows image vertically\");\n+\n   offX = offsetX;\n   offY = offsetY;\n   w = width;",
+    "summary": "commit 011039cbdcda1a37659003246a429433856cb7c0\nAuthor: Roman Lebedev <lebedev.ri@gmail.com>\nDate:   Mon Mar 12 00:58:28 2018 +0300\n\n    LJpegDecompressor::decode(): sanitize off+dims.\n    \n    If the code was asked to fill such a tile, and\n    it can't do that, let's not crash/fill only a part,\n    but report as the proper error.\n"
+  }
+]

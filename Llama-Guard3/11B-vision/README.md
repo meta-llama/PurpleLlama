@@ -38,19 +38,19 @@ upholding the principles of openness. Our mission is to empower individuals, and
 industry through this opportunity, while fostering an environment of discovery
 and ethical AI advancements.
 
-The same license as Llama 3.1 applies: see the [LICENSE](../../LICENSE) file, as well
+The same license as Llama 3.1 applies: see the [LICENSE](LICENSE) file, as well
 as our accompanying [Acceptable Use Policy](USE_POLICY.md).
 
 # Citation
 ```
 @misc{chi2024llamaguard3vision,
-      title={Llama Guard 3 Vision: Safeguarding Human-AI Image Understanding Conversations}, 
+      title={Llama Guard 3 Vision: Safeguarding Human-AI Image Understanding Conversations},
       author={Jianfeng Chi and Ujjwal Karn and Hongyuan Zhan and Eric Smith and Javier Rando and Yiming Zhang and Kate Plawiak and Zacharie Delpierre Coudert and Kartikeya Upasani and Mahesh Pasupuleti},
       year={2024},
       eprint={2411.10414},
       archivePrefix={arXiv},
       primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2411.10414}, 
+      url={https://arxiv.org/abs/2411.10414},
 }
 ```
 

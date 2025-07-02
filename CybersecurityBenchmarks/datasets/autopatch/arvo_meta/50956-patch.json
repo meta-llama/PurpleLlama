@@ -1,0 +1,11 @@
+[
+  {
+    "filename": "src/cmsopt.c",
+    "patched_line_numbers": [
+      1699,
+      1700
+    ],
+    "patch": "-1695,6 +1695,10 @@ cmsBool OptimizeMatrixShaper(cmsPipeline** Lut, cmsUInt32Number Intent, cmsUInt3\n               _cmsStageMatrixData* Data1 = (_cmsStageMatrixData*)cmsStageData(Matrix1);\n               _cmsStageMatrixData* Data2 = (_cmsStageMatrixData*)cmsStageData(Matrix2);\n \n+              // Only RGB to RGB\n+              if (Matrix1->InputChannels != 3 || Matrix1->OutputChannels != 3 ||\n+                  Matrix1->InputChannels != 3 || Matrix2->OutputChannels != 3) return FALSE;\n+\n               // Input offset should be zero\n               if (Data1->Offset != NULL) return FALSE;",
+    "summary": "commit ba7004c8ff07bee2c9b6bccb8036611d8b0b2408\nAuthor: Marti Maria <marti.maria@littlecms.com>\nDate:   Thu Dec 1 17:04:26 2022 +0100\n\n    Add a check for forged profiles with bad matrices\n    \n    Found by chrome fuzzer. Thanks!\n"
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "src/tests/fuzzing/fuzz_pkcs11.c",
+    "patched_line_numbers": [
+      515
+    ],
+    "patch": "-512,7 +512,7 @@ static void test_verify(const uint8_t *data, size_t size)\n \t\twhile (verify_data_size > 0) {\n \t\t\tto_process = verify_data_size < sizeof(in_buffer) ? verify_data_size : sizeof(in_buffer);\n \t\t\tverify_data_size -= to_process;\n-\t\t\tmemcpy(in_buffer, data, to_process);\n+\t\t\tmemcpy(in_buffer, verify_data, to_process);\n \t\t\tverify_data += to_process;\n \n \t\t\tif (p11->C_VerifyUpdate(session, in_buffer, to_process) != CKR_OK)",
+    "summary": "commit ffbff25ec6c6d0ad3f8df76f57210698f7947fc3\nAuthor: Veronika Hanul\u00edkov\u00e1 <vhanulik@redhat.com>\nDate:   Fri Aug 11 09:44:57 2023 +0200\n\n    fuzz_pkcs11.c: Use valid data for verify\n    \n    Thanks OSS-Fuzz\n    https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=60971\n"
+  }
+]

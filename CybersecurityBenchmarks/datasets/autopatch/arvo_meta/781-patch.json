@@ -1,0 +1,15 @@
+[
+  {
+    "filename": "ChangeLog",
+    "patched_line_numbers": [
+    ],
+    "patch": "@@ -14,10 +14,20 @@ hard-to-do issues such as #1887 in Bugzilla. The code is also cleaner because\n the old code had a number of fudges to try to reduce stack usage. It seems to \n run no slower than the old code.\n \n+A number of bugs in the refactored code were subsequently fixed during testing\n+before release, but after the code was made available in the repository. Many\n+of the bugs were discovered by fuzzing testing. These bugs were never in fully\n+released code, but are noted here for the record.\n+\n+  (a) If a pattern had fewer capturing parentheses than the ovector supplied in \n+      the match data block, a memory error (detectable by ASAN) occurred after\n+      a match, because the external block was being set from non-existent\n+      internal ovector fields. Fixes oss-fuzz issue 781.\n+\n 2. Hardened pcre2test so as to reduce the number of bugs reported by fuzzers:\n \n-   (a) Check for malloc failures when getting memory for the ovector (POSIX) or \n-       the match data block (non-POSIX). \n+  (a) Check for malloc failures when getting memory for the ovector (POSIX) or \n+      the match data block (non-POSIX). \n        \n 3. In the 32-bit library in non-UTF mode, an attempt to find a Unicode property\n for a character with a code point greater than 0x10ffff (the Unicode maximum)"
+  },
+  {
+    "filename": "src/pcre2_match.c",
+    "patched_line_numbers": [
+      823
+    ],
+    "patch": "@@ -816,9 +816,11 @@ fprintf(stderr, \"++ op=%d\\n\", *Fecode);\n \n     ovector[0] = Fstart_match - mb->start_subject;\n     ovector[1] = Feptr - mb->start_subject;\n-    memcpy(ovector+2, Fovector, (oveccount - 1) * 2 * sizeof(PCRE2_SIZE));\n-\n+    \n+    /* Set i to the smaller of the sizes of the external and frame ovectors. */\n+    \n     i = 2 * ((top_bracket + 1 > oveccount)? oveccount : top_bracket + 1);\n+    memcpy(ovector + 2, Fovector, (i - 2) * sizeof(PCRE2_SIZE));\n     while (--i >= Foffset_top + 2) ovector[i] = PCRE2_UNSET;\n     return MATCH_MATCH;  /* Note: NOT RRETURN */\n "
+  }
+]

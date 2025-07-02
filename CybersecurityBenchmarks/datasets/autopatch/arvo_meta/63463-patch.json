@@ -1,0 +1,20 @@
+[
+  {
+    "filename": "src/decode.c",
+    "patched_line_numbers": [
+      6919,
+      6921,
+      6922,
+      6923,
+      6924,
+      6926,
+      6955,
+      6957,
+      6958,
+      6959,
+      6960,
+      6962
+    ],
+    "patch": "@@ -6916,7 +6916,14 @@ decode_preR13_entities (BITCODE_RL start, BITCODE_RL end,\n               {\n                 PRE (R_11) // no crc16\n                 {\n-                  if (obj->address + obj->size != dat->byte)\n+                  if (obj->size > dat->size - oldpos)\n+                    {\n+                      LOG_ERROR (\"Invalid obj->size \" FORMAT_RL \" changed to %\" PRIuSIZE,\n+                                 obj->size, dat->byte - oldpos);\n+                      error |= DWG_ERR_VALUEOUTOFBOUNDS;\n+                      obj->size = (dat->byte - oldpos) & 0xFFFFFFFF;\n+                    }\n+                  else if (obj->address + obj->size != dat->byte)\n                     {\n                       LOG_ERROR (\"offset %ld\",\n                                  (long)(obj->address + obj->size - dat->byte));\n@@ -6945,7 +6952,14 @@ decode_preR13_entities (BITCODE_RL start, BITCODE_RL end,\n                 }\n                 LATER_VERSIONS\n                 {\n-                  if (obj->address + obj->size != dat->byte + 2)\n+                  if (obj->size > dat->size - oldpos)\n+                    {\n+                      LOG_ERROR (\"Invalid obj->size \" FORMAT_RL \" changed to %\" PRIuSIZE,\n+                                 obj->size, dat->byte + 2 - oldpos);\n+                      error |= DWG_ERR_VALUEOUTOFBOUNDS;\n+                      obj->size = ((dat->byte + 2) - oldpos) & 0xFFFFFFFF;\n+                    }\n+                  else if (obj->address + obj->size != dat->byte + 2)\n                     {\n                       LOG_ERROR (\"offset %ld\", (long)(obj->address + obj->size\n                                                       - (dat->byte + 2)));"
+  }
+]

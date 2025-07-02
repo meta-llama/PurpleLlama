@@ -1,0 +1,38 @@
+{
+  "sample_id": 35675,
+  "arvo_metadata": {
+    "fix": "https://github.com/h2o/h2o/commit/1785a2fe97eda2de3d065147a0a4e5b509f0e3c0",
+    "verify": "0",
+    "localId": 35675,
+    "project": "h2o",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Heap-buffer-overflow READ 1",
+    "severity": "Medium",
+    "fix_commit": [
+      "0b2425b41830e550dfc5d451b217ab4d44bd4985",
+      "a939ef6dbb33a7fea20de22a2a751cfc0632b4b2",
+      "7d7d1bd49e4703d878b7926a13c0ac5695639c3c",
+      "1785a2fe97eda2de3d065147a0a4e5b509f0e3c0"
+    ],
+    "repo_addr": "https://github.com/h2o/h2o"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 91,
+    "total_lines_added": 10,
+    "total_lines_subtracted": 2,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

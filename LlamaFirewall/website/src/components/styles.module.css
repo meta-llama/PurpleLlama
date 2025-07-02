@@ -1,0 +1,166 @@
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+
+ /* Boilerplate that was here when the site template was first generated. */
+ .features {
+  display: flex;
+  align-items: center;
+  padding: 2.5rem 0;
+  width: 100%;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2.5rem 0;
+}
+
+.titleContainer {
+  overflow: hidden;
+}
+
+.title {
+  font-size: 64px;
+  margin-top: 10px;
+  margin-bottom: 25px;
+  opacity: 0;
+}
+
+.fadeIn {
+  animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.videoWrapper {
+  position: relative;
+  max-width: 70%;
+}
+
+.video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  text-align: center;
+  margin-bottom: 7px;
+}
+
+.footer p {
+  margin-bottom: 5px;
+  margin-top: 2px;
+}
+
+.horizontalContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  max-width: 70%;
+}
+
+.textContainer {
+  font-size: xx-large;
+  width: 50%;
+  padding-right: 5rem;
+}
+.codeContainer {
+  width: 50%;
+}
+
+.codeSnippet > div > div {
+  display: none;
+}
+
+.codeSnippet code:first-of-type > span {
+  opacity: 0;
+  transform: translateX(4rem);
+  display: block;
+}
+
+.codeSnippet pre:first-of-type {
+  overflow-x: hidden;
+}
+
+.fadeInFromRight {
+  animation: fadeInFromRight 1s forwards;
+}
+
+@keyframes fadeInFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(4rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media screen and (max-width: 996px) {
+  .titleContainer {
+    padding: 0 1rem;
+  }
+
+  .title {
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .footer {
+    position: relative;
+    background-color: rgba(255, 255, 255, 0.2);
+    margin-top: -7px;
+  }
+
+  .footer p {
+    margin-bottom: 0;
+    margin-top: 0;
+    padding:  4px 0;
+    font-size: 0.6rem;
+  }
+
+  .horizontalContainer {
+    flex-direction: column;
+    max-width: 100%;
+  }
+
+  .textContainer {
+    display: flex;
+    flex-direction: column;
+    font-size: small;
+    text-align: center;
+    padding: 0 1.5rem 1.5rem 1.5rem;
+    margin: 0;
+    width: 100%;
+  }
+
+  .codeContainer {
+    font-size: x-small;
+    overflow: hidden;
+    padding: 0 2rem;
+    width: auto;
+  }
+}

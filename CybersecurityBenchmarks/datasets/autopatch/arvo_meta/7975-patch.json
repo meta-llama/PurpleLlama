@@ -1,0 +1,10 @@
+[
+  {
+    "filename": "epan/dissectors/packet-dns.c",
+    "patched_line_numbers": [
+      1507
+    ],
+    "patch": "-1504,11 +1504,9 @@ add_rr_to_tree(proto_tree  *rr_tree, tvbuff_t *tvb, int offset,\n   proto_item *ttl_item;\n   gchar      **srv_rr_info;\n \n-  if (type == T_SRV) {\n+  if (type == T_SRV && name[0]) {\n     srv_rr_info = wmem_strsplit(wmem_packet_scope(), name, \".\", 3);\n \n-    /* The + 1 on the strings is to skip the leading '_' */\n-\n     proto_tree_add_string(rr_tree, hf_dns_srv_service, tvb, offset,\n                           namelen, srv_rr_info[0]);",
+    "summary": "commit 843735e0efe03f601ed69f69e5295974aad927b2\nAuthor: Peter Wu <peter@lekensteyn.nl>\nDate:   Sun May 13 16:27:27 2018 +0200\n\n    dns: fix null pointer deref for empty name in SRV record\n    \n    Per RFC 2782, the name should follow the \"_Service._Proto.Name\" format.\n    If a malformed packet does not adhere to this and provides a zero-length\n    name, then wmem_strsplit returns NULL.\n    \n    Bug: 14681\n    Change-Id: I7b9935238a9800a1526c8b694fd2c63d3b488d0b\n    Link: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=7416\n    Reviewed-on: https://code.wireshark.org/review/27499\n    Petri-Dish: Peter Wu <peter@lekensteyn.nl>\n    Tested-by: Petri Dish Buildbot\n    Reviewed-by: Anders Broman <a.broman58@gmail.com>\n"
+  }
+]

@@ -1,0 +1,32 @@
+{
+  "sample_id": 35583,
+  "arvo_metadata": {
+    "fix": "https://chromium.googlesource.com/webm/libwebp/+/277d30749f15d3fd99649c9347867ddc2fe4f32e%5E%21/",
+    "verify": "0",
+    "localId": 35583,
+    "project": "libwebp",
+    "fuzzer": "afl",
+    "sanitizer": "asan",
+    "crash_type": "Negative-size-param",
+    "fix_commit": "277d30749f15d3fd99649c9347867ddc2fe4f32e",
+    "repo_addr": "https://chromium.googlesource.com/webm/libwebp"
+  },
+  "parsed_diff_data": {
+    "total_files": 5,
+    "total_hunks": 7,
+    "max_hunk_length": 117,
+    "total_lines_added": 92,
+    "total_lines_subtracted": 67,
+    "modified_files": 5,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

@@ -1,0 +1,14 @@
+[
+  {
+    "filename": "epan/dissectors/packet-dof.c",
+    "patched_line_numbers": [
+      3906,
+      3907,
+      3917,
+      3919,
+      3921
+    ],
+    "patch": "-3861,6 +3861,14 @@ typedef struct DOFObjectIDAttribute_t\n     const guint8 *data;                         /**< Attribute data. **/\n } DOFObjectIDAttribute;\n \n+/**\n+* Read variable-length value from buffer.\n+*\n+* @param maxSize   [in]        Maximum size of value to be read\n+* @param bufLength [in,out]    Input: size of buffer, output: size of value in buffer\n+* @param buffer    [in]        Actual buffer\n+* @return                      Uncompressed value if buffer size is valid (or 0 on error)\n+*/\n static guint32 OALMarshal_UncompressValue(guint8 maxSize, guint32 *bufLength, const guint8 *buffer)\n {\n     guint32 value = 0;\n@@ -3894,6 +3902,10 @@ static guint32 OALMarshal_UncompressValue(guint8 maxSize, guint32 *bufLength, co\n         break;\n     }\n \n+    /* Sanity check */\n+    if (size > *bufLength)\n+        return 0;\n+\n     value = buffer[used++] & mask;\n     while (used < size)\n         value = (value << 8) | buffer[used++];\n@@ -3902,20 +3914,15 @@ static guint32 OALMarshal_UncompressValue(guint8 maxSize, guint32 *bufLength, co\n     return (value);\n }\n \n-static guint32 DOFObjectID_GetClassSize_Bytes(const guint8 *pBytes)\n+static guint32 DOFObjectID_GetClassSize(DOFObjectID self)\n {\n-    guint32 size = 4;\n+    guint32 size = self->len;\n \n-    (void)OALMarshal_UncompressValue(DOFOBJECTID_MAX_CLASS_SIZE, &size, pBytes);\n+    (void)OALMarshal_UncompressValue(DOFOBJECTID_MAX_CLASS_SIZE, &size, self->oid);\n \n     return size;\n }\n \n-static guint32 DOFObjectID_GetClassSize(DOFObjectID self)\n-{\n-    return DOFObjectID_GetClassSize_Bytes(self->oid);\n-}\n-\n static guint32 DOFObjectID_GetDataSize(const DOFObjectID self)\n {\n     return ((*((const guint8 *)self->oid + DOFObjectID_GetClassSize(self))) & OID_DATA_LEN_MASK);",
+    "summary": "commit 6fdf8eb5a92d51617203be1a712c15585b156497\nAuthor: Bj\u00f6rn Ruytenberg <bjorn@bjornweb.nl>\nDate:   Sat Apr 22 23:33:57 2017 +0200\n\n    DOF: Fix buffer overflow (read)\n    \n    Perform sanity check on buffer length parsed from data. Check buffer\n    size before reading value.\n    \n    Change-Id: I8beaf8860b39426d79867b0dd2221e57e32da8e0\n    Link: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=1151\n    Bug: 13608\n    Reviewed-on: https://code.wireshark.org/review/21287\n    Reviewed-by: Peter Wu <peter@lekensteyn.nl>\n    Petri-Dish: Peter Wu <peter@lekensteyn.nl>\n    Tested-by: Petri Dish Buildbot <buildbot-no-reply@wireshark.org>\n    Reviewed-by: Michael Mann <mmann78@netscape.net>\n"
+  }
+]

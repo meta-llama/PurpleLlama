@@ -1,0 +1,45 @@
+[
+  {
+    "filename": "ChangeLog",
+    "patched_line_numbers": [
+    ],
+    "patch": "@@ -24,11 +24,17 @@ released code, but are noted here for the record.\n       a match, because the external block was being set from non-existent\n       internal ovector fields. Fixes oss-fuzz issue 781.\n \n+  (b) A pattern with very many capturing parentheses (when the internal frame \n+      size was greater than the initial frame vector on the stack) caused a \n+      crash. A vector on the heap is now set up at the start of matching if the \n+      vector on the stack is not big enough to handle at least 10 frames. \n+      Fixes oss-fuzz issue 783. \n+       \n 2. Hardened pcre2test so as to reduce the number of bugs reported by fuzzers:\n \n   (a) Check for malloc failures when getting memory for the ovector (POSIX) or \n       the match data block (non-POSIX). \n-       \n+      \n 3. In the 32-bit library in non-UTF mode, an attempt to find a Unicode property\n for a character with a code point greater than 0x10ffff (the Unicode maximum)\n caused a crash."
+  },
+  {
+    "filename": "src/pcre2_match.c",
+    "patched_line_numbers": [
+      6245,
+      6251,
+      6253,
+      6254,
+      6256,
+      6258,
+      6259,
+      6260,
+      6261,
+      6264,
+      6265,
+      6270,
+      6271,
+      6276,
+      6277,
+      6278,
+      6283,
+      6284,
+      6285
+    ],
+    "patch": "@@ -816,9 +816,9 @@ fprintf(stderr, \"++ op=%d\\n\", *Fecode);\n \n     ovector[0] = Fstart_match - mb->start_subject;\n     ovector[1] = Feptr - mb->start_subject;\n-    \n+\n     /* Set i to the smaller of the sizes of the external and frame ovectors. */\n-    \n+\n     i = 2 * ((top_bracket + 1 > oveccount)? oveccount : top_bracket + 1);\n     memcpy(ovector + 2, Fovector, (i - 2) * sizeof(PCRE2_SIZE));\n     while (--i >= Foffset_top + 2) ovector[i] = PCRE2_UNSET;\n@@ -5231,7 +5231,7 @@ fprintf(stderr, \"++ op=%d\\n\", *Fecode);\n     /* The variable Flength will be added to Fecode when the condition is\n     false, to get to the second branch. Setting it to the offset to the ALT or\n     KET, then incrementing Fecode achieves this effect. However, if the second\n-    branch is non-existent, we must point to the KET so that the end of the \n+    branch is non-existent, we must point to the KET so that the end of the\n     group is correctly processed. We now have Fecode pointing to the condition\n     or callout. */\n \n@@ -5478,8 +5478,8 @@ fprintf(stderr, \"++ op=%d\\n\", *Fecode);\n \n       /* If we are at the end of an assertion that is a condition, return a\n       match, discarding any intermediate backtracking points. Copy back the\n-      captures into the frame before N so that they are set on return. Doing \n-      this for all assertions, both positive and negative, seems to match what \n+      captures into the frame before N so that they are set on return. Doing\n+      this for all assertions, both positive and negative, seems to match what\n       Perl does. */\n \n       if (GF_IDMASK(N->group_frame_type) == GF_CONDASSERT)\n@@ -5545,7 +5545,7 @@ fprintf(stderr, \"++ op=%d\\n\", *Fecode);\n       case OP_SCBRA:\n       case OP_SCBRAPOS:\n       number = GET2(bracode, 1+LINK_SIZE);\n-      \n+\n       /* Handle a recursively called group. We reinstate the previous set of\n       captures and then carry on. */\n \n@@ -6197,45 +6197,6 @@ mb->name_count = re->name_count;\n mb->name_entry_size = re->name_entry_size;\n mb->start_code = mb->name_table + re->name_count * re->name_entry_size;\n \n-/* The backtracking frames have fixed data at the front, and a PCRE2_SIZE\n-vector at the end, whose size depends on the number of capturing parentheses in\n-the pattern. It is not used at all if there are no capturing parentheses.\n-\n-  frame_size             is the total size of each frame\n-  mb->frame_vector_size  is the total usable size of the vector (rounded down\n-                           to a whole number of frames)\n-\n-The last of these may be changed if the frame vector has to be expanded. We\n-therefore put it into the match block so that it is correct when calling\n-match() more than once for non-anchored patterns. */\n-\n-frame_size = sizeof(heapframe) + ((re->top_bracket - 1) * 2 * sizeof(PCRE2_SIZE));\n-mb->frame_vector_size = ((START_FRAMES_SIZE/frame_size) * frame_size);\n-\n-/* Set up the initial frame set. Write to the ovector within the first frame to\n-mark every capture unset and to avoid uninitialized memory read errors when it\n-is copied to a new frame. */\n-\n-memset((char *)(mb->stack_frames) + offsetof(heapframe,ovector), 0xff,\n-  re->top_bracket * 2 * sizeof(PCRE2_SIZE));\n-mb->match_frames = mb->stack_frames;\n-mb->match_frames_top =\n-  (heapframe *)((char *)mb->match_frames + mb->frame_vector_size);\n-\n-/* Limits set in the pattern override the match context only if they are\n-smaller. */\n-\n-mb->match_limit = (mcontext->match_limit < re->limit_match)?\n-                  mcontext->match_limit : re->limit_match;\n-mb->match_limit_recursion = (mcontext->recursion_limit < re->limit_recursion)?\n-                            mcontext->recursion_limit : re->limit_recursion;\n-\n-/* Pointers to the individual character tables */\n-\n-mb->lcc = re->tables + lcc_offset;\n-mb->fcc = re->tables + fcc_offset;\n-mb->ctypes = re->tables + ctypes_offset;\n-\n /* Process the \\R and newline settings. */\n \n mb->bsr_convention = re->bsr_convention;\n@@ -6269,6 +6230,60 @@ switch(re->newline_convention)\n   default: return PCRE2_ERROR_INTERNAL;\n   }\n \n+/* The backtracking frames have fixed data at the front, and a PCRE2_SIZE\n+vector at the end, whose size depends on the number of capturing parentheses in\n+the pattern. It is not used at all if there are no capturing parentheses.\n+\n+  frame_size             is the total size of each frame\n+  mb->frame_vector_size  is the total usable size of the vector (rounded down\n+                           to a whole number of frames)\n+\n+The last of these is changed within the match() function if the frame vector\n+has to be expanded. We therefore put it into the match block so that it is\n+correct when calling match() more than once for non-anchored patterns. */\n+\n+frame_size = sizeof(heapframe) + ((re->top_bracket - 1) * 2 * sizeof(PCRE2_SIZE));\n+\n+/* If a pattern has very many capturing parentheses, the frame size may be very\n+large. Ensure that there are at least 10 available frames by getting an initial \n+vector on the heap if necessary. */\n+\n+if (frame_size <= START_FRAMES_SIZE/10)\n+  {\n+  mb->match_frames = mb->stack_frames;   /* Initial frame vector on the stack */\n+  mb->frame_vector_size = ((START_FRAMES_SIZE/frame_size) * frame_size);\n+  }\n+else\n+  {\n+  mb->frame_vector_size = frame_size * 10;\n+  mb->match_frames = mb->memctl.malloc(mb->frame_vector_size,\n+    mb->memctl.memory_data);\n+  if (mb->match_frames == NULL) return PCRE2_ERROR_NOMEMORY;\n+  }\n+\n+mb->match_frames_top =\n+  (heapframe *)((char *)mb->match_frames + mb->frame_vector_size);\n+\n+/* Write to the ovector within the first frame to mark every capture unset and\n+to avoid uninitialized memory read errors when it is copied to a new frame. */\n+\n+memset((char *)(mb->match_frames) + offsetof(heapframe, ovector), 0xff,\n+  re->top_bracket * 2 * sizeof(PCRE2_SIZE));\n+\n+/* Limits set in the pattern override the match context only if they are\n+smaller. */\n+\n+mb->match_limit = (mcontext->match_limit < re->limit_match)?\n+                  mcontext->match_limit : re->limit_match;\n+mb->match_limit_recursion = (mcontext->recursion_limit < re->limit_recursion)?\n+                            mcontext->recursion_limit : re->limit_recursion;\n+\n+/* Pointers to the individual character tables */\n+\n+mb->lcc = re->tables + lcc_offset;\n+mb->fcc = re->tables + fcc_offset;\n+mb->ctypes = re->tables + ctypes_offset;\n+\n /* Set up the first code unit to match, if available. The first_codeunit value\n is never set for an anchored regular expression, but the anchoring may be\n forced at run time, so we have to test for anchoring. The first code unit may"
+  },
+  {
+    "filename": "testdata/testinput2",
+    "patched_line_numbers": [
+    ],
+    "patch": "@@ -5009,4 +5009,10 @@ a)\"xI\n '(?:a(*:aa))b|ac' mark\n     ac\n      \n+/(R?){65}/\n+    (R?){65}\n+\n+/\\[(a)]{60}/expand\n+    aaaa\n+\n # End of testinput2 "
+  },
+  {
+    "filename": "testdata/testoutput2",
+    "patched_line_numbers": [
+    ],
+    "patch": "@@ -15559,6 +15559,15 @@ Subject length lower bound = 11\n     ac\n  0: ac\n      \n+/(R?){65}/\n+    (R?){65}\n+ 0: \n+ 1: \n+\n+/\\[(a)]{60}/expand\n+    aaaa\n+No match\n+\n # End of testinput2 \n Error -63: PCRE2_ERROR_BADDATA (unknown error number)\n Error -62: bad serialized data"
+  }
+]

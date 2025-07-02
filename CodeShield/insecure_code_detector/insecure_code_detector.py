@@ -221,7 +221,7 @@ async def _run_command(command: list[str]) -> str:
         LOG.fatal(
             f"Process {' '.join(command)} failed with exit code {process.returncode}\nStdout: {stdout}\nStderr:{stderr}"
         )
-    return stdout.decode("utf-8")
+    return stdout.decode("utf-8", errors="replace")
 
 
 def _write_code_to_file(file_content: str, extension: str) -> Path:
@@ -324,7 +324,7 @@ async def _semgrep_analyze(
             (
                 str(config_file_path)
                 if config_file_path.exists()
-                else str(oss.SEMGREP_RULE_REPO_PATH / code_context.language)
+                else str(oss.SEMGREP_RULE_REPO_PATH / str(code_context.language))
             )
         ]
         + (["--project-root", root_folder] if root_folder else [])

@@ -1,0 +1,40 @@
+[
+  {
+    "filename": "blosc/blosc2.c",
+    "patched_line_numbers": [
+      2578,
+      2620,
+      2621,
+      2622,
+      2624,
+      2625,
+      2626,
+      2628,
+      2629,
+      2630,
+      2631,
+      2633,
+      2634,
+      2635,
+      2636,
+      2637,
+      2638,
+      2640,
+      2641,
+      2642,
+      2643,
+      2644,
+      2646,
+      2647,
+      2648,
+      2649,
+      2650,
+      2651,
+      2652,
+      2653,
+      2655
+    ],
+    "patch": "-2575,6 +2575,7 @@ int blosc_decompress(const void* src, void* dest, size_t destsize) {\n int _blosc_getitem(blosc2_context* context, blosc_header* header, const void* src, int32_t srcsize,\n                    int start, int nitems, void* dest, int32_t destsize) {\n   uint8_t* _src = (uint8_t*)(src);  /* current pos for source buffer */\n+  uint8_t* _dest = (uint8_t*)(dest);\n   int32_t ntbytes = 0;              /* the number of uncompressed bytes */\n   int32_t bsize, bsize2, ebsize, leftoverblock;\n   int32_t cbytes;\n@@ -2616,6 +2617,44 @@ int _blosc_getitem(blosc2_context* context, blosc_header* header, const void* sr\n     memcpyed = true;\n   }\n \n+  bool is_lazy = ((context->header_overhead == BLOSC_EXTENDED_HEADER_LENGTH) &&\n+                  (context->blosc2_flags & 0x08u) && !context->special_type);\n+  if (memcpyed && !is_lazy && !context->postfilter) {\n+    // Short-circuit for (non-lazy) memcpyed or special values\n+    ntbytes = nitems * header->typesize;\n+    switch (context->special_type) {\n+      case BLOSC2_SPECIAL_VALUE:\n+        // All repeated values\n+        rc = set_values(context->typesize, _src, _dest, ntbytes);\n+        if (rc < 0) {\n+          BLOSC_TRACE_ERROR(\"set_values failed\");\n+          return BLOSC2_ERROR_DATA;\n+        }\n+        break;\n+      case BLOSC2_SPECIAL_NAN:\n+        rc = set_nans(context->typesize, _dest, ntbytes);\n+        if (rc < 0) {\n+          BLOSC_TRACE_ERROR(\"set_nans failed\");\n+          return BLOSC2_ERROR_DATA;\n+        }\n+        break;\n+      case BLOSC2_SPECIAL_ZERO:\n+        memset(_dest, 0, ntbytes);\n+        break;\n+      case BLOSC2_SPECIAL_UNINIT:\n+        // We do nothing here\n+        break;\n+      case BLOSC2_NO_SPECIAL:\n+        _src += context->header_overhead + start * context->typesize;\n+        memcpy(_dest, _src, ntbytes);\n+        break;\n+      default:\n+        BLOSC_TRACE_ERROR(\"Unhandled special value case\");\n+        return -1;\n+    }\n+    return ntbytes;\n+  }\n+\n   ebsize = header->blocksize + header->typesize * (signed)sizeof(int32_t);\n   struct thread_context* scontext = context->serial_context;\n   /* Resize the temporaries in serial context if needed */",
+    "summary": "commit 4a727370b1c2e9746434c00bf2236db86c31ea5c\nAuthor: Francesc Alted <francesc@blosc.org>\nDate:   Tue Apr 20 19:58:19 2021 +0200\n\n    Fast path for memcpyed and special chunks in getitem\n"
+  }
+]

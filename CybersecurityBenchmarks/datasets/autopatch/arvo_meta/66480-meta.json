@@ -1,0 +1,33 @@
+{
+  "sample_id": 66480,
+  "arvo_metadata": {
+    "fix": "https://github.com/FreeRADIUS/freeradius-server/commit/dbac50e667c70419625ce52eebb8b928f1ee6dfa",
+    "verify": "0",
+    "localId": 66480,
+    "project": "freeradius-server",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Heap-buffer-overflow READ 1",
+    "severity": "Medium",
+    "fix_commit": "dbac50e667c70419625ce52eebb8b928f1ee6dfa",
+    "repo_addr": "https://github.com/FreeRADIUS/freeradius-server.git"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 118,
+    "total_lines_added": 1,
+    "total_lines_subtracted": 1,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

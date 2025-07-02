@@ -1,0 +1,33 @@
+{
+  "sample_id": 51988,
+  "arvo_metadata": {
+    "fix": "https://github.com/hunspell/hunspell/commit/7357713ba5d529f3ff70c654b703429fc9cb55a4",
+    "verify": "0",
+    "localId": 51988,
+    "project": "hunspell",
+    "fuzzer": "libfuzzer",
+    "sanitizer": "asan",
+    "crash_type": "Heap-buffer-overflow READ 1",
+    "severity": "Medium",
+    "fix_commit": "7357713ba5d529f3ff70c654b703429fc9cb55a4",
+    "repo_addr": "https://github.com/hunspell/hunspell.git"
+  },
+  "parsed_diff_data": {
+    "total_files": 1,
+    "total_hunks": 1,
+    "max_hunk_length": 25,
+    "total_lines_added": 1,
+    "total_lines_subtracted": 1,
+    "modified_files": 1,
+    "added_files": 0,
+    "removed_files": 0
+  },
+  "vul_container_checks": {
+    "crash_reproduced": true,
+    "has_stacktrace": true,
+    "compiles": true
+  },
+  "fix_container_checks": {
+    "passes_fuzzing": true
+  }
+}

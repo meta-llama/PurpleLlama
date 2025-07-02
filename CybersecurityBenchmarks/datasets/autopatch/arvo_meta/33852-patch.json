@@ -1,0 +1,12 @@
+[
+  {
+    "filename": "Userland/Shell/Parser.cpp",
+    "patched_line_numbers": [
+      1985,
+      1986,
+      1988
+    ],
+    "patch": "-1982,8 +1982,10 @@ RefPtr<AST::Node> Parser::parse_heredoc_initiation_record()\n \n bool Parser::parse_heredoc_entries()\n {\n+    auto heredocs = move(m_heredoc_initiations);\n+    m_heredoc_initiations.clear();\n     // Try to parse heredoc entries, as reverse recorded in the initiation records\n-    for (auto& record : m_heredoc_initiations) {\n+    for (auto& record : heredocs) {\n         auto rule_start = push_start();\n         if (m_rule_start_offsets.size() > max_allowed_nested_rule_depth) {\n             record.node->set_is_syntax_error(*create<AST::SyntaxError>(String::formatted(\"Expression nested too deep (max allowed is {})\", max_allowed_nested_rule_depth)));\n@@ -2070,8 +2072,6 @@ bool Parser::parse_heredoc_entries()\n             record.node->set_contents(create<AST::DoubleQuotedString>(move(expr)));\n         }\n     }\n-\n-    m_heredoc_initiations.clear();\n     return true;\n }",
+    "summary": "commit 70728b49e266e2e71fe69d675d117a2b30435bdb\nAuthor: Ali Mohammad Pur <ali.mpfard@gmail.com>\nDate:   Sat May 1 12:44:09 2021 +0430\n\n    Shell: Move the heredocs vector to a local value before processing it\n    \n    Otherwise we would end up trying to parse the same heredoc entry, if it\n    contained a sequence terminated by a newline.\n    e.g. `<<-x\\n$({` would attempt to read a heredoc entry after `x`, and\n    then after `{` while inside the first heredoc entry.\n    To make this work, we can simply empty the instance vector and keep the\n    state on the stack.\n    Issue found through oss-fuzz:\n    https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=33852\n"
+  }
+]
