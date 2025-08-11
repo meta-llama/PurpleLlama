@@ -1,8 +1,10 @@
 # Prompt Guard
-<span style="color: red;">**Please note that as of April 29th, a new version of this model, [PromptGuard 2](../Prompt-Guard/README.md), has been released. This updated version offers enhanced performance for most use cases. We recommend considering an upgrade to PromptGuard 2 for your application.**</span>
+**Please note that as of April 29th, a new version of this model, [PromptGuard 2](../Llama-Prompt-Guard-2/), has been released. This updated version offers enhanced performance for most use cases. We recommend considering an upgrade to PromptGuard 2 for your application.**
+
+
 
 <p align="center">
-  <img src="prompt_guard_visual.png" width="400"/>
+  <img src="../Prompt-Guard/prompt_guard_visual.png" width="600"/>
 </p>
 
 
