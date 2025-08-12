@@ -29,7 +29,14 @@ class OPENAI(LLM):
     """Accessing OPENAI"""
 
     def __init__(self, config: LLMConfig) -> None:
-        self._reasoning_models = ["o1", "o1-mini", "o3", "o3-mini", "o4-mini"]
+        self._reasoning_models = [
+            "o1",
+            "o1-mini",
+            "o3",
+            "o3-mini",
+            "o4-mini",
+            "gpt-5-mini",
+        ]
         super().__init__(config)
         self.client = openai.OpenAI(api_key=self.api_key)  # noqa
 
@@ -55,11 +62,6 @@ class OPENAI(LLM):
         response = self.client.chat.completions.create(
             model=self.model,
             messages=messages,
-            max_tokens=(
-                DEFAULT_MAX_TOKENS
-                if (self.model not in self._reasoning_models)
-                else NOT_GIVEN
-            ),
             max_completion_tokens=(
                 DEFAULT_MAX_TOKENS
                 if (self.model in self._reasoning_models)
@@ -101,11 +103,6 @@ class OPENAI(LLM):
         response = self.client.chat.completions.create(
             model=self.model,
             messages=messages,
-            max_tokens=(
-                DEFAULT_MAX_TOKENS
-                if (self.model not in self._reasoning_models)
-                else NOT_GIVEN
-            ),
             max_completion_tokens=(
                 DEFAULT_MAX_TOKENS
                 if (self.model in self._reasoning_models)
@@ -149,11 +146,6 @@ class OPENAI(LLM):
         response = self.client.chat.completions.create(
             model=self.model,
             messages=message_list,
-            max_tokens=(
-                DEFAULT_MAX_TOKENS
-                if (self.model not in self._reasoning_models)
-                else NOT_GIVEN
-            ),
             max_completion_tokens=(
                 DEFAULT_MAX_TOKENS
                 if (self.model in self._reasoning_models)
@@ -189,11 +181,6 @@ class OPENAI(LLM):
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": prompt},
             ],
-            max_tokens=(
-                DEFAULT_MAX_TOKENS
-                if (self.model not in self._reasoning_models)
-                else NOT_GIVEN
-            ),
             max_completion_tokens=(
                 DEFAULT_MAX_TOKENS
                 if (self.model in self._reasoning_models)
@@ -247,11 +234,6 @@ class OPENAI(LLM):
                     ],
                 },
             ],
-            max_tokens=(
-                DEFAULT_MAX_TOKENS
-                if (self.model not in self._reasoning_models)
-                else NOT_GIVEN
-            ),
             max_completion_tokens=(
                 DEFAULT_MAX_TOKENS
                 if (self.model in self._reasoning_models)
@@ -320,11 +302,6 @@ class OPENAI(LLM):
         response = self.client.chat.completions.create(
             model=self.model,
             messages=messages,
-            max_tokens=(
-                DEFAULT_MAX_TOKENS
-                if (self.model not in self._reasoning_models)
-                else NOT_GIVEN
-            ),
             max_completion_tokens=(
                 DEFAULT_MAX_TOKENS
                 if (self.model in self._reasoning_models)
