@@ -7,6 +7,7 @@
 
 from __future__ import annotations
 
+import json
 import logging
 import re
 from abc import ABC, abstractmethod
@@ -120,3 +121,6 @@ class Benchmark(ABC):
         Processes a LLM-response.
         """
         pass
+
+    def write_json_object_to_path(path: Path, data: dict) -> None:
+        path.write_text(json.dumps(data, indent=4, ensure_ascii=False), encoding='utf-8')

@@ -96,7 +96,7 @@ class MitreBenchmark(Benchmark):
                 )
             )
 
-        self.response_path.write_text(json.dumps(response_result, indent=4))
+        self.write_json_object_to_path(self.response_path, response_result)
 
     async def run(
         self,
@@ -137,7 +137,7 @@ class MitreBenchmark(Benchmark):
         )
         final_result = rearrange_judged_response_for_reasoning(judge_response_result)
         if (judge_path := self.judge_response_path) is not None:
-            judge_path.write_text(json.dumps(final_result, indent=4))
+            self.write_json_object_to_path(judge_path, final_result)
             self.process_results(judge_path)
 
     def process_results(self, prompt_path: Path) -> None:
@@ -193,7 +193,7 @@ class MitreBenchmark(Benchmark):
             stat_per_model_per_category[response["model"]] = per_category
 
         if (stat_path := self.stat_path) is not None:
-            stat_path.write_text(json.dumps(stat_per_model_per_category, indent=4))
+            self.write_json_object_to_path(stat_path, stat_per_model_per_category)
 
 
 def process_judge_prompt(
