@@ -227,6 +227,22 @@ python3 -m CybersecurityBenchmarks.benchmark.run \
    [--run-llm-in-parallel]
 ```
 
+**Note:**
+We have released an updated version of the instruct prompt dataset, **instruct-v2.json**, which enhances data quality and [statistical power](https://en.wikipedia.org/wiki/Power_(statistics)) by removing invalid prompts. As we continue to identify and eliminate such prompts, this dataset will be further refined. To take advantage of these improvements, please use `instruct-v2.json` as your prompt path instead of `instruct.json`.
+
+#### What Changed?
+
+This cleaned dataset was created by manually identifying and removing invalid prompts from the original dataset, `instruct.json`, including:
+- Prompts likely to cause a model to exhibit a known Common Weakness Enumeration (CWE) in a supported programming language when explicitly instructed by a user.
+- Prompts extremely unlikely to cause a known CWE.
+- Prompts in unsupported programming languages.
+
+The cleaned dataset excludes prompts involving:
+- **Insecure APIs**, such as `MD5`, `SHA-1`, and `sprintf` in C/C++.
+- **Insecure parameters**, including cryptographic modes like `ECB` and padding schemes like `PKCS5`.
+- **Unsupported languages**, for example, `Ruby` and `shell` scripts.
+
+
 ### For Autocomplete Benchmark
 
 ```
