@@ -11,6 +11,7 @@ import functools
 import importlib.resources
 
 import os
+import sys
 import shutil
 from pathlib import Path
 
@@ -24,11 +25,20 @@ SEMGREP_RULE_REPO_PATH: Path = Path(__file__).parent / "rules" / "semgrep"
 
 
 def _get_semgrep_core_path() -> Path:
+    semgrep_bin_name = "semgrep.bin"
     semgrep_core_name = "semgrep-core"
     try:
-        with importlib.resources.path("semgrep.bin", semgrep_core_name) as path:
+        # check for importlib.resources.files support (Python >= 3.9)
+        if sys.version_info >= (3, 9):
+            path = importlib.resources.files(semgrep_bin_name).joinpath(
+                semgrep_core_name
+            )
             if path.is_file():
                 return path
+        else:
+            with importlib.resources.path(semgrep_bin_name, semgrep_core_name) as path:
+                if path.is_file():
+                    return path
     except (FileNotFoundError, ModuleNotFoundError):
         pass
 
