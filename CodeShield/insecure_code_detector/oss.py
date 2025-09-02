@@ -18,6 +18,7 @@ from pathlib import Path
 # can't access the rules directly. Hence the special casing here.
 RULES_ROOT: Path = Path(__file__).parent / "rules"
 ENABLE_REGEX_ANALYZER = True
+INCLUDE_SEMGREP_PROJECT_ROOT_PARAMETER = True
 
 ENABLE_SEMGREP: bool = True
 SEMGREP_RULE_REPO_PATH: Path = Path(__file__).parent / "rules" / "semgrep"

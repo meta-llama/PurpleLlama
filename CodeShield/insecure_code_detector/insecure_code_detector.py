@@ -316,7 +316,9 @@ async def _semgrep_analyze(
         / f"{code_context.language.value}_{usecase.value}.json"
     )
 
-    root_folder = "/" if os.path.isabs(code_context.path) else None
+    root_folder = None
+    if oss.INCLUDE_SEMGREP_PROJECT_ROOT_PARAMETER:
+        root_folder = "/" if os.path.isabs(code_context.path) else None
 
     command = (
         oss.SEMGREP_COMMAND
