@@ -141,8 +141,7 @@ def get_enabled_rules(
 
 @functools.lru_cache(maxsize=None)
 def _read_rule_config(usecase: UseCase) -> dict[str, Any]:
-    yaml_file = oss.RULES_ROOT / "config.yaml"
-    with open(yaml_file, "r") as file:
+    with open(oss.RULES_CONFIG_FILE_PATH, "r") as file:
         data = yaml.safe_load(file)
         if "config" in data and usecase.value in data["config"]:
             return data["config"][usecase.value]

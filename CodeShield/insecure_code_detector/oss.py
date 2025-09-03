@@ -17,6 +17,7 @@ from pathlib import Path
 # We use buck internally to bundle the code into a .par file which
 # can't access the rules directly. Hence the special casing here.
 RULES_ROOT: Path = Path(__file__).parent / "rules"
+RULES_CONFIG_FILE_PATH: Path = RULES_ROOT / "config.yaml"
 ENABLE_REGEX_ANALYZER = True
 INCLUDE_SEMGREP_PROJECT_ROOT_PARAMETER = True
 
