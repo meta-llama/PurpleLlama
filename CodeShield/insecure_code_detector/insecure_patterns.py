@@ -66,9 +66,7 @@ def load(
 
 @functools.lru_cache(maxsize=None)
 def load_prescan_regexes(language: Language, usecase: UseCase) -> list[InsecurePattern]:
-    rule_file_path = (
-        oss.RULES_ROOT / "semgrep" / "_generated_" / f"{language}_{usecase}.json"
-    )
+    rule_file_path = oss.SEMGREP_GENERATED_RULES_PATH / f"{language}_{usecase}.json"
     patterns = []
     if not os.path.exists(rule_file_path):
         return []

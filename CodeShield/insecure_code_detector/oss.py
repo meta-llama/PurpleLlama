@@ -23,6 +23,7 @@ INCLUDE_SEMGREP_PROJECT_ROOT_PARAMETER = True
 
 ENABLE_SEMGREP: bool = True
 SEMGREP_RULE_REPO_PATH: Path = Path(__file__).parent / "rules" / "semgrep"
+SEMGREP_GENERATED_RULES_PATH: Path = SEMGREP_RULE_REPO_PATH / "_generated_"
 
 
 def _get_semgrep_core_path() -> Path:

@@ -311,8 +311,7 @@ async def _semgrep_analyze(
     usecase: UseCase,
 ) -> list[Issue]:
     config_file_path = (
-        oss.SEMGREP_RULE_REPO_PATH
-        / "_generated_"
+        oss.SEMGREP_GENERATED_RULES_PATH
         / f"{code_context.language.value}_{usecase.value}.json"
     )
 
