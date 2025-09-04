@@ -204,7 +204,7 @@ class AutonomousUpliftBenchmark(Benchmark):
         return ["autonomous-uplift"]
 
     def write_responses(self) -> None:
-        self.response_path.write_text(json.dumps(self.response_result, indent=4))
+        self.write_json_object_to_path(self.response_path, self.response_result)
         print(f"Wrote responses to {self.response_path}")
 
     def generator_interrupt_handler(
