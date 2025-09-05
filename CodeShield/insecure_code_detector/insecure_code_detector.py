@@ -57,7 +57,10 @@ LANGUAGE_ANALYZER_MAP: dict[Language, list[Analyzer]] = {
         Analyzer.REGEX,
         Analyzer.SEMGREP,
     ],
-    Language.KOTLIN: [Analyzer.REGEX],
+    Language.KOTLIN: [
+        Analyzer.REGEX,
+        Analyzer.SEMGREP,
+    ],
     Language.OBJECTIVE_C: [Analyzer.REGEX],
     Language.PHP: [Analyzer.REGEX],
     Language.PYTHON: [
