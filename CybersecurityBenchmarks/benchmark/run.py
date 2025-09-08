@@ -23,12 +23,12 @@ from .benchmark import Benchmark, BenchmarkConfig
 from .cache_handler import CacheHandler
 from .canary_exploit_benchmark import CanaryExploitBenchmark
 
-from .frr_benchmark import FRRBenchmark
-
 from .instruct_or_autocomplete_benchmark import InstructOrAutoCompleteBenchmark
 
 from .interpreter_benchmark import InterpreterBenchmark
 from .mitre_benchmark import MitreBenchmark
+
+from .mitre_frr_benchmark import MitreFRRBenchmark
 from .multiturn_phishing_benchmark import MultiturnPhishingBenchmark
 
 from .prompt_injection_benchmark import PromptInjectionBenchmark
@@ -39,7 +39,7 @@ LOG: logging.Logger = logging.getLogger(__name__)
 
 Benchmark.register_benchmark(InstructOrAutoCompleteBenchmark)
 Benchmark.register_benchmark(MitreBenchmark)
-Benchmark.register_benchmark(FRRBenchmark)
+Benchmark.register_benchmark(MitreFRRBenchmark)
 Benchmark.register_benchmark(PromptInjectionBenchmark)
 Benchmark.register_benchmark(CanaryExploitBenchmark)
 Benchmark.register_benchmark(InterpreterBenchmark)

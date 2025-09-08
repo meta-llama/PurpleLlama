@@ -13,14 +13,14 @@ Created to measure and incentivize the development of highly capable LLM based d
 
 The repository includes several types of benchmarks:
 
-1.  **MITRE and False Refusal Rate (FRR) Tests**: These tests evaluate an LLM's
+1.  **MITRE and MITRE False Refusal Rate (FRR) Tests**: These tests evaluate an LLM's
     compliance when asked to assist in cyberattacks as well as how often an LLM
     incorrectly refuses a borderline but essentially benign query.
 
     1. **MITRE Tests**: These tests use the MITRE ATT&CK framework to evaluate
        an LLM's compliance when asked to assist in cyberattacks.
 
-    2. **False Refusal Rate (FRR) Tests**: These tests measure how often an LLM
+    2. **MITRE False Refusal Rate (FRR) Tests**: These tests measure how often an LLM
        incorrectly refuses a borderline but essentially benign query, due to
        misinterpreting the prompt as a malicious request.
 
@@ -158,7 +158,7 @@ We appreciate the time and effort everyone has contributed to our CybersecurityB
 * If your PR aims to add a new feature to a benchmark or the evaluation infrastructure, please start by opening an issue and discuss it with our team before proceeding with the PR.
 Thank you for your attention and contributions to our project.
 
-## Running the MITRE and False Refusal Rate (FRR) Benchmarks
+## Running the MITRE and MITRE False Refusal Rate (FRR) Benchmarks
 
 ### Running MITRE Benchmark
 
@@ -189,20 +189,20 @@ The expansion LLM model and judge LLM model are independent of the initial LLM
 for processing prompts. Although we've used Llama and Code Llama models for the
 original paper, we recommend using GPT-3.5 including an OpenAI API key.
 
-### Running False Refusal Rate (FRR) Benchmark
+### Running MITRE False Refusal Rate (FRR) Benchmark
 
 ```
 python3 -m CybersecurityBenchmarks.benchmark.run \
-   --benchmark=frr \
-   --prompt-path="$DATASETS/frr/<INPUT_DATASET>" \
-   --response-path="$DATASETS/frr/frr_responses.json" \
-   --stat-path="$DATASETS/frr/frr_stat.json" \
+   --benchmark=mitre-frr \
+   --prompt-path="$DATASETS/mitre_frr/<INPUT_DATASET>" \
+   --response-path="$DATASETS/mitre_frr/mitre_frr_responses.json" \
+   --stat-path="$DATASETS/mitre_frr/mitre_frr_stat.json" \
    --llm-under-test=<SPECIFICATION_1> --llm-under-test=<SPECIFICATION_2> ...
    [--run-llm-in-parallel]
 ```
-where <INPUT_DATASET> is one of frr.json (for English prompts) or frr_multilingual_machine_translated.json (for multilingual prompts).  Note that multilingual prompts were created using automated machine translations of the english prompts and therefore may not be entirely accurate with respect to language translation, and, consequently, may also not be entirely accurate with respect to CyberSecEval results.
+where <INPUT_DATASET> is one of mitre_frr.json (for English prompts) or frr_multilingual_machine_translated.json (for multilingual prompts).  Note that multilingual prompts were created using automated machine translations of the english prompts and therefore may not be entirely accurate with respect to language translation, and, consequently, may also not be entirely accurate with respect to CyberSecEval results.
 
-FRR benchmark is run in two steps:
+MITRE FRR benchmark is run in two steps:
 
 - _Processing prompts_ The LLM is called (in parallel, if specified) to render
   the LLM output for each prompt. Once the response is received, a keyword-based
@@ -736,7 +736,7 @@ The result of each bucket follows the same structure.
 }
 ```
 
-### FRR Results
+### MITRE FRR Results
 
 ```
 {
