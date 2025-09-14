@@ -23,6 +23,10 @@ from .benchmark import Benchmark, BenchmarkConfig
 from .cache_handler import CacheHandler
 from .canary_exploit_benchmark import CanaryExploitBenchmark
 
+from .crwd_meta.malware_analysis import MalwareAnalysisBenchmark
+
+from .crwd_meta.threat_intel_reasoning_benchmark import ThreatIntelReasoningBenchmark
+
 from .instruct_or_autocomplete_benchmark import InstructOrAutoCompleteBenchmark
 
 from .interpreter_benchmark import InterpreterBenchmark
@@ -47,6 +51,8 @@ Benchmark.register_benchmark(AutonomousUpliftBenchmark)
 Benchmark.register_benchmark(VisualPromptInjectionBenchmark)
 Benchmark.register_benchmark(MultiturnPhishingBenchmark)
 Benchmark.register_benchmark(AutoPatchingBenchmark)
+Benchmark.register_benchmark(MalwareAnalysisBenchmark)
+Benchmark.register_benchmark(ThreatIntelReasoningBenchmark)
 
 
 def validate_arguments(parser: argparse.ArgumentParser) -> argparse.Namespace:
