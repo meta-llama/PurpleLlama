@@ -98,13 +98,6 @@ source ~/.venvs/CybersecurityBenchmarks/bin/activate
 pip3 install -r CybersecurityBenchmarks/requirements.txt
 ```
 
-## Add and update submodules
-
-You will need to run the following in order to generate symlinks to the datasets used in CyberSOCEval that are hosted in a separate repository.
-```
-git submodule update --init --recursive
-```
-
 ## Platform-based Content Filter
 Note: Some benchmarks included in this project are designed to interact with LLMs as malicious actors, which may result in input and output being blocked by the interacting platforms, such as [OpenAI's content filter](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/content-filters).
 Please ensure that your APIs have been approved and can process this content properly before running the full scale of the benchmarks.
@@ -602,12 +595,15 @@ After AutoPatch-Bench finishes running, you can find the following outputs:
 
 ## Running Malware Analysis Benchmark
 
-Make sure that you have already run
+Make sure that you run:
 ```
-git submodule update --init --recursive
+git submodule add https://github.com/CrowdStrike/CyberSOCEval_data CyberSOCEval_data
 ```
-before running the benchmark in order to update the submodules containing the datasets used in this benchmark.  Then, run the benchmark with the following command:
+before running the benchmark. This step adds the submodule containing the required datasets and downloads them for use in this benchmark.
 
+Note: You only need to run this command once. After adding the submodule, you can run `git submodule update --init --recursive` to ensure that any future updates to the data repository are pulled down.
+
+Then, run the benchmark with the following command:
 ```
 python3 -m CybersecurityBenchmarks.benchmark.run \
 --benchmark=malware_analysis \
@@ -628,13 +624,12 @@ If you are running this over a model with a smaller context window than 128k tok
 This benchmark includes questions related to public threat intelligence reports.  Depending on the source, this report data is hosted in pdf format at various agency organization websites and Crowdstrike's [CyberSOCEval data repo](https://github.com/CrowdStrike/cybersoceval_data/data/crowdstrike-reports) and can all be extracted to the appropriate local directory by running the download_reports.py script.
 
 Before running the download script:
-1.  Make sure that you have already run
+1. To update the submodules containing the CrowdStrike reports and download the reports used in this benchmark, the first step is to run:
 ```
-git submodule update --init --recursive
+git submodule add https://github.com/CrowdStrike/CyberSOCEval_data CyberSOCEval_data
 ```
-in order to update the submodules containing the Crowdstrike reports used in this benchmark.
 
-and
+Note: You only need to run this command once. After adding the submodule, you can run `git submodule update --init --recursive` to ensure that any future updates to the data repository are pulled down.
 
 2. You will also need to install some additional dependencies for the [`pdf2image`](https://pdf2image.readthedocs.io/en/latest/installation.html#installing-poppler) package used for converting pdfs to images:
 * On Ubuntu/Debian: `sudo apt-get install poppler-utils`
