@@ -7,7 +7,7 @@ and
 [CyberSecEval](https://ai.meta.com/research/publications/purple-llama-cyberseceval-a-benchmark-for-evaluating-the-cybersecurity-risks-of-large-language-models/).
 CyberSecEval 4 is an extensive benchmark suite designed to assess the
 cybersecurity vulnerabilities and defensive capabilities of Large Language Models (LLMs). Building on its
-predecessor, CyberSecEval 3, this latest version introduces a new benchmark, [AutoPatchBench](https://engineering.fb.com/2025/04/29/ai-research/autopatchbench-benchmark-ai-powered-security-fixes), which measures an LLM agent's capability to automatically patch security vulnerabilities in native code.
+predecessor, CyberSecEval 3, this latest version introduces three new benchmarks to evaluate an AI system's defensiive capabilities: Two new tests comprise [CyberSOCEval](https://ai.meta.com/research/publications/cybersoceval-benchmarking-llms-capabilities-for-malware-analysis-and-threat-intelligence-reasoning/), which measures the LLM's capability to enable Security Operation Center (SOC) efficiency improvements or automation.  These benchmarks were developed in collaboration with Crowdstrike and include tests for Malware Analysis and Threat Intellligence Reasoning. The third new benchmark, [AutoPatchBench](https://engineering.fb.com/2025/04/29/ai-research/autopatchbench-benchmark-ai-powered-security-fixes), measures an LLM agent's capability to automatically patch security vulnerabilities in native code.
 
 Created to measure and incentivize the development of highly capable LLM based defender tools, CyberSecEval 4 builds on the CyerSecEval code base to offer a comprehensive set of tools for evaluting both vulnerabilities and defensive capabilities in various security domains. It has been applied to well-known LLMs such as Meta's Llama4 as well as OpenAI, Google, and Anthropic models. The findings from the collection of CyberSecEval studies underscore both substantial cybersecurity threats, as well as promising oppottunities to leverage these models for uplifting defenders.
 
@@ -69,3 +69,7 @@ The repository includes several types of benchmarks:
 8.  **AutoPatch Tests**: These tests are designed to evaluate the capabilities
     of LLMs to autonomously generate security patches for vulnerabilities, specifically
     the crashes discovered by fuzzer tests.
+
+9.  **CyberSOCEval Tests**: These tests, created in partnership with Crowdstrike, assess defensive capabilities and include two benchmarks:
+    * Malware Analysis:  Assesses the precision and recall of LLMs in identifying malicious activities from potential malware, such as detecting ransomware or remote access trojans via mutiple choice questions where multple options may be correct.
+    * Threat Intelligence Reasoning: Evaluates an AI's ability to parse unstructured threat intelligence reports and extract actionable insights via mutiple choice questions where multple options may be correct.

@@ -36,7 +36,7 @@ const sidebars = {
       type: 'category',
       label: 'Benchmarks',
       collapsed: false,
-      items: ['benchmarks/mitre_benchmark', 'benchmarks/secure_code_generation', 'benchmarks/prompt_injection', 'benchmarks/code_interpreter', 'benchmarks/vulnerability_exploitation', 'benchmarks/spear_phishing', 'benchmarks/autonomous_uplift'],
+      items: ['benchmarks/mitre_benchmark', 'benchmarks/secure_code_generation', 'benchmarks/prompt_injection', 'benchmarks/code_interpreter', 'benchmarks/vulnerability_exploitation', 'benchmarks/spear_phishing', 'benchmarks/autonomous_uplift', 'benchmarks/autopatch', 'benchmarks/malware_analysis', 'benchmarks/threat_intelligence_reasoning'],
     },
     {
       type: 'category',

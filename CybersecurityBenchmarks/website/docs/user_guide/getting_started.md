@@ -54,7 +54,13 @@ few examples:
 ### How to run benchmarks for self hosted models
 
 1. Extend `llm.py`.
-2. `def query(self, prompt: str) -> str:` Implement your inferencing logic.
+2. Implement your inferencing logic for at least the following required methods:
+  - `def query(self, prompt: str, guided_decode_json_schema: Optional[str] = None, temperature: float = DEFAULT_TEMPERATURE, top_p: float = DEFAULT_TOP_P) -> str:`
+  - `def chat_with_system_prompt(self, system_prompt: str, prompt_with_history: List[str], guided_decode_json_schema: Optional[str] = None, temperature: float = DEFAULT_TEMPERATURE, top_p: float = DEFAULT_TOP_P) -> str:`
+  - `def chat(self, prompt_with_history: List[str], guided_decode_json_schema: Optional[str] = None, temperature: float = DEFAULT_TEMPERATURE, top_p: float = DEFAULT_TOP_P) -> str:`
+
+   Note: Additional methods may be needed for some benchmarks; you will be prompted to implement them if you attempt to run a benchmark requiring a method not supported by your custom provider.
+
 3. Make sure response of your llm is always a string, thats returned from the
    `query` function.
 4. Update supported providers in `llm.create` method with the name of LLM you
