@@ -640,7 +640,7 @@ Once these have been done, you can run:
 python3 -m CybersecurityBenchmarks.datasets.crwd_meta.threat_intel_reasoning.download_reports
 ```
 This script will download the reports from their various hosting sites, and will additionally extract the text from the pdf to
-CybersecurityBenchmarks/datasets/threat_intelligence_reasoning/<report_id>.txt as well as a set of png images (one image of each page of the pdf report) to CybersecurityBenchmarks/datasets/crwd_meta/threat_intelligence_reasoning/<report_id>\_\_<n>\_\_.png.  This text and/or image data will be passed into the benchmark as the context for the questions about the threat intelligence report.
+CybersecurityBenchmarks/datasets/threat_intelligence_reasoning/<report_id>.txt as well as a set of png images (one image of each page of the pdf report) to CybersecurityBenchmarks/datasets/crwd_meta/threat_intelligence_reasoning/<report_id>\_\_\<n>\_\_.png.  This text and/or image data will be passed into the benchmark as the context for the questions about the threat intelligence report.
 
 
 
@@ -991,7 +991,7 @@ Output stats will appear in a json according to the following structure:
 
 where:
 * stat_per_model contains the aggregate metrics evaluated over all questions in the dataset
-* stat_per_model_per_<CATEGORY>> contains these same metrics aggregated only over the given <CATEGORY>, where these categories include question topic, difficulty level, and malware type ('attack').
+* stat_per_model_per_\<CATEGORY> contains these same metrics aggregated only over the given \<CATEGORY>, where these categories include question topic, difficulty level, and malware type ('attack').
 Metrics for each of these include:
 * (in)correct_mc_count and (in)correct_mc_pct fields represent the number or percentage of questions to which the model correctly or incorrectly chose exaxtly the set of correct options
 * response_parsing_error_count contains the number of questions for which we were unable to extract multiple choice selections
@@ -1027,7 +1027,7 @@ Output stats will appear in a json according to the following structure:
 
 where:
 * stat_per_model contains the aggregate metrics evaluated over all questions in the dataset
-* stat_per_model_per_<CATEGORY>> contains these same metrics aggregated only over the given <CATEGORY>, where these categories include individual report identifier and source (e.g. the source from which the report was obtained, one of IC3, CISA, NSA, or CrowdStrike)
+* stat_per_model_per_\<CATEGORY> contains these same metrics aggregated only over the given \<CATEGORY>, where these categories include individual report identifier and source (e.g. the source from which the report was obtained, one of IC3, CISA, NSA, or CrowdStrike)
 Metrics for each of these include:
 * (in)correct_mc_count and (in)correct_mc_pct fields represent the number or percentage of questions to which the model correctly or incorrectly chose exaxtly the set of correct options
 * response_parsing_error_count contains the number of questions for which we were unable to extract multiple choice selections
