@@ -24,7 +24,7 @@ Once these have been done, you can run:
 python3 -m CybersecurityBenchmarks.datasets.crwd_meta.threat_intel_reasoning.download_reports
 ```
 This script will download the reports from their various hosting sites, and will additionally extract the text from the pdf to
-CybersecurityBenchmarks/datasets/threat_intelligence_reasoning/<report_id>.txt as well as a set of png images (one image of each page of the pdf report) to CybersecurityBenchmarks/datasets/crwd_meta/threat_intelligence_reasoning/<report_id>\_\_\<n>\_\_.png.  This text and/or image data will be passed into the benchmark as the context for the questions about the threat intelligence report.
+CybersecurityBenchmarks/datasets/threat_intelligence_reasoning/\<report_id>.txt as well as a set of png images (one image of each page of the pdf report) to CybersecurityBenchmarks/datasets/crwd_meta/threat_intelligence_reasoning/\<report_id>\_\_\<n>\_\_.png.  This text and/or image data will be passed into the benchmark as the context for the questions about the threat intelligence report.
 
 
 
@@ -44,7 +44,7 @@ python3 -m CybersecurityBenchmarks.benchmark.run \
 [--run-llm-in-parallel]
 ```
 
-where <INPUT_MODALITY> is one of "text", "image", or "text_and_image"
+where \<INPUT_MODALITY> is one of "text", "image", or "text_and_image"
 
 ## Results:
 
