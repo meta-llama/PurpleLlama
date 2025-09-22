@@ -12,6 +12,7 @@ from typing import List
 
 from .llms.anthropic import ANTHROPIC
 from .llms.googlegenai import GOOGLEGENAI
+from .llms.community_contribution import VLLM
 
 from .llms.llm_base import (
     DEFAULT_MAX_TOKENS,
@@ -70,5 +71,7 @@ def create(
         return ANTHROPIC(config)
     if provider == "GOOGLEGENAI":
         return GOOGLEGENAI(config)
+    if provider == "VLLM":
+        return VLLM(config)
 
     raise ValueError(f"Unknown provider: {provider}")
