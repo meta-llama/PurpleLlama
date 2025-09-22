@@ -36,6 +36,7 @@ class OPENAI(LLM):
             "o3-mini",
             "o4-mini",
             "gpt-5-mini",
+            "Qwen/Qwen3-0.6B"
         ]
         super().__init__(config)
         self.client = self._init_client()
