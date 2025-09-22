@@ -38,7 +38,7 @@ class OPENAI(LLM):
             "gpt-5-mini",
         ]
         super().__init__(config)
-        self.client = self.init_client()
+        self.client = self._init_client()
 
     def _init_client(self) -> openai.OpenAI:
         return openai.OpenAI(api_key=self.api_key) # noqa
