@@ -105,7 +105,12 @@ class ExistingOrTempDirectory:
         return False  # A return value of 'False' means propagate the exception
 
 
-def dump_values(target: Path, config: Config, output_dir: Optional[Path] = None):
+def dump_values(
+    target: Path,
+    config: Config,
+    output_dir: Optional[Path] = None,
+    suppress_output: bool = False,
+):
     target = target.resolve()
     target = target.absolute()
     root = Path(__file__).parent / "resources" if __package__ else Path("/")
@@ -134,6 +139,8 @@ def dump_values(target: Path, config: Config, output_dir: Optional[Path] = None)
             subprocess_result = subprocess.run(
                 ["lldb", "-s", script_path, target, "--", *config.args],
                 timeout=config.timeout_seconds,
+                stdout=subprocess.DEVNULL if suppress_output else None,
+                stderr=subprocess.DEVNULL if suppress_output else None,
             ).returncode
         except subprocess.TimeoutExpired:
             print(" ENCOUNTERED TIMEOUT")
@@ -156,7 +163,12 @@ quit
 """
 
 
-def dump_stacktrace(target: Path, config: Config, output_dir: Optional[Path] = None):
+def dump_stacktrace(
+    target: Path,
+    config: Config,
+    output_dir: Optional[Path] = None,
+    suppress_output: bool = False,
+):
     target = target.resolve()
     target = target.absolute()
     root = Path(__file__).parent / "resources" if __package__ else Path("/")
@@ -187,6 +199,8 @@ def dump_stacktrace(target: Path, config: Config, output_dir: Optional[Path] = N
             subprocess_result = subprocess.run(
                 cmd,
                 timeout=config.timeout_seconds,
+                stdout=subprocess.DEVNULL if suppress_output else None,
+                stderr=subprocess.DEVNULL if suppress_output else None,
             ).returncode
         except subprocess.TimeoutExpired:
             print(" ENCOUNTERED TIMEOUT")
