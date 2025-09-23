@@ -44,6 +44,7 @@ class LLMConfig:
     api_key: str | None = None
     max_tokens: int = DEFAULT_MAX_TOKENS
     cot_end_tokens: list[str] | None = None
+    base_url: str | None = None
 
 
 class LLM(ABC):
@@ -56,6 +57,7 @@ class LLM(ABC):
         self.cache_handler: CacheHandler | None = None
         self.max_tokens: int = config.max_tokens
         self.cot_end_tokens: list[str] | None = config.cot_end_tokens
+        self.base_url: str | None = config.base_url
         if self.model not in self.valid_models():
             LOG.warning(
                 f"{self.model} is not in the valid model list for {type(self).__name__}. Valid models are: {', '.join(self.valid_models())}."

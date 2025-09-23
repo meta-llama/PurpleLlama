@@ -30,7 +30,7 @@ from .llms.together import TOGETHER
 LOG: logging.Logger = logging.getLogger(__name__)
 
 
-SPECIFICATION_FORMAT: str = "<PROVIDER>::<MODEL>(::<API KEY>)?"
+SPECIFICATION_FORMAT: str = "<PROVIDER>::<MODEL>(::<API KEY>)?(::BASE_URL)?"
 EXAMPLE_SPECIFICATION: str = "OPENAI::gpt-3.5-turbo::<YOUR API KEY>"
 
 
@@ -42,13 +42,26 @@ def create(
     """
     Takes a string of the format <SPECIFICATION_FORMAT> and generates LLM instance.
     See <EXAMPLE_SPECIFICATION> for example.
+
+    Supported formats:
+    1. PROVIDER::MODEL (uses default API key from environment)
+    2. PROVIDER::MODEL::API_KEY (uses provided API key)
+    3. PROVIDER::MODEL::API_KEY::BASE_URL (uses custom endpoint)
+
+    Examples:
+    - OPENAI::gpt-4::sk-123::https://api.custom.com/v1
+    - OPENAI::gpt-4::sk-123 (uses default OpenAI endpoint)
     """
     api_key: str | None = None
+    base_url: str | None = None
     split = identifier.split("::")
+
     if len(split) == 2:
         provider, name = split
     elif len(split) == 3:
         provider, name, api_key = split
+    elif len(split) == 4:
+        provider, name, api_key, base_url = split
     else:
         raise ValueError(f"Invalid identifier: {identifier}")
 
@@ -60,6 +73,7 @@ def create(
         api_key=api_key,
         max_tokens=max_tokens,
         cot_end_tokens=cot_end_tokens,
+        base_url=base_url,
     )
 
     if provider == "OPENAI":
