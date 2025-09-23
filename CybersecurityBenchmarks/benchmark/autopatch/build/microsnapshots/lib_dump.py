@@ -6,7 +6,6 @@
 # pyre-unsafe
 
 import argparse
-import importlib.resources
 import json
 import os
 import subprocess
@@ -79,7 +78,34 @@ quit
 """
 
 
-def dump_values(target: Path, config: Config):
+class ExistingOrTempDirectory:
+    """
+    Wrapper around TemporaryDirectory that provides the same context manager interface:
+    - If a path is supplied, uses directory at path (or creates it, if it doesn't exist)
+         that will not be cleaned up on context manager exit.
+    - Else, it calls TemporaryDitectory to create a tempdir that will be cleaned up on context manger exit.
+    """
+
+    def __init__(self, existing: Optional[Path] = None):
+        if existing is None:
+            self.tmpdir: TemporaryDirectory = TemporaryDirectory()
+            return
+        if not existing.exists():
+            existing.mkdir()
+        self.tmpdir: Path = existing
+
+    def __enter__(self):
+        if isinstance(self.tmpdir, TemporaryDirectory):
+            return self.tmpdir.__enter__()
+        return self.tmpdir
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if isinstance(self.tmpdir, TemporaryDirectory):
+            return self.tmpdir.__exit__(exc_type, exc_value, traceback)
+        return False  # A return value of 'False' means propagate the exception
+
+
+def dump_values(target: Path, config: Config, output_dir: Optional[Path] = None):
     target = target.resolve()
     target = target.absolute()
     root = Path(__file__).parent / "resources" if __package__ else Path("/")
@@ -87,7 +113,7 @@ def dump_values(target: Path, config: Config):
     if not MICROSNAPSHOT_PLUGIN.exists():
         MICROSNAPSHOT_PLUGIN = root / "microsnapshot.py"
 
-    with TemporaryDirectory() as tmpdirobj:
+    with ExistingOrTempDirectory(existing=output_dir) as tmpdirobj:
         tmpdir = Path(tmpdirobj)
         microsnapshot_path = MICROSNAPSHOT_PLUGIN
         config_path = tmpdir / "rules.json"
@@ -130,7 +156,7 @@ quit
 """
 
 
-def dump_stacktrace(target: Path, config: Config):
+def dump_stacktrace(target: Path, config: Config, output_dir: Optional[Path] = None):
     target = target.resolve()
     target = target.absolute()
     root = Path(__file__).parent / "resources" if __package__ else Path("/")
@@ -138,7 +164,7 @@ def dump_stacktrace(target: Path, config: Config):
     if not MICROSNAPSHOT_PLUGIN.exists():
         MICROSNAPSHOT_PLUGIN = root / "microsnapshot.py"
 
-    with TemporaryDirectory() as tmpdirobj:
+    with ExistingOrTempDirectory(existing=output_dir) as tmpdirobj:
         tmpdir = Path(tmpdirobj)
         microsnapshot_path = MICROSNAPSHOT_PLUGIN
         config_path = tmpdir / "rules.json"
