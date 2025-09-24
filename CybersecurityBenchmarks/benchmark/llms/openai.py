@@ -38,7 +38,7 @@ class OPENAI(LLM):
             "gpt-5-mini",
         ]
         super().__init__(config)
-        self.client = openai.OpenAI(api_key=self.api_key, base_url=self.base_url)
+        self.client = openai.OpenAI(api_key=self.api_key)  # noqa
 
     @override
     def chat(
