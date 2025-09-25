@@ -8,10 +8,19 @@ from ..openai import OPENAI
 from ..llm_base import LLMConfig
 
 
+class AlwaysIn(list[str]):
+    def __contains__(self, item):
+        return True
+
+
 class VLLM(OPENAI):
     def __init__(self, config: LLMConfig):
         super().__init__(config)
-        pass
+        self._reasoning_models = AlwaysIn()
+    
+    @override
+    def valid_models(self) -> list[str]:
+        return AlwaysIn()
     
     @override
     def _init_client(self) -> openai.OpenAI:
