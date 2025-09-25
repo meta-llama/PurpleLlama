@@ -7,35 +7,100 @@
 
 import logging
 import os
-
-import torch
-from huggingface_hub import HfFolder, login
-
-from torch import Tensor
-from torch._prims_common import DeviceLikeType
-from torch.nn import Module
-from torch.nn.functional import softmax
-
-from transformers import (
-    AutoModelForSequenceClassification,
-    AutoTokenizer,
-    PreTrainedTokenizer,
-)
+from typing import Tuple
 
 LOG: logging.Logger = logging.getLogger(__name__)
 
 
+def _ensure_transformers_and_torch() -> Tuple[object, object, object, object, object]:
+    """Lazily import heavy ML deps and return the symbols we need.
+
+    This avoids requiring torch/transformers at package import time. If the
+    optional dependencies are missing, raise an informative ImportError.
+    """
+    try:
+        import torch
+    except Exception as e:  # pragma: no cover - environment dependent
+        raise ImportError(
+            "Prompt Guard scanner requires 'torch' and 'transformers'.\n"
+            "Install with: pip install torch transformers huggingface-hub"
+        ) from e
+
+    try:
+        from huggingface_hub import HfFolder, login
+    except Exception as e:  # pragma: no cover - environment dependent
+        raise ImportError(
+            "Prompt Guard scanner requires 'huggingface_hub'.\n"
+            "Install with: pip install huggingface-hub"
+        ) from e
+
+    try:
+        from torch import Tensor
+        from torch._prims_common import DeviceLikeType
+        from torch.nn import Module
+        from torch.nn.functional import softmax
+    except Exception:
+        # If the torch package layout differs, still continue but raise later
+        Tensor = object
+        DeviceLikeType = object
+        Module = object
+        from torch.nn.functional import softmax  # type: ignore
+
+    try:
+        from transformers import (
+            AutoModelForSequenceClassification,
+            AutoTokenizer,
+            PreTrainedTokenizer,
+        )
+    except Exception as e:  # pragma: no cover - environment dependent
+        raise ImportError(
+            "Prompt Guard scanner requires 'transformers'.\n"
+            "Install with: pip install transformers"
+        ) from e
+
+    return (
+        torch,
+        HfFolder,
+        login,
+        Tensor,
+        DeviceLikeType,
+        Module,
+        softmax,
+        AutoModelForSequenceClassification,
+        AutoTokenizer,
+        PreTrainedTokenizer,
+    )
+
+
 class PromptGuard:
     def __init__(self) -> None:
-        self.model: Module
-        self.tokenizer: PreTrainedTokenizer
+        # Defer heavy imports until an instance is created
+        (
+            self._torch,
+            self._HfFolder,
+            self._login,
+            self._Tensor,
+            self._DeviceLikeType,
+            self._Module,
+            self._softmax,
+            self._AutoModelForSequenceClassification,
+            self._AutoTokenizer,
+            self._PreTrainedTokenizer,
+        ) = _ensure_transformers_and_torch()
+
+        self.model: object
+        self.tokenizer: object
         self.model, self.tokenizer = self._load_model_and_tokenizer()
 
         if self.model:
-            self.device: DeviceLikeType = torch.device(
-                "cuda" if torch.cuda.is_available() else "cpu"
+            self.device: object = self._torch.device(
+                "cuda" if self._torch.cuda.is_available() else "cpu"
             )
-            self.model.to(self.device)
+            try:
+                self.model.to(self.device)
+            except Exception:
+                # Some models may not implement to(); ignore in that case
+                pass
 
     def _load_model_and_tokenizer(
         self,
@@ -60,17 +125,21 @@ class PromptGuard:
                 LOG.warning(
                     "No Hugging Face token found. You will be prompted to enter it via Hugging Face login function, no data will be stored by LlamaFirewall."
                 )
-                login()
+                self._login()
             # Load the model and tokenizer from Hugging Face
-            model = AutoModelForSequenceClassification.from_pretrained(model_name)
-            tokenizer = AutoTokenizer.from_pretrained(model_name)
+            model = self._AutoModelForSequenceClassification.from_pretrained(
+                model_name
+            )
+            tokenizer = self._AutoTokenizer.from_pretrained(model_name)
             # Save the model and tokenizer locally
             model.save_pretrained(model_path)
             tokenizer.save_pretrained(model_path)
         else:
             # Load the model and tokenizer from the local path
-            model = AutoModelForSequenceClassification.from_pretrained(model_path)
-            tokenizer = AutoTokenizer.from_pretrained(model_path)
+            model = self._AutoModelForSequenceClassification.from_pretrained(
+                model_path
+            )
+            tokenizer = self._AutoTokenizer.from_pretrained(model_path)
 
         return model, tokenizer
 
@@ -111,10 +180,10 @@ class PromptGuard:
             text, return_tensors="pt", padding=True, truncation=True, max_length=512
         )
         inputs = inputs.to(self.device)
-        with torch.no_grad():
-            logits: Tensor = self.model(**inputs).logits
-        scaled_logits: Tensor = logits / temperature
-        probabilities = softmax(scaled_logits, dim=-1)
+        with self._torch.no_grad():
+            logits = self.model(**inputs).logits
+        scaled_logits = logits / temperature
+        probabilities = self._softmax(scaled_logits, dim=-1)
         return probabilities
 
     def get_jailbreak_score(
@@ -124,4 +193,11 @@ class PromptGuard:
         preprocess: bool = True,
     ) -> float:
         probabilities = self._get_class_probabilities(text, temperature, preprocess)
-        return probabilities[0, -1].item()
+        try:
+            return float(probabilities[0, -1].item())
+        except Exception:
+            # If probabilities isn't a torch tensor, try to coerce
+            try:
+                return float(probabilities[0][-1])
+            except Exception:
+                return 0.0
