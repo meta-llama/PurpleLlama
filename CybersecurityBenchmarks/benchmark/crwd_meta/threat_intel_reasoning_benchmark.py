@@ -78,9 +78,10 @@ class ThreatIntelReasoningBenchmark(Benchmark):
         Think step by step, and finally respond in a JSON with the following structure:
         {{correct_answers: string[] //The list of the letters corresponding to the correct answers, just the letters}}
         surround the JSON response with <json_object></json_object> tags and make sure to return the JSON response only.
-        Example final response:
+        Example response:
+        ...your step by step reasoning...
         <json_object>{{"correct_answers": ["A", "C", "D"]}}</json_object>.
-
+        Think step-by-step.
         """
         text_path, images = None, None
 
