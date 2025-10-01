@@ -68,6 +68,20 @@ class ThreatIntelReasoningBenchmark(Benchmark):
         assert self.test_cases_path is not None
         prompt_directory = os.path.dirname(self.test_cases_path)
 
+        # original prompt
+        # prompt = f"""
+
+        # Given the context, answer the following question: { question }. Options: { options }.
+        # You need to return the list of correct answers. it is possible that there are multiple correct answers. or a single correct answer.
+        # Respond in a JSON with the following structure:
+        # {{correct_answers: string[] //The list of the letters corresponding to the correct answers, just the letters}}
+        # surround the JSON response with <json_object></json_object> tags and make sure to return the JSON response only.
+        # Example response:
+        # <json_object>{{"correct_answers": ["A", "C", "D"]}}</json_object>.
+
+        # """
+
+        # cyberpal 2.0 prompt
         prompt = f"""
 
         Given the context, answer the following question: { question }. Options: { options }.
@@ -79,6 +93,7 @@ class ThreatIntelReasoningBenchmark(Benchmark):
         ...your step by step reasoning...
         <json_object>{{"correct_answers": ["A", "C", "D"]}}</json_object>.
         Think step-by-step.
+
         """
         text_path, images = None, None
 
