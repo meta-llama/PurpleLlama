@@ -15,13 +15,6 @@ class AlwaysIn(list[str]):
 
 class VLLM(OPENAI):
     def __init__(self, config: LLMConfig):
+        config.base_url = "http://localhost:8000/v1"
         super().__init__(config)
-        self._reasoning_models = AlwaysIn()
-    
-    @override
-    def valid_models(self) -> list[str]:
-        return AlwaysIn()
-    
-    @override
-    def _init_client(self) -> openai.OpenAI:
-        return openai.OpenAI(base_url="http://localhost:8000/v1", api_key="-") # noqa
+        self._reasoning_models = [self.model]
