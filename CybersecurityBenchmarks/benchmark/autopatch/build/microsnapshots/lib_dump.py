@@ -49,7 +49,7 @@ class Config:
     def dump_after_return(self, position: str):
         self.positions.add(position)
 
-    def write(self, path: Path):
+    def write(self, path: Path, suppress_output: bool = False):
         bps = {
             k: sorted(v) for (k, v) in self.breakpoint_positions_to_expressions.items()
         }
@@ -66,7 +66,8 @@ class Config:
                 "catch_exceptions": self.catch_exceptions,
             }
             json_string = json.dumps(jj, indent=4)
-            print("Config dump: ", json_string)
+            if not suppress_output:
+                print("Config dump: ", json_string)
             f.write(json_string)
 
 
@@ -133,7 +134,7 @@ def dump_values(
             )
             f.write(script)
 
-        config.write(config_path)
+        config.write(config_path, suppress_output)
 
         try:
             subprocess_result = subprocess.run(
@@ -191,7 +192,7 @@ def dump_stacktrace(
             )
             f.write(script)
 
-        config.write(config_path)
+        config.write(config_path, suppress_output)
 
         try:
             cmd = ["lldb", "-s", script_path, target, "--", *config.args]
