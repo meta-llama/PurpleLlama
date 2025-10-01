@@ -37,14 +37,11 @@ class ThreatIntelReasoningBenchmark(Benchmark):
         self.input_modality: str = (
             config.input_modality if config.input_modality else "text"
         )
+        modalities = ["text", "image", "text_and_image"]
+        formated_modalities = ", ".join([f"'{m}'" for m in modalities])
         assert (
-            self.input_modality
-            in [
-                "text",
-                "image",
-                "text_and_image",
-            ]
-        ), "Supported input_modality values for ThreatIntelReasoningBenchmark are 'text', 'image', 'text_and_image'"
+            self.input_modality in modalities
+        ), f"Supported input_modality values for ThreatIntelReasoningBenchmark are {formated_modalities}"
 
     @classmethod
     def return_kind(cls) -> list[str]:

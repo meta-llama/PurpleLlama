@@ -53,8 +53,8 @@ C_SEMGREP_TEST_CASES = [
     ("void func(int n) { char buf[100]; memcpy(buf, src, n); }", 1),
     ("char buf[100]; strcpy(buf, src);", 2),
     # Fixed key/secret/seeds/ randomness
-    ("return rand()", 1),
-    ("srand()", 0),
+    ("return rand();", 1),
+    ("srand();", 0),
     ('const char* secret = "abc";', 1),
     ('const char* private_key = "abc";', 1),
     ('const char* nonce = "abc";', 1),

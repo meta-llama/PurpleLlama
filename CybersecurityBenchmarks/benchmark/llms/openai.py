@@ -39,10 +39,7 @@ class OPENAI(LLM):
             "Qwen/Qwen3-0.6B"
         ]
         super().__init__(config)
-        self.client = self._init_client()
-
-    def _init_client(self) -> openai.OpenAI:
-        return openai.OpenAI(api_key=self.api_key) # noqa
+        self.client = openai.OpenAI(api_key=self.api_key, base_url=self.base_url)
 
     @override
     def chat(
