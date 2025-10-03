@@ -34,13 +34,11 @@ export DATASETS=$PWD/CybersecurityBenchmarks/datasets
 
 Each benchmark can run tests for multiple LLMs. Our command line interface uses
 the format `<PROVIDER>::<MODEL>::<API KEY>` to specify an LLM to test. We
-currently support APIs from OPENAI, ANYSCALE, and TOGETHER. For OpenAI compatible endpoints,
-you can also specify a custom base URL by using this format: `<PROVIDER>::<MODEL>::<API KEY>::<BASE URL>`.
-The followings are a few examples:
+currently support APIs from OPENAI, ANYSCALE, and TOGETHER. The followings are a
+few examples:
 
 - `OPENAI::gpt-4::<API KEY>`
 - `OPENAI::gpt-3.5-turbo::<API KEY>`
-- `OPENAI::gpt-3.5-turbo::<API KEY>::https://api.openai.com/v1/`
 - `ANYSCALE::meta-llama/Llama-2-13b-chat-hf::<API KEY>`
 - `TOGETHER::togethercomputer/llama-2-7b::<API KEY>`
 
