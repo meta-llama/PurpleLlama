@@ -36,7 +36,6 @@ class OPENAI(LLM):
             "o3-mini",
             "o4-mini",
             "gpt-5-mini",
-            "Qwen/Qwen3-0.6B"
         ]
         super().__init__(config)
         self.client = openai.OpenAI(api_key=self.api_key, base_url=self.base_url)
