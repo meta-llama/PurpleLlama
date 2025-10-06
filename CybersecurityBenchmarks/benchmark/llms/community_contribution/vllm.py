@@ -15,6 +15,6 @@ class AlwaysIn(list[str]):
 
 class VLLM(OPENAI):
     def __init__(self, config: LLMConfig):
-        config.base_url = "http://localhost:8000/v1"
+        config.base_url = config.base_url or "http://localhost:8000/v1"
         super().__init__(config)
         self._reasoning_models = [self.model]
