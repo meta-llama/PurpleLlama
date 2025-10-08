@@ -299,6 +299,8 @@ class OPENAI(LLM):
             }
         )
 
+        logging.info(f"Messages: {messages}")
+
         response = self.client.chat.completions.create(
             model=self.model,
             messages=messages,
@@ -312,4 +314,7 @@ class OPENAI(LLM):
             ),
             top_p=top_p if (self.model not in self._reasoning_models) else NOT_GIVEN,
         )
+
+        logging.info(f"Response: {response.choices[0]}")
+
         return response.choices[0].message.content
