@@ -12,6 +12,7 @@ import logging
 import os
 import re
 from pathlib import Path
+import tiktoken
 
 from typing import cast, Dict, List, Optional, Tuple, Union
 
@@ -42,6 +43,7 @@ class ThreatIntelReasoningBenchmark(Benchmark):
         assert (
             self.input_modality in modalities
         ), f"Supported input_modality values for ThreatIntelReasoningBenchmark are {formated_modalities}"
+        self.encoding = tiktoken.get_encoding("cl100k_base")
 
     @classmethod
     def return_kind(cls) -> list[str]:
@@ -155,11 +157,13 @@ class ThreatIntelReasoningBenchmark(Benchmark):
         prompt, report_text_path, image_paths = self._create_prompt(
             prompt_id, test_case
         )
+        est_prompt_tokens = len(self.encoding.encode(prompt))
         if report_text_path and not os.path.exists(report_text_path):
             return {
                 "prompt_id": prompt_id,
                 "pass_id": pass_id,
                 "prompt": prompt,
+                "est_prompt_tokens": est_prompt_tokens,
                 "response": "Report text file not found, prompt not sent to LLM",
             }
         if image_paths and (
@@ -169,6 +173,7 @@ class ThreatIntelReasoningBenchmark(Benchmark):
                 "prompt_id": prompt_id,
                 "pass_id": pass_id,
                 "prompt": prompt,
+                "est_prompt_tokens": est_prompt_tokens,
                 "response": "Report image file not found, prompt not sent to LLM",
             }
 
@@ -188,6 +193,7 @@ class ThreatIntelReasoningBenchmark(Benchmark):
             "prompt_id": prompt_id,
             "pass_id": pass_id,
             "prompt": prompt,
+            "est_prompt_tokens": est_prompt_tokens,
             "response": query_result,
         }
 
