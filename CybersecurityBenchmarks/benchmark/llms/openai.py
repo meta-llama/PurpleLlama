@@ -299,8 +299,6 @@ class OPENAI(LLM):
             }
         )
 
-        logging.info(f"Messages: {messages}")
-
         response = self.client.chat.completions.create(
             model=self.model,
             messages=messages,
@@ -314,7 +312,8 @@ class OPENAI(LLM):
             ),
             top_p=top_p if (self.model not in self._reasoning_models) else NOT_GIVEN,
         )
-
-        logging.info(f"Response: {response.choices[0]}")
-
+        if '/dccstor' in self.model and 'gpt-oss' in self.model:
+            # For CyberPal 2.0 fine tuned models, we did not use the "analysis" and "assistant" special tokens in the
+            # harmony response format, so the reasoning_content field contains the model's response.
+            return response.choices[0].message.reasoning_content
         return response.choices[0].message.content
