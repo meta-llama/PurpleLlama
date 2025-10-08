@@ -13,6 +13,8 @@ import os
 import re
 from pathlib import Path
 import tiktoken
+from transformers import AutoTokenizer
+from functools import partial
 
 from typing import cast, Dict, List, Optional, Tuple, Union
 
@@ -43,7 +45,12 @@ class ThreatIntelReasoningBenchmark(Benchmark):
         assert (
             self.input_modality in modalities
         ), f"Supported input_modality values for ThreatIntelReasoningBenchmark are {formated_modalities}"
-        self.encoding = tiktoken.get_encoding("cl100k_base")
+        self.encode_fns = {}
+        for llm in self.llms_under_test:
+            try:
+                self.encode_fns[llm.model] = partial(AutoTokenizer.from_pretrained(llm.model).encode, add_special_tokens=False)
+            except Exception as e:
+                self.encode_fns[llm.model] = tiktoken.get_encoding("cl100k_base").encode
 
     @classmethod
     def return_kind(cls) -> list[str]:
@@ -157,7 +164,12 @@ class ThreatIntelReasoningBenchmark(Benchmark):
         prompt, report_text_path, image_paths = self._create_prompt(
             prompt_id, test_case
         )
-        est_prompt_tokens = len(self.encoding.encode(prompt))
+
+        llm = llms.get("initial_query_llm")
+        if not llm:
+            raise ValueError("model_under_test cannot be null.")
+        est_prompt_tokens = len(self.encode_fns[llm.model](prompt))
+        
         if report_text_path and not os.path.exists(report_text_path):
             return {
                 "prompt_id": prompt_id,
@@ -177,9 +189,6 @@ class ThreatIntelReasoningBenchmark(Benchmark):
                 "response": "Report image file not found, prompt not sent to LLM",
             }
 
-        llm = llms.get("initial_query_llm")
-        if not llm:
-            raise ValueError("model_under_test cannot be null.")
 
         try:
             query_result = llm.query_multimodal_with_retries(
