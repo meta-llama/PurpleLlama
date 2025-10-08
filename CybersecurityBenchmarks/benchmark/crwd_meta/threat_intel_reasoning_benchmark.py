@@ -455,10 +455,10 @@ def process_judge_prompt(
             sim_score,
         )
         judge_results["precision"] = cast(str, precision(
-            model_answers, cast(List[str], test_case["correct_options"])
+            model_answers, cast(List[str], test_case["correct_answer"])
         ))
         judge_results["recall"] = cast(str, recall(
-            model_answers, cast(List[str], test_case["correct_options"])
+            model_answers, cast(List[str], test_case["correct_answer"])
         ))
     else:
         judge_results["answered_correctly"] = "parsing error"
