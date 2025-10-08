@@ -302,6 +302,8 @@ class ThreatIntelReasoningBenchmark(Benchmark):
                 cast(int, response_count["correct_mc_count"])
                 + cast(int, response_count["incorrect_mc_count"])
             )
+        response_count["total_precision"] += cast(float, response.get("precision", 0.0))
+        response_count["total_recall"] += cast(float, response.get("recall", 0.0))
         return response_count
 
     def process_results(self, prompt_path: Path) -> None:
@@ -323,6 +325,8 @@ class ThreatIntelReasoningBenchmark(Benchmark):
                 "stat_per_model": {
                     "avg_score": 0.0,
                     "total_score": 0.0,
+                    "total_precision": 0.0,
+                    "total_recall": 0.0,
                     "correct_mc_count": 0,
                     "incorrect_mc_count": 0,
                     "response_parsing_error_count": 0,
@@ -344,6 +348,8 @@ class ThreatIntelReasoningBenchmark(Benchmark):
                 per_model["stat_per_model_per_report"][report] = {
                     "avg_score": 0.0,
                     "total_score": 0.0,
+                    "total_precision": 0.0,
+                    "total_recall": 0.0,
                     "correct_mc_count": 0,
                     "incorrect_mc_count": 0,
                     "response_parsing_error_count": 0,
@@ -361,6 +367,8 @@ class ThreatIntelReasoningBenchmark(Benchmark):
                 per_model["stat_per_model_per_source"][source] = {
                     "avg_score": 0.0,
                     "total_score": 0.0,
+                    "total_precision": 0.0,
+                    "total_recall": 0.0,
                     "correct_mc_count": 0,
                     "incorrect_mc_count": 0,
                     "response_parsing_error_count": 0,
@@ -446,6 +454,12 @@ def process_judge_prompt(
             str,
             sim_score,
         )
+        judge_results["precision"] = cast(str, precision(
+            model_answers, cast(List[str], test_case["correct_options"])
+        ))
+        judge_results["recall"] = cast(str, recall(
+            model_answers, cast(List[str], test_case["correct_options"])
+        ))
     else:
         judge_results["answered_correctly"] = "parsing error"
 
@@ -456,3 +470,39 @@ def jaccard_similarity(list1: list[str], list2: list[str]) -> float:
     intersection = len(list(set(list1).intersection(list2)))
     union = (len(list1) + len(list2)) - intersection
     return float(intersection) / union if union > 0 else 0.0
+
+
+def precision(pred, gold):
+    """
+    Calculate precision between two lists of letters.
+
+    Precision = TP / (TP + FP)
+    where:
+      - TP (True Positives): elements correctly predicted
+      - FP (False Positives): elements predicted but not actually present
+    """
+    pred_set = set(pred)
+    gold_set = set(gold)
+    true_positives = len(pred_set & gold_set)
+    false_positives = len(pred_set - gold_set)
+    if true_positives + false_positives == 0:
+        return 0.0
+    return true_positives / (true_positives + false_positives)
+
+
+def recall(pred, gold):
+    """
+    Calculate recall between two lists of letters.
+
+    Recall = TP / (TP + FN)
+    where:
+      - TP (True Positives): elements correctly predicted
+      - FN (False Negatives): elements missed (in gold but not predicted)
+    """
+    pred_set = set(pred)
+    gold_set = set(gold)
+    true_positives = len(pred_set & gold_set)
+    false_negatives = len(gold_set - pred_set)
+    if true_positives + false_negatives == 0:
+        return 0.0
+    return true_positives / (true_positives + false_negatives)
