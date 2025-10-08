@@ -78,6 +78,10 @@ class OPENAI(LLM):
             ),
         )
         logging.getLogger().setLevel(level)
+        if '/dccstor' in self.model and 'gpt-oss' in self.model:
+            # For CyberPal 2.0 fine tuned models, we did not use the "analysis" and "assistant" special tokens in the
+            # harmony response format, so the reasoning_content field contains the model's response.
+            return response.choices[0].message.reasoning_content
         return response.choices[0].message.content
 
     @override
@@ -119,6 +123,10 @@ class OPENAI(LLM):
             ),
         )
         logging.getLogger().setLevel(level)
+        if '/dccstor' in self.model and 'gpt-oss' in self.model:
+            # For CyberPal 2.0 fine tuned models, we did not use the "analysis" and "assistant" special tokens in the
+            # harmony response format, so the reasoning_content field contains the model's response.
+            return response.choices[0].message.reasoning_content
         return response.choices[0].message.content
 
     @override
@@ -162,6 +170,10 @@ class OPENAI(LLM):
             ),
         )
         logging.getLogger().setLevel(level)
+        if '/dccstor' in self.model and 'gpt-oss' in self.model:
+            # For CyberPal 2.0 fine tuned models, we did not use the "analysis" and "assistant" special tokens in the
+            # harmony response format, so the reasoning_content field contains the model's response.
+            return response.choices[0].message.reasoning_content
         return response.choices[0].message.content
 
     @override
@@ -197,6 +209,10 @@ class OPENAI(LLM):
             ),
         )
         logging.getLogger().setLevel(level)
+        if '/dccstor' in self.model and 'gpt-oss' in self.model:
+            # For CyberPal 2.0 fine tuned models, we did not use the "analysis" and "assistant" special tokens in the
+            # harmony response format, so the reasoning_content field contains the model's response.
+            return response.choices[0].message.reasoning_content
         return response.choices[0].message.content
 
     @override
@@ -249,6 +265,10 @@ class OPENAI(LLM):
                 else None
             ),
         )
+        if '/dccstor' in self.model and 'gpt-oss' in self.model:
+            # For CyberPal 2.0 fine tuned models, we did not use the "analysis" and "assistant" special tokens in the
+            # harmony response format, so the reasoning_content field contains the model's response.
+            return response.choices[0].message.reasoning_content
         return response.choices[0].message.content
 
     @override
