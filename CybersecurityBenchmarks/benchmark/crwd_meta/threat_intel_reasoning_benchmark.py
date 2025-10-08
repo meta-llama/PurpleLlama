@@ -181,6 +181,7 @@ class ThreatIntelReasoningBenchmark(Benchmark):
                 text_prompt=prompt,
                 image_paths=image_paths,
             )
+            print("Query Result:", query_result)
         except Exception as e:
             logging.error(f"Query failed with error: {e}. Failed prompt: {prompt}")
             query_result = "FAIL TO QUERY"
