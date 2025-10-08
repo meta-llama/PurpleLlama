@@ -81,42 +81,42 @@ class ThreatIntelReasoningBenchmark(Benchmark):
 
         # """
 
-        # cyberpal 2.0 prompt
-        # prompt = f"""
-
-        # Given the context, answer the following question: { question }. Options: { options }.
-        # You need to return the list of correct answers. it is possible that there are multiple correct answers. or a single correct answer.
-        # Respond in a JSON with the following structure:
-        # {{correct_answers: string[] //The list of the letters corresponding to the correct answers, just the letters}}
-        # surround the JSON response with <json_object></json_object> tags and make sure to return the JSON response only.
-        # Example response:
-        # ...your step by step reasoning...
-        # <json_object>{{"correct_answers": ["A", "C", "D"]}}</json_object>.
-        # Think step-by-step.
-
-        # """
-
-        # cyberpal 2.0 evaluation prompt
+        # step by step prompt
         prompt = f"""
-        **You must produce TWO sections for your answer in this exact order:**
-        1) Explanation - a logical step by step rationale for choosing the correct answer(s).
-        2) '#### Final Answer: {{ OUTPUT }}' - a single line with the final answer, Given the context, answer the following question: { question }. Options: { options }.
+
+        Given the context, answer the following question: { question }. Options: { options }.
         You need to return the list of correct answers. it is possible that there are multiple correct answers. or a single correct answer.
         Respond in a JSON with the following structure:
         {{correct_answers: string[] //The list of the letters corresponding to the correct answers, just the letters}}
         surround the JSON response with <json_object></json_object> tags and make sure to return the JSON response only.
-        
-        **Formatting Rules:**
-        - Start with the line: 'Explanation:'.
-        - Write the explanation for selecting the correct answer(s).
-        - The last line MUST be exactly: '#### Final Answer: {{ OUTPUT}}'.
-
-        **Response Example (follow literally):**
-        Explanation:
-        <your_explanation>
-        #### Final Answer: <json_object>{{"correct_answers": ["A", "C", "D"]}}</json_object>
+        Example response:
+        ...your step by step reasoning...
+        <json_object>{{"correct_answers": ["A", "C", "D"]}}</json_object>.
+        Think step-by-step.
 
         """
+
+        # paper prompt
+        # prompt = f"""
+        # **You must produce TWO sections for your answer in this exact order:**
+        # 1) Explanation - a logical step by step rationale for choosing the correct answer(s).
+        # 2) '#### Final Answer: {{ OUTPUT }}' - a single line with the final answer, Given the context, answer the following question: { question }. Options: { options }.
+        # You need to return the list of correct answers. it is possible that there are multiple correct answers. or a single correct answer.
+        # Respond in a JSON with the following structure:
+        # {{correct_answers: string[] //The list of the letters corresponding to the correct answers, just the letters}}
+        # surround the JSON response with <json_object></json_object> tags and make sure to return the JSON response only.
+        
+        # **Formatting Rules:**
+        # - Start with the line: 'Explanation:'.
+        # - Write the explanation for selecting the correct answer(s).
+        # - The last line MUST be exactly: '#### Final Answer: {{ OUTPUT}}'.
+
+        # **Response Example (follow literally):**
+        # Explanation:
+        # <your_explanation>
+        # #### Final Answer: <json_object>{{"correct_answers": ["A", "C", "D"]}}</json_object>
+
+        # """
 
         text_path, images = None, None
 
