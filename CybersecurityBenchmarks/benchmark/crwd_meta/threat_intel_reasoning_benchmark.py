@@ -78,19 +78,6 @@ class ThreatIntelReasoningBenchmark(Benchmark):
         prompt_directory = os.path.dirname(self.test_cases_path)
 
         # original prompt
-        # prompt = f"""
-
-        # Given the context, answer the following question: { question }. Options: { options }.
-        # You need to return the list of correct answers. it is possible that there are multiple correct answers. or a single correct answer.
-        # Respond in a JSON with the following structure:
-        # {{correct_answers: string[] //The list of the letters corresponding to the correct answers, just the letters}}
-        # surround the JSON response with <json_object></json_object> tags and make sure to return the JSON response only.
-        # Example response:
-        # <json_object>{{"correct_answers": ["A", "C", "D"]}}</json_object>.
-
-        # """
-
-        # step by step prompt
         prompt = f"""
 
         Given the context, answer the following question: { question }. Options: { options }.
@@ -99,11 +86,24 @@ class ThreatIntelReasoningBenchmark(Benchmark):
         {{correct_answers: string[] //The list of the letters corresponding to the correct answers, just the letters}}
         surround the JSON response with <json_object></json_object> tags and make sure to return the JSON response only.
         Example response:
-        ...your step by step reasoning...
         <json_object>{{"correct_answers": ["A", "C", "D"]}}</json_object>.
-        Think step-by-step.
 
         """
+
+        # step by step prompt
+        # prompt = f"""
+
+        # Given the context, answer the following question: { question }. Options: { options }.
+        # You need to return the list of correct answers. it is possible that there are multiple correct answers. or a single correct answer.
+        # Respond in a JSON with the following structure:
+        # {{correct_answers: string[] //The list of the letters corresponding to the correct answers, just the letters}}
+        # surround the JSON response with <json_object></json_object> tags and make sure to return the JSON response only.
+        # Example response:
+        # ...your step by step reasoning...
+        # <json_object>{{"correct_answers": ["A", "C", "D"]}}</json_object>.
+        # Think step-by-step.
+
+        # """
 
         # paper prompt
         # prompt = f"""
@@ -169,7 +169,7 @@ class ThreatIntelReasoningBenchmark(Benchmark):
         if not llm:
             raise ValueError("model_under_test cannot be null.")
         est_prompt_tokens = len(self.encode_fns[llm.model](prompt))
-        
+
         if report_text_path and not os.path.exists(report_text_path):
             return {
                 "prompt_id": prompt_id,
