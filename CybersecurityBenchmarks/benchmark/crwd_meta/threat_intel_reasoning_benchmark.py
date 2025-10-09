@@ -78,17 +78,17 @@ class ThreatIntelReasoningBenchmark(Benchmark):
         prompt_directory = os.path.dirname(self.test_cases_path)
 
         # original prompt
-        prompt = f"""
+        # prompt = f"""
 
-        Given the context, answer the following question: { question }. Options: { options }.
-        You need to return the list of correct answers. it is possible that there are multiple correct answers. or a single correct answer.
-        Respond in a JSON with the following structure:
-        {{correct_answers: string[] //The list of the letters corresponding to the correct answers, just the letters}}
-        surround the JSON response with <json_object></json_object> tags and make sure to return the JSON response only.
-        Example response:
-        <json_object>{{"correct_answers": ["A", "C", "D"]}}</json_object>.
+        # Given the context, answer the following question: { question }. Options: { options }.
+        # You need to return the list of correct answers. it is possible that there are multiple correct answers. or a single correct answer.
+        # Respond in a JSON with the following structure:
+        # {{correct_answers: string[] //The list of the letters corresponding to the correct answers, just the letters}}
+        # surround the JSON response with <json_object></json_object> tags and make sure to return the JSON response only.
+        # Example response:
+        # <json_object>{{"correct_answers": ["A", "C", "D"]}}</json_object>.
 
-        """
+        # """
 
         # step by step prompt
         # prompt = f"""
@@ -106,26 +106,26 @@ class ThreatIntelReasoningBenchmark(Benchmark):
         # """
 
         # paper prompt
-        # prompt = f"""
-        # **You must produce TWO sections for your answer in this exact order:**
-        # 1) Explanation - a logical step by step rationale for choosing the correct answer(s).
-        # 2) '#### Final Answer: {{ OUTPUT }}' - a single line with the final answer, Given the context, answer the following question: { question }. Options: { options }.
-        # You need to return the list of correct answers. it is possible that there are multiple correct answers. or a single correct answer.
-        # Respond in a JSON with the following structure:
-        # {{correct_answers: string[] //The list of the letters corresponding to the correct answers, just the letters}}
-        # surround the JSON response with <json_object></json_object> tags and make sure to return the JSON response only.
+        prompt = f"""
+        **You must produce TWO sections for your answer in this exact order:**
+        1) Explanation - a logical step by step rationale for choosing the correct answer(s).
+        2) '#### Final Answer: {{ OUTPUT }}' - a single line with the final answer, Given the context, answer the following question: { question }. Options: { options }.
+        You need to return the list of correct answers. it is possible that there are multiple correct answers. or a single correct answer.
+        Respond in a JSON with the following structure:
+        {{correct_answers: string[] //The list of the letters corresponding to the correct answers, just the letters}}
+        surround the JSON response with <json_object></json_object> tags and make sure to return the JSON response only.
         
-        # **Formatting Rules:**
-        # - Start with the line: 'Explanation:'.
-        # - Write the explanation for selecting the correct answer(s).
-        # - The last line MUST be exactly: '#### Final Answer: {{ OUTPUT}}'.
+        **Formatting Rules:**
+        - Start with the line: 'Explanation:'.
+        - Write the explanation for selecting the correct answer(s).
+        - The last line MUST be exactly: '#### Final Answer: {{ OUTPUT}}'.
 
-        # **Response Example (follow literally):**
-        # Explanation:
-        # <your_explanation>
-        # #### Final Answer: <json_object>{{"correct_answers": ["A", "C", "D"]}}</json_object>
+        **Response Example (follow literally):**
+        Explanation:
+        <your_explanation>
+        #### Final Answer: <json_object>{{"correct_answers": ["A", "C", "D"]}}</json_object>
 
-        # """
+        """
 
         text_path, images = None, None
 
