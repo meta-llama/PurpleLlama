@@ -6,5 +6,6 @@
 # pyre-strict
 
 from .ftgooglegenai import FTGOOGLEGENAI
+from .vllm import VLLM
 
-__all__ = ["FTGOOGLEGENAI"]
+__all__ = ["FTGOOGLEGENAI", "VLLM"]
