@@ -7,5 +7,6 @@
 
 from .ftgooglegenai import FTGOOGLEGENAI
 from .vllm import VLLM
+from .rits import RITS
 
-__all__ = ["FTGOOGLEGENAI", "VLLM"]
+__all__ = ["FTGOOGLEGENAI", "VLLM", "RITS"]
