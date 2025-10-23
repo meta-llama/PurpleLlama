@@ -136,13 +136,7 @@ class ThreatIntelReasoningBenchmark(Benchmark):
 Answers:
 {options_str}
         
-You need to return the list of correct answers. it is possible that there are multiple correct answers. or a single correct answer.
-
-Respond in a JSON with the following structure:
-{{
-    correct_answers: string[] //The list of the letters corresponding to the correct answers, just the letters
-}}
-surround the JSON response with <json_object></json_object> tags and make sure to return the JSON response only.
+In your final answer, you need to return the list of correct answers. it is possible that there are multiple correct answers. or a single correct answer.
 
 Before providing the final answer, **think step-by-step** by following the thought process:
 1) Answer A Analysis: analyze whether or not answer A is correct and finally give an evaluation of its correctness.
@@ -150,7 +144,11 @@ Before providing the final answer, **think step-by-step** by following the thoug
 3-{len(options)}) ... analysis of the other answers one by one ...
 {len(options)+1}) Summary: after analyzing all answers separately, summarize the reasoning by providing a short conclusion for each answer, and a general summary of the entire reasoning process.
 {len(options)+2}) Decision: aggregate the evaluations from the previous analyses to make a final decision on which answers are correct and which are not depending on the question.
-{len(options)+3}) Final Answer: finally, provide the final answer in the specified json structure."""
+{len(options)+3}) Final Answer: finally, provide the final answer in the following json structure:
+{{
+    correct_answers: string[] //The list of the letters corresponding to the correct answers, just the letters
+}}
+surround the JSON response with <json_object></json_object> tags and make sure to return the JSON response only."""
 
         text_path, images = None, None
 
