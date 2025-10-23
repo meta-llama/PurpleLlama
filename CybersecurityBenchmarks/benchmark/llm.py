@@ -67,8 +67,8 @@ def create(
     else:
         raise ValueError(f"Invalid identifier: {identifier}")
 
-    if api_key is None:
-        raise ValueError(f"No API key provided for {provider}: {name}")
+    # if api_key is None:
+    #     raise ValueError(f"No API key provided for {provider}: {name}")
 
     config = LLMConfig(
         model=name,

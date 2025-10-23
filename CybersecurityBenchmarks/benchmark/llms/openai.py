@@ -28,7 +28,7 @@ from .llm_base import (
 class OPENAI(LLM):
     """Accessing OPENAI"""
 
-    def __init__(self, config: LLMConfig) -> None:
+    def __init__(self, config: LLMConfig, default_headers: dict | None = None) -> None:
         self._reasoning_models = [
             "o1",
             "o1-mini",
@@ -38,7 +38,7 @@ class OPENAI(LLM):
             "gpt-5-mini",
         ]
         super().__init__(config)
-        self.client = openai.OpenAI(api_key=self.api_key, base_url=self.base_url)
+        self.client = openai.OpenAI(api_key=self.api_key, base_url=self.base_url, default_headers=default_headers)
 
     @override
     def chat(
