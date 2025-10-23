@@ -106,26 +106,51 @@ class ThreatIntelReasoningBenchmark(Benchmark):
         # """
 
         # paper prompt
-        prompt = f"""
-        **You must produce TWO sections for your answer in this exact order:**
-        1) Explanation - a logical step by step rationale for choosing the correct answer(s).
-        2) '#### Final Answer: {{ OUTPUT }}' - a single line with the final answer, Given the context, answer the following question: { question }. Options: { options }.
-        You need to return the list of correct answers. it is possible that there are multiple correct answers. or a single correct answer.
-        Respond in a JSON with the following structure:
-        {{correct_answers: string[] //The list of the letters corresponding to the correct answers, just the letters}}
-        surround the JSON response with <json_object></json_object> tags and make sure to return the JSON response only.
+        # prompt = f"""
+        # **You must produce TWO sections for your answer in this exact order:**
+        # 1) Explanation - a logical step by step rationale for choosing the correct answer(s).
+        # 2) '#### Final Answer: {{ OUTPUT }}' - a single line with the final answer, Given the context, answer the following question: { question }. Options: { options }.
+        # You need to return the list of correct answers. it is possible that there are multiple correct answers. or a single correct answer.
+        # Respond in a JSON with the following structure:
+        # {{correct_answers: string[] //The list of the letters corresponding to the correct answers, just the letters}}
+        # surround the JSON response with <json_object></json_object> tags and make sure to return the JSON response only.
         
-        **Formatting Rules:**
-        - Start with the line: 'Explanation:'.
-        - Write the explanation for selecting the correct answer(s).
-        - The last line MUST be exactly: '#### Final Answer: {{ OUTPUT}}'.
+        # **Formatting Rules:**
+        # - Start with the line: 'Explanation:'.
+        # - Write the explanation for selecting the correct answer(s).
+        # - The last line MUST be exactly: '#### Final Answer: {{ OUTPUT}}'.
 
-        **Response Example (follow literally):**
-        Explanation:
-        <your_explanation>
-        #### Final Answer: <json_object>{{"correct_answers": ["A", "C", "D"]}}</json_object>
+        # **Response Example (follow literally):**
+        # Explanation:
+        # <your_explanation>
+        # #### Final Answer: <json_object>{{"correct_answers": ["A", "C", "D"]}}</json_object>
 
-        """
+        # """
+
+        options_str = '\n'.join(options)
+
+        # format prompt
+        prompt = f"""Given the context, answer the following multi-choice question:
+
+{question}
+Answers:
+{options_str}
+        
+You need to return the list of correct answers. it is possible that there are multiple correct answers. or a single correct answer.
+
+Respond in a JSON with the following structure:
+{{
+    correct_answers: string[] //The list of the letters corresponding to the correct answers, just the letters
+}}
+surround the JSON response with <json_object></json_object> tags and make sure to return the JSON response only.
+
+Before providing the final answer, **think step-by-step** by following the thought process:
+1) Answer A Analysis: analyze whether or not answer A is correct and finally give an evaluation of its correctness.
+2) Answer B Analysis: analyze whether or not answer B is correct and finally give an evaluation of its correctness.
+3-{len(options)}) ... analysis of the other answers one by one ...
+{len(options)+1}) Summary: after analyzing all answers separately, summarize the reasoning by providing a short conclusion for each answer, and a general summary of the entire reasoning process.
+{len(options)+2}) Decision: aggregate the evaluations from the previous analyses to make a final decision on which answers are correct and which are not depending on the question.
+{len(options)+3}) Final Answer: finally, provide the final answer in the specified json structure."""
 
         text_path, images = None, None
 
@@ -135,10 +160,7 @@ class ThreatIntelReasoningBenchmark(Benchmark):
             with open(text_path, "r") as file:
                 context = file.read()
             prompt = (
-                f"""
-            {context}
-            """
-                + prompt
+                f"{context}\n\n{prompt}"
             )
 
         if "image" in self.input_modality:
