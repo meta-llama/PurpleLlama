@@ -106,45 +106,45 @@ class ThreatIntelReasoningBenchmark(Benchmark):
         # """
 
         # paper prompt
-        # prompt = f"""
-        # **You must produce TWO sections for your answer in this exact order:**
-        # 1) Explanation - a logical step by step rationale for choosing the correct answer(s).
-        # 2) '#### Final Answer: {{ OUTPUT }}' - a single line with the final answer, Given the context, answer the following question: { question }. Options: { options }.
-        # You need to return the list of correct answers. it is possible that there are multiple correct answers. or a single correct answer.
-        # Respond in a JSON with the following structure:
-        # {{correct_answers: string[] //The list of the letters corresponding to the correct answers, just the letters}}
-        # surround the JSON response with <json_object></json_object> tags and make sure to return the JSON response only.
+        prompt = f"""
+        **You must produce TWO sections for your answer in this exact order:**
+        1) Explanation - a logical step by step rationale for choosing the correct answer(s).
+        2) '#### Final Answer: {{ OUTPUT }}' - a single line with the final answer, Given the context, answer the following question: { question }. Options: { options }.
+        You need to return the list of correct answers. it is possible that there are multiple correct answers. or a single correct answer.
+        Respond in a JSON with the following structure:
+        {{correct_answers: string[] //The list of the letters corresponding to the correct answers, just the letters}}
+        surround the JSON response with <json_object></json_object> tags and make sure to return the JSON response only.
         
-        # **Formatting Rules:**
-        # - Start with the line: 'Explanation:'.
-        # - Write the explanation for selecting the correct answer(s).
-        # - The last line MUST be exactly: '#### Final Answer: {{ OUTPUT}}'.
+        **Formatting Rules:**
+        - Start with the line: 'Explanation:'.
+        - Write the explanation for selecting the correct answer(s).
+        - The last line MUST be exactly: '#### Final Answer: {{ OUTPUT}}'.
 
-        # **Response Example (follow literally):**
-        # Explanation:
-        # <your_explanation>
-        # #### Final Answer: <json_object>{{"correct_answers": ["A", "C", "D"]}}</json_object>
+        **Response Example (follow literally):**
+        Explanation:
+        <your_explanation>
+        #### Final Answer: <json_object>{{"correct_answers": ["A", "C", "D"]}}</json_object>
 
-        # """
+        """
 
-        options_str = '\n'.join(options)
 
         # format prompt
-        prompt = f"""Given the context, answer the following multi-choice question:
+#         options_str = '\n'.join(options)
+#         prompt = f"""Given the context, answer the following multi-choice question:
 
-{question}
-Answers:
-{options_str}
+# {question}
+# Answers:
+# {options_str}
         
-In your final answer, you need to return the list of correct answers. it is possible that there are multiple correct answers. or a single correct answer.
+# In your final answer, you need to return the list of correct answers. it is possible that there are multiple correct answers. or a single correct answer.
 
-Before providing the final answer, **think step-by-step** by following the thought process:
-1. Carefully read and understand the multi-choice question. 
-2. Answers Analysis - Analyze **each** option separately, explaining the reasoning behind choosing or not choosing it.
-3. Summarize the reasoning from step 2 by providing a short sentence for each option that concludes the rationale for its correctness or incorrectness.
-4. Final Answer: finally, provide the final answer in the following json structure: {{ "correct_answers": string[] // The list of the letters corresponding to the correct answers, just the letters }}. Surround the JSON response with <json_object></json_object> tags and make sure to return the JSON response only.
+# Before providing the final answer, **think step-by-step** by following the thought process:
+# 1. Carefully read and understand the multi-choice question. 
+# 2. Answers Analysis - Analyze **each** option separately, explaining the reasoning behind choosing or not choosing it.
+# 3. Summarize the reasoning from step 2 by providing a short sentence for each option that concludes the rationale for its correctness or incorrectness.
+# 4. Final Answer: finally, provide the final answer in the following json structure: {{ "correct_answers": string[] // The list of the letters corresponding to the correct answers, just the letters }}. Surround the JSON response with <json_object></json_object> tags and make sure to return the JSON response only.
 
-It is very important that you first think step-by-step as described above, and then provide the final answer in the exact JSON format specified."""
+# It is very important that you first think step-by-step as described above, and then provide the final answer in the exact JSON format specified."""
 
         text_path, images = None, None
 
