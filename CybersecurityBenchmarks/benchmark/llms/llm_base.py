@@ -170,6 +170,11 @@ class LLM(ABC):
             try:
                 return func(*args)
             except Exception as exception:
+                if re.search(r"This model's maximum context length is \d+ tokens. However, your request has \d+ input tokens. Please reduce the length of the input messages.", str(exception)):
+                    LOG.error(
+                        f"LLM Query failed due to input exceeding model context length: {exception}. Giving up on this example."
+                    )
+                    return None
                 last_exception = exception
                 sleep_time = (
                     backoff_factor * (2**retry)
