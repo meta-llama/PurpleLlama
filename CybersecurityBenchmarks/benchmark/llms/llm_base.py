@@ -170,7 +170,10 @@ class LLM(ABC):
             try:
                 return func(*args)
             except Exception as exception:
-                if re.search(r"This model's maximum context length is \d+ tokens. However, your request has \d+ input tokens. Please reduce the length of the input messages.", str(exception)):
+                if (
+                    re.search(r"This model's maximum context length is \d+ tokens. However, your request has \d+ input tokens. Please reduce the length of the input messages.", str(exception))
+                    or re.search(r"'max_tokens must be at least 1, got -\d+.", str(exception))
+                ):
                     LOG.error(
                         f"LLM Query failed due to input exceeding model context length: {exception}. Giving up on this example."
                     )
@@ -464,7 +467,10 @@ class LLM(ABC):
                 LOG.error(f"LLM Query failed due to unretriable error: {exception}")
                 return None
             except Exception as exception:
-                if re.search(r"This model's maximum context length is \d+ tokens. However, your request has \d+ input tokens. Please reduce the length of the input messages.", str(exception)):
+                if (
+                    re.search(r"This model's maximum context length is \d+ tokens. However, your request has \d+ input tokens. Please reduce the length of the input messages.", str(exception))
+                    or re.search(r"'max_tokens must be at least 1, got -\d+.", str(exception))
+                ):
                     LOG.error(
                         f"LLM Query failed due to input exceeding model context length: {exception}. Giving up on this example."
                     )
