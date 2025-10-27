@@ -7,6 +7,7 @@
 
 from __future__ import annotations
 
+import re
 import logging
 import textwrap
 import time
@@ -458,6 +459,11 @@ class LLM(ABC):
                 LOG.error(f"LLM Query failed due to unretriable error: {exception}")
                 return None
             except Exception as exception:
+                if re.search(r"This model's maximum context length is \d+ tokens. However, your request has \d+ input tokens. Please reduce the length of the input messages.", str(exception)):
+                    LOG.error(
+                        f"LLM Query failed due to input exceeding model context length: {exception}. Giving up on this example."
+                    )
+                    return None
                 last_exception = exception
                 sleep_time = (
                     backoff_factor * (2**retry)
