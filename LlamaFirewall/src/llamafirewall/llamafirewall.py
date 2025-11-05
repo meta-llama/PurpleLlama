@@ -7,6 +7,7 @@
 
 import asyncio
 import logging
+import threading
 from typing import Callable, Type
 
 from llamafirewall.config import Configuration, PREDEFINED_USE_CASES, UseCase
@@ -20,7 +21,7 @@ from llamafirewall.llamafirewall_data_types import (
     Trace,
 )
 
-from typing_extensions import Self
+from typing import Self
 
 # Only import the base Scanner class at module level
 from .scanners import Scanner
@@ -114,12 +115,66 @@ class LlamaFirewall:
         reasons = []
         decisions = {}
         last_reason = ""
+        def _run_coro_in_new_thread(coro):
+            """Run a coroutine in a fresh event loop in a background thread and
+            return its result.
+
+            Implementation notes:
+            - Use asyncio.new_event_loop() inside the thread and run the
+              coroutine with loop.run_until_complete(). This avoids calling
+              asyncio.run() which can raise if some runtimes interact with the
+              global event loop policy in unexpected ways.
+            - Keep the interface synchronous so existing callers of scan()
+              don't need changes.
+            """
+            result: dict[str, object] = {}
+            exc: dict[str, BaseException] = {}
+
+            def _target():
+                try:
+                    loop = asyncio.new_event_loop()
+                    try:
+                        asyncio.set_event_loop(loop)
+                        result["value"] = loop.run_until_complete(coro)
+                    finally:
+                        try:
+                            loop.close()
+                        except Exception:
+                            pass
+                except Exception as e:
+                    exc["e"] = e
+
+            t = threading.Thread(target=_target)
+            t.start()
+            t.join()
+            if "e" in exc:
+                raise exc["e"]
+            return result.get("value")
         for scanner_type in scanners:
             scanner_instance = create_scanner(scanner_type)
             LOG.debug(
                 f"[LlamaFirewall] Scanning with {scanner_instance.name}, for the input {str(input.content)[:20]}"
             )
-            scanner_result = asyncio.run(scanner_instance.scan(input, trace))
+            # Detect whether an event loop is running in this thread. The
+            # recommended way is asyncio.get_running_loop(), which raises
+            # RuntimeError when no loop is running. Avoid get_event_loop()
+            # here because some loop policies may create a new loop and report
+            # is_running() == False even when the environment is async.
+            try:
+                asyncio.get_running_loop()
+                running = True
+            except RuntimeError:
+                running = False
+
+            if running:
+                # Run the scanner coroutine in a background thread with its
+                # own event loop to keep the synchronous API stable.
+                scanner_result = _run_coro_in_new_thread(
+                    scanner_instance.scan(input, trace)
+                )
+            else:
+                # Safe to run directly in the current thread
+                scanner_result = asyncio.run(scanner_instance.scan(input, trace))
             reasons.append(
                 f"{scanner_type}: {scanner_result.reason.strip()} - score: {scanner_result.score}"
             )
