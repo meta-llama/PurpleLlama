@@ -23,7 +23,7 @@ from typing import Any, Callable, Coroutine, Dict, Optional, Union
 
 import pkg_resources
 
-from .arvo_utils import ArvoContainer
+from .arvo_utils import ArvoContainer, get_arvo_meta_path
 
 from .autopatch.autopatch_tools import AutoPatchAgent
 from .autopatch.report import ChatHistory, write_chat_history_markdown
@@ -365,9 +365,7 @@ class AutoPatchingBenchmark(Benchmark):
         YELLOW = "\033[1m\033[93m"
         END = "" "\033[0m"
         BLUE = "\033[1m\033[94m"
-        metadata_path = pkg_resources.resource_filename(
-            __name__, f"arvo_meta/{case_id}-meta.json"
-        )
+        metadata_path = get_arvo_meta_path(f"{case_id}-meta.json")
         if not metadata_path.exists():
             logging.warning(
                 f"Metadata file not found for case {case_id}: {metadata_path}"
@@ -426,9 +424,7 @@ class AutoPatchingBenchmark(Benchmark):
                 fix_container.logger.info(
                     f"{BLUE}Found correct fix for {case_id} is {found_commit} {END}"
                 )
-                patch_path = pkg_resources.resource_filename(
-                    __name__, f"arvo_meta/{case_id}-patch.json"
-                )
+                patch_path = get_arvo_meta_path(f"{case_id}-patch.json")
                 with open(patch_path, "r") as f:
                     patch_dict = json.load(f)[0]
                 metadata_json["arvo_metadata"]["fix_commit"] = found_commit

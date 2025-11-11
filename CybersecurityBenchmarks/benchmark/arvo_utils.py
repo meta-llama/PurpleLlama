@@ -8,6 +8,7 @@
 import asyncio
 import json
 import logging
+import os
 import re
 import subprocess
 import tempfile
@@ -101,6 +102,20 @@ def get_all_least_common_ancestors(
         f"FOUND LCAs with avg {sum_losses/len(ground_truth_stacktraces)} lost frames out of {sum_len / len(ground_truth_stacktraces)}: {repr(res)}",
     )
     return list(res)
+
+
+def get_arvo_meta_path(filename: str) -> Path:
+    """
+    Get the path to an arvo_meta file using the DATASETS environment variable.
+    Raises RuntimeError if DATASETS is not set.
+    """
+    datasets_path = os.getenv("DATASETS")
+    if not datasets_path:
+        raise RuntimeError(
+            "DATASETS environment variable must be set. "
+            "Example: export DATASETS=/path/to/PurpleLlama/CybersecurityBenchmarks/datasets"
+        )
+    return Path(datasets_path) / "autopatch" / "arvo_meta" / filename
 
 
 class ArvoContainer:
@@ -1015,17 +1030,13 @@ class ArvoContainer:
 
     def _load_ground_truth_patches(self) -> List[Dict[str, Any]]:
         """Load the ground truth patch data from the arvo_meta directory."""
-        gt_patch_path = pkg_resources.resource_filename(
-            __name__, f"arvo_meta/{self.arvo_id}-patch.json"
-        )
+        gt_patch_path = get_arvo_meta_path(f"{self.arvo_id}-patch.json")
         with open(gt_patch_path, "r") as f:
             return json.load(f)
 
     def _load_arvo_metadata(self) -> Dict[str, Any]:
         """Load ARVO metadata"""
-        gt_patch_path = pkg_resources.resource_filename(
-            __name__, f"arvo_meta/{self.arvo_id}-meta.json"
-        )
+        gt_patch_path = get_arvo_meta_path(f"{self.arvo_id}-meta.json")
         with open(gt_patch_path, "r") as f:
             return json.load(f)
 
