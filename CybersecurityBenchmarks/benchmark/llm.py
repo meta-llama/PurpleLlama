@@ -24,6 +24,7 @@ from .llms.llm_base import (
     RetriesExceededException,
     UnretriableQueryException,
 )
+from .llms.meta import LLAMA
 from .llms.openai import OPENAI
 from .llms.together import TOGETHER
 
@@ -84,5 +85,7 @@ def create(
         return ANTHROPIC(config)
     if provider == "GOOGLEGENAI":
         return GOOGLEGENAI(config)
+    if provider == "LLAMA":
+        return LLAMA(config)
 
     raise ValueError(f"Unknown provider: {provider}")
