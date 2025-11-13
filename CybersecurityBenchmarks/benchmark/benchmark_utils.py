@@ -117,12 +117,51 @@ def get_mime_type(file_path: str) -> Optional[str]:
 
 
 def extract_json(text: str) -> Union[Dict[str, Any], bool]:
-    text = text.replace("\n", "")
+    """Extracts the first complete JSON object from text."""
+    if not text or not text.strip():
+        print("Error extracting JSON: Empty input text")
+        return False
+
+    # Try parsing entire text first
     try:
-        start = text.rindex("{")
-        end = text.rindex("}")
-        return json.loads(text[start : end + 1])
-    except Exception as e:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+
+    # Find first complete JSON object by tracking balanced braces
+    try:
+        start = text.index("{")
+        brace_count = 0
+        in_string = False
+        escape_next = False
+
+        for i in range(start, len(text)):
+            char = text[i]
+
+            if escape_next:
+                escape_next = False
+                continue
+
+            if char == "\\":
+                escape_next = True
+                continue
+
+            if char == '"':
+                in_string = not in_string
+                continue
+
+            if not in_string:
+                if char == "{":
+                    brace_count += 1
+                elif char == "}":
+                    brace_count -= 1
+                    if brace_count == 0:
+                        return json.loads(text[start : i + 1])
+
+        print("Error extracting JSON: No balanced braces found")
+        return False
+
+    except (ValueError, json.JSONDecodeError) as e:
         print(f"Error extracting JSON: {e}")
         return False
 

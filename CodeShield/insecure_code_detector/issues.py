@@ -58,3 +58,17 @@ class Issue:
 
     def to_json(self) -> str:
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True)
+
+    def __str__(self) -> str:
+        return f"""
+        Issue(
+            cwe_id: {self.cwe_id}
+            severity: {self.severity}
+            rule: {self.rule}
+            path: {self.path}
+            line: {self.line}
+            name: {self.name}
+            pattern_id: {self.pattern_id}
+            analyzer: {self.analyzer}
+        )
+        """

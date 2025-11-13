@@ -7,20 +7,20 @@ and
 [CyberSecEval](https://ai.meta.com/research/publications/purple-llama-cyberseceval-a-benchmark-for-evaluating-the-cybersecurity-risks-of-large-language-models/).
 CyberSecEval 4 is an extensive benchmark suite designed to assess the
 cybersecurity vulnerabilities and defensive capabilities of Large Language Models (LLMs). Building on its
-predecessor, CyberSecEval 3, this latest version introduces a new benchmark, [AutoPatchBench](https://engineering.fb.com/2025/04/29/ai-research/autopatchbench-benchmark-ai-powered-security-fixes), which measures an LLM agent's capability to automatically patch security vulnerabilities in native code.
+predecessor, CyberSecEval 3, this latest version introduces three new benchmarks to evaluate an AI system's defensiive capabilities: Two new tests comprise [CyberSOCEval](https://ai.meta.com/research/publications/cybersoceval-benchmarking-llms-capabilities-for-malware-analysis-and-threat-intelligence-reasoning/), which measures the LLM's capability to enable Security Operation Center (SOC) efficiency improvements or automation.  These benchmarks were developed in collaboration with Crowdstrike and include tests for Malware Analysis and Threat Intellligence Reasoning. The third new benchmark, [AutoPatchBench](https://engineering.fb.com/2025/04/29/ai-research/autopatchbench-benchmark-ai-powered-security-fixes), measures an LLM agent's capability to automatically patch security vulnerabilities in native code.
 
 Created to measure and incentivize the development of highly capable LLM based defender tools, CyberSecEval 4 builds on the CyberSecEval code base to offer a comprehensive set of tools for evaluting both vulnerabilities and defensive capabilities in various security domains. It has been applied to well-known LLMs such as Meta's Llama4 as well as OpenAI, Google, and Anthropic models. The findings from the collection of CyberSecEval studies underscore both substantial cybersecurity threats, as well as promising oppottunities to leverage these models for uplifting defenders.
 
 The repository includes several types of benchmarks:
 
-1.  **MITRE and False Refusal Rate (FRR) Tests**: These tests evaluate an LLM's
+1.  **MITRE and MITRE False Refusal Rate (FRR) Tests**: These tests evaluate an LLM's
     compliance when asked to assist in cyberattacks as well as how often an LLM
     incorrectly refuses a borderline but essentially benign query.
 
     1. **MITRE Tests**: These tests use the MITRE ATT&CK framework to evaluate
        an LLM's compliance when asked to assist in cyberattacks.
 
-    2. **False Refusal Rate (FRR) Tests**: These tests measure how often an LLM
+    2. **MITRE False Refusal Rate (FRR) Tests**: These tests measure how often an LLM
        incorrectly refuses a borderline but essentially benign query, due to
        misinterpreting the prompt as a malicious request.
 
@@ -70,6 +70,10 @@ The repository includes several types of benchmarks:
     of LLMs to autonomously generate security patches for vulnerabilities, specifically
     the crashes discovered by fuzzer tests.
 
+9.  **CyberSOCEval Tests**: These tests, created in partnership with Crowdstrike, assess defensive capabilities and include two benchmarks:
+    * Malware Analysis:  Assesses the precision and recall of LLMs in identifying malicious activities from potential malware, such as detecting ransomware or remote access trojans via mutiple choice questions where multple options may be correct.
+    * Threat Intelligence Reasoning: Evaluates an AI's ability to parse unstructured threat intelligence reports and extract actionable insights via mutiple choice questions where multple options may be correct.
+
 Please take a look at our [wiki](https://meta-llama.github.io/PurpleLlama/)
 which contains detailed instructions on how to execute our benchmarks.
 
@@ -115,12 +119,18 @@ export DATASETS=$PWD/CybersecurityBenchmarks/datasets
 
 Each benchmark can run tests for multiple LLMs. Our command line interface uses
 the format `<PROVIDER>::<MODEL>::<API KEY>` to specify an LLM to test. We
-currently support APIs from OPENAI, and TOGETHER. The followings are a
-few examples:
+currently support APIs from OPENAI, GOOGLE, ANTHROPIC, LLAMA and TOGETHER. For OpenAI compatible endpoints,
+you can also specify a custom base URL by using this format: `<PROVIDER>::<MODEL>::<API KEY>::<BASE URL>`.
+The followings are a few examples:
 
 - `OPENAI::gpt-4::<API KEY>`
 - `OPENAI::gpt-3.5-turbo::<API KEY>`
+- `OPENAI::gpt-3.5-turbo::<API KEY>::https://api.openai.com/v1/`
 - `TOGETHER::togethercomputer/llama-2-7b::<API KEY>`
+
+### How to run benchmarks for additional models and inference APIs
+
+For integrating additional models and inference APIs, please refer to the dedicated documentation in the `CybersecurityBenchmarks/benchmark/llms/community_contribution` directory. This section contains examples and instructions for extending the benchmark framework with custom LLM implementations.
 
 ### How to use a different model supported by a provider
 
@@ -133,7 +143,13 @@ few examples:
 ### How to run benchmarks for self hosted models
 
 1. Extend `llm.py`.
-2. `def query(self, prompt: str) -> str:` Implement your inferencing logic.
+2. Implement your inferencing logic for at least the following required methods:
+  - `def query(self, prompt: str, guided_decode_json_schema: Optional[str] = None, temperature: float = DEFAULT_TEMPERATURE, top_p: float = DEFAULT_TOP_P) -> str:`
+  - `def chat_with_system_prompt(self, system_prompt: str, prompt_with_history: List[str], guided_decode_json_schema: Optional[str] = None, temperature: float = DEFAULT_TEMPERATURE, top_p: float = DEFAULT_TOP_P) -> str:`
+  - `def chat(self, prompt_with_history: List[str], guided_decode_json_schema: Optional[str] = None, temperature: float = DEFAULT_TEMPERATURE, top_p: float = DEFAULT_TOP_P) -> str:`
+
+   Note: Additional methods may be needed for some benchmarks; you will be prompted to implement them if you attempt to run a benchmark requiring a method not supported by your custom provider.
+
 3. Make sure response of your llm is always a string, thats returned from the
    `query` function.
 4. Update supported providers in `llm.create` method with the name of LLM you
@@ -154,7 +170,7 @@ We appreciate the time and effort everyone has contributed to our CybersecurityB
 * If your PR aims to add a new feature to a benchmark or the evaluation infrastructure, please start by opening an issue and discuss it with our team before proceeding with the PR.
 Thank you for your attention and contributions to our project.
 
-## Running the MITRE and False Refusal Rate (FRR) Benchmarks
+## Running the MITRE and MITRE False Refusal Rate (FRR) Benchmarks
 
 ### Running MITRE Benchmark
 
@@ -185,20 +201,20 @@ The expansion LLM model and judge LLM model are independent of the initial LLM
 for processing prompts. Although we've used Llama and Code Llama models for the
 original paper, we recommend using GPT-3.5 including an OpenAI API key.
 
-### Running False Refusal Rate (FRR) Benchmark
+### Running MITRE False Refusal Rate (FRR) Benchmark
 
 ```
 python3 -m CybersecurityBenchmarks.benchmark.run \
-   --benchmark=frr \
-   --prompt-path="$DATASETS/frr/<INPUT_DATASET>" \
-   --response-path="$DATASETS/frr/frr_responses.json" \
-   --stat-path="$DATASETS/frr/frr_stat.json" \
+   --benchmark=mitre-frr \
+   --prompt-path="$DATASETS/mitre_frr/<INPUT_DATASET>" \
+   --response-path="$DATASETS/mitre_frr/mitre_frr_responses.json" \
+   --stat-path="$DATASETS/mitre_frr/mitre_frr_stat.json" \
    --llm-under-test=<SPECIFICATION_1> --llm-under-test=<SPECIFICATION_2> ...
    [--run-llm-in-parallel]
 ```
-where <INPUT_DATASET> is one of frr.json (for English prompts) or frr_multilingual_machine_translated.json (for multilingual prompts).  Note that multilingual prompts were created using automated machine translations of the english prompts and therefore may not be entirely accurate with respect to language translation, and, consequently, may also not be entirely accurate with respect to CyberSecEval results.
+where <INPUT_DATASET> is one of mitre_frr.json (for English prompts) or frr_multilingual_machine_translated.json (for multilingual prompts).  Note that multilingual prompts were created using automated machine translations of the english prompts and therefore may not be entirely accurate with respect to language translation, and, consequently, may also not be entirely accurate with respect to CyberSecEval results.
 
-FRR benchmark is run in two steps:
+MITRE FRR benchmark is run in two steps:
 
 - _Processing prompts_ The LLM is called (in parallel, if specified) to render
   the LLM output for each prompt. Once the response is received, a keyword-based
@@ -222,6 +238,22 @@ python3 -m CybersecurityBenchmarks.benchmark.run \
    --llm-under-test=<SPECIFICATION_1> --llm-under-test=<SPECIFICATION_2> ...
    [--run-llm-in-parallel]
 ```
+
+**Note:**
+We have released an updated version of the instruct prompt dataset, **instruct-v2.json**, which enhances data quality and [statistical power](https://en.wikipedia.org/wiki/Power_(statistics)) by removing invalid prompts. As we continue to identify and eliminate such prompts, this dataset will be further refined. To take advantage of these improvements, please use `instruct-v2.json` as your prompt path instead of `instruct.json`.
+
+#### What Changed?
+
+This cleaned dataset was created by manually identifying and removing invalid prompts from the original dataset, `instruct.json`, including:
+- Prompts likely to cause a model to exhibit a known Common Weakness Enumeration (CWE) in a supported programming language when explicitly instructed by a user.
+- Prompts extremely unlikely to cause a known CWE.
+- Prompts in unsupported programming languages.
+
+The cleaned dataset excludes prompts involving:
+- **Insecure APIs**, such as `MD5`, `SHA-1`, and `sprintf` in C/C++.
+- **Insecure parameters**, including cryptographic modes like `ECB` and padding schemes like `PKCS5`.
+- **Unsupported languages**, for example, `Ruby` and `shell` scripts.
+
 
 ### For Autocomplete Benchmark
 
@@ -561,6 +593,78 @@ After AutoPatch-Bench finishes running, you can find the following outputs:
 * **Summarized Evaluation Statistics**: Available in the JSON file specified by the `--stat-path`` argument.
 * **Detailed Evaluation Information**: Found in the JSON file specified by the `--judge-response-path`` argument.
 
+
+## Running Malware Analysis Benchmark
+
+Make sure that you run:
+```
+git submodule add https://github.com/CrowdStrike/CyberSOCEval_data CyberSOCEval_data
+```
+before running the benchmark. This step adds the submodule containing the required datasets and downloads them for use in this benchmark.
+
+Note: You only need to run this command once. After adding the submodule, you can run `git submodule update --init --recursive` to ensure that any future updates to the data repository are pulled down.
+
+Then, run the benchmark with the following command:
+```
+python3 -m CybersecurityBenchmarks.benchmark.run \
+--benchmark=malware_analysis \
+--prompt-path="$DATASETS/crwd_meta/malware_analysis/questions.json" \
+--response-path="$DATASETS/crwd_meta/malware_analysis/responses.json" \
+--judge-response-path="$DATASETS/crwd_meta/malware_analysis/judge_responses.json" \
+--stat-path="$DATASETS/crwd_meta/malware_analysis/stats.json" \
+--llm-under-test=<SPECIFICATION_1> --llm-under-test=<SPECIFICATION_2> ...
+[--truncate-input] [--run-llm-in-parallel]
+```
+
+If you are running this over a model with a smaller context window than 128k tokens, we suggest using the --truncate-input flag which will filter out some fields from the Hybrid analysis report and truncate values of other fields.  We found this truncation to have little effect on model performance on this benchmark.
+
+## Running Threat Intelligence Reasoning Benchmark
+
+### Download Threat Intelligence Report Data
+
+This benchmark includes questions related to public threat intelligence reports.  Depending on the source, this report data is hosted in pdf format at various agency organization websites and Crowdstrike's [CyberSOCEval data repo](https://github.com/CrowdStrike/CyberSOCEval_data/tree/main/data/crowdstrike-reports) and can all be extracted to the appropriate local directory by running the download_reports.py script.
+
+Before running the download script:
+1. To update the submodules containing the CrowdStrike reports and download the reports used in this benchmark, the first step is to run:
+```
+git submodule add https://github.com/CrowdStrike/CyberSOCEval_data CyberSOCEval_data
+```
+
+Note: You only need to run this command once. After adding the submodule, you can run `git submodule update --init --recursive` to ensure that any future updates to the data repository are pulled down.
+
+2. You will also need to install some additional dependencies for the [`pdf2image`](https://pdf2image.readthedocs.io/en/latest/installation.html#installing-poppler) package used for converting pdfs to images:
+* On Ubuntu/Debian: `sudo apt-get install poppler-utils`
+* On Arch Linux: `sudo pacman -S poppler`
+* On macOS: `brew install poppler`
+
+Once these have been done, you can run:
+```
+python3 -m CybersecurityBenchmarks.datasets.crwd_meta.threat_intel_reasoning.download_reports
+```
+This script will download the reports from their various hosting sites, and will additionally extract the text from the pdf to
+CybersecurityBenchmarks/datasets/threat_intelligence_reasoning/<report_id>.txt as well as a set of png images (one image of each page of the pdf report) to CybersecurityBenchmarks/datasets/crwd_meta/threat_intelligence_reasoning/<report_id>\_\_\<n>\_\_.png.  This text and/or image data will be passed into the benchmark as the context for the questions about the threat intelligence report.
+
+
+
+### Run the benchmark
+
+You may run this benchmark using either text, image, or both as the modality in which the threat intel report is passed to the model under test.
+
+```
+python3 -m CybersecurityBenchmarks.benchmark.run \
+--benchmark=threat_intel_reasoning \
+--prompt-path="$DATASETS/crwd_meta/threat_intel_reasoning/report_questions.json" \
+--response-path="$DATASETS/crwd_meta/threat_intel_reasoning/responses.json" \
+--judge-response-path="$DATASETS/crwd_meta/threat_intel_reasoning/judge_responses.json" \
+--stat-path="$DATASETS/crwd_meta/threat_intel_reasoning/stats.json" \
+--input-modality=<INPUT_MODALITY> \
+--llm-under-test=<SPECIFICATION_1> --llm-under-test=<SPECIFICATION_2> ...
+[--run-llm-in-parallel]
+```
+
+where <INPUT_MODALITY> is one of "text", "image", or "text_and_image"
+
+
 ## Results:
 
 Once the benchmarks have run, the evaluations of each model across each language
@@ -716,7 +820,7 @@ The result of each bucket follows the same structure.
 }
 ```
 
-### FRR Results
+### MITRE FRR Results
 
 ```
 {
@@ -846,8 +950,6 @@ where:
 * shr_passing_fuzzing contains the share of test cases that generated a patched function name and also passed an extensive period of fuzzing tests
 * shr_correct_patches contains the share of test cases that generated a patched function name, passed an extensive period of fuzzing tests, and also passed the differential debugging tests
 
-
-
 ## Exit the Virtual Environment
 
 And once you're done you can leave the python environment with
@@ -855,6 +957,84 @@ And once you're done you can leave the python environment with
 ```
 deactivate
 ```
+
+
+#### Malware Analysis Results
+
+Output stats will appear in a json according to the following structure:
+
+```
+ "model_name": {
+        "stat_per_model": {
+            "avg_score": ...,
+            "total_score": ...,
+            "correct_mc_count": ...,
+            "incorrect_mc_count": ...,
+            "response_parsing_error_count": ...,
+            "correct_mc_pct": ...
+        },
+        "stat_per_model_per_topic": {
+            "Risk Assessment": {
+                "avg_score": ...,
+                ...
+            },
+        "stat_per_model_per_difficulty": {
+            "medium": {
+                "avg_score": ...,
+                ...
+            },
+         "stat_per_model_per_attack": {
+            "infostealers": {
+                "avg_score": ...,
+                ...
+            }
+         }
+```
+
+where:
+* stat_per_model contains the aggregate metrics evaluated over all questions in the dataset
+* stat_per_model_per_\<CATEGORY> contains these same metrics aggregated only over the given \<CATEGORY>, where these categories include question topic, difficulty level, and malware type ('attack').
+Metrics for each of these include:
+* (in)correct_mc_count and (in)correct_mc_pct fields represent the number or percentage of questions to which the model correctly or incorrectly chose exaxtly the set of correct options
+* response_parsing_error_count contains the number of questions for which we were unable to extract multiple choice selections
+* avg_socre presents the average of the Jaccard similarity computed between the models chosen multiple choice options and the correct set of multiple choice options.  This provides a 'less strict' metric of correctness that allows dor partial credit when the model gets some but not all, or more than the set of correct options.
+
+
+#### Threat Intelligence Reasoning Results
+
+Output stats will appear in a json according to the following structure:
+
+```
+ "model_name": {
+        "stat_per_model": {
+            "avg_score": ...,
+            "total_score": ...,
+            "correct_mc_count": ...,
+            "incorrect_mc_count": ...,
+            "response_parsing_error_count": ...,
+            "correct_mc_pct": ...
+        },
+        "stat_per_model_per_report": {
+            "dprk-espionage": {
+                "avg_score": ...,
+                ...
+            },
+         "stat_per_model_per_source": {
+            "IC3": {
+                "avg_score": ...,
+                ...
+            }
+         }
+```
+
+where:
+* stat_per_model contains the aggregate metrics evaluated over all questions in the dataset
+* stat_per_model_per_\<CATEGORY> contains these same metrics aggregated only over the given \<CATEGORY>, where these categories include individual report identifier and source (e.g. the source from which the report was obtained, one of IC3, CISA, NSA, or CrowdStrike)
+Metrics for each of these include:
+* (in)correct_mc_count and (in)correct_mc_pct fields represent the number or percentage of questions to which the model correctly or incorrectly chose exaxtly the set of correct options
+* response_parsing_error_count contains the number of questions for which we were unable to extract multiple choice selections
+* avg_socre presents the average of the Jaccard similarity computed between the models chosen multiple choice options and the correct set of multiple choice options.  This provides a 'less strict' metric of correctness that allows dor partial credit when the model gets some but not all, or more than the set of correct options.
+
 
 # Developer's Guide
 

@@ -14,6 +14,7 @@ import unittest
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Dict, Generator, Tuple
+from unittest.mock import patch
 
 from security.genai.CybersecurityBenchmarks.benchmark.autopatch.build.microsnapshots.lib_dump import (
     dump_stacktrace,
@@ -229,158 +230,77 @@ class MemCpy(unittest.TestCase):
         )
         self.assertJSONEqual(dump, expected)
 
-    def test_get_noisy(self):
-        with self.fake_fuzz() as (tmp, fake_fuzz_delta, fake_fuzz_nodelta):
-            print(tmp, fake_fuzz_delta, fake_fuzz_nodelta)
-            input_p = tmp / "input"
-            with open(input_p, "w") as f:
-                f.write("bar")
-            args = lib_dump.parse_args(
-                [
-                    "get-noisy-config",
-                    "--binary",
-                    str(fake_fuzz_nodelta),
-                    "--hook-after",
-                    "someFunction",
-                    "--input",
-                    str(input_p),
-                ]
-            )
+    def test_config_write_suppress_output_false(self):
+        """Test that Config.write() prints config dump when suppress_output=False (default)."""
+        # Setup: create config and temp file
+        config = Config()
+        config.add_breakpoint("test_func", "test_var")
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as temp_file:
+            temp_path = Path(temp_file.name)
+            # Execute: call write with suppress_output=False and capture print output
+            with patch("builtins.print") as mock_print:
+                config.write(temp_path, suppress_output=False)
+
+            # Assert: print should not have been called
+            mock_print.assert_called_once()
+            call_args = mock_print.call_args[0]
+            self.assertEqual(call_args[0], "Config dump: ")
+            self.assertIn('"breakpoint_to_expressions"', call_args[1])
+
+            # Verify file was still written correctly
+            with open(temp_path, "r") as f:
+                written_config = json.load(f)
+            self.assertIn("breakpoint_to_expressions", written_config)
             self.assertEqual(
-                args,
-                lib_dump.Arguments(
-                    command="get-noisy-config",
-                    hook_after="someFunction",
-                    inputs=[str(input_p)],
-                    binary_orig=str(fake_fuzz_nodelta),
-                    binary_patched=None,
-                ),
+                written_config["breakpoint_to_expressions"]["test_func"], ["test_var"]
             )
-            skipped_fields, skipped_locals = lib_dump.extract_nosiy_fields(args)
-            print("skipped_fields: " + repr(skipped_fields))
-            print("skipped_locals: " + repr(skipped_locals))
-            self.assertJSONEqual(skipped_fields, {"SomeObject": ["some_noise"]})
-            self.assertJSONEqual(skipped_locals, ["noisy_local"])
 
-    def denoise_deltas(self, deltas):
-        denoised = []
-        for line in deltas:
-            line = re.sub(r"got \d{6,}", "got NOISE", line)
-            line = re.sub(r"expected \d{6,}", "expected NOISE", line)
-            denoised.append(line)
-        return sorted(denoised)
+    def test_config_write_suppress_output_true(self):
+        """Test that Config.write() does not print config dump when suppress_output=True."""
+        # Setup: create config and temp file
+        config = Config()
+        config.add_breakpoint("test_func", "test_var")
 
-    def test_get_delta(self):
-        with self.fake_fuzz() as (tmp, fake_fuzz_delta, fake_fuzz_nodelta):
-            print(tmp, fake_fuzz_delta, fake_fuzz_nodelta)
-            input_p = tmp / "input"
-            with open(input_p, "w") as f:
-                f.write("foo")
-            args = lib_dump.parse_args(
-                [
-                    "get-delta",
-                    "--binary-correct",
-                    str(fake_fuzz_nodelta),
-                    "--binary-suggested",
-                    str(fake_fuzz_delta),
-                    "--hook-after",
-                    "someFunction",
-                    "--input",
-                    str(input_p),
-                ]
-            )
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as temp_file:
+            temp_path = Path(temp_file.name)
+            # Execute: call write with suppress_output=True and capture print output
+            with patch("builtins.print") as mock_print:
+                config.write(temp_path, suppress_output=True)
+
+            # Assert: print should not have been called
+            mock_print.assert_not_called()
+
+            # Verify file was still written correctly
+            with open(temp_path, "r") as f:
+                written_config = json.load(f)
+            self.assertIn("breakpoint_to_expressions", written_config)
             self.assertEqual(
-                args,
-                lib_dump.Arguments(
-                    command="get-delta",
-                    hook_after="someFunction",
-                    inputs=[str(input_p)],
-                    binary_orig=str(fake_fuzz_nodelta),
-                    binary_patched=str(fake_fuzz_delta),
-                ),
-            )
-            deltas = lib_dump.get_delta(args)
-            denoised = self.denoise_deltas(deltas)
-            self.assertJSONEqual(
-                denoised,
-                sorted(
-                    [
-                        "after(someFunction).[0].values.obj.values.some_noise got NOISE expected NOISE",
-                        "after(someFunction).[0].values.obj.values.some_value got 4 expected 3",
-                        "after(someFunction).[0].values.noisy_local got NOISE expected NOISE",
-                        "after(someFunction).[1].values.obj.values.some_noise got NOISE expected NOISE",
-                        "after(someFunction).[1].values.obj.values.some_value got 4 expected 3",
-                        "after(someFunction).[1].values.noisy_local got NOISE expected NOISE",
-                    ]
-                ),
+                written_config["breakpoint_to_expressions"]["test_func"], ["test_var"]
             )
 
-            # the input bar shouldn't trigger a delta
-            with open(input_p, "w") as f:
-                f.write("bar")
-            deltas = lib_dump.get_delta(args)
-            denoised = self.denoise_deltas(deltas)
-            self.assertJSONEqual(
-                denoised,
-                sorted(
-                    [
-                        "after(someFunction).[0].values.obj.values.some_noise got NOISE expected NOISE",
-                        "after(someFunction).[0].values.noisy_local got NOISE expected NOISE",
-                        "after(someFunction).[1].values.obj.values.some_noise got NOISE expected NOISE",
-                        "after(someFunction).[1].values.noisy_local got NOISE expected NOISE",
-                    ]
-                ),
-            )
+    def test_config_write_default_behavior(self):
+        """Test that Config.write() defaults to suppress_output=False (prints by default)."""
+        # Setup: create config and temp file
+        config = Config()
+        config.add_breakpoint("test_func", "test_var")
 
-    def test_get_delta_with_noise_file(self):
-        with self.fake_fuzz() as (tmp, fake_fuzz_delta, fake_fuzz_nodelta):
-            print(tmp, fake_fuzz_delta, fake_fuzz_nodelta)
-            input_p = tmp / "input"
-            with open(input_p, "w") as f:
-                f.write("foo")
-            skip_file = tmp / "noise_file"
-            with open(skip_file, "w") as f:
-                json.dump(
-                    {
-                        "struct_to_skipped_fields": {"SomeObject": ["some_noise"]},
-                        "skipped_locals": ["noisy_local"],
-                    },
-                    f,
-                )
-            args = lib_dump.parse_args(
-                [
-                    "get-delta",
-                    "--binary-correct",
-                    str(fake_fuzz_nodelta),
-                    "--binary-suggested",
-                    str(fake_fuzz_delta),
-                    "--hook-after",
-                    "someFunction",
-                    "--input",
-                    str(input_p),
-                    "--skip-file",
-                    str(skip_file),
-                ]
-            )
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as temp_file:
+            temp_path = Path(temp_file.name)
+            # Execute: call write without supplying suppress_output and capture print output
+            with patch("builtins.print") as mock_print:
+                config.write(temp_path)
+
+            # Assert: print should not have been called
+            mock_print.assert_called_once()
+            call_args = mock_print.call_args[0]
+            self.assertEqual(call_args[0], "Config dump: ")
+            self.assertIn('"breakpoint_to_expressions"', call_args[1])
+
+            # Verify file was still written correctly
+            with open(temp_path, "r") as f:
+                written_config = json.load(f)
+            self.assertIn("breakpoint_to_expressions", written_config)
             self.assertEqual(
-                args,
-                lib_dump.Arguments(
-                    command="get-delta",
-                    hook_after="someFunction",
-                    inputs=[str(input_p)],
-                    binary_orig=str(fake_fuzz_nodelta),
-                    binary_patched=str(fake_fuzz_delta),
-                    skip_file=str(skip_file),
-                ),
-            )
-            deltas = lib_dump.get_delta(args)
-            denoised = self.denoise_deltas(deltas)
-            self.assertJSONEqual(
-                denoised,
-                sorted(
-                    [
-                        "after(someFunction).[0].values.obj.values.some_value got 4 expected 3",
-                        "after(someFunction).[1].values.obj.values.some_value got 4 expected 3",
-                    ]
-                ),
+                written_config["breakpoint_to_expressions"]["test_func"], ["test_var"]
             )

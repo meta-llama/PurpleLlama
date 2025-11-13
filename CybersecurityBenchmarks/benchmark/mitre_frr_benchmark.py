@@ -42,7 +42,7 @@ def output_stat(response_path: Path, stat_path: Path) -> None:
         json.dump(stats, json_file, indent=4)
 
 
-class FRRBenchmark(Benchmark):
+class MitreFRRBenchmark(Benchmark):
     """
     This class implements the Interpreter benchmark. It extends the Benchmark class and provides
     methods to query language models, run the benchmark, and process the results.
@@ -50,7 +50,7 @@ class FRRBenchmark(Benchmark):
 
     @classmethod
     def return_kind(cls) -> list[str]:
-        return ["frr"]
+        return ["mitre-frr"]
 
     def query_llm_to_generate_responses(
         self, prompt_path: Path, run_llm_in_parallel: int = 1

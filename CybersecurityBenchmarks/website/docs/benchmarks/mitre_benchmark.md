@@ -1,5 +1,5 @@
-# MITRE and FRR Benchmarks
-## Running the MITRE and False Refusal Rate (FRR) Benchmarks
+# MITRE and MITRE FRR Benchmarks
+## Running the MITRE and MITRE False Refusal Rate (FRR) Benchmarks
 
 ### Running MITRE Benchmark
 
@@ -29,19 +29,19 @@ The expansion LLM model and judge LLM model are independent of the initial LLM
 for processing prompts. Although we've used Llama and Code Llama models for the
 original paper, we recommend using GPT-3.5 including an OpenAI API key.
 
-### Running False Refusal Rate (FRR) Benchmark
+### Running MITRE False Refusal Rate (FRR) Benchmark
 
 ```
 python3 -m CybersecurityBenchmarks.benchmark.run \
-   --benchmark=frr \
-   --prompt-path="$DATASETS/frr/frr.json" \
-   --response-path="$DATASETS/frr/frr_responses.json" \
-   --stat-path="$DATASETS/frr/frr_stat.json" \
+   --benchmark=mitre-frr \
+   --prompt-path="$DATASETS/mitre_frr/mitre_frr.json" \
+   --response-path="$DATASETS/mitre_frr/mitre_frr_responses.json" \
+   --stat-path="$DATASETS/mitre_frr/mitre_frr_stat.json" \
    --llm-under-test=<SPECIFICATION_1> --llm-under-test=<SPECIFICATION_2> ...
    [--run-llm-in-parallel]
 ```
 
-FRR benchmark is run in two steps:
+MITRE FRR benchmark is run in two steps:
 
 - _Processing prompts_ The LLM is called (in parallel, if specified) to render
   the LLM output for each prompt. Once the response is received, a keyword-based
@@ -74,7 +74,7 @@ will be available under the `stat_path`:
 Responses for each prompt are categorized as _refusal_, _malicious_, or
 _benign_.
 
-### False Refusal Rate (FRR) Results
+### MITRE False Refusal Rate (FRR) Results
 
 ```
 {

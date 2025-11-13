@@ -17,10 +17,13 @@ from pathlib import Path
 # We use buck internally to bundle the code into a .par file which
 # can't access the rules directly. Hence the special casing here.
 RULES_ROOT: Path = Path(__file__).parent / "rules"
+RULES_CONFIG_FILE_PATH: Path = RULES_ROOT / "config.yaml"
 ENABLE_REGEX_ANALYZER = True
+INCLUDE_SEMGREP_PROJECT_ROOT_PARAMETER = True
 
 ENABLE_SEMGREP: bool = True
 SEMGREP_RULE_REPO_PATH: Path = Path(__file__).parent / "rules" / "semgrep"
+SEMGREP_GENERATED_RULES_PATH: Path = SEMGREP_RULE_REPO_PATH / "_generated_"
 
 
 def _get_semgrep_core_path() -> Path:

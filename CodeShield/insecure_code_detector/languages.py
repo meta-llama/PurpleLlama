@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import enum
 
-from typing import Dict
+from typing import Dict, List
 
 
 class Language(enum.Enum):
@@ -34,28 +34,38 @@ class Language(enum.Enum):
         return self.name.lower()
 
 
-EXTENSION_MAP: Dict[Language, str] = {
-    Language.C: ".c",
-    Language.CPP: ".cpp",
-    Language.CSHARP: ".cs",
-    Language.HACK: ".php",
-    Language.JAVA: ".java",
-    Language.JAVASCRIPT: ".js",
-    Language.KOTLIN: ".kt",
-    Language.OBJECTIVE_C: ".m",
-    Language.OBJECTIVE_CPP: ".mm",
-    Language.PHP: ".php",
-    Language.PYTHON: ".py",
-    Language.RUBY: ".rb",
-    Language.RUST: ".rs",
-    Language.SWIFT: ".swift",
-    Language.XML: ".xml",
+EXTENSION_MAP: Dict[Language, List[str]] = {
+    Language.C: [".c", ".h"],
+    Language.CPP: [
+        ".cpp",
+        ".hh",
+        ".hpp",
+        ".cc",
+        ".cu",
+        ".cuh",
+        ".cxx",
+        ".hxx",
+        ".tcc",
+    ],
+    Language.CSHARP: [".cs"],
+    Language.HACK: [".php"],
+    Language.JAVA: [".java"],
+    Language.JAVASCRIPT: [".js"],
+    Language.KOTLIN: [".kt"],
+    Language.OBJECTIVE_C: [".m"],
+    Language.OBJECTIVE_CPP: [".mm"],
+    Language.PHP: [".php"],
+    Language.PYTHON: [".py"],
+    Language.RUBY: [".rb"],
+    Language.RUST: [".rs"],
+    Language.SWIFT: [".swift"],
+    Language.XML: [".xml"],
 }
 
 
 def get_file_extension(language: Language) -> str:
     if language in EXTENSION_MAP:
-        return EXTENSION_MAP[language]
+        return EXTENSION_MAP[language][0]
     else:
         raise ValueError("Unknown language")
 

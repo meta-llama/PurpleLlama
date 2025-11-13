@@ -57,7 +57,10 @@ LANGUAGE_ANALYZER_MAP: dict[Language, list[Analyzer]] = {
         Analyzer.REGEX,
         Analyzer.SEMGREP,
     ],
-    Language.KOTLIN: [Analyzer.REGEX],
+    Language.KOTLIN: [
+        Analyzer.REGEX,
+        Analyzer.SEMGREP,
+    ],
     Language.OBJECTIVE_C: [Analyzer.REGEX],
     Language.PHP: [Analyzer.REGEX],
     Language.PYTHON: [
@@ -311,12 +314,13 @@ async def _semgrep_analyze(
     usecase: UseCase,
 ) -> list[Issue]:
     config_file_path = (
-        oss.SEMGREP_RULE_REPO_PATH
-        / "_generated_"
+        oss.SEMGREP_GENERATED_RULES_PATH
         / f"{code_context.language.value}_{usecase.value}.json"
     )
 
-    root_folder = "/" if os.path.isabs(code_context.path) else None
+    root_folder = None
+    if oss.INCLUDE_SEMGREP_PROJECT_ROOT_PARAMETER:
+        root_folder = "/" if os.path.isabs(code_context.path) else None
 
     command = (
         oss.SEMGREP_COMMAND

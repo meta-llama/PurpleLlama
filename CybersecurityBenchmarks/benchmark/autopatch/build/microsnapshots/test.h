@@ -71,7 +71,7 @@ void enum_and_ptrs(
   printf("other_2->d: %d\n", other_2->d);
 }
 
-typedef Foo SomeTypeDefEnum;
+using SomeTypeDefEnum = Foo;
 
 void test_typedef_enum(SomeTypeDefEnum foo) {
   printf("foo: %d\n", foo);
