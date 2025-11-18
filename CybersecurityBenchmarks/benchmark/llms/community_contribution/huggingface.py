@@ -29,25 +29,24 @@ class HUGGINGFACE(LLM):
     """Accessing Local HuggingFace Models via Transformers"""
 
     def __init__(self, config: LLMConfig) -> None:
-        self.model_name = self.model
         super().__init__(config)
         
-        logging.info(f"Loading HuggingFace model: {self.model_name}")
+        logging.info(f"Loading HuggingFace model: {self.model}")
 
         # Load Tokenizer
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name, trust_remote_code=True)
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model, trust_remote_code=True)
         if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
 
         # Determine if this is a VLM (Vision Language Model) or standard LLM for loading
         # This is a heuristic; specific architectures might need explicit checking
-        self.is_multimodal = "llava" in self.model_name.lower() or "vision" in self.model_name.lower() or "vl" in self.model_name.lower()
+        self.is_multimodal = "llava" in self.model.lower() or "vision" in self.model.lower() or "vl" in self.model.lower()
 
         if self.is_multimodal:
              # Helper for VLMs (handles image + text processing)
-            self.processor = AutoProcessor.from_pretrained(self.model_name, trust_remote_code=True)
+            self.processor = AutoProcessor.from_pretrained(self.model, trust_remote_code=True)
             self.hf_model = AutoModelForCausalLM.from_pretrained(
-                self.model_name,
+                self.model,
                 device_map="auto",
                 torch_dtype=torch.float16, # Usually preferred for inference
                 trust_remote_code=True
@@ -55,7 +54,7 @@ class HUGGINGFACE(LLM):
         else:
             self.processor = None
             self.hf_model = AutoModelForCausalLM.from_pretrained(
-                self.model_name,
+                self.model,
                 device_map="auto",
                 torch_dtype="auto",
                 trust_remote_code=True
@@ -207,7 +206,7 @@ class HUGGINGFACE(LLM):
     @override
     def valid_models(self) -> list[str]:
         # Since this is local, technically any HF string is valid, but we can return the configured one
-        return [self.model_name]
+        return [self.model]
 
     @override
     def query_with_system_prompt_and_image(
@@ -220,7 +219,7 @@ class HUGGINGFACE(LLM):
         top_p: float = DEFAULT_TOP_P,
     ) -> str:
         if not self.is_multimodal or not self.processor:
-            raise NotImplementedError(f"Model {self.model_name} does not appear to be a VLM supported by AutoProcessor.")
+            raise NotImplementedError(f"Model {self.model} does not appear to be a VLM supported by AutoProcessor.")
 
         # Open image using PIL
         try:
