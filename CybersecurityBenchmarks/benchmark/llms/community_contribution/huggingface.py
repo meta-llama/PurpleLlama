@@ -29,9 +29,9 @@ class HUGGINGFACE(LLM):
     """Accessing Local HuggingFace Models via Transformers"""
 
     def __init__(self, config: LLMConfig) -> None:
+        self.model_name = self.model
         super().__init__(config)
         
-        self.model_name = self.model
         logging.info(f"Loading HuggingFace model: {self.model_name}")
 
         # Load Tokenizer
