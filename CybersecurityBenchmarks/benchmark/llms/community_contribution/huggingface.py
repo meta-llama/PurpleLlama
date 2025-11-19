@@ -218,44 +218,12 @@ class HUGGINGFACE(LLM):
         temperature: float = DEFAULT_TEMPERATURE,
         top_p: float = DEFAULT_TOP_P,
     ) -> str:
-        if not self.is_multimodal or not self.processor:
-            raise NotImplementedError(f"Model {self.model} does not appear to be a VLM supported by AutoProcessor.")
-
-        # Open image using PIL
-        try:
-            raw_image = Image.open(image_path).convert("RGB")
-        except Exception as e:
-            logging.error(f"Failed to load image {image_path}: {e}")
-            raise e
-
-        # Construct prompt - Format depends heavily on the specific model (Llava vs Idefics etc)
-        # This implementation follows a generic Llava/Transformers style
-        
-        # Most VLMs expect the system prompt to be part of the text prompt logic or applied via processor
-        full_prompt = f"{system_prompt}\nUSER: <image>\n{prompt}\nASSISTANT:"
-        
-        if guided_decode_json_schema:
-             full_prompt = f"{system_prompt}\nInstruction: Output JSON following: {guided_decode_json_schema}\nUSER: <image>\n{prompt}\nASSISTANT:"
-
-        inputs = self.processor(text=full_prompt, images=raw_image, return_tensors="pt").to(self.hf_model.device)
-
-        with torch.no_grad():
-            outputs = self.hf_model.generate(
-                **inputs,
-                max_new_tokens=DEFAULT_MAX_TOKENS,
-                temperature=temperature,
-                top_p=top_p,
-                do_sample=True if temperature > 0 else False
-            )
-        
-        # Decode
-        generated_text = self.processor.batch_decode(outputs, skip_special_tokens=True)[0]
-        
-        # Clean up response (remove the prompt part if the model echoes it)
-        # Note: This parsing is fragile and depends on the specific model's behavior
-        if "ASSISTANT:" in generated_text:
-            return generated_text.split("ASSISTANT:")[-1].strip()
-        return generated_text
+        return self.query_with_system_prompt(
+            system_prompt=system_prompt,
+            prompt=prompt,
+            temperature=temperature,
+            top_p=top_p
+        )
 
     @override
     def query_multimodal(
@@ -268,40 +236,9 @@ class HUGGINGFACE(LLM):
         temperature: float = DEFAULT_TEMPERATURE,
         top_p: float = DEFAULT_TOP_P,
     ) -> str:
-        if audio_paths:
-            raise NotImplementedError("Audio processing via generic HuggingFace AutoModel is not supported in this implementation yet.")
-        
-        if not self.is_multimodal:
-             raise NotImplementedError("This model does not support multimodal inputs.")
-
-        # Load all images
-        images = []
-        if image_paths:
-            for p in image_paths:
-                images.append(Image.open(p).convert("RGB"))
-
-        # Construct Prompt
-        # Standard generic VLM prompt construction
-        sys_text = f"{system_prompt}\n" if system_prompt else ""
-        user_text = f"{text_prompt}" if text_prompt else ""
-        
-        # Insert image tokens for every image found
-        image_tokens = "<image>\n" * len(images)
-        full_prompt = f"{sys_text}USER: {image_tokens}{user_text}\nASSISTANT:"
-
-        inputs = self.processor(text=full_prompt, images=images if images else None, return_tensors="pt").to(self.hf_model.device)
-
-        with torch.no_grad():
-            outputs = self.hf_model.generate(
-                **inputs,
-                max_new_tokens=max_tokens,
-                temperature=temperature,
-                top_p=top_p,
-                do_sample=True if temperature > 0 else False
-            )
-
-        generated_text = self.processor.batch_decode(outputs, skip_special_tokens=True)[0]
-        
-        if "ASSISTANT:" in generated_text:
-            return generated_text.split("ASSISTANT:")[-1].strip()
-        return generated_text
+        return self.query_with_system_prompt(
+            system_prompt=system_prompt,
+            prompt=text_prompt,
+            temperature=temperature,
+            top_p=top_p
+        )
