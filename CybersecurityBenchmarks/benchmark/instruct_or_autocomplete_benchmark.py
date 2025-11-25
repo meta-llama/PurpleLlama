@@ -104,7 +104,14 @@ class InstructOrAutoCompleteBenchmark(Benchmark):
                 for llm_response in tqdm(lang_responses, desc="Processing Responses"):
                     # Extract the code from the LLM response, if possible
                     response = llm_response["response"]
-                    extract_result = self.extract_content_in_code_blocks(response)
+                    try:
+                        extract_result = self.extract_content_in_code_blocks(response)
+                    except Exception as e:
+                        LOG.debug(
+                            f"Failed to extract code blocks from response due to {e}, matching the entire message instead!"
+                        )
+                        print(response)
+                        raise e
                     if len(extract_result) == 0:
                         LOG.debug(
                             "One response does not contain code block, matching the entire message instead!"
