@@ -154,13 +154,13 @@
             {
               "pattern-either": [
                 {
-                  "pattern-inside": "import java.net.*\n...\n"
+                  "pattern-inside": "import java.net.*;\n...\n"
                 },
                 {
-                  "pattern-inside": "import java.net.URL\n...\n"
+                  "pattern-inside": "import java.net.URL;\n...\n"
                 },
                 {
-                  "pattern-inside": "import java.net.URI\n...\n"
+                  "pattern-inside": "import java.net.URI;\n...\n"
                 }
               ]
             },

@@ -99,7 +99,10 @@ class RepoRevisionHelper:
     """
 
     def __init__(
-        self, target_revision: Optional[str], logger: Optional[Logger] = None
+        self,
+        target_revision: Optional[str],
+        logger: Optional[Logger] = None,
+        discard_local_changes: bool = False,
     ) -> None:
         """
         Args:
@@ -108,12 +111,14 @@ class RepoRevisionHelper:
         self._target_revision: Optional[str] = target_revision
         self._prev_revision: Optional[str] = None
         self._logger: Logger = logger or LOGGER
+        self._discard_local_changes = discard_local_changes
 
     async def __aenter__(self) -> None:
         if self._target_revision is None:
             # we only maintain the context when a target revision is provided
             return
-        self.shelve()  # shelve the uncommited changes
+        if not self._discard_local_changes:
+            self.shelve()  # shelve the uncommited changes
         self._prev_revision = self.get_repo_revision()
         self._target_revision: str
         self.checkout_repo_revision(self._target_revision)
@@ -129,7 +134,8 @@ class RepoRevisionHelper:
 
         if self._prev_revision:
             self.checkout_repo_revision(self._prev_revision)
-        self.unshelve()
+        if not self._discard_local_changes:
+            self.unshelve()
         return False  # Do not suppress exceptions raised in the context
 
     def checkout_repo_revision(self, repo_hash: str) -> None:

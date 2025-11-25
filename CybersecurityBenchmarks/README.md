@@ -119,7 +119,7 @@ export DATASETS=$PWD/CybersecurityBenchmarks/datasets
 
 Each benchmark can run tests for multiple LLMs. Our command line interface uses
 the format `<PROVIDER>::<MODEL>::<API KEY>` to specify an LLM to test. We
-currently support APIs from OPENAI, and TOGETHER. For OpenAI compatible endpoints,
+currently support APIs from OPENAI, GOOGLE, ANTHROPIC, LLAMA and TOGETHER. For OpenAI compatible endpoints,
 you can also specify a custom base URL by using this format: `<PROVIDER>::<MODEL>::<API KEY>::<BASE URL>`.
 The followings are a few examples:
 

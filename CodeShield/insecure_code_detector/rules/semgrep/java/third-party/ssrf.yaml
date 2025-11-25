@@ -9,13 +9,13 @@ rules:
   - patterns:
     - pattern-either:
       - pattern-inside: |
-          import java.net.*
+          import java.net.*;
           ...
       - pattern-inside: |
-          import java.net.URL
+          import java.net.URL;
           ...
       - pattern-inside: |
-          import java.net.URI
+          import java.net.URI;
           ...
     - pattern: "new $TYPE(...). ... .$FUNC"
     - pattern-not: "new $TYPE(\"...\"). ... .$FUNC"

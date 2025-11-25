@@ -14,6 +14,7 @@ import unittest
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Dict, Generator, Tuple
+from unittest.mock import patch
 
 from security.genai.CybersecurityBenchmarks.benchmark.autopatch.build.microsnapshots.lib_dump import (
     dump_stacktrace,
@@ -228,3 +229,78 @@ class MemCpy(unittest.TestCase):
             r"0x[0-9a-f]+", "PTR", dump[0]["values"]["(*x)"]["desc"]
         )
         self.assertJSONEqual(dump, expected)
+
+    def test_config_write_suppress_output_false(self):
+        """Test that Config.write() prints config dump when suppress_output=False (default)."""
+        # Setup: create config and temp file
+        config = Config()
+        config.add_breakpoint("test_func", "test_var")
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as temp_file:
+            temp_path = Path(temp_file.name)
+            # Execute: call write with suppress_output=False and capture print output
+            with patch("builtins.print") as mock_print:
+                config.write(temp_path, suppress_output=False)
+
+            # Assert: print should not have been called
+            mock_print.assert_called_once()
+            call_args = mock_print.call_args[0]
+            self.assertEqual(call_args[0], "Config dump: ")
+            self.assertIn('"breakpoint_to_expressions"', call_args[1])
+
+            # Verify file was still written correctly
+            with open(temp_path, "r") as f:
+                written_config = json.load(f)
+            self.assertIn("breakpoint_to_expressions", written_config)
+            self.assertEqual(
+                written_config["breakpoint_to_expressions"]["test_func"], ["test_var"]
+            )
+
+    def test_config_write_suppress_output_true(self):
+        """Test that Config.write() does not print config dump when suppress_output=True."""
+        # Setup: create config and temp file
+        config = Config()
+        config.add_breakpoint("test_func", "test_var")
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as temp_file:
+            temp_path = Path(temp_file.name)
+            # Execute: call write with suppress_output=True and capture print output
+            with patch("builtins.print") as mock_print:
+                config.write(temp_path, suppress_output=True)
+
+            # Assert: print should not have been called
+            mock_print.assert_not_called()
+
+            # Verify file was still written correctly
+            with open(temp_path, "r") as f:
+                written_config = json.load(f)
+            self.assertIn("breakpoint_to_expressions", written_config)
+            self.assertEqual(
+                written_config["breakpoint_to_expressions"]["test_func"], ["test_var"]
+            )
+
+    def test_config_write_default_behavior(self):
+        """Test that Config.write() defaults to suppress_output=False (prints by default)."""
+        # Setup: create config and temp file
+        config = Config()
+        config.add_breakpoint("test_func", "test_var")
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json") as temp_file:
+            temp_path = Path(temp_file.name)
+            # Execute: call write without supplying suppress_output and capture print output
+            with patch("builtins.print") as mock_print:
+                config.write(temp_path)
+
+            # Assert: print should not have been called
+            mock_print.assert_called_once()
+            call_args = mock_print.call_args[0]
+            self.assertEqual(call_args[0], "Config dump: ")
+            self.assertIn('"breakpoint_to_expressions"', call_args[1])
+
+            # Verify file was still written correctly
+            with open(temp_path, "r") as f:
+                written_config = json.load(f)
+            self.assertIn("breakpoint_to_expressions", written_config)
+            self.assertEqual(
+                written_config["breakpoint_to_expressions"]["test_func"], ["test_var"]
+            )
