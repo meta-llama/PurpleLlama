@@ -18,6 +18,7 @@ class RITS(OPENAI):
     def __init__(self, config: LLMConfig):
         config.base_url = config.base_url or "/".join(['https://inference-3scale-apicast-production.apps.rits.fmaas.res.ibm.com', config.model, "v1"])
         config.api_key = config.api_key or os.getenv("RITS_API_KEY")
+        print("RITS_API_KEY:", config.api_key)
         config.model = {
             "gpt-oss-20b": "openai/gpt-oss-20b",
             "gpt-oss-120b": "openai/gpt-oss-120b",
