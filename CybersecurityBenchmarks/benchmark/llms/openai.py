@@ -78,11 +78,17 @@ class OPENAI(LLM):
             ),
         )
         logging.getLogger().setLevel(level)
-        if '/dccstor' in self.model and 'gpt-oss' in self.model:
-            # For CyberPal 2.0 fine tuned models, we did not use the "analysis" and "assistant" special tokens in the
-            # harmony response format, so the reasoning_content field contains the model's response.
-            return response.choices[0].message.reasoning_content
-        return response.choices[0].message.content
+        # if '/dccstor' in self.model and 'gpt-oss' in self.model:
+        #     # For CyberPal 2.0 fine tuned models, we did not use the "analysis" and "assistant" special tokens in the
+        #     # harmony response format, so the reasoning_content field contains the model's response.
+        #     return response.choices[0].message.reasoning_content
+        # return response.choices[0].message.content
+        output = ""
+        if response.choices[0].message.reasoning_content is not None:
+            output += response.choices[0].message.reasoning_content
+        if response.choices[0].message.content is not None:
+            output += response.choices[0].message.content
+        return output
 
     @override
     def chat_with_system_prompt(
