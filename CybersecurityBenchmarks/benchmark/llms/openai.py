@@ -5,6 +5,7 @@
 
 # pyre-strict
 
+import re
 from __future__ import annotations
 
 import logging
@@ -83,11 +84,17 @@ class OPENAI(LLM):
         #     # harmony response format, so the reasoning_content field contains the model's response.
         #     return response.choices[0].message.reasoning_content
         # return response.choices[0].message.content
-        output = ""
-        if response.choices[0].message.reasoning_content is not None:
-            output += response.choices[0].message.reasoning_content
-        if response.choices[0].message.content is not None:
-            output += response.choices[0].message.content
+
+        # return including reasoning
+        # output = ""
+        # if response.choices[0].message.reasoning_content is not None:
+        #     output += response.choices[0].message.reasoning_content + "\n"
+        # if response.choices[0].message.content is not None:
+        #     output += response.choices[0].message.content
+
+        # return without reasoning
+        output = response.choices[0].message.content
+        output = re.sub(r'<think>.*?</think>', '', output, flags=re.DOTALL)
         return output
 
     @override
