@@ -47,5 +47,5 @@ typing-inspection==0.4.0
 typing_extensions==4.13.2
 tzdata==2025.2
 uritemplate==4.1.1
-urllib3==2.5.0
+urllib3==2.6.0
 wcwidth==0.2.13
