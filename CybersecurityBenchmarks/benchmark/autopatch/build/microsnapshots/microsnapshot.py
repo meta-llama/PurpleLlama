@@ -302,6 +302,9 @@ class RecursiveDumpValues:
         type_class = tt.GetTypeClass()
         if type_class == lldb.eTypeClassTypedef:
             return self.dump(val=val, tt=tt.GetTypedefedType())
+        elif type_class == lldb.eTypeClassReference:
+            # Handle C++ references (like const std::vector<>&) by dereferencing them
+            return self.dump(val=val.Dereference())
         elif type_class == lldb.eTypeClassArray:
             return self.dump_array(val)
         elif type_class == lldb.eTypeClassBuiltin:
@@ -373,6 +376,8 @@ class RecursiveDumpValues:
         return FuncPtr(self.resolve_fptr_name(val))
 
     def dump_enum(self, val):
+        # lldb formats enum values as strings like "FOO" or "BAR" in val.value
+        # Just return the formatted value directly
         return val.value
 
     def dump_pointer(self, val):
@@ -421,7 +426,25 @@ class RecursiveDumpValues:
     def dump_union(self, val):
         return {"stype": "UNION", "type": val.type.name}
 
-    def dump_expr(self, expr) -> Dict[str, Any]:
+    def dump_expr(self, expr, frame=None) -> Dict[str, Any]:
+        # Try to find the variable in the current frame first (more reliable for function parameters)
+        if frame:
+            try:
+                # Get all variables: arguments, locals, statics, and in_scope_only
+                # GetVariables(arguments, locals, statics, in_scope_only)
+                all_vars = frame.GetVariables(True, True, False, True)
+                for i in range(all_vars.GetSize()):
+                    var = all_vars.GetValueAtIndex(i)
+                    if var.name == expr:
+                        return self.dump(val=var)
+            except Exception as e:
+                self.log(f"Error accessing frame variables for {expr}: {e}")
+
+            # Use frame context for expression evaluation - this has access to local variables
+            val = frame.EvaluateExpression(expr)
+            return self.dump(val=val)
+
+        # Fall back to target-level evaluation only if no frame
         target = self.debugger.GetSelectedTarget()
         val = target.EvaluateExpression(expr)
         return self.dump(val=val)
@@ -555,7 +578,7 @@ def dump_struct_callback_wrapper(frame, loc, dict):
         dumper = RecursiveDumpValues(debugger, GLOBAL_STATE.config)
         for expr in exprs:
             # We reuse the dumper, so that we don't dump the same pointers multiple times if multiple expressions refer to the same object
-            res["values"][expr] = dumper.dump_expr(expr)
+            res["values"][expr] = dumper.dump_expr(expr, frame=frame)
     if res:
         with open(GLOBAL_STATE.config.outfile_path, "a") as f:
             json.dump(res, f, default=lambda o: o.as_json())

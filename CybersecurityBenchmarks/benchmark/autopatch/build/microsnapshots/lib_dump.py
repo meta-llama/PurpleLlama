@@ -73,6 +73,7 @@ class Config:
 
 LLDB_TEMPLATE: str = """
 command script import {microsnapshot_path}
+settings set target.debug-file-search-paths {dwp_search_path}
 hook_dump_structs {config_path} {out_path}
 run
 quit
@@ -119,44 +120,69 @@ def dump_values(
     if not MICROSNAPSHOT_PLUGIN.exists():
         MICROSNAPSHOT_PLUGIN = root / "microsnapshot.py"
 
-    with ExistingOrTempDirectory(existing=output_dir) as tmpdirobj:
-        tmpdir = Path(tmpdirobj)
-        microsnapshot_path = MICROSNAPSHOT_PLUGIN
-        config_path = tmpdir / "rules.json"
-        out_path = tmpdir / "out.json"
-        script_path = tmpdir / "test_lldb.lldb"
-
-        with open(script_path, "w") as f:
-            script = LLDB_TEMPLATE.format(
-                microsnapshot_path=microsnapshot_path,
-                config_path=config_path,
-                out_path=out_path,
-            )
-            f.write(script)
-
-        config.write(config_path, suppress_output)
-
+    # Create symlink for dwp file if it doesn't exist
+    # Buck creates bin-pre_stamped.dwp but lldb looks for bin.dwp
+    dwp_expected = target.parent / f"{target.name}.dwp"
+    dwp_actual = target.parent / f"{target.name}-pre_stamped.dwp"
+    created_symlink = False
+    if dwp_actual.exists() and not dwp_expected.exists():
         try:
-            subprocess_result = subprocess.run(
-                ["lldb", "-s", script_path, target, "--", *config.args],
-                timeout=config.timeout_seconds,
-                stdout=subprocess.DEVNULL if suppress_output else None,
-                stderr=subprocess.DEVNULL if suppress_output else None,
-            ).returncode
-        except subprocess.TimeoutExpired:
-            print(" ENCOUNTERED TIMEOUT")
-            return [{"desc": "TIMEOUT", "values": {"TIMEOUT": True}}]
-        assert subprocess_result == 0
-        res = []
-        with open(out_path, "r") as f:
-            for line in f.readlines():
-                res.append(json.loads(line.strip()))
-        # print("dump_values: ", repr(res))
-        return res
+            dwp_expected.symlink_to(dwp_actual)
+            created_symlink = True
+        except Exception:
+            pass  # If symlink creation fails, continue anyway
+
+    try:
+        with ExistingOrTempDirectory(existing=output_dir) as tmpdirobj:
+            tmpdir = Path(tmpdirobj)
+            microsnapshot_path = MICROSNAPSHOT_PLUGIN
+            config_path = tmpdir / "rules.json"
+            out_path = tmpdir / "out.json"
+            script_path = tmpdir / "test_lldb.lldb"
+
+            # Set dwp search path to the directory containing the binary
+            dwp_search_path = target.parent
+
+            with open(script_path, "w") as f:
+                script = LLDB_TEMPLATE.format(
+                    microsnapshot_path=microsnapshot_path,
+                    config_path=config_path,
+                    out_path=out_path,
+                    dwp_search_path=dwp_search_path,
+                )
+                f.write(script)
+
+            config.write(config_path, suppress_output)
+
+            try:
+                subprocess_result = subprocess.run(
+                    ["lldb", "-s", script_path, target, "--", *config.args],
+                    timeout=config.timeout_seconds,
+                    stdout=subprocess.DEVNULL if suppress_output else None,
+                    stderr=subprocess.DEVNULL if suppress_output else None,
+                ).returncode
+            except subprocess.TimeoutExpired:
+                print(" ENCOUNTERED TIMEOUT")
+                return [{"desc": "TIMEOUT", "values": {"TIMEOUT": True}}]
+            assert subprocess_result == 0
+            res = []
+            with open(out_path, "r") as f:
+                for line in f.readlines():
+                    res.append(json.loads(line.strip()))
+            # print("dump_values: ", repr(res))
+            return res
+    finally:
+        # Clean up symlink if we created it
+        if created_symlink and dwp_expected.exists():
+            try:
+                dwp_expected.unlink()
+            except Exception:
+                pass
 
 
 LLDB_TEMPLATE_STACKTRACES: str = """
 command script import {microsnapshot_path}
+settings set target.debug-file-search-paths {dwp_search_path}
 hook_dump_stacktrace {config_path} {out_path}
 breakpoint list
 run
@@ -177,42 +203,66 @@ def dump_stacktrace(
     if not MICROSNAPSHOT_PLUGIN.exists():
         MICROSNAPSHOT_PLUGIN = root / "microsnapshot.py"
 
-    with ExistingOrTempDirectory(existing=output_dir) as tmpdirobj:
-        tmpdir = Path(tmpdirobj)
-        microsnapshot_path = MICROSNAPSHOT_PLUGIN
-        config_path = tmpdir / "rules.json"
-        out_path = tmpdir / "out.json"
-        script_path = tmpdir / "test_lldb.lldb"
-
-        with open(script_path, "w") as f:
-            script = LLDB_TEMPLATE_STACKTRACES.format(
-                microsnapshot_path=microsnapshot_path,
-                config_path=config_path,
-                out_path=out_path,
-            )
-            f.write(script)
-
-        config.write(config_path, suppress_output)
-
+    # Create symlink for dwp file if it doesn't exist
+    # Buck creates bin-pre_stamped.dwp but lldb looks for bin.dwp
+    dwp_expected = target.parent / f"{target.name}.dwp"
+    dwp_actual = target.parent / f"{target.name}-pre_stamped.dwp"
+    created_symlink = False
+    if dwp_actual.exists() and not dwp_expected.exists():
         try:
-            cmd = ["lldb", "-s", script_path, target, "--", *config.args]
-            print(f"Running debugger: {repr(cmd)}")
-            subprocess_result = subprocess.run(
-                cmd,
-                timeout=config.timeout_seconds,
-                stdout=subprocess.DEVNULL if suppress_output else None,
-                stderr=subprocess.DEVNULL if suppress_output else None,
-            ).returncode
-        except subprocess.TimeoutExpired:
-            print(" ENCOUNTERED TIMEOUT")
-            return [{"desc": "TIMEOUT", "values": {"TIMEOUT": True}}]
-        assert subprocess_result == 0
-        res = []
-        with open(out_path, "r") as f:
-            for line in f.readlines():
-                res.append(json.loads(line.strip()))
-        # print("dump_values: ", repr(res))
-        return res
+            dwp_expected.symlink_to(dwp_actual)
+            created_symlink = True
+        except Exception:
+            pass  # If symlink creation fails, continue anyway
+
+    try:
+        with ExistingOrTempDirectory(existing=output_dir) as tmpdirobj:
+            tmpdir = Path(tmpdirobj)
+            microsnapshot_path = MICROSNAPSHOT_PLUGIN
+            config_path = tmpdir / "rules.json"
+            out_path = tmpdir / "out.json"
+            script_path = tmpdir / "test_lldb.lldb"
+
+            # Set dwp search path to the directory containing the binary
+            dwp_search_path = target.parent
+
+            with open(script_path, "w") as f:
+                script = LLDB_TEMPLATE_STACKTRACES.format(
+                    microsnapshot_path=microsnapshot_path,
+                    config_path=config_path,
+                    out_path=out_path,
+                    dwp_search_path=dwp_search_path,
+                )
+                f.write(script)
+
+            config.write(config_path, suppress_output)
+
+            try:
+                cmd = ["lldb", "-s", script_path, target, "--", *config.args]
+                print(f"Running debugger: {repr(cmd)}")
+                subprocess_result = subprocess.run(
+                    cmd,
+                    timeout=config.timeout_seconds,
+                    stdout=subprocess.DEVNULL if suppress_output else None,
+                    stderr=subprocess.DEVNULL if suppress_output else None,
+                ).returncode
+            except subprocess.TimeoutExpired:
+                print(" ENCOUNTERED TIMEOUT")
+                return [{"desc": "TIMEOUT", "values": {"TIMEOUT": True}}]
+            assert subprocess_result == 0
+            res = []
+            with open(out_path, "r") as f:
+                for line in f.readlines():
+                    res.append(json.loads(line.strip()))
+            # print("dump_values: ", repr(res))
+            return res
+    finally:
+        # Clean up symlink if we created it
+        if created_symlink and dwp_expected.exists():
+            try:
+                dwp_expected.unlink()
+            except Exception:
+                pass
 
 
 @dataclass
