@@ -5,10 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <cstdint>
+#pragma once
+
 #include <cstring>
-#include <iostream>
 #include <map>
+#include <string>
 #include <vector>
 #include "stdio.h"
 #include "stdlib.h"
