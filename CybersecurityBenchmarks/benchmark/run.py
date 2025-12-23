@@ -39,6 +39,10 @@ from .prompt_injection_benchmark import PromptInjectionBenchmark
 
 from .visual_prompt_injection_benchmark import VisualPromptInjectionBenchmark
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 LOG: logging.Logger = logging.getLogger(__name__)
 
 Benchmark.register_benchmark(InstructOrAutoCompleteBenchmark)

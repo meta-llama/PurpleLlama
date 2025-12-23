@@ -12,6 +12,9 @@ from typing import List
 
 from .llms.anthropic import ANTHROPIC
 from .llms.googlegenai import GOOGLEGENAI
+from .llms.community_contribution import VLLM
+from .llms.community_contribution import RITS
+from .llms.community_contribution import HUGGINGFACE
 
 from .llms.llm_base import (
     DEFAULT_MAX_TOKENS,
@@ -66,8 +69,8 @@ def create(
     else:
         raise ValueError(f"Invalid identifier: {identifier}")
 
-    if api_key is None:
-        raise ValueError(f"No API key provided for {provider}: {name}")
+    # if api_key is None:
+    #     raise ValueError(f"No API key provided for {provider}: {name}")
 
     config = LLMConfig(
         model=name,
@@ -85,6 +88,12 @@ def create(
         return ANTHROPIC(config)
     if provider == "GOOGLEGENAI":
         return GOOGLEGENAI(config)
+    if provider == "VLLM":
+        return VLLM(config)
+    if provider == "RITS":
+        return RITS(config)
+    if provider == "HUGGINGFACE":
+        return HUGGINGFACE(config)
     if provider == "LLAMA":
         return LLAMA(config)
 
