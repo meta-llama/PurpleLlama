@@ -12,7 +12,6 @@ from typing import List, Optional
 
 import openai
 from openai._types import NOT_GIVEN
-
 from typing_extensions import override
 
 from ..benchmark_utils import audio_to_b64, image_to_b64
@@ -229,7 +228,7 @@ class OPENAI(LLM):
                         {"type": "text", "text": prompt},
                         {
                             "type": "image_url",
-                            "image_url": {"url": f"data:image/png;base64, {image}"},
+                            "image_url": {"url": f"data:image/png;base64,{image}"},
                         },
                     ],
                 },
@@ -276,7 +275,7 @@ class OPENAI(LLM):
                 user_message_content.append(
                     {
                         "type": "image_url",
-                        "image_url": {"url": f"data:image/png;base64, {image_data}"},
+                        "image_url": {"url": f"data:image/png;base64,{image_data}"},
                     }
                 )
 
