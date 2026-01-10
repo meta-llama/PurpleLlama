@@ -63,14 +63,18 @@ class PromptGuard:
                 login()
             # Load the model and tokenizer from Hugging Face
             model = AutoModelForSequenceClassification.from_pretrained(model_name)
-            tokenizer = AutoTokenizer.from_pretrained(model_name)
+            tokenizer = AutoTokenizer.from_pretrained(
+                model_name, fix_mistral_regex=True
+            )
             # Save the model and tokenizer locally
             model.save_pretrained(model_path)
             tokenizer.save_pretrained(model_path)
         else:
             # Load the model and tokenizer from the local path
             model = AutoModelForSequenceClassification.from_pretrained(model_path)
-            tokenizer = AutoTokenizer.from_pretrained(model_path)
+            tokenizer = AutoTokenizer.from_pretrained(
+                model_path, fix_mistral_regex=True
+            )
 
         return model, tokenizer
 
