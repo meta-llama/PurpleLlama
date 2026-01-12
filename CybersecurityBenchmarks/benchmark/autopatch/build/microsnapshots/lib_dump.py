@@ -3,7 +3,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-# pyre-unsafe
+# pyre-strict
 
 import argparse
 import json
@@ -13,43 +13,44 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Any, Dict, List, Optional, Tuple, Union
+from types import TracebackType
+from typing import Any, cast, Dict, Generator, List, Optional, Set, Tuple, Type, Union
 
 
 class Config:
-    def __init__(self):
-        self.struct_to_skipped_fields = {}
-        self.skipped_locals = set()
-        self.skipped_ptr_types = {}
-        self.breakpoint_positions_to_expressions = {}
-        self.positions = set()
+    def __init__(self) -> None:
+        self.struct_to_skipped_fields: Dict[str, List[str]] = {}
+        self.skipped_locals: Set[str] = set()
+        self.skipped_ptr_types: Dict[str, Any] = {}
+        self.breakpoint_positions_to_expressions: Dict[str, Set[str]] = {}
+        self.positions: Set[str] = set()
         self.max_objects = 10000
         self.max_recursion_depth = 20
         self.catch_exceptions = True
-        self.args = []
+        self.args: List[str] = []
         self.timeout_seconds = 10
-        self.patched_lines = set()
+        self.patched_lines: Set[str] = set()
 
-    def skip_struct_field(self, struct_name: str, field_name: str):
+    def skip_struct_field(self, struct_name: str, field_name: str) -> None:
         if struct_name not in self.struct_to_skipped_fields:
             self.struct_to_skipped_fields[struct_name] = []
         self.struct_to_skipped_fields[struct_name].append(field_name)
 
-    def skip_local(self, name: str):
+    def skip_local(self, name: str) -> None:
         self.skipped_locals.add(name)
 
-    def add_breakpoint(self, position: str, expression: str):
+    def add_breakpoint(self, position: str, expression: str) -> None:
         if position not in self.breakpoint_positions_to_expressions:
             self.breakpoint_positions_to_expressions[position] = set()
         self.breakpoint_positions_to_expressions[position].add(expression)
 
-    def add_patched_line(self, file: str, line: int):
+    def add_patched_line(self, file: str, line: int) -> None:
         self.patched_lines.add(f"{file}:{line}")
 
-    def dump_after_return(self, position: str):
+    def dump_after_return(self, position: str) -> None:
         self.positions.add(position)
 
-    def write(self, path: Path, suppress_output: bool = False):
+    def write(self, path: Path, suppress_output: bool = False) -> None:
         bps = {
             k: sorted(v) for (k, v) in self.breakpoint_positions_to_expressions.items()
         }
@@ -88,21 +89,26 @@ class ExistingOrTempDirectory:
     - Else, it calls TemporaryDitectory to create a tempdir that will be cleaned up on context manger exit.
     """
 
-    def __init__(self, existing: Optional[Path] = None):
+    def __init__(self, existing: Optional[Path] = None) -> None:
         if existing is None:
-            self.tmpdir: TemporaryDirectory = TemporaryDirectory()
+            self.tmpdir: Union[TemporaryDirectory[str], Path] = TemporaryDirectory()
             return
         if not existing.exists():
             existing.mkdir()
-        self.tmpdir: Path = existing
+        self.tmpdir = existing
 
-    def __enter__(self) -> Union[str, Path]:
+    def __enter__(self) -> Path:
         if isinstance(self.tmpdir, TemporaryDirectory):
-            result: str = self.tmpdir.__enter__()
-            return result
+            return Path(self.tmpdir.__enter__())
+        assert isinstance(self.tmpdir, Path)
         return self.tmpdir.__enter__()
 
-    def __exit__(self, exc_type, exc_value, traceback):
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        traceback: Optional[TracebackType],
+    ) -> Optional[bool]:
         if isinstance(self.tmpdir, TemporaryDirectory):
             return self.tmpdir.__exit__(exc_type, exc_value, traceback)
         return False  # A return value of 'False' means propagate the exception
@@ -113,7 +119,7 @@ def dump_values(
     config: Config,
     output_dir: Optional[Path] = None,
     suppress_output: bool = False,
-):
+) -> List[Dict[str, Any]]:
     target = target.resolve()
     target = target.absolute()
     root = Path(__file__).parent / "resources" if __package__ else Path("/")
@@ -196,7 +202,7 @@ def dump_stacktrace(
     config: Config,
     output_dir: Optional[Path] = None,
     suppress_output: bool = False,
-):
+) -> List[Dict[str, Any]]:
     target = target.resolve()
     target = target.absolute()
     root = Path(__file__).parent / "resources" if __package__ else Path("/")
@@ -278,7 +284,7 @@ class Arguments:
     patched_lines: Optional[List[str]] = None
 
 
-def add_common_args(parser: argparse.ArgumentParser):
+def add_common_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--input",
         required=True,
@@ -386,7 +392,13 @@ def parse_args(args: List[str]) -> Arguments:
     return Arguments(**vars(parser.parse_args(args)))
 
 
-def recursive_compare_dicts(event1, event2, path=[]):
+def recursive_compare_dicts(
+    event1: Dict[str, Any],
+    event2: Dict[str, Any],
+    path: Optional[List[str]] = None,
+) -> Generator[Tuple[List[str], Any, Any], None, None]:
+    if path is None:
+        path = []
     for key in set(event1.keys()) | set(event2.keys()):
         key_path = path + [key]
         if key not in event2:
@@ -436,7 +448,12 @@ def find_struct_field_for_path(
         last_key = cur_key
 
 
-def find_noisy_fields(dump1, dump2, out_struct_to_fields, out_locals):
+def find_noisy_fields(
+    dump1: Dict[str, Any],
+    dump2: Dict[str, Any],
+    out_struct_to_fields: Dict[str, Set[str]],
+    out_locals: Set[str],
+) -> bool:
     assert set(dump1.keys()) == set(dump2.keys())
     for desc_key in dump1.keys():
         dump1 = dump1[desc_key]
@@ -455,7 +472,9 @@ def find_noisy_fields(dump1, dump2, out_struct_to_fields, out_locals):
     return False
 
 
-def transpose_event_list(events):
+def transpose_event_list(
+    events: List[Dict[str, Any]],
+) -> Dict[str, List[Dict[str, Any]]]:
     res = {}
     for event in events:
         if event["desc"] not in res:
@@ -475,7 +494,9 @@ def _expand_input_files(inputs: List[str]) -> List[str]:
     return args
 
 
-def extract_noisy_fields(args: Arguments):
+def extract_noisy_fields(
+    args: Arguments,
+) -> Tuple[Dict[str, List[str]], List[str]]:
     assert args.command == "get-noisy-config"
     config = Config()
     config.catch_exceptions = True
@@ -508,14 +529,14 @@ def extract_noisy_fields(args: Arguments):
     )
 
 
-def extract_stacktraces(args: Arguments):
+def extract_stacktraces(args: Arguments) -> List[Tuple[str, ...]]:
     assert args.command == "get-stacktraces"
     config = Config()
     config.catch_exceptions = True
     all_inputs = _expand_input_files(args.inputs)
     lines = args.patched_lines
     assert lines is not None
-    config.patched_lines = lines
+    config.patched_lines = set(lines)
     if Path("/tmp/poc").exists():
         all_inputs = ["/tmp/poc"] + all_inputs[:100]
     assert Path(args.binary_orig).exists(), f"Expect {args.binary_orig} to exist"
@@ -525,11 +546,11 @@ def extract_stacktraces(args: Arguments):
         config.args = [inp]
         stacktraces = dump_stacktrace(Path(args.binary_orig), config)
         for st in stacktraces:
-            all_stacktraces.add(tuple(st[::-1]))
+            all_stacktraces.add(tuple(cast(List[str], st)[::-1]))
     return list(all_stacktraces)
 
 
-def list_all_fields(dump1: Any, cur_path: List[str], out_paths: List[str]):
+def list_all_fields(dump1: Any, cur_path: List[str], out_paths: List[str]) -> None:
     if isinstance(dump1, dict):
         for k, v in dump1.items():
             list_all_fields(v, cur_path + [k], out_paths)
@@ -540,7 +561,11 @@ def list_all_fields(dump1: Any, cur_path: List[str], out_paths: List[str]):
 
 
 # dump has format "addr/name/file:num" -> [{"desc": key, values: TreeOfDumpedValues}]
-def find_deltas(dump_expected, dump_patched, out_deltas):
+def find_deltas(
+    dump_expected: Dict[str, Any],
+    dump_patched: Dict[str, Any],
+    out_deltas: List[str],
+) -> None:
     for desc_key in dump_expected.keys():
         dump1 = dump_expected[desc_key]
         dump2 = dump_patched.get(desc_key, None)
@@ -559,7 +584,7 @@ def find_deltas(dump_expected, dump_patched, out_deltas):
                         out_deltas.append(".".join(path) + f" got {sv2} expected {sv1}")
 
 
-def get_delta(args: Arguments):
+def get_delta(args: Arguments) -> List[str]:
     config = Config()
     config.catch_exceptions = True
     config.dump_after_return(args.hook_after)
