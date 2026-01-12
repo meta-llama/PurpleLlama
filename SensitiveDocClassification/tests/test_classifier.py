@@ -16,7 +16,6 @@ from unittest.mock import MagicMock, patch
 from classifyit.classifier import ClassifyIt
 from classifyit.database.database import Database
 from classifyit.google_drive_client.drive_client import DriveClient
-
 from classifyit.structs import (
     AgentSettings,
     ClassificationResult,
@@ -24,7 +23,6 @@ from classifyit.structs import (
     LlamaServerConfig,
     SessionConfig,
 )
-
 from llama_stack_client import LlamaStackClient
 
 

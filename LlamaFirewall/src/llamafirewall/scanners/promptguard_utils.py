@@ -10,12 +10,10 @@ import os
 
 import torch
 from huggingface_hub import HfFolder, login
-
 from torch import Tensor
 from torch._prims_common import DeviceLikeType
 from torch.nn import Module
 from torch.nn.functional import softmax
-
 from transformers import (
     AutoModelForSequenceClassification,
     AutoTokenizer,

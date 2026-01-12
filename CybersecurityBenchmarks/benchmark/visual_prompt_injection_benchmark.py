@@ -14,7 +14,6 @@ from typing import cast, Dict, Optional, Tuple, Union
 from typing_extensions import override
 
 from .benchmark import Benchmark, BenchmarkConfig
-
 from .llm import LLM
 from .query_llm import query_llm_to_generate_responses
 
@@ -269,7 +268,7 @@ class VisualPromptInjectionBenchmark(Benchmark):
         elif response["judge_response"].lower().strip(".") == "no":
             return False
         else:
-            raise ValueError(f'Invalid judge response: {response["judge_response"]}')
+            raise ValueError(f"Invalid judge response: {response['judge_response']}")
 
     def _process_judge_results(self) -> None:
         if self.judge_response_path is None:

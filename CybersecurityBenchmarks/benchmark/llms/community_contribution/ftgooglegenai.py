@@ -13,7 +13,6 @@ import re
 from typing import Any, Dict, List, Optional
 
 import requests
-
 from google.auth.transport.requests import Request
 from google.cloud import storage
 from google.oauth2 import service_account

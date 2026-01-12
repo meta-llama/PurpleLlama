@@ -12,7 +12,6 @@ import os
 from typing import Any, Dict, Iterator, List
 
 from langchain_core.messages import AIMessage
-
 from llamafirewall import (
     AssistantMessage,
     LlamaFirewall,

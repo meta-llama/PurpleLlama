@@ -12,7 +12,6 @@ from typing import List, Optional
 
 import openai
 from openai._types import NOT_GIVEN
-
 from typing_extensions import override
 
 from ..benchmark_utils import audio_to_b64, image_to_b64

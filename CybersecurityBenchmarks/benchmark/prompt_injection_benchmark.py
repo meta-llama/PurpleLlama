@@ -12,7 +12,6 @@ from pathlib import Path
 from typing import cast, Dict, Optional, Tuple, Union
 
 from .benchmark import Benchmark, BenchmarkConfig
-
 from .llm import LLM
 from .query_llm import process_prompt_and_user_input, query_llm_to_generate_responses
 

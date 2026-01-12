@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import functools
 import importlib.resources
-
 import os
 import shutil
 from pathlib import Path

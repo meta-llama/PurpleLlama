@@ -12,11 +12,9 @@ import logging
 import os
 import re
 from pathlib import Path
-
 from typing import cast, Dict, List, Optional, Tuple, Union
 
 from ..benchmark import Benchmark, BenchmarkConfig
-
 from ..benchmark_utils import extract_json
 from ..llm import LLM
 from ..query_llm import query_llm_to_generate_responses
@@ -39,9 +37,9 @@ class ThreatIntelReasoningBenchmark(Benchmark):
         )
         modalities = ["text", "image", "text_and_image"]
         formated_modalities = ", ".join([f"'{m}'" for m in modalities])
-        assert (
-            self.input_modality in modalities
-        ), f"Supported input_modality values for ThreatIntelReasoningBenchmark are {formated_modalities}"
+        assert self.input_modality in modalities, (
+            f"Supported input_modality values for ThreatIntelReasoningBenchmark are {formated_modalities}"
+        )
 
     @classmethod
     def return_kind(cls) -> list[str]:
@@ -70,7 +68,7 @@ class ThreatIntelReasoningBenchmark(Benchmark):
 
         prompt = f"""
 
-        Given the context, answer the following question: { question }. Options: { options }.
+        Given the context, answer the following question: {question}. Options: {options}.
         You need to return the list of correct answers. it is possible that there are multiple correct answers. or a single correct answer.
         Respond in a JSON with the following structure:
         {{correct_answers: string[] //The list of the letters corresponding to the correct answers, just the letters}}

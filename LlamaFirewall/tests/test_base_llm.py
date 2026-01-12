@@ -10,7 +10,6 @@ import unittest
 from unittest.mock import AsyncMock, MagicMock, patch
 
 from llamafirewall.utils.base_llm import LLMClient
-
 from pydantic import BaseModel
 
 

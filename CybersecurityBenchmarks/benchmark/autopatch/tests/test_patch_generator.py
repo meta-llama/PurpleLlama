@@ -12,11 +12,9 @@ from pathlib import Path
 from typing import Iterator, List, Optional, Type
 
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
-
 from later.unittest import TestCase
 
 from ..llm_interface import forget_middle_of_the_convo, LLMInterface
-
 from ..patch_generator import (
     extract_code,
     LOGGER as patch_generator_logger,
@@ -26,7 +24,6 @@ from ..patch_generator import (
     PatchGenerator,
 )
 from ..source_utils import FakeSourceUtils, TreeSitterSourceUtils
-
 from ..tools import get_new_report, PatchVerifierInterface
 from ..types import (
     CrashReproduceResult,

@@ -7,7 +7,6 @@
 
 import json
 import logging
-
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Callable, cast, Dict, List, Optional, Union

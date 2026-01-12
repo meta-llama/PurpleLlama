@@ -19,7 +19,6 @@ from llamafirewall.llamafirewall_data_types import (
     ScanStatus,
     Trace,
 )
-
 from typing_extensions import Self
 
 # Only import the base Scanner class at module level

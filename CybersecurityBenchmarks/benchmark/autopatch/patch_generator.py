@@ -15,7 +15,6 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from logging import Logger, LoggerAdapter
 from pathlib import Path
-
 from typing import Callable, List, Optional, Tuple, Type
 
 from .llm_interface import forget_middle_of_the_convo, LLMInterface
@@ -36,7 +35,6 @@ from .source_utils import (
     Stopwatch,
 )
 from .tools import PatchVerifierInterface
-
 from .types import (
     Commit,
     CrashReproduceStatus,
@@ -562,7 +560,7 @@ class PatchGenerator:
                 crash_info, self.get_report()
             )
             self._logger.info(
-                f"Retry round: {retry_round+1} / {self._config.max_retries}"
+                f"Retry round: {retry_round + 1} / {self._config.max_retries}"
             )
 
             with Stopwatch() as sw:
@@ -751,7 +749,7 @@ class PatchGenerator:
                     )
             except Exception as e:
                 self._logger.warning(
-                    f"Failed the {i+1}/{max_iterations} patch trajectory: {e}\n\n{traceback.format_exc()}."
+                    f"Failed the {i + 1}/{max_iterations} patch trajectory: {e}\n\n{traceback.format_exc()}."
                 )
                 continue
             if not patch_plan:
@@ -765,7 +763,7 @@ class PatchGenerator:
 
             # revert and continue
             self._logger.info(
-                f"Attempted patch ({i+1}/{max_iterations}) did not fix the crash and pass the tests."
+                f"Attempted patch ({i + 1}/{max_iterations}) did not fix the crash and pass the tests."
             )
             try:
                 await self._source_utils.revert_current_changes()

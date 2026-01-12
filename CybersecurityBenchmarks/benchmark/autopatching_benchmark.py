@@ -24,11 +24,9 @@ from typing import Any, Callable, Coroutine, Dict, Optional, Union
 import pkg_resources
 
 from .arvo_utils import ArvoContainer
-
 from .autopatch.autopatch_tools import AutoPatchAgent
 from .autopatch.report import ChatHistory, write_chat_history_markdown
 from .autopatch.types import PatchGenerationReport
-
 from .benchmark import Benchmark, BenchmarkConfig
 from .llm import LLM
 
@@ -363,7 +361,7 @@ class AutoPatchingBenchmark(Benchmark):
     ) -> None:
         RED = "\033[1m\033[91m"
         YELLOW = "\033[1m\033[93m"
-        END = "" "\033[0m"
+        END = "\033[0m"
         BLUE = "\033[1m\033[94m"
         metadata_path = pkg_resources.resource_filename(
             __name__, f"arvo_meta/{case_id}-meta.json"
@@ -804,13 +802,13 @@ class AutoPatchingBenchmark(Benchmark):
             if num_passed_qa_checks > 0:
                 evaluation_statistics[model][
                     AutoPatchingBenchmark.EVALUATION_SHR_PATCHES_GENERATED_KEY
-                ] = f"{num_patch_generated/num_passed_qa_checks:.3f}"
+                ] = f"{num_patch_generated / num_passed_qa_checks:.3f}"
                 evaluation_statistics[model][
                     AutoPatchingBenchmark.EVALUATION_SHR_PASSING_FUZZING_KEY
-                ] = f"{num_passed_fuzzing/num_passed_qa_checks:.3f}"
+                ] = f"{num_passed_fuzzing / num_passed_qa_checks:.3f}"
                 evaluation_statistics[model][
                     AutoPatchingBenchmark.EVALUATION_SHR_CORRECT_PATCHES_KEY
-                ] = f"{num_passed_fuzzing_and_differential_debugging/num_passed_qa_checks:.3f}"
+                ] = f"{num_passed_fuzzing_and_differential_debugging / num_passed_qa_checks:.3f}"
             else:
                 evaluation_statistics[model][
                     AutoPatchingBenchmark.EVALUATION_SHR_CORRECT_PATCHES_KEY
@@ -842,30 +840,30 @@ class AutoPatchingBenchmark(Benchmark):
             arvo_challenge_number = response[
                 AutoPatchingBenchmark.RESPONSES_ARVO_CHALLENGE_NUMBER_KEY
             ]
-            assert isinstance(
-                arvo_challenge_number, int
-            ), f"{AutoPatchingBenchmark.RESPONSES_ARVO_CHALLENGE_NUMBER_KEY} should be an int"
+            assert isinstance(arvo_challenge_number, int), (
+                f"{AutoPatchingBenchmark.RESPONSES_ARVO_CHALLENGE_NUMBER_KEY} should be an int"
+            )
 
             rebuilt_binary = response.get(
                 AutoPatchingBenchmark.RESPONSES_REBUILT_BINARY_KEY
             )
-            assert isinstance(
-                rebuilt_binary, str
-            ), f"{AutoPatchingBenchmark.RESPONSES_REBUILT_BINARY_KEY} should be a str"
+            assert isinstance(rebuilt_binary, str), (
+                f"{AutoPatchingBenchmark.RESPONSES_REBUILT_BINARY_KEY} should be a str"
+            )
 
             patched_function_name = response.get(
                 AutoPatchingBenchmark.RESPONSES_PATCHED_FUNCTION_KEY
             )
-            assert isinstance(
-                patched_function_name, str
-            ), f"{AutoPatchingBenchmark.RESPONSES_PATCHED_FUNCTION_KEY} should be a str"
+            assert isinstance(patched_function_name, str), (
+                f"{AutoPatchingBenchmark.RESPONSES_PATCHED_FUNCTION_KEY} should be a str"
+            )
 
             containers_pass_qa_checks = response.get(
                 AutoPatchingBenchmark.RESPONSES_CONTAINERS_PASS_QA_CHECKS_KEY, False
             )
-            assert isinstance(
-                containers_pass_qa_checks, bool
-            ), f"{AutoPatchingBenchmark.RESPONSES_CONTAINERS_PASS_QA_CHECKS_KEY} should be a bool"
+            assert isinstance(containers_pass_qa_checks, bool), (
+                f"{AutoPatchingBenchmark.RESPONSES_CONTAINERS_PASS_QA_CHECKS_KEY} should be a bool"
+            )
 
             # Initialize result dictionary for this challenge
             evaluation_results[model][arvo_challenge_number] = {}

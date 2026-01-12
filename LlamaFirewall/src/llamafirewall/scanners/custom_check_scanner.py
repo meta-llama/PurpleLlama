@@ -10,11 +10,9 @@ from abc import abstractmethod
 from typing import Generic, Type, TypeVar
 
 from llamafirewall.utils.base_llm import LLMClient
-
 from pydantic import BaseModel
 
 from ..llamafirewall_data_types import Message, ScanResult, Trace
-
 from .base_scanner import Scanner
 
 LOG: logging.Logger = logging.getLogger(__name__)

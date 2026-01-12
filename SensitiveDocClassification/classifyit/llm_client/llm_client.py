@@ -13,7 +13,6 @@ import re
 import uuid
 
 from classifyit.structs import SessionConfig
-
 from llama_stack_client import Agent, LlamaStackClient
 from pydantic import BaseModel
 

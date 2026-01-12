@@ -9,14 +9,11 @@
 from __future__ import annotations
 
 import asyncio
-
 import enum
-
 import logging
 from dataclasses import dataclass
 
 from CodeShield.insecure_code_detector import insecure_code_detector, languages
-
 from CodeShield.insecure_code_detector.issues import Issue, Severity
 from CodeShield.insecure_code_detector.languages import Language
 from CodeShield.insecure_code_detector.usecases import UseCase

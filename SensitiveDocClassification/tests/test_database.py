@@ -14,7 +14,6 @@ from datetime import datetime, timezone
 from unittest.mock import MagicMock, patch
 
 from classifyit.database.database import Database, File, Label
-
 from peewee import DatabaseError
 
 

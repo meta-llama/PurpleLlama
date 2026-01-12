@@ -13,7 +13,6 @@ import subprocess
 import tempfile
 import traceback
 from concurrent.futures import ThreadPoolExecutor
-
 from enum import auto, Enum
 from functools import lru_cache
 from pathlib import Path
@@ -22,7 +21,6 @@ from typing import Any, Dict, List, MutableMapping, Optional, Set, Tuple
 
 import boto3
 import pkg_resources
-
 from async_lru import alru_cache
 from botocore import UNSIGNED
 from botocore.config import Config
@@ -98,7 +96,7 @@ def get_all_least_common_ancestors(
 
     dumb_log(
         diff_log,
-        f"FOUND LCAs with avg {sum_losses/len(ground_truth_stacktraces)} lost frames out of {sum_len / len(ground_truth_stacktraces)}: {repr(res)}",
+        f"FOUND LCAs with avg {sum_losses / len(ground_truth_stacktraces)} lost frames out of {sum_len / len(ground_truth_stacktraces)}: {repr(res)}",
     )
     return list(res)
 
@@ -189,9 +187,9 @@ class ArvoContainer:
     @classmethod
     def _get_container_repository(cls) -> str:
         container_repository = cls._container_repository
-        assert (
-            container_repository is not None
-        ), "Container repository must be set before use."
+        assert container_repository is not None, (
+            "Container repository must be set before use."
+        )
         return container_repository
 
     @classmethod

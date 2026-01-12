@@ -35,7 +35,7 @@ class MemCpy(unittest.TestCase):
                 "c": 1.23457,
                 "other": {
                     "stype": "ALLOC",
-                    "name": f"ptr_{ptr_offset+1}",
+                    "name": f"ptr_{ptr_offset + 1}",
                     "value": {
                         "stype": "STRUCT",
                         "type": "OtherObject",
@@ -44,7 +44,7 @@ class MemCpy(unittest.TestCase):
                 },
                 "skipped": {
                     "stype": "ALLOC",
-                    "name": f"ptr_{ptr_offset+2}",
+                    "name": f"ptr_{ptr_offset + 2}",
                     "value": self.main_z,
                 },
                 "tag": [84, 65, 71, 88],

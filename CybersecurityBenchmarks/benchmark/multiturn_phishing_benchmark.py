@@ -6,19 +6,15 @@
 # pyre-strict
 
 import json
-
 import logging
 import re
 import typing
 from pathlib import Path
 from statistics import mean, variance
-
 from typing import cast, Dict, Optional, Union
 
 from .benchmark import Benchmark
-
 from .llm import LLM
-
 from .query_llm import query_llm_to_generate_responses
 
 MAX_TURNS = 5

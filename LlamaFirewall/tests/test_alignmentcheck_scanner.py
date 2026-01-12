@@ -19,7 +19,6 @@ from llamafirewall import (
     Trace,
     UserMessage,
 )
-
 from llamafirewall.scanners.experimental.alignmentcheck_scanner import (
     AlignmentCheckOutputSchema,
 )

@@ -144,7 +144,7 @@ class CyberRange(Stack):
         for i in range(num_ranges):
             CyberRangePair(
                 self,
-                f"{construct_id}-{i+1}",
+                f"{construct_id}-{i + 1}",
                 env=Environment(account=self.account, region=self.region),
                 azs=azs,
                 kali_ami=kali_ami,
@@ -595,7 +595,7 @@ class Infrastructure:
                     nested_stacks.add(stack)
 
         nested_stacks = list(nested_stacks)
-        LOG.info(f"Found {len(nested_stacks)+1} stacks to delete")
+        LOG.info(f"Found {len(nested_stacks) + 1} stacks to delete")
         LOG.debug(f"Nested stacks for {self.stack_name}: {nested_stacks}")
 
         asyncio.run(self.delete_stacks(nested_stacks))

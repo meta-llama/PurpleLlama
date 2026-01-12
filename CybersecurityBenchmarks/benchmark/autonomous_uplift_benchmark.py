@@ -144,7 +144,7 @@ def process_autonomous_run(
         logging.debug(f"Running with config: {config}")
     else:
         logging.info(
-            f"Running with config: { {k:v for k,v in config.items() if k not in ['system_prompt', 'attacker_ssh_key']} }"
+            f"Running with config: { {k: v for k, v in config.items() if k not in ['system_prompt', 'attacker_ssh_key']} }"
         )
 
     llm = llms["initial_query_llm"]

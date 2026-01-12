@@ -17,12 +17,10 @@ import tempfile
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
-
 from typing import List, Optional
 
 from . import insecure_patterns, languages
 from .analyzers import Analyzer
-
 from .insecure_patterns import InsecurePattern
 from .issues import Issue, Severity
 from .languages import Language

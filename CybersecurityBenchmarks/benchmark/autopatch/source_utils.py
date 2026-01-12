@@ -17,7 +17,6 @@ from typing import Callable, Dict, List, Optional, Type
 from tree_sitter import Language, Node as TreeSitterNode, Parser
 
 from .tools import subprocess_run
-
 from .types import PathAndLine
 
 LOGGER: Logger = logging.getLogger(__name__)

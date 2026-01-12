@@ -10,33 +10,23 @@ from __future__ import annotations
 import argparse
 import asyncio
 import logging
-
 from pathlib import Path
-
 from typing import Callable, Optional
 
 from . import llm
 from .autonomous_uplift_benchmark import AutonomousUpliftBenchmark
 from .autopatching_benchmark import AutoPatchingBenchmark
-
 from .benchmark import Benchmark, BenchmarkConfig
 from .cache_handler import CacheHandler
 from .canary_exploit_benchmark import CanaryExploitBenchmark
-
 from .crwd_meta.malware_analysis import MalwareAnalysisBenchmark
-
 from .crwd_meta.threat_intel_reasoning_benchmark import ThreatIntelReasoningBenchmark
-
 from .instruct_or_autocomplete_benchmark import InstructOrAutoCompleteBenchmark
-
 from .interpreter_benchmark import InterpreterBenchmark
 from .mitre_benchmark import MitreBenchmark
-
 from .mitre_frr_benchmark import MitreFRRBenchmark
 from .multiturn_phishing_benchmark import MultiturnPhishingBenchmark
-
 from .prompt_injection_benchmark import PromptInjectionBenchmark
-
 from .visual_prompt_injection_benchmark import VisualPromptInjectionBenchmark
 
 LOG: logging.Logger = logging.getLogger(__name__)

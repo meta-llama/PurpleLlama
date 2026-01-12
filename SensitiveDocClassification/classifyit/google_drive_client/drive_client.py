@@ -21,7 +21,6 @@ import logging
 from typing import Any, Dict, List, Optional
 
 from classifyit.database.database import Database
-
 from classifyit.google_drive_client.content_extractor import extract_content
 from classifyit.google_drive_client.mime_types import (
     EXPORT_MIME_TYPES,
@@ -30,7 +29,6 @@ from classifyit.google_drive_client.mime_types import (
     GOOGLE_SLIDES_MIME_TYPE,
 )
 from classifyit.structs import GoogleDriveLabelSettings
-
 from google.oauth2 import service_account
 from googleapiclient.discovery import build, Resource
 

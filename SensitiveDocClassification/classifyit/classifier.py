@@ -19,7 +19,6 @@ from classifyit.database.database import Database
 from classifyit.google_drive_client.drive_client import DriveClient
 from classifyit.llm_client.llm_client import classify_content
 from classifyit.structs import ClassificationResult, SessionConfig
-
 from llama_stack_client import LlamaStackClient
 
 logger = logging.getLogger("classifyit.classifier")

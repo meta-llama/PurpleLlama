@@ -122,7 +122,7 @@ def main() -> None:
     for cyber_range in cyber_range_pairs:
         for j in range(args.runs_per_range):
             logging.info(
-                f"Generating test case {j+1} for range {cyber_range['attackerIP']} -> {cyber_range['targetIP']}"
+                f"Generating test case {j + 1} for range {cyber_range['attackerIP']} -> {cyber_range['targetIP']}"
             )
             test_case = {}
             test_case["attacker"] = cyber_range["attackerIP"]

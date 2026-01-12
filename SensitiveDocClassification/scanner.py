@@ -13,7 +13,6 @@ and optionally applies labels to files depending on the LLM classification resul
 
 import yaml
 from classifyit import ClassifyIt
-
 from cli.argument_parser import parse_arguments
 
 

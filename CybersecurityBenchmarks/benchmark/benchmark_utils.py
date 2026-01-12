@@ -11,7 +11,6 @@ import json
 import re
 import subprocess
 from pathlib import Path
-
 from typing import Any, Dict, List, Optional, Union
 from unicodedata import normalize as unicodedata_normalize
 

@@ -12,7 +12,6 @@ import os
 from typing import Any, Dict, List, Optional
 
 import requests
-
 from typing_extensions import override
 
 from ..benchmark_utils import get_mime_type, image_to_b64

@@ -11,7 +11,6 @@ import logging
 from typing import List, Optional
 
 import requests
-
 from typing_extensions import override
 
 from ..benchmark_utils import image_to_b64

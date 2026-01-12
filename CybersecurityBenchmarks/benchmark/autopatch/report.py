@@ -188,7 +188,7 @@ def write_chat_history_markdown(histories: List[ChatHistory], output_file: str) 
             else:
                 # Write each message in the chat history
                 for i, msg in enumerate(history.history):
-                    md_file.write(f"### Message {i+1}\n\n")
+                    md_file.write(f"### Message {i + 1}\n\n")
                     msg = msg.replace("###", "@@@")
                     msg = msg.replace("##", "@@")
                     msg = msg.replace("# ", "#### ")
