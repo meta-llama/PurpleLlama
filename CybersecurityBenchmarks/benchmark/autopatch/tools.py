@@ -171,8 +171,7 @@ class GlogFormatter(CustomFormatter):
         logging.Formatter.__init__(self, fmt, datefmt)
 
     def format(self, record: logging.LogRecord) -> str:
-        # pyre-fixme[16]: `LogRecord` has no attribute `levelchar`.
-        record.levelchar = GlogFormatter.get_level_char(record.levelno)
+        record.levelchar = GlogFormatter.get_level_char(record.levelno)  # type: ignore[attr-defined]
         result = CustomFormatter.format(self, record)
         if self.escape_newlines:
             result = result.replace("\n", r"\n")

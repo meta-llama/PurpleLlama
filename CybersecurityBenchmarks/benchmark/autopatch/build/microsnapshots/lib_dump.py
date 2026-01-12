@@ -13,7 +13,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 
 class Config:
@@ -96,10 +96,11 @@ class ExistingOrTempDirectory:
             existing.mkdir()
         self.tmpdir: Path = existing
 
-    def __enter__(self):
+    def __enter__(self) -> Union[str, Path]:
         if isinstance(self.tmpdir, TemporaryDirectory):
-            return self.tmpdir.__enter__()
-        return self.tmpdir
+            result: str = self.tmpdir.__enter__()
+            return result
+        return self.tmpdir.__enter__()
 
     def __exit__(self, exc_type, exc_value, traceback):
         if isinstance(self.tmpdir, TemporaryDirectory):
@@ -217,7 +218,7 @@ def dump_stacktrace(
 
     try:
         with ExistingOrTempDirectory(existing=output_dir) as tmpdirobj:
-            tmpdir = Path(tmpdirobj)
+            tmpdir: Path = Path(tmpdirobj)
             microsnapshot_path = MICROSNAPSHOT_PLUGIN
             config_path = tmpdir / "rules.json"
             out_path = tmpdir / "out.json"
