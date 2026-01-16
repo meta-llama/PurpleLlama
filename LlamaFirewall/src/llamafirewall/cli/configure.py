@@ -100,7 +100,7 @@ def download_model(model_name: str = DEFAULT_MODEL_NAME) -> bool:
         # Download and save the model and tokenizer
         print(f"Downloading model {model_name}...")
         model = AutoModelForSequenceClassification.from_pretrained(model_name)
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
+        tokenizer = AutoTokenizer.from_pretrained(model_name, fix_mistral_regex=True)
 
         # Save the model and tokenizer locally
         model.save_pretrained(model_path)
