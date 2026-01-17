@@ -18,7 +18,7 @@ from langchain_core.runnables import Runnable
 from langchain_core.runnables.config import RunnableConfig
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
 from langgraph.checkpoint.memory import MemorySaver  # @manual
-from langgraph.graph.state import CompiledStateGraph
+from langgraph.graph.graph import CompiledGraph
 from langgraph.prebuilt import create_react_agent  # @manual
 from llamafirewall import (
     AssistantMessage,
@@ -106,7 +106,7 @@ class LangChainAgent:
         memory = MemorySaver()
         search = TavilySearchResults(max_results=2)
         tools = [search]
-        self.agent_executor: CompiledStateGraph = create_react_agent(
+        self.agent_executor: CompiledGraph = create_react_agent(
             base_llm, tools, checkpointer=memory
         )
         self.config: RunnableConfig = {"configurable": {"thread_id": "abc123"}}
