@@ -11,6 +11,6 @@ tree-sitter==0.24.0
 tree-sitter-cpp==0.23.4
 async_lru==2.0.5
 boto3==1.37.31
-pypdf==6.1.3
+pypdf==6.6.0
 pdf2image==1.17.0
 setuptools==78.1.1
