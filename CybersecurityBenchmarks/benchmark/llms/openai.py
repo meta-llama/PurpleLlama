@@ -228,7 +228,7 @@ class OPENAI(LLM):
                         {"type": "text", "text": prompt},
                         {
                             "type": "image_url",
-                            "image_url": {"url": f"data:image/png;base64, {image}"},
+                            "image_url": {"url": f"data:image/png;base64,{image}"},
                         },
                     ],
                 },
@@ -275,7 +275,7 @@ class OPENAI(LLM):
                 user_message_content.append(
                     {
                         "type": "image_url",
-                        "image_url": {"url": f"data:image/png;base64, {image_data}"},
+                        "image_url": {"url": f"data:image/png;base64,{image_data}"},
                     }
                 )
 
