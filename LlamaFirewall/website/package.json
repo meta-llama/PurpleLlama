@@ -42,9 +42,11 @@
     "node": ">=18.0"
   },
   "overrides": {
-    "ajv": "^8.18.0"
+    "ajv": "^8.18.0",
+    "minimatch": "^10.2.1"
   },
   "resolutions": {
-    "ajv": "^8.18.0"
+    "ajv": "^8.18.0",
+    "minimatch": "^10.2.1"
   }
 }
