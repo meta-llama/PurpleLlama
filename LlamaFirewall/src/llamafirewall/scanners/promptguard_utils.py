@@ -9,7 +9,7 @@ import logging
 import os
 
 import torch
-from huggingface_hub import HfFolder, login
+from huggingface_hub import get_token, login
 from torch import Tensor
 from torch._prims_common import DeviceLikeType
 from torch.nn import Module
@@ -54,7 +54,7 @@ class PromptGuard:
             LOG.warning(
                 f"Prompt Guard Scanner requires {model_name} available locally to run. We are downloading it from Hugging Face Hub. This may take a while..."
             )
-            if not HfFolder.get_token():
+            if not get_token():
                 LOG.warning(
                     "No Hugging Face token found. You will be prompted to enter it via Hugging Face login function, no data will be stored by LlamaFirewall."
                 )
