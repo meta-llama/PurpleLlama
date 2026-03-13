@@ -15,7 +15,7 @@ with the necessary tokens and API keys.
 import os
 
 import typer
-from huggingface_hub import HfFolder, login
+from huggingface_hub import get_token as _get_hf_token, login
 
 # Default model name for PromptGuard
 DEFAULT_MODEL_NAME = "meta-llama/Llama-Prompt-Guard-2-86M"
@@ -93,7 +93,7 @@ def download_model(model_name: str = DEFAULT_MODEL_NAME) -> bool:
         )
 
         # Check if the user is logged in to Hugging Face
-        if not HfFolder.get_token():
+        if not _get_hf_token():
             print("You need to log in to Hugging Face to download the model.")
             login()
 
