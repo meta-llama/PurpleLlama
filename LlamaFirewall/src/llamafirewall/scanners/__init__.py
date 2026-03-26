@@ -51,4 +51,8 @@ def __getattr__(name: str) -> Type[object]:
         from .experimental.piicheck_scanner import PIICheckScanner
 
         return PIICheckScanner
+    elif name == "promptguard_utils":
+        from . import promptguard_utils
+
+        return promptguard_utils
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
