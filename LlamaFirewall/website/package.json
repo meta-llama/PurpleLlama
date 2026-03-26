@@ -43,10 +43,12 @@
   },
   "overrides": {
     "ajv": "^8.18.0",
-    "minimatch": "^10.2.1"
+    "minimatch": "^10.2.1",
+    "picomatch": "^2.3.2"
   },
   "resolutions": {
     "ajv": "^8.18.0",
-    "minimatch": "^10.2.1"
+    "minimatch": "^10.2.1",
+    "picomatch": "^2.3.2"
   }
 }
