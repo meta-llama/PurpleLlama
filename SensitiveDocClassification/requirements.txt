@@ -34,7 +34,7 @@ pyparsing==3.2.3
 python-dateutil==2.9.0.post0
 pytz==2025.2
 PyYAML==6.0.2
-requests==2.32.4
+requests==2.33.0
 rich==14.0.0
 rsa==4.9.1
 setuptools==80.9.0
