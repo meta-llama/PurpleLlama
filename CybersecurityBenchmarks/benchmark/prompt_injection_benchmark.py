@@ -15,7 +15,6 @@ from .benchmark import Benchmark, BenchmarkConfig
 from .llm import LLM
 from .query_llm import process_prompt_and_user_input, query_llm_to_generate_responses
 
-
 ModelKey = Tuple[str]  # One-tuple for model
 CategoryKey = Tuple[str, str]  # Two-tuple for model and category
 Key = Union[ModelKey, CategoryKey]

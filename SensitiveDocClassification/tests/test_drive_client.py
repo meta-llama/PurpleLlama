@@ -13,7 +13,6 @@ from unittest.mock import call, MagicMock, patch
 from classifyit.google_drive_client.drive_client import DriveClient
 from classifyit.structs import GoogleDriveLabelSettings
 
-
 REQUEST_FIELDS = (
     "nextPageToken, files(id, name, mimeType, size, "
     + "createdTime, modifiedTime, md5Checksum, "

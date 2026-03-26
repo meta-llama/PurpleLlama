@@ -9,7 +9,6 @@ from typing import List, Optional
 
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
 
-
 LOGGER: logging.Logger = logging.getLogger(__name__)
 LIONHEAD_BOT_FBID = 89002005279108
 LIONHEAD_METAGEN_KEY = "mg-api-c40d0a29fcdf"

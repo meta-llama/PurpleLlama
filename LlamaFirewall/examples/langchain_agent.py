@@ -29,7 +29,6 @@ from llamafirewall import (
     Trace,
 )
 
-
 LOG: logging.Logger = logging.getLogger(__name__)
 
 

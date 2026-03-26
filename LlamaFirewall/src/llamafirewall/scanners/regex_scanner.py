@@ -17,7 +17,6 @@ from ..llamafirewall_data_types import (
 )
 from .base_scanner import Scanner
 
-
 # Default regex patterns for common security concerns
 DEFAULT_REGEX_PATTERNS: Dict[str, str] = {
     # Prompt injection patterns

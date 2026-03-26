@@ -10,7 +10,6 @@ from typing import Mapping, Sequence, TypeAlias
 
 from .llamafirewall_data_types import Role, ScannerType
 
-
 Configuration: TypeAlias = Mapping[Role, Sequence[ScannerType | str]]
 
 

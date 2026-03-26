@@ -14,7 +14,6 @@ from typing import Any, Dict, List
 
 from .types import PatchGenerationReport
 
-
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,

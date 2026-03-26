@@ -13,7 +13,6 @@ from functools import cached_property
 from pathlib import Path
 from typing import Callable, List, Match, Optional, Pattern, Set, Tuple
 
-
 # NOTE: by overriding this pattern, you can filter out stack frames that you
 # don't want to be considered for patching, such as library that assists
 # fuzzing. Overwriting

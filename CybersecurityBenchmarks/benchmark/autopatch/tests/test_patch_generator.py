@@ -34,7 +34,6 @@ from ..types import (
     SanityCheckResult,
 )
 
-
 TEST_ROOT_PATH: Path = Path(__file__).parent
 LOGGER: logging.Logger = logging.getLogger(__name__)
 
