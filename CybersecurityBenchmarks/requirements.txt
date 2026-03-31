@@ -1,6 +1,6 @@
 openai==1.58.1
 paramiko==3.4.0
-pillow==10.4.0
+pillow==12.1.1
 pyyaml==6.0.1
 sacrebleu==2.0.0
 semgrep==1.51.0
