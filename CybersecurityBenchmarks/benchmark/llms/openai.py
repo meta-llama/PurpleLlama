@@ -25,7 +25,13 @@ from .llm_base import (
 
 
 class OPENAI(LLM):
-    """Accessing OPENAI"""
+    """Accessing OPENAI via Chat Completions or Responses API.
+
+    The Responses API is selected by appending ',responses' to the model name
+    in the specification string, e.g. 'OPENAI::gpt-4o,responses::API_KEY'.
+    When the Responses API is active, conversation state is managed locally
+    (full history is passed in each request; remote session storage is not used).
+    """
 
     def __init__(self, config: LLMConfig) -> None:
         self._reasoning_models = [
@@ -35,9 +41,58 @@ class OPENAI(LLM):
             "o3-mini",
             "o4-mini",
             "gpt-5-mini",
+            "gpt-5-codex",
+            "gpt-5.1-codex",
+            "gpt-5.1-codex-mini",
+            "gpt-5.1-codex-max",
+            "gpt-5.2-codex",
+            "gpt-5.3-codex",
+            "gpt-5.4-mini",
         ]
+        self._use_responses_api: bool = config.model.endswith(",responses")
+        if self._use_responses_api:
+            config = LLMConfig(
+                model=config.model[: -len(",responses")],
+                api_key=config.api_key,
+                max_tokens=config.max_tokens,
+                cot_end_tokens=config.cot_end_tokens,
+                base_url=config.base_url,
+            )
         super().__init__(config)
         self.client = openai.OpenAI(api_key=self.api_key, base_url=self.base_url)
+
+    # -- Responses API helpers ------------------------------------------------
+
+    def _responses_common_kwargs(
+        self,
+        temperature: float,
+        top_p: float,
+        guided_decode_json_schema: Optional[str] = None,
+    ) -> dict:
+        """Return the keyword arguments shared across all Responses API calls."""
+        is_reasoning = self.model in self._reasoning_models
+        kwargs: dict = {
+            "model": self.model,
+            "store": False,
+        }
+        if is_reasoning:
+            kwargs["max_output_tokens"] = DEFAULT_MAX_TOKENS
+        else:
+            kwargs["temperature"] = temperature
+            kwargs["top_p"] = top_p
+        if guided_decode_json_schema is not None:
+            kwargs["text"] = {"format": {"type": "json_object"}}
+        return kwargs
+
+    @staticmethod
+    def _build_input_items(prompt_with_history: List[str]) -> List[dict]:
+        """Convert the alternating user/assistant string list into Responses
+        API input items, preserving the full conversation locally."""
+        items: List[dict] = []
+        for i, text in enumerate(prompt_with_history):
+            role = "user" if i % 2 == 0 else "assistant"
+            items.append({"role": role, "content": text})
+        return items
 
     @override
     def chat(
@@ -47,6 +102,16 @@ class OPENAI(LLM):
         temperature: float = DEFAULT_TEMPERATURE,
         top_p: float = DEFAULT_TOP_P,
     ) -> str:
+        if self._use_responses_api:
+            kwargs = self._responses_common_kwargs(
+                temperature, top_p, guided_decode_json_schema
+            )
+            response = self.client.responses.create(
+                input=self._build_input_items(prompt_with_history),
+                **kwargs,
+            )
+            return response.output_text
+
         messages = []
         for i in range(len(prompt_with_history)):
             if i % 2 == 0:
@@ -88,6 +153,17 @@ class OPENAI(LLM):
         temperature: float = DEFAULT_TEMPERATURE,
         top_p: float = DEFAULT_TOP_P,
     ) -> str:
+        if self._use_responses_api:
+            kwargs = self._responses_common_kwargs(
+                temperature, top_p, guided_decode_json_schema
+            )
+            response = self.client.responses.create(
+                input=self._build_input_items(prompt_with_history),
+                instructions=system_prompt,
+                **kwargs,
+            )
+            return response.output_text
+
         messages = [{"role": "system", "content": system_prompt}]
         for i in range(len(prompt_with_history)):
             if i % 2 == 0:
@@ -128,6 +204,26 @@ class OPENAI(LLM):
         temperature: float = DEFAULT_TEMPERATURE,
         top_p: float = DEFAULT_TOP_P,
     ) -> str:
+        if self._use_responses_api:
+            kwargs = self._responses_common_kwargs(
+                temperature, top_p, guided_decode_json_schema
+            )
+            instructions = NOT_GIVEN
+            if guided_decode_json_schema is not None:
+                instructions = (
+                    "You are a helpful assistant. Always format your response"
+                    f" in json format following this schema: {guided_decode_json_schema} "
+                )
+            level = logging.getLogger().level
+            logging.getLogger().setLevel(logging.WARNING)
+            response = self.client.responses.create(
+                input=prompt,
+                instructions=instructions,
+                **kwargs,
+            )
+            logging.getLogger().setLevel(level)
+            return response.output_text
+
         # Best-level effort to suppress openai log-spew.
         # Likely not work well in multi-threaded environment.
         level = logging.getLogger().level
@@ -172,6 +268,20 @@ class OPENAI(LLM):
         temperature: float = DEFAULT_TEMPERATURE,
         top_p: float = DEFAULT_TOP_P,
     ) -> str:
+        if self._use_responses_api:
+            kwargs = self._responses_common_kwargs(
+                temperature, top_p, guided_decode_json_schema
+            )
+            level = logging.getLogger().level
+            logging.getLogger().setLevel(logging.WARNING)
+            response = self.client.responses.create(
+                input=prompt,
+                instructions=system_prompt,
+                **kwargs,
+            )
+            logging.getLogger().setLevel(level)
+            return response.output_text
+
         level = logging.getLogger().level
         logging.getLogger().setLevel(logging.WARNING)
         response = self.client.chat.completions.create(
@@ -218,6 +328,29 @@ class OPENAI(LLM):
         top_p: float = DEFAULT_TOP_P,
     ) -> str:
         image = image_to_b64(image_path)
+
+        if self._use_responses_api:
+            kwargs = self._responses_common_kwargs(
+                temperature, top_p, guided_decode_json_schema
+            )
+            response = self.client.responses.create(
+                input=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "input_text", "text": prompt},
+                            {
+                                "type": "input_image",
+                                "image_url": f"data:image/png;base64, {image}",
+                            },
+                        ],
+                    }
+                ],
+                instructions=system_prompt,
+                **kwargs,
+            )
+            return response.output_text
+
         response = self.client.chat.completions.create(
             model=self.model,
             messages=[
@@ -261,6 +394,38 @@ class OPENAI(LLM):
         temperature: float = DEFAULT_TEMPERATURE,
         top_p: float = DEFAULT_TOP_P,
     ) -> str:
+        if self._use_responses_api:
+            user_content: List[dict] = []
+            if text_prompt:
+                user_content.append({"type": "input_text", "text": text_prompt})
+            if image_paths:
+                for image_path in image_paths:
+                    image_data = image_to_b64(image_path)
+                    user_content.append(
+                        {
+                            "type": "input_image",
+                            "image_url": f"data:image/png;base64, {image_data}",
+                        }
+                    )
+            if audio_paths:
+                for audio_path in audio_paths:
+                    user_content.append(
+                        {
+                            "type": "input_audio",
+                            "input_audio": {
+                                "data": audio_to_b64(str(audio_path)),
+                                "format": "wav",
+                            },
+                        }
+                    )
+            kwargs = self._responses_common_kwargs(temperature, top_p)
+            response = self.client.responses.create(
+                input=[{"role": "user", "content": user_content}],
+                instructions=system_prompt if system_prompt else NOT_GIVEN,
+                **kwargs,
+            )
+            return response.output_text
+
         messages = []
         if system_prompt:
             messages.append({"role": "system", "content": system_prompt})

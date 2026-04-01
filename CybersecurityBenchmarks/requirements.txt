@@ -1,4 +1,4 @@
-openai==1.58.1
+openai>=1.68.0
 paramiko==3.4.0
 pillow==10.4.0
 pyyaml==6.0.1
