@@ -55,8 +55,9 @@ DEFAULT_REGEX_PATTERNS: Dict[str, str] = {
         r"|\bsystem:\s*you\s+are\b"
     ),
     "ATR: Social engineering pressure": (
-        r"(?:I've\s+already\s+asked|stop\s+refusing|you\s+must\s+comply"
-        r"|this\s+is\s+urgent|as\s+(?:your|the)\s+(?:creator|developer|admin))"
+        r"(?:I've\s+already\s+asked\s+you|stop\s+refusing\s+(?:to|my)"
+        r"|you\s+must\s+comply\s+(?:with|now)"
+        r"|as\s+(?:your|the)\s+(?:creator|developer|owner),?\s+I\s+(?:order|command|demand))"
     ),
     # -- Tool poisoning & data exfiltration --
     "ATR: Tool poisoning - hidden data actions": (
@@ -66,15 +67,17 @@ DEFAULT_REGEX_PATTERNS: Dict[str, str] = {
         r"(?:data|file|content|information|credential|token|key|secret)"
     ),
     "ATR: Data exfiltration URL": (
-        r"(?:https?://|fetch|curl|wget|requests\.(?:get|post))\s*\(?\s*['\"]?"
-        r"(?:(?:\$\{|%7B)[\w]+(?:\}|%7D)"
-        r"|[a-z0-9.-]+\.(?:ngrok|requestbin|pipedream|webhook\.site|burpcollaborator))"
+        r"(?:curl|wget|fetch|requests\.(?:get|post))\s*\(?\s*['\"]?[^\s'\"]*"
+        r"(?:\$\{|\$\(|%7B)[^\s'\"]*"
+        r"(?:password|token|key|secret|auth|cookie|session)"
+        r"|(?:https?://[^\s'\"]*\.(?:ngrok|requestbin|pipedream|webhook\.site|burpcollaborator)"
+        r"\.[a-z]+[^\s'\"]*(?:\$\{|\$\(|%7B))"
     ),
     # -- Infrastructure attacks --
     "ATR: Reverse shell": (
         r"(?:bash|sh|nc|ncat|netcat|python|perl|ruby|php)\s+"
-        r"(?:-[a-z]+\s+)*.*?"
-        r"(?:/dev/tcp/|(?:RHOST|LHOST|RPORT)|(?:nc|ncat)\s+-[a-z]*[el])"
+        r"[^\n]{0,200}"
+        r"(?:/dev/tcp/|(?:RHOST|LHOST|RPORT)|\b(?:nc|ncat)\s+-[a-z]*[el]\b)"
     ),
     "ATR: Path traversal": (
         r"(?:\.\./|\.\.\\){2,}"
@@ -82,18 +85,18 @@ DEFAULT_REGEX_PATTERNS: Dict[str, str] = {
         r"|~/.(?:ssh|aws|kube|gnupg)"
     ),
     "ATR: Code injection - eval/exec": (
-        r"(?:eval|exec|os\.system"
-        r"|subprocess\.(?:call|run|Popen)"
-        r"|child_process\.exec)\s*\("
+        r"(?:eval|exec)\s*\(\s*(?:input|request|user|data|payload|args|params|cmd|command)"
+        r"|(?:os\.system|subprocess\.(?:call|run|Popen))\s*\(\s*(?:f['\"]|input|request|user|data|cmd|command|\+)"
+        r"|child_process\.exec\s*\("
     ),
     "ATR: Persistence mechanisms": (
         r"(?:crontab|schtasks|launchctl|systemctl\s+enable)\s+.*?"
         r"(?:curl|wget|python|bash|sh|nc)"
     ),
     "ATR: Privilege escalation": (
-        r"(?:sudo\s+(?:su|-i|-s|bash)"
-        r"|chmod\s+[0-7]*[4-7][0-7]{2}"
-        r"|chown\s+root|setuid|SUID)"
+        r"(?:sudo\s+(?:su\b|-[is]\b|bash\b)"
+        r"|chmod\s+[2467]\d{3}\b"
+        r"|chown\s+root\b|\bsetuid\b)"
     ),
     # -- Credential & secret exposure --
     "ATR: Credential patterns": (
@@ -126,7 +129,8 @@ DEFAULT_REGEX_PATTERNS: Dict[str, str] = {
     "ATR: Markdown/HTML injection": (
         r"!\[.*?\]\(https?://[^)]*\?.*?"
         r"(?:password|token|secret|key|auth|session|cookie)="
-        r"|<(?:script|img|iframe|object|embed|svg)\s"
+        r"|<(?:script|object|embed)\s"
+        r"|<(?:img|iframe|svg)\s[^>]*(?:onerror|onload|javascript:)"
     ),
     "ATR: Hidden instruction markers": (
         r"(?:<!--\s*(?:hidden|secret|system|admin|override)[^>]*-->"
