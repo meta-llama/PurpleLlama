@@ -3,7 +3,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-# pyre-unsafe
+# pyre-strict
 
 import copy
 import importlib.resources
@@ -13,7 +13,7 @@ import tempfile
 import unittest
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Dict, Generator, Tuple
+from typing import Any, Dict, Generator, List, Tuple
 from unittest.mock import patch
 
 from security.genai.CybersecurityBenchmarks.benchmark.autopatch.build.microsnapshots.lib_dump import (
@@ -104,11 +104,11 @@ class MemCpy(unittest.TestCase):
         if diff:
             raise AssertionError("Assert JSON failed:\n{}".format(diff))
 
-    def run_dumper(self):
+    def run_dumper(self) -> List[Dict[str, Any]]:
         with importlib.resources.path(__package__, "test_bin") as target:
             return dump_values(target, self.config)
 
-    def run_stacktrace_dumper(self):
+    def run_stacktrace_dumper(self) -> List[Dict[str, Any]]:
         with importlib.resources.path(__package__, "test_bin") as target:
             return dump_stacktrace(target, self.config)
 
@@ -123,7 +123,7 @@ class MemCpy(unittest.TestCase):
                 with tempfile.TemporaryDirectory() as input_dir:
                     yield (Path(input_dir), fake_fuzz_delta, fake_fuzz_nodelta)
 
-    def test_skipped(self):
+    def test_skipped(self) -> None:
         self.config.skip_struct_field("SomeObject", "skipped")
         self.config.add_breakpoint("some_fn", "(*x)")
         dump = self.run_dumper()
@@ -132,13 +132,13 @@ class MemCpy(unittest.TestCase):
         expected = [{"desc": "some_fn", "values": {"(*x)": value}}]
         self.assertJSONEqual(dump, expected)
 
-    def test_not_skipped(self):
+    def test_not_skipped(self) -> None:
         self.config.add_breakpoint("some_fn", "(*x)")
         dump = self.run_dumper()
         expected = [{"desc": "some_fn", "values": {"(*x)": self.some_fn_x}}]
         self.assertJSONEqual(dump, expected)
 
-    def test_file_line_bp(self):
+    def test_file_line_bp(self) -> None:
         self.config.add_breakpoint("some_fn", "(*x)")
         self.config.add_breakpoint("test.cpp:15", "(*z)")
         dump = self.run_dumper()
@@ -148,7 +148,7 @@ class MemCpy(unittest.TestCase):
         ]
         self.assertJSONEqual(dump, expected)
 
-    def test_stl(self):
+    def test_stl(self) -> None:
         self.config.add_breakpoint("some_template_fn", "vec")
         self.config.add_breakpoint("some_more_classes", "map")
         dump = self.run_dumper()
@@ -161,7 +161,7 @@ class MemCpy(unittest.TestCase):
         ]
         self.assertJSONEqual(dump, expected)
 
-    def test_enum_and_ptrs(self):
+    def test_enum_and_ptrs(self) -> None:
         self.config.add_breakpoint("enum_and_ptrs", "foo")
         self.config.add_breakpoint("enum_and_ptrs", "other_1")
         self.config.add_breakpoint("enum_and_ptrs", "other_2")
@@ -173,7 +173,7 @@ class MemCpy(unittest.TestCase):
         ]
         self.assertJSONEqual(dump, expected)
 
-    def test_hook_after(self):
+    def test_hook_after(self) -> None:
         self.config.dump_after_return("some_fn")
         self.config.skip_local("argc")
         self.config.skip_local("argv")
@@ -195,7 +195,7 @@ class MemCpy(unittest.TestCase):
         ]
         self.assertJSONEqual(dump, expected)
 
-    def test_dump_stacktrace(self):
+    def test_dump_stacktrace(self) -> None:
         self.config.add_patched_line("test.h", 44)
         dump = [
             [fn for fn in stack if fn[0] != "_"]
@@ -209,7 +209,7 @@ class MemCpy(unittest.TestCase):
         ]
         self.assertJSONEqual(dump, expected)
 
-    def test_limit_recursion(self):
+    def test_limit_recursion(self) -> None:
         self.config.add_breakpoint("some_fn", "(*x)")
         self.config.max_recursion_depth = 0
         self.config.catch_exceptions = True
@@ -230,7 +230,7 @@ class MemCpy(unittest.TestCase):
         )
         self.assertJSONEqual(dump, expected)
 
-    def test_config_write_suppress_output_false(self):
+    def test_config_write_suppress_output_false(self) -> None:
         """Test that Config.write() prints config dump when suppress_output=False (default)."""
         # Setup: create config and temp file
         config = Config()
@@ -256,7 +256,7 @@ class MemCpy(unittest.TestCase):
                 written_config["breakpoint_to_expressions"]["test_func"], ["test_var"]
             )
 
-    def test_config_write_suppress_output_true(self):
+    def test_config_write_suppress_output_true(self) -> None:
         """Test that Config.write() does not print config dump when suppress_output=True."""
         # Setup: create config and temp file
         config = Config()
@@ -279,7 +279,7 @@ class MemCpy(unittest.TestCase):
                 written_config["breakpoint_to_expressions"]["test_func"], ["test_var"]
             )
 
-    def test_config_write_default_behavior(self):
+    def test_config_write_default_behavior(self) -> None:
         """Test that Config.write() defaults to suppress_output=False (prints by default)."""
         # Setup: create config and temp file
         config = Config()
