@@ -14,13 +14,7 @@ import requests
 from typing_extensions import override
 
 from ..benchmark_utils import image_to_b64
-from .llm_base import (
-    DEFAULT_MAX_TOKENS,
-    DEFAULT_TEMPERATURE,
-    DEFAULT_TOP_P,
-    LLM,
-    LLMConfig,
-)
+from .llm_base import DEFAULT_MAX_TOKENS, DEFAULT_TEMPERATURE, DEFAULT_TOP_P, LLM
 
 
 class ANTHROPIC(LLM):

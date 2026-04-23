@@ -20,7 +20,6 @@ from .llm_base import (
     DEFAULT_TEMPERATURE,
     DEFAULT_TOP_P,
     LLM,
-    LLMConfig,
     UnretriableQueryException,
 )
 
