@@ -53,22 +53,22 @@ class MemCpy(unittest.TestCase):
         }
 
     def setUp(self) -> None:
-        self.main_z = {
+        self.main_z: Dict[str, Any] = {
             "stype": "STRUCT",
             "type": "SkippedObject",
             "values": {"e": 1},
         }
-        self.some_fn_x = self.val_x(ptr_offset=0)
-        self.some_template_fn_vec = [
+        self.some_fn_x: Dict[str, Any] = self.val_x(ptr_offset=0)
+        self.some_template_fn_vec: List[Dict[str, Any]] = [
             {"stype": "STRUCT", "type": "OtherObject", "values": {"c": 3, "d": 4}}
         ]
-        self.some_more_classes_map = [
+        self.some_more_classes_map: List[List[Any]] = [
             [
                 42,
                 '"some string"',
             ]
         ]
-        self.enum_and_ptrs = {
+        self.enum_and_ptrs: Dict[str, Any] = {
             "foo": "BAR",
             "other_1": {
                 "stype": "ALLOC",
@@ -81,7 +81,7 @@ class MemCpy(unittest.TestCase):
             },
             "other_2": {"stype": "BACKREF", "name": "ptr_1"},
         }
-        self.config = Config()
+        self.config: Config = Config()
         self.config.timeout_seconds = 20
         return super().setUp()
 
