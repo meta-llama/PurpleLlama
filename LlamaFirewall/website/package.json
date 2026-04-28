@@ -44,7 +44,7 @@
   "overrides": {
     "ajv": "^8.18.0",
     "picomatch": "^2.3.2",
-    "minimatch": "^10.2.1",
+    "minimatch": "^10.2.3",
     "brace-expansion": "^5.0.5",
     "serialize-javascript": "^7.0.5",
     "path-to-regexp": "^0.1.13",
@@ -56,7 +56,7 @@
   "resolutions": {
     "ajv": "^8.18.0",
     "picomatch": "^2.3.2",
-    "minimatch": "^10.2.1",
+    "minimatch": "^10.2.3",
     "brace-expansion": "^5.0.5",
     "serialize-javascript": "^7.0.5",
     "path-to-regexp": "^0.1.13",
