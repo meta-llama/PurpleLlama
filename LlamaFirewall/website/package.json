@@ -49,7 +49,8 @@
     "serialize-javascript": "^7.0.5",
     "path-to-regexp": "^0.1.13",
     "follow-redirects": "^1.16.0",
-    "uuid": "^14.0.0"
+    "uuid": "^14.0.0",
+    "svgo": "^3.3.3"
   },
   "resolutions": {
     "ajv": "^8.18.0",
@@ -59,6 +60,7 @@
     "serialize-javascript": "^7.0.5",
     "path-to-regexp": "^0.1.13",
     "follow-redirects": "^1.16.0",
-    "uuid": "^14.0.0"
+    "uuid": "^14.0.0",
+    "svgo": "^3.3.3"
   }
 }
