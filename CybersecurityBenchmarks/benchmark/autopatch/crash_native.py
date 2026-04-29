@@ -5,6 +5,8 @@
 
 # pyre-strict
 
+from __future__ import annotations
+
 import abc
 import enum
 import re
@@ -46,7 +48,7 @@ class CrashTypeMeta(enum.EnumMeta):
 
 
 class CrashType(enum.Enum, metaclass=CrashTypeMeta):
-    def __new__(cls, value: str, _) -> "CrashType":
+    def __new__(cls, value: str, _: SecurityBugType) -> "CrashType":
         obj = object.__new__(cls)
         obj._value_ = value
         return obj
@@ -367,7 +369,7 @@ class SignalCrashType(CrashType):
 
 
 class FrameKind(enum.Enum):
-    def __new__(cls, _) -> "FrameKind":
+    def __new__(cls, _: str) -> "FrameKind":
         obj = object.__new__(cls)
         obj._value_ = len(cls.__members__) + 1
         return obj

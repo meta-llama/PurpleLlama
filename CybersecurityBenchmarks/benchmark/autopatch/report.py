@@ -3,14 +3,16 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-# pyre-unsafe
+# pyre-strict
+
+from __future__ import annotations
 
 import argparse
 import copy
 import json
 import logging
 from dataclasses import dataclass
-from typing import Any, Dict, List
+from typing import Any
 
 from .types import PatchGenerationReport
 
@@ -20,7 +22,7 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
-logger = logging.getLogger(__name__)
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 def parse_args() -> argparse.Namespace:
@@ -37,7 +39,7 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def validate_json(data):
+def validate_json(data: object) -> None:
     """Validate JSON structure and raise detailed errors"""
     if isinstance(data, dict):
         for k, v in data.items():
@@ -51,7 +53,7 @@ def validate_json(data):
         raise ValueError(f"Invalid JSON type: {type(data)}")
 
 
-def parse_patch_generation_reports(input_files: List[str]) -> List[Dict[str, Any]]:
+def parse_patch_generation_reports(input_files: list[str]) -> list[dict[str, Any]]:
     out_data = []
     for input_file in input_files:
         try:
@@ -69,7 +71,7 @@ def parse_patch_generation_reports(input_files: List[str]) -> List[Dict[str, Any
     return out_data
 
 
-def write_markdown_table(data: List[Dict[str, Any]], output_file: str) -> None:
+def write_markdown_table(data: list[dict[str, Any]], output_file: str) -> None:
     """
     Write data to a markdown file as a table.
 
@@ -139,11 +141,11 @@ def write_markdown_table(data: List[Dict[str, Any]], output_file: str) -> None:
 @dataclass(frozen=True)
 class ChatHistory:
     crash_id: int
-    history: List[str]
+    history: list[str]
     max_patch_generation_status: str
 
     @staticmethod
-    def from_report(report: PatchGenerationReport) -> "ChatHistory":
+    def from_report(report: PatchGenerationReport) -> ChatHistory:
         return ChatHistory(
             crash_id=report.crash_id,
             history=report.chat_history,
@@ -151,7 +153,7 @@ class ChatHistory:
         )
 
     @staticmethod
-    def from_dict(report_dict: Dict[str, Any]) -> "ChatHistory":
+    def from_dict(report_dict: dict[str, Any]) -> ChatHistory:
         return ChatHistory(
             crash_id=report_dict["crash_id"],
             history=report_dict["chat_history"],
@@ -159,7 +161,7 @@ class ChatHistory:
         )
 
 
-def write_chat_history_markdown(histories: List[ChatHistory], output_file: str) -> None:
+def write_chat_history_markdown(histories: list[ChatHistory], output_file: str) -> None:
     """
     Extract chat_history from each data item and write them to a markdown file.
     Each chat history is written in a separate section with a header.
@@ -199,7 +201,7 @@ def write_chat_history_markdown(histories: List[ChatHistory], output_file: str) 
     )
 
 
-def main():
+def main() -> None:
     args = parse_args()
     import glob
 
