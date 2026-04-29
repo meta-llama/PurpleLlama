@@ -7478,10 +7478,10 @@
   "resolved" "https://registry.npmjs.org/postcss-zindex/-/postcss-zindex-6.0.2.tgz"
   "version" "6.0.2"
 
-"postcss@^7.0.0 || ^8.0.1", "postcss@^8", "postcss@^8.0.3", "postcss@^8.0.9", "postcss@^8.1.0", "postcss@^8.2.2", "postcss@^8.4", "postcss@^8.4.21", "postcss@^8.4.23", "postcss@^8.4.24", "postcss@^8.4.31", "postcss@^8.4.33", "postcss@^8.4.6", "postcss@^8.5.4":
-  "integrity" "sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg=="
-  "resolved" "https://registry.npmjs.org/postcss/-/postcss-8.5.6.tgz"
-  "version" "8.5.6"
+"postcss@^8.5.12":
+  "integrity" "sha512-W62t/Se6rA0Az3DfCL0AqJwXuKwBeYg6nOaIgzP+xZ7N5BFCI7DYi1qs6ygUYT6rvfi6t9k65UMLJC+PHZpDAA=="
+  "resolved" "https://registry.npmjs.org/postcss/-/postcss-8.5.12.tgz"
+  "version" "8.5.12"
   dependencies:
     "nanoid" "^3.3.11"
     "picocolors" "^1.1.1"
