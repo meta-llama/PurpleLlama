@@ -52,7 +52,8 @@
     "lodash": "^4.18.0",
     "serialize-javascript": "^7.0.5",
     "path-to-regexp": "^0.1.13",
-    "postcss": "^8.5.10"
+    "postcss": "^8.5.10",
+    "follow-redirects": "^1.16.0"
   },
   "resolutions": {
     "picomatch": "^2.3.2",
@@ -63,6 +64,7 @@
     "lodash": "^4.18.0",
     "serialize-javascript": "^7.0.5",
     "path-to-regexp": "^0.1.13",
-    "postcss": "^8.5.10"
+    "postcss": "^8.5.10",
+    "follow-redirects": "^1.16.0"
   }
 }
