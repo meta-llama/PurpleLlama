@@ -1,0 +1,239 @@
+name: Purple Llama – Full CI Pipeline
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      run_benchmarks:
+        description: "Run CybersecurityBenchmarks against an LLM"
+        required: false
+        default: "false"
+        type: choice
+        options: ["true", "false"]
+      llm_under_test:
+        description: "LLM identifier (e.g. OPENAI::gpt-4o)"
+        required: false
+        default: ""
+      benchmark_types:
+        description: "Benchmark suites to run (space-separated)"
+        required: false
+        default: "instruct mitre"
+
+permissions:
+  contents: read
+
+jobs:
+  # -------------------------------------------------------------------------
+  # CodeShield
+  # -------------------------------------------------------------------------
+  codeshield:
+    name: CodeShield – Install & Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: CodeShield
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install CodeShield
+        run: pip install -e .
+
+      - name: Run tests
+        run: python -m pytest tests/ -v --tb=short --junitxml=../test-results/codeshield.xml
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codeshield-test-results
+          path: test-results/codeshield.xml
+
+  # -------------------------------------------------------------------------
+  # CybersecurityBenchmarks
+  # -------------------------------------------------------------------------
+  cybersecuritybenchmarks:
+    name: CybersecurityBenchmarks – Install & Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: CybersecurityBenchmarks
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        run: python -m pytest benchmark/tests/ -v --tb=short --junitxml=../test-results/cybersecbench.xml
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cybersecbench-test-results
+          path: test-results/cybersecbench.xml
+
+  # -------------------------------------------------------------------------
+  # LlamaFirewall
+  # -------------------------------------------------------------------------
+  llamafirewall:
+    name: LlamaFirewall – Install & Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: LlamaFirewall
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install LlamaFirewall
+        run: pip install -e .
+
+      - name: Run tests
+        run: python -m pytest tests/ -v --tb=short --junitxml=../test-results/llamafirewall.xml
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: llamafirewall-test-results
+          path: test-results/llamafirewall.xml
+
+  # -------------------------------------------------------------------------
+  # SensitiveDocClassification
+  # -------------------------------------------------------------------------
+  sensitivedocclassification:
+    name: SensitiveDocClassification – Install & Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: SensitiveDocClassification
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        run: python -m pytest tests/ -v --tb=short --junitxml=../test-results/sensitivedoc.xml
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sensitivedoc-test-results
+          path: test-results/sensitivedoc.xml
+
+  # -------------------------------------------------------------------------
+  # Full automation report (consolidates all components)
+  # -------------------------------------------------------------------------
+  full-report:
+    name: Full Automation Report
+    runs-on: ubuntu-latest
+    needs:
+      - codeshield
+      - cybersecuritybenchmarks
+      - llamafirewall
+      - sensitivedocclassification
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install all dependencies
+        run: |
+          pip install -e CodeShield/
+          pip install -r CybersecurityBenchmarks/requirements.txt
+          pip install -e LlamaFirewall/
+          pip install -r SensitiveDocClassification/requirements.txt
+
+      - name: Run automation script (tests only, deps already installed)
+        run: |
+          python automate.py \
+            --skip-install \
+            --report-path automation_report.json
+
+      - name: Upload automation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: automation-report
+          path: automation_report.json
+
+  # -------------------------------------------------------------------------
+  # Optional: CybersecurityBenchmarks against a live LLM
+  # Triggered manually via workflow_dispatch only
+  # -------------------------------------------------------------------------
+  run-benchmarks:
+    name: CybersecurityBenchmarks – Live LLM Run
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' &&
+      github.event.inputs.run_benchmarks == 'true' &&
+      github.event.inputs.llm_under_test != ''
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install CybersecurityBenchmarks dependencies
+        run: pip install -r CybersecurityBenchmarks/requirements.txt
+
+      - name: Run benchmarks
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python automate.py \
+            --components cybersecuritybenchmarks \
+            --skip-install \
+            --skip-tests \
+            --run-benchmarks \
+            --llm-under-test "${{ github.event.inputs.llm_under_test }}" \
+            --benchmark-types ${{ github.event.inputs.benchmark_types }} \
+            --num-queries 5 \
+            --report-path benchmark_report.json \
+            --benchmark-output-dir benchmark_outputs/
+
+      - name: Upload benchmark outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-outputs
+          path: |
+            benchmark_report.json
+            benchmark_outputs/
