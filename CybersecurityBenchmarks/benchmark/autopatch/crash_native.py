@@ -10,15 +10,15 @@ from __future__ import annotations
 import abc
 import enum
 import re
+from collections.abc import Callable
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
-from typing import Callable, List, Match, Optional, Pattern, Set, Tuple
 
 # NOTE: by overriding this pattern, you can filter out stack frames that you
 # don't want to be considered for patching, such as library that assists
 # fuzzing. Overwriting
-FUZZ_LIB_INVOCATION_PATTERN: Pattern[str] = re.compile(
+FUZZ_LIB_INVOCATION_PATTERN: re.Pattern[str] = re.compile(
     "OVERWRITE_THIS_PATTERN_FOR_FUZZER_API_INVOCATION_PATTERN"
 )
 Identifier = str
@@ -40,7 +40,7 @@ class SecurityBugType(enum.Enum):
 
 
 class CrashTypeMeta(enum.EnumMeta):
-    def from_value(self, value: str) -> Optional["CrashType"]:
+    def from_value(self, value: str) -> CrashType | None:
         try:
             return super().__call__(value)
         except ValueError:
@@ -375,7 +375,7 @@ class FrameKind(enum.Enum):
         return obj
 
     def __init__(self, pattern: str) -> None:
-        self.pattern: Pattern[str] = re.compile(pattern)
+        self.pattern: re.Pattern[str] = re.compile(pattern)
 
     # Native
     # For afl-qemu harness, the entry function can be either afl_qemu_driver_stdin_input or LLVMFuzzerTestOneInput
@@ -397,17 +397,17 @@ class Frame(abc.ABC):
     raw_frame: str
     function: str
     file: str
-    lineno: Optional[int]
-    colno: Optional[int]
+    lineno: int | None
+    colno: int | None
 
     @cached_property
-    def frame_kinds(self) -> Set[FrameKind]:
+    def frame_kinds(self) -> set[FrameKind]:
         # A frame can be of multiple kinds, e.g. LIBC and LIBC_ABORT
         return {kind for kind in FrameKind if kind.pattern.search(self.raw_frame)}
 
     @classmethod
     @abc.abstractmethod
-    def create(cls, raw_frame: str) -> Optional["Frame"]:
+    def create(cls, raw_frame: str) -> Frame | None:
         # Factory method
         ...
 
@@ -425,7 +425,7 @@ class Crash(abc.ABC):
         return self._output
 
     @cached_property
-    def output_lines(self) -> List[str]:
+    def output_lines(self) -> list[str]:
         return self.output.split("\n")
 
     @property
@@ -446,7 +446,7 @@ class Crash(abc.ABC):
 
 
 class CrashPattern:
-    STACKTRACE_START: Pattern[str] = re.compile(
+    STACKTRACE_START: re.Pattern[str] = re.compile(
         r"^\w+: .*Assertion.*failed.*$|"
         r"\b[\w.]+:\d*\] Check failed:.*$|"
         r"(^==\d+== ?WARNING.*$)|"
@@ -455,85 +455,85 @@ class CrashPattern:
         flags=re.MULTILINE,
     )
 
-    HASHED_BUCK_OUT_PATH: Pattern[str] = re.compile(
+    HASHED_BUCK_OUT_PATH: re.Pattern[str] = re.compile(
         r"(?P<stem>buck-out\/.*\/gen\/(fbsource\/)?)(?P<hash>[0-9a-f]+\/)"
     )
 
-    ASAN_ALLOC_DEALLOC_MISMATCH: Pattern[str] = re.compile(
+    ASAN_ALLOC_DEALLOC_MISMATCH: re.Pattern[str] = re.compile(
         r"AddressSanitizer: alloc-dealloc-mismatch \((?P<mismatch>.* vs .*)\)"
     )
-    ASAN_NEGATIVE_SIZE_PARAM: Pattern[str] = re.compile(
+    ASAN_NEGATIVE_SIZE_PARAM: re.Pattern[str] = re.compile(
         r"AddressSanitizer: negative-size-param: \((?P<size>size=-\d+)\)"
     )
-    ASAN_OOM: Pattern[str] = re.compile(
+    ASAN_OOM: re.Pattern[str] = re.compile(
         r"AddressSanitizer: allocator is out of memory trying to allocate (?P<size>0x[0-9a-f]+) bytes"
     )
-    ASAN_READ_WRITE_SIZE: Pattern[str] = re.compile(
+    ASAN_READ_WRITE_SIZE: re.Pattern[str] = re.compile(
         r"(?P<type>(READ)|(WRITE)) of (?P<size>size \d+)"
     )
-    ASAN_SCARINESS: Pattern[str] = re.compile(
+    ASAN_SCARINESS: re.Pattern[str] = re.compile(
         r"SCARINESS: (?P<scariness>\d+) \((?P<size>\S+-byte-)?(?P<crash_type>.*)\)",
     )
-    ASSERT_FAIL: Pattern[str] = re.compile(r"^\w+: .*Assertion.*failed.*$")
-    CHECK_FAIL_WITH_DIFFERENCE: Pattern[str] = re.compile(
+    ASSERT_FAIL: re.Pattern[str] = re.compile(r"^\w+: .*Assertion.*failed.*$")
+    CHECK_FAIL_WITH_DIFFERENCE: re.Pattern[str] = re.compile(
         r"\b[\w.]+:\d*\] Check failed:(?P<check>.*)\((?P<difference>.* vs. .*)\).*$",
         flags=re.MULTILINE,
     )
-    CHECK_FAIL_WITHOUT_DIFFERENCE: Pattern[str] = re.compile(
+    CHECK_FAIL_WITHOUT_DIFFERENCE: re.Pattern[str] = re.compile(
         r"\b[\w.]+:\d*\] Check failed:(?P<check>.*).*$",
         flags=re.MULTILINE,
     )
-    FOLLY_UNINITIALIZED_SINGLETON: Pattern[str] = re.compile(
+    FOLLY_UNINITIALIZED_SINGLETON: re.Pattern[str] = re.compile(
         r"folly::detail::singletonWarnCreateBeforeRegistrationCompleteAndAbort"
     )
-    FUZZ_TARGET_EXITED: Pattern[str] = re.compile(r"libFuzzer: fuzz target exited")
-    GDB_SIGNAL: Pattern[str] = re.compile(
+    FUZZ_TARGET_EXITED: re.Pattern[str] = re.compile(r"libFuzzer: fuzz target exited")
+    GDB_SIGNAL: re.Pattern[str] = re.compile(
         r"Program received signal SIG(?P<crash_type>[\w-]+)"
     )
-    LIBFUZZER_DEADLY_SIGNAL: Pattern[str] = re.compile(
+    LIBFUZZER_DEADLY_SIGNAL: re.Pattern[str] = re.compile(
         r"^.*?ERROR:\s*?libFuzzer:\s*?deadly signal",
         flags=re.MULTILINE,
     )
-    LIBFUZZER_OOM_LEAK: Pattern[str] = re.compile(
+    LIBFUZZER_OOM_LEAK: re.Pattern[str] = re.compile(
         r"==\d+== ERROR: libFuzzer: out-of-memory \((?P<usage>used: .*; limit: .*)\)"
     )
-    LIBFUZZER_OOM_MALLOC: Pattern[str] = re.compile(
+    LIBFUZZER_OOM_MALLOC: re.Pattern[str] = re.compile(
         r"==\d+== ERROR: libFuzzer: out-of-memory \(malloc\((?P<size>\d+)\)\)"
     )
-    LSAN_DIRECT_LEAK: Pattern[str] = re.compile(
+    LSAN_DIRECT_LEAK: re.Pattern[str] = re.compile(
         r"Direct leak of \d+ byte\(s\) in \d+ object\(s\) allocated from:"
     )
-    LSAN_INDIRECT_LEAK: Pattern[str] = re.compile(
+    LSAN_INDIRECT_LEAK: re.Pattern[str] = re.compile(
         r"Indirect leak of \d+ byte\(s\) in \d+ object\(s\) allocated from:"
     )
-    LSAN_LEAK_SIZE: Pattern[str] = re.compile(
+    LSAN_LEAK_SIZE: re.Pattern[str] = re.compile(
         r"SUMMARY: AddressSanitizer: (?P<size>\d+ byte\(s\) leaked in \d+ allocation\(s\))"
     )
-    MSAN_UNITIALIZED_VALUE_ALLOCATION: Pattern[str] = re.compile(
+    MSAN_UNITIALIZED_VALUE_ALLOCATION: re.Pattern[str] = re.compile(
         r"Uninitialized value was created by an allocation of"
     )
-    REPRO_STEPS: Pattern[str] = re.compile(
+    REPRO_STEPS: re.Pattern[str] = re.compile(
         r"====BEGIN REPRO STEPS====\n(?P<repro_steps>.*)====END REPRO STEPS====",
         flags=re.DOTALL,
     )
-    REPRO_STEPS_COMMAND: Pattern[str] = re.compile(
+    REPRO_STEPS_COMMAND: re.Pattern[str] = re.compile(
         r"\* CLI repro command:\s*(?P<command>.*?$)", re.MULTILINE
     )
-    REPRO_STEPS_FILE: Pattern[str] = re.compile(r"(?<=\* Wrote file ')([^']*)(?=')")
-    SANITIZER_SUMMARY: Pattern[str] = re.compile(
+    REPRO_STEPS_FILE: re.Pattern[str] = re.compile(r"(?<=\* Wrote file ')([^']*)(?=')")
+    SANITIZER_SUMMARY: re.Pattern[str] = re.compile(
         r"SUMMARY: \w+Sanitizer: (?P<crash_type>[\w-]+)"
     )
-    TERMINATE: Pattern[str] = re.compile(
+    TERMINATE: re.Pattern[str] = re.compile(
         r"terminate called[\S\s]*what\(\):\s*(?P<reason>.*)\n"
     )
-    THREAD_LIMIT_EXCEEDED: Pattern[str] = re.compile(
+    THREAD_LIMIT_EXCEEDED: re.Pattern[str] = re.compile(
         r"AddressSanitizer: Thread limit \(\d+ threads\) exceeded."
     )
-    TIMEOUT: Pattern[str] = re.compile(
+    TIMEOUT: re.Pattern[str] = re.compile(
         r"^.*?ERROR:\s*?libFuzzer:\s*?timeout",
         flags=re.MULTILINE,
     )
-    UNCAUGHT_EXCEPTION: Pattern[str] = re.compile(
+    UNCAUGHT_EXCEPTION: re.Pattern[str] = re.compile(
         r"ERROR:\s*libFuzzer:\s*deadly signal[\S\s]*"
         r"#\d+ .* in std::terminate\(\) .*$\n\s*#\d+ .* in __cxa_(re)?throw",
         flags=re.MULTILINE,
@@ -542,7 +542,7 @@ class CrashPattern:
 
 # Map of patterns to the crash types they identify. The order here matters,
 # e.g. we look for CUSTOM_INVARIANT_FAILURE before CHECK_FAILURE
-CRASH_PATTERN_CRASH_TYPES: List[Tuple[Pattern[str], CrashType]] = [
+CRASH_PATTERN_CRASH_TYPES: list[tuple[re.Pattern[str], CrashType]] = [
     (
         CrashPattern.FOLLY_UNINITIALIZED_SINGLETON,
         GenericCrashType.FOLLY_UNINITIALIZED_SINGLETON,
@@ -563,7 +563,7 @@ CRASH_PATTERN_CRASH_TYPES: List[Tuple[Pattern[str], CrashType]] = [
 # Map of patterns to functions that extract formatted details about the crash
 # from their matches.
 # Order also matters here, similar to the above list.
-CRASH_PATTERN_DETAILS: List[Tuple[Pattern[str], Callable[[Match[str]], str]]] = [
+CRASH_PATTERN_DETAILS: list[tuple[re.Pattern[str], Callable[[re.Match[str]], str]]] = [
     (CrashPattern.ASAN_ALLOC_DEALLOC_MISMATCH, lambda m: m["mismatch"]),
     (CrashPattern.ASAN_NEGATIVE_SIZE_PARAM, lambda m: m["size"]),
     (CrashPattern.ASAN_READ_WRITE_SIZE, lambda m: m["size"]),
@@ -582,8 +582,8 @@ CRASH_PATTERN_DETAILS: List[Tuple[Pattern[str], Callable[[Match[str]], str]]] = 
 
 @dataclass
 class CliReproSteps:
-    command: Optional[str]
-    files: List[Path]
+    command: str | None
+    files: list[Path]
 
 
 @dataclass
@@ -591,7 +591,7 @@ class NativeFrame(Frame):
     index: int
     is_symbolicated: bool
 
-    _RE_FRAME: Pattern[str] = re.compile(
+    _RE_FRAME: re.Pattern[str] = re.compile(
         r"^\s*#(?P<index>\d+) \dx[0-9a-f]+( in )?"
         # Identify functions by consuming everything up until the final space,
         # excluding '/' directory separators
@@ -609,7 +609,7 @@ class NativeFrame(Frame):
     )
 
     @classmethod
-    def create(cls, raw_frame: str) -> Optional["NativeFrame"]:
+    def create(cls, raw_frame: str) -> NativeFrame | None:
         if m := NativeFrame._RE_FRAME.match(raw_frame.strip()):
             return NativeFrame(
                 raw_frame=raw_frame,
@@ -657,8 +657,8 @@ class NativeFrame(Frame):
         # delimiters at the specified nesting depth
         def _find_enclosed_range(
             s: str, opening_delim: str, closing_delim: str, depth: int
-        ) -> List[Tuple[int, int]]:
-            ranges: List[Tuple[int, int]] = []
+        ) -> list[tuple[int, int]]:
+            ranges: list[tuple[int, int]] = []
             current_depth = 0
             index_opening = 0
             for index, char in enumerate(s):
@@ -712,7 +712,7 @@ class NativeFrame(Frame):
 @dataclass
 class NativeStacktrace:
     header: str
-    frames: List[NativeFrame]
+    frames: list[NativeFrame]
 
     @cached_property
     def is_symbolicated(self) -> bool:
@@ -729,7 +729,7 @@ class NativeStacktrace:
         return "\n".join(frame.raw_frame.strip() for frame in self.minimized_frames)
 
     @cached_property
-    def minimized_frames(self) -> List[NativeFrame]:
+    def minimized_frames(self) -> list[NativeFrame]:
         minimized_frames = list(self.frames)
 
         # Filter frames before entrypoint
@@ -773,14 +773,14 @@ class NativeStacktrace:
         ]
 
     @cached_property
-    def symbolicated_minimized_frames(self) -> List[NativeFrame]:
+    def symbolicated_minimized_frames(self) -> list[NativeFrame]:
         return [frame for frame in self.minimized_frames if frame.is_symbolicated]
 
 
 class NativeCrash(Crash):
     @cached_property
-    def stacktraces(self) -> List[NativeStacktrace]:
-        stacktraces: List[NativeStacktrace] = []
+    def stacktraces(self) -> list[NativeStacktrace]:
+        stacktraces: list[NativeStacktrace] = []
         prev_line = ""
         for line in self.output_lines:
             # If the output has multiple crashes (with multiple errors), assume
@@ -878,7 +878,7 @@ class NativeCrash(Crash):
         return summary
 
 
-def minimize_frames(frames: List[NativeFrame]) -> List[NativeFrame]:
+def minimize_frames(frames: list[NativeFrame]) -> list[NativeFrame]:
     pattern = re.compile(r"fbcode/third-party-buck/")
     return [
         frame
