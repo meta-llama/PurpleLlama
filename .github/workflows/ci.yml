@@ -25,9 +25,6 @@ on:
 permissions:
   contents: read
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   # -------------------------------------------------------------------------
   # CodeShield
@@ -47,11 +44,8 @@ jobs:
           python-version: "3.11"
           cache: pip
 
-      - name: Install CodeShield
-        run: pip install -e .
-
-      - name: Install test dependencies
-        run: pip install pytest
+      - name: Install CodeShield and pytest
+        run: pip install pytest -e .
 
       - name: Run tests
         run: python -m pytest tests/ -v --tb=short --junitxml=../test-results/codeshield.xml
@@ -81,11 +75,8 @@ jobs:
           python-version: "3.11"
           cache: pip
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Install test dependencies
-        run: pip install pytest
+      - name: Install dependencies and pytest
+        run: pip install pytest -r requirements.txt
 
       - name: Run tests
         run: python -m pytest benchmark/tests/ -v --tb=short --junitxml=../test-results/cybersecbench.xml
@@ -115,11 +106,8 @@ jobs:
           python-version: "3.11"
           cache: pip
 
-      - name: Install LlamaFirewall
-        run: pip install -e .
-
-      - name: Install test dependencies
-        run: pip install pytest
+      - name: Install LlamaFirewall and pytest
+        run: pip install pytest -e .
 
       - name: Run tests
         run: python -m pytest tests/ -v --tb=short --junitxml=../test-results/llamafirewall.xml
@@ -149,11 +137,8 @@ jobs:
           python-version: "3.11"
           cache: pip
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Install test dependencies
-        run: pip install pytest
+      - name: Install dependencies and pytest
+        run: pip install pytest -r requirements.txt
 
       - name: Run tests
         run: python -m pytest tests/ -v --tb=short --junitxml=../test-results/sensitivedoc.xml
@@ -186,7 +171,7 @@ jobs:
           python-version: "3.11"
           cache: pip
 
-      - name: Install all dependencies
+      - name: Install all dependencies and pytest
         run: |
           pip install pytest
           pip install -e CodeShield/
@@ -227,8 +212,8 @@ jobs:
           python-version: "3.11"
           cache: pip
 
-      - name: Install CybersecurityBenchmarks dependencies
-        run: pip install -r CybersecurityBenchmarks/requirements.txt
+      - name: Install CybersecurityBenchmarks dependencies and pytest
+        run: pip install pytest -r CybersecurityBenchmarks/requirements.txt
 
       - name: Run benchmarks
         env:
