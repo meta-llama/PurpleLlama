@@ -25,6 +25,9 @@ on:
 permissions:
   contents: read
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   # -------------------------------------------------------------------------
   # CodeShield
@@ -46,6 +49,9 @@ jobs:
 
       - name: Install CodeShield
         run: pip install -e .
+
+      - name: Install test dependencies
+        run: pip install pytest
 
       - name: Run tests
         run: python -m pytest tests/ -v --tb=short --junitxml=../test-results/codeshield.xml
@@ -78,6 +84,9 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Install test dependencies
+        run: pip install pytest
+
       - name: Run tests
         run: python -m pytest benchmark/tests/ -v --tb=short --junitxml=../test-results/cybersecbench.xml
 
@@ -109,6 +118,9 @@ jobs:
       - name: Install LlamaFirewall
         run: pip install -e .
 
+      - name: Install test dependencies
+        run: pip install pytest
+
       - name: Run tests
         run: python -m pytest tests/ -v --tb=short --junitxml=../test-results/llamafirewall.xml
 
@@ -139,6 +151,9 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Install test dependencies
+        run: pip install pytest
 
       - name: Run tests
         run: python -m pytest tests/ -v --tb=short --junitxml=../test-results/sensitivedoc.xml
@@ -173,6 +188,7 @@ jobs:
 
       - name: Install all dependencies
         run: |
+          pip install pytest
           pip install -e CodeShield/
           pip install -r CybersecurityBenchmarks/requirements.txt
           pip install -e LlamaFirewall/
