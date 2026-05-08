@@ -680,8 +680,7 @@ class AutoPatchingBenchmark(Benchmark):
         test_cases = self.images_available
         llms_under_test = self.llms_under_test
         semaphore = asyncio.Semaphore(run_llm_in_parallel)
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(
+        asyncio.run(
             self._run_patch_generation(
                 test_cases=test_cases,
                 llms_under_test=llms_under_test,
