@@ -53,6 +53,13 @@ def _make_semgrep_binary_path() -> Path:
     return Path(destination)
 
 
+# Cap the number of semgrep workers. osemgrep otherwise defaults to one job per
+# CPU, which on high-core CI machines exhausts the kernel's io_uring resources
+# and makes osemgrep crash with ENOMEM during io_uring_queue_init. See
+# T264089434.
+MAX_SEMGREP_JOBS: int = 16
+SEMGREP_JOBS: int = min(os.cpu_count() or MAX_SEMGREP_JOBS, MAX_SEMGREP_JOBS)
+
 SEMGREP_BINARY_PATH: Path = _make_semgrep_binary_path()
 SEMGREP_COMMAND: list[str] = [
     str(SEMGREP_BINARY_PATH),
@@ -63,5 +70,6 @@ SEMGREP_COMMAND: list[str] = [
     "off",
     "--quiet",
     "--json",
+    f"--jobs={SEMGREP_JOBS}",
     "--config",
 ]
