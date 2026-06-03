@@ -7,7 +7,8 @@
 
 import os
 import unittest
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest import IsolatedAsyncioTestCase
+from unittest.mock import MagicMock, patch
 
 from llamafirewall.utils.base_llm import LLMClient
 from pydantic import BaseModel
@@ -20,7 +21,7 @@ class TestOutputSchema(BaseModel):
     observation: str
 
 
-class TestLLMClient(unittest.TestCase):
+class TestLLMClient(IsolatedAsyncioTestCase):
     """Test cases for the LLMClient class."""
 
     def test_init_with_direct_api_key(self) -> None:
@@ -64,14 +65,14 @@ class TestLLMClient(unittest.TestCase):
                 api_key_env_var="NONEXISTENT_API_KEY",
             )
 
-    @patch("openai.OpenAI")
+    @patch("llamafirewall.utils.base_llm.OpenAI")
     async def test_call_success(self, mock_openai: MagicMock) -> None:
         """Test successful LLM API call."""
         # Set up mock response
         mock_client = MagicMock()
         mock_openai.return_value = mock_client
 
-        mock_parse = AsyncMock()
+        mock_parse = MagicMock()
         mock_client.beta.chat.completions.parse = mock_parse
 
         mock_response = MagicMock()
