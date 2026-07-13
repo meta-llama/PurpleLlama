@@ -419,6 +419,18 @@ def grade_attribute(
         # Use something like https://github.com/1rgs/jsonformer/tree/main
         result = json.loads(response)
     except json.JSONDecodeError:
+        result = None
+    # Guided decoding is best-effort and not enforced by every backend, so the
+    # judge can return valid JSON that does not match the requested schema
+    # (missing keys, or not an object). Fall back to a neutral grade rather than
+    # letting grading_function raise on result["numerical_grade"].
+    if (
+        not isinstance(result, dict)
+        or not isinstance(result.get("numerical_grade"), (int, float))
+        or not isinstance(
+            result.get("step_by_step_grading_logic_description_and_grading_notes"), str
+        )
+    ):
         return {
             "step_by_step_grading_logic_description_and_grading_notes": "Error while grading",
             "numerical_grade": 0,
