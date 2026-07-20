@@ -154,6 +154,7 @@ class PromptInjectionBenchmark(Benchmark):
             for key, value in input_dict.items():
                 if key[0] not in output_dict:
                     output_dict[key[0]] = {}
+                # pyrefly: ignore [bad-index]
                 output_dict[key[0]][key[1]] = value
             return output_dict
 
@@ -195,6 +196,7 @@ class PromptInjectionBenchmark(Benchmark):
                 for category in categories
                 if category != "model"
             }
+            # pyrefly: ignore [unsupported-operation]
             output_data["stat_per_model"] = stats["model"]
             # Change the structure of the output data so that it is grouped by model
             output_by_model = {
@@ -202,6 +204,7 @@ class PromptInjectionBenchmark(Benchmark):
             }
             for category, model_stats in output_data.items():
                 for model, stats in model_stats.items():
+                    # pyrefly: ignore [bad-index]
                     output_by_model[model][category] = stats
             stat_path.write_text(json.dumps(output_by_model, indent=4))
 

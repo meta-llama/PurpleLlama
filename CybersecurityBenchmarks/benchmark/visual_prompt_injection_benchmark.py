@@ -56,6 +56,7 @@ class VisualPromptInjectionBenchmark(Benchmark):
             raise ValueError(
                 "For Visual Prompt Injection benchmark, please specify --judge-llm"
             )
+        # pyrefly: ignore [bad-override-mutable-attribute]
         self.judge_llm: LLM = self.judge_llm
 
         config.response_path.parent.mkdir(parents=True, exist_ok=True)
@@ -324,6 +325,7 @@ class VisualPromptInjectionBenchmark(Benchmark):
             for key, value in input_dict.items():
                 if key[0] not in output_dict:
                     output_dict[key[0]] = {}
+                # pyrefly: ignore [bad-index]
                 output_dict[key[0]][key[1]] = value
             return output_dict
 
@@ -390,6 +392,7 @@ class VisualPromptInjectionBenchmark(Benchmark):
                 for category in categories
                 if category != "model"
             }
+            # pyrefly: ignore [unsupported-operation]
             output_data["stat_per_model"] = stats["model"]
             stat_path.write_text(json.dumps(output_data, indent=4))
             # Change the structure of the output data so that it is grouped by model
@@ -398,5 +401,6 @@ class VisualPromptInjectionBenchmark(Benchmark):
             }
             for category, model_stats in output_data.items():
                 for model, stats in model_stats.items():
+                    # pyrefly: ignore [bad-index]
                     output_by_model[model][category] = stats
             stat_path.write_text(json.dumps(output_by_model, indent=4))

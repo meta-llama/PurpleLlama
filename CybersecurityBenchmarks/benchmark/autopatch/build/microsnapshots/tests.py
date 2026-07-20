@@ -105,20 +105,26 @@ class MemCpy(unittest.TestCase):
             raise AssertionError("Assert JSON failed:\n{}".format(diff))
 
     def run_dumper(self) -> List[Dict[str, Any]]:
+        # pyrefly: ignore [bad-argument-type]
         with importlib.resources.path(__package__, "test_bin") as target:
             return dump_values(target, self.config)
 
     def run_stacktrace_dumper(self) -> List[Dict[str, Any]]:
+        # pyrefly: ignore [bad-argument-type]
         with importlib.resources.path(__package__, "test_bin") as target:
             return dump_stacktrace(target, self.config)
 
     @contextmanager
     def fake_fuzz(self) -> Generator[Tuple[Path, Path, Path], None, None]:
         with importlib.resources.path(
-            __package__, "fake_fuzz_delta"
+            # pyrefly: ignore [bad-argument-type]
+            __package__,
+            "fake_fuzz_delta",
         ) as fake_fuzz_delta:
             with importlib.resources.path(
-                __package__, "fake_fuzz_nodelta"
+                # pyrefly: ignore [bad-argument-type]
+                __package__,
+                "fake_fuzz_nodelta",
             ) as fake_fuzz_nodelta:
                 with tempfile.TemporaryDirectory() as input_dir:
                     yield (Path(input_dir), fake_fuzz_delta, fake_fuzz_nodelta)

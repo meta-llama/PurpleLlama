@@ -444,6 +444,7 @@ def find_struct_field_for_path(
             and "stype" in obj
             and obj["stype"] == "STRUCT"
         ):
+            # pyrefly: ignore [bad-return]
             return (obj["type"], last_key)
         last_key = cur_key
 

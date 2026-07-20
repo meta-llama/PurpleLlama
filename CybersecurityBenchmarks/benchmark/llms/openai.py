@@ -62,13 +62,16 @@ class OPENAI(LLM):
             model=self.model,
             messages=messages,
             max_completion_tokens=(
+                # pyrefly: ignore [bad-argument-type]
                 DEFAULT_MAX_TOKENS
                 if (self.model in self._reasoning_models)
                 else NOT_GIVEN
             ),
             temperature=(
+                # pyrefly: ignore [bad-argument-type]
                 temperature if (self.model not in self._reasoning_models) else NOT_GIVEN
             ),
+            # pyrefly: ignore [bad-argument-type]
             top_p=top_p if (self.model not in self._reasoning_models) else NOT_GIVEN,
             response_format=(
                 {"type": "json_object"}
@@ -77,6 +80,7 @@ class OPENAI(LLM):
             ),
         )
         logging.getLogger().setLevel(level)
+        # pyrefly: ignore [missing-attribute]
         return response.choices[0].message.content
 
     @override
@@ -103,13 +107,16 @@ class OPENAI(LLM):
             model=self.model,
             messages=messages,
             max_completion_tokens=(
+                # pyrefly: ignore [bad-argument-type]
                 DEFAULT_MAX_TOKENS
                 if (self.model in self._reasoning_models)
                 else NOT_GIVEN
             ),
             temperature=(
+                # pyrefly: ignore [bad-argument-type]
                 temperature if (self.model not in self._reasoning_models) else NOT_GIVEN
             ),
+            # pyrefly: ignore [bad-argument-type]
             top_p=top_p if (self.model not in self._reasoning_models) else NOT_GIVEN,
             response_format=(
                 {"type": "json_object"}
@@ -118,6 +125,7 @@ class OPENAI(LLM):
             ),
         )
         logging.getLogger().setLevel(level)
+        # pyrefly: ignore [missing-attribute]
         return response.choices[0].message.content
 
     @override
@@ -146,13 +154,16 @@ class OPENAI(LLM):
             model=self.model,
             messages=message_list,
             max_completion_tokens=(
+                # pyrefly: ignore [bad-argument-type]
                 DEFAULT_MAX_TOKENS
                 if (self.model in self._reasoning_models)
                 else NOT_GIVEN
             ),
             temperature=(
+                # pyrefly: ignore [bad-argument-type]
                 temperature if (self.model not in self._reasoning_models) else NOT_GIVEN
             ),
+            # pyrefly: ignore [bad-argument-type]
             top_p=top_p if (self.model not in self._reasoning_models) else NOT_GIVEN,
             response_format=(
                 {"type": "json_object"}
@@ -161,6 +172,7 @@ class OPENAI(LLM):
             ),
         )
         logging.getLogger().setLevel(level)
+        # pyrefly: ignore [missing-attribute]
         return response.choices[0].message.content
 
     @override
@@ -181,13 +193,16 @@ class OPENAI(LLM):
                 {"role": "user", "content": prompt},
             ],
             max_completion_tokens=(
+                # pyrefly: ignore [bad-argument-type]
                 DEFAULT_MAX_TOKENS
                 if (self.model in self._reasoning_models)
                 else NOT_GIVEN
             ),
             temperature=(
+                # pyrefly: ignore [bad-argument-type]
                 temperature if (self.model not in self._reasoning_models) else NOT_GIVEN
             ),
+            # pyrefly: ignore [bad-argument-type]
             top_p=top_p if (self.model not in self._reasoning_models) else NOT_GIVEN,
             response_format=(
                 {"type": "json_object"}
@@ -196,6 +211,7 @@ class OPENAI(LLM):
             ),
         )
         logging.getLogger().setLevel(level)
+        # pyrefly: ignore [missing-attribute]
         return response.choices[0].message.content
 
     @override
@@ -234,13 +250,16 @@ class OPENAI(LLM):
                 },
             ],
             max_completion_tokens=(
+                # pyrefly: ignore [bad-argument-type]
                 DEFAULT_MAX_TOKENS
                 if (self.model in self._reasoning_models)
                 else NOT_GIVEN
             ),
             temperature=(
+                # pyrefly: ignore [bad-argument-type]
                 temperature if (self.model not in self._reasoning_models) else NOT_GIVEN
             ),
+            # pyrefly: ignore [bad-argument-type]
             top_p=top_p if (self.model not in self._reasoning_models) else NOT_GIVEN,
             response_format=(
                 {"type": "json_object"}
@@ -248,6 +267,7 @@ class OPENAI(LLM):
                 else None
             ),
         )
+        # pyrefly: ignore [missing-attribute]
         return response.choices[0].message.content
 
     @override
@@ -273,6 +293,7 @@ class OPENAI(LLM):
             for image_path in image_paths:
                 image_data = image_to_b64(image_path)
                 user_message_content.append(
+                    # pyrefly: ignore [bad-argument-type]
                     {
                         "type": "image_url",
                         "image_url": {"url": f"data:image/png;base64, {image_data}"},
@@ -282,6 +303,7 @@ class OPENAI(LLM):
         if audio_paths:
             for audio_path in audio_paths:
                 user_message_content.append(
+                    # pyrefly: ignore [bad-argument-type]
                     {
                         "type": "input_audio",
                         "input_audio": {
@@ -292,6 +314,7 @@ class OPENAI(LLM):
                 )
 
         messages.append(
+            # pyrefly: ignore [bad-argument-type]
             {
                 "role": "user",
                 "content": user_message_content,
@@ -302,13 +325,17 @@ class OPENAI(LLM):
             model=self.model,
             messages=messages,
             max_completion_tokens=(
+                # pyrefly: ignore [bad-argument-type]
                 DEFAULT_MAX_TOKENS
                 if (self.model in self._reasoning_models)
                 else NOT_GIVEN
             ),
             temperature=(
+                # pyrefly: ignore [bad-argument-type]
                 temperature if (self.model not in self._reasoning_models) else NOT_GIVEN
             ),
+            # pyrefly: ignore [bad-argument-type]
             top_p=top_p if (self.model not in self._reasoning_models) else NOT_GIVEN,
         )
+        # pyrefly: ignore [missing-attribute]
         return response.choices[0].message.content

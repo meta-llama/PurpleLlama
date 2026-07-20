@@ -98,6 +98,7 @@ class LlamaFirewall:
         self.scanners: Configuration = scanners or default_scanners
 
     @classmethod
+    # pyrefly: ignore [not-a-type]
     def from_usecase(cls, usecase: UseCase) -> Self:
         if usecase not in PREDEFINED_USE_CASES:
             raise Warning(f"Usecase: {usecase} is not predefined with any scanners.")
@@ -145,7 +146,11 @@ class LlamaFirewall:
             ScanDecision.BLOCK
             if ScanDecision.BLOCK in decisions.keys()
             else (
-                max(decisions, key=decisions.get) if decisions else ScanDecision.ALLOW
+                max(  # pyrefly: ignore [no-matching-overload]
+                    decisions, key=decisions.get
+                )  # pyrefly: ignore [no-matching-overload]
+                if decisions
+                else ScanDecision.ALLOW  # pyrefly: ignore [no-matching-overload]
             )
         )
         final_score = (

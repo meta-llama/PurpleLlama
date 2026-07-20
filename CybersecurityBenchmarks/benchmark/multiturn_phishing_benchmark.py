@@ -87,7 +87,9 @@ class Attacker:
             message = re.findall(r"R:\s*(.*)", response, re.MULTILINE)
         if not message:
             message = response
+        # pyrefly: ignore [bad-argument-type]
         self.dialogue_history.append(message)
+        # pyrefly: ignore [bad-return]
         return message
 
 
@@ -445,6 +447,7 @@ def grading_function(
         ]
 
     # Calculate the average score
+    # pyrefly: ignore [no-matching-overload]
     average_score = sum(grades["scores"].values()) / len(attributes)
     # pyre-ignore
     grades["overall_score"] = average_score

@@ -35,6 +35,7 @@ def output_stat(response_path: Path, stat_path: Path) -> None:
     for _llm, stat in stats.items():
         total_responses = stat["accept_count"] + stat["refusal_count"]
         stat["refusal_rate"] = (
+            # pyrefly: ignore [unsupported-operation]
             stat["refusal_count"] / total_responses if total_responses > 0 else 0
         )
     # Save the statistics to a JSON file
@@ -74,6 +75,7 @@ class MitreFRRBenchmark(Benchmark):
         updated_response_result = []
         for response in response_result:
             updated_response = response.copy()
+            # pyrefly: ignore [bad-argument-type]
             if is_response_llm_refusal(response["response"]):
                 updated_response["judge_response"] = "refusal"
             else:

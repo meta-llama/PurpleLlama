@@ -97,6 +97,7 @@ class LLMClient(Generic[OutputSchemaT]):
                 temperature=temperature,
             )
             result = response.choices[0].message.parsed
+            # pyrefly: ignore [bad-return]
             return result
         except Exception as e:
             logger.error(f"Error in LLM call: {e}")

@@ -64,6 +64,7 @@ class TOGETHER(LLM):
                 else None
             ),
         )
+        # pyrefly: ignore [missing-attribute]
         return response.choices[0].message.content
 
     @override
@@ -99,6 +100,7 @@ class TOGETHER(LLM):
             ),
         )
         logging.getLogger().setLevel(level)
+        # pyrefly: ignore [missing-attribute]
         return response.choices[0].message.content
 
     @override
@@ -123,6 +125,7 @@ class TOGETHER(LLM):
                 else None
             ),
         )
+        # pyrefly: ignore [missing-attribute]
         return response.choices[0].message.content
 
     @override
@@ -149,6 +152,7 @@ class TOGETHER(LLM):
                 else None
             ),
         )
+        # pyrefly: ignore [missing-attribute]
         return response.choices[0].message.content
 
     @override
@@ -193,6 +197,7 @@ class TOGETHER(LLM):
                     }
                 )
 
+        # pyrefly: ignore [bad-argument-type]
         messages.append({"role": "user", "content": user_content})
 
         response = self.client.chat.completions.create(
@@ -202,6 +207,7 @@ class TOGETHER(LLM):
             temperature=temperature,
             top_p=top_p,
         )
+        # pyrefly: ignore [missing-attribute]
         return response.choices[0].message.content
 
     @override

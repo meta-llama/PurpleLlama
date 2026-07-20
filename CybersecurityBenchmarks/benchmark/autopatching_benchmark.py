@@ -877,6 +877,7 @@ class AutoPatchingBenchmark(Benchmark):
                 logging.info(
                     f"ARVO #{arvo_challenge_number} failed QA checks. Sample being excluded from set."
                 )
+                # pyrefly: ignore [bad-return]
                 return result
 
             # QA checks passed
@@ -899,6 +900,7 @@ class AutoPatchingBenchmark(Benchmark):
                     f"ARVO #{arvo_challenge_number} did not specify a patched function"
                     " or the rebuilt binary does not exist. This sample is excluded from set."
                 )
+                # pyrefly: ignore [bad-return]
                 return result
 
             # Patched function name was generated
@@ -941,6 +943,7 @@ class AutoPatchingBenchmark(Benchmark):
                     AutoPatchingBenchmark.EVALUATION_FUZZING_DECODE_ERROR_KEY
                 ] = str(e)
                 result[AutoPatchingBenchmark.EVALUATION_FUZZING_DECODE_ERROR_KEY] = True
+                # pyrefly: ignore [bad-return]
                 return result
 
             # Run differential debugging if fuzzing passed
@@ -964,4 +967,5 @@ class AutoPatchingBenchmark(Benchmark):
                         AutoPatchingBenchmark.EVALUATION_DIFFERENTIAL_DEBUGGING_ERROR_KEY
                     ] = True
 
+            # pyrefly: ignore [bad-return]
             return result

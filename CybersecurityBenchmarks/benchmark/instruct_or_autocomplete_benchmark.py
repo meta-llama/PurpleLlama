@@ -168,7 +168,9 @@ class InstructOrAutoCompleteBenchmark(Benchmark):
                     if original_text_for_bleu:
                         try:
                             bleu_score = compute_bleu_score(
-                                response_text_for_bleu, original_text_for_bleu
+                                # pyrefly: ignore [bad-argument-type]
+                                response_text_for_bleu,
+                                original_text_for_bleu,
                             )
                             bleu_scores_sum += bleu_score
                             bleu_scores_sum_language += bleu_score

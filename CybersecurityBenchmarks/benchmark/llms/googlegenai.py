@@ -223,6 +223,7 @@ class GOOGLEGENAI(LLM):
                 image_mimetype = get_mime_type(image_path)
 
                 content_parts.append(
+                    # pyrefly: ignore [bad-argument-type]
                     {"file_data": {"mime_type": image_mimetype, "file_uri": file_uri}}
                 )
 
@@ -232,6 +233,7 @@ class GOOGLEGENAI(LLM):
                 file_uris.append(file_uri)
                 audio_mimetype = get_mime_type(audio_path)
                 content_parts.append(
+                    # pyrefly: ignore [bad-argument-type]
                     {"file_data": {"mime_type": audio_mimetype, "file_uri": file_uri}}
                 )
 
@@ -313,6 +315,7 @@ class GOOGLEGENAI(LLM):
         temperature: float = DEFAULT_TEMPERATURE,
         top_p: float = DEFAULT_TOP_P,
     ) -> str:
+        # pyrefly: ignore [missing-attribute]
         return super().chat_with_system_prompt(
             system_prompt,
             prompt_with_history,

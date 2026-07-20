@@ -54,5 +54,6 @@ def __getattr__(name: str) -> Type[object]:
     elif name == "promptguard_utils":
         from . import promptguard_utils
 
+        # pyrefly: ignore [bad-return]
         return promptguard_utils
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

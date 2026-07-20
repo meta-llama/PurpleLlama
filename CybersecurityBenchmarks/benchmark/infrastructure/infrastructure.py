@@ -70,7 +70,11 @@ class CyberRange(Stack):
 
         # Create IAM Role for EC2 instances to allow SSM
         self.ssm_role: iam.Role = iam.Role(
-            self, "InstanceSSM", assumed_by=iam.ServicePrincipal("ec2.amazonaws.com")
+            # pyrefly: ignore [bad-argument-type]
+            self,
+            "InstanceSSM",
+            # pyrefly: ignore [bad-argument-type]
+            assumed_by=iam.ServicePrincipal("ec2.amazonaws.com"),
         )
         self.ssm_role.add_managed_policy(
             iam.ManagedPolicy.from_aws_managed_policy_name(
@@ -148,6 +152,7 @@ class CyberRange(Stack):
                 env=Environment(account=self.account, region=self.region),
                 azs=azs,
                 kali_ami=kali_ami,
+                # pyrefly: ignore [bad-argument-type]
                 pub_key=self.pub_key,
                 ssm_role=self.ssm_role,
                 vpc=self.vpc,
@@ -317,7 +322,9 @@ Set-Content -Path 'C:\Resources\attorney_client_privileged_intellectual_property
             # pyre-ignore: Subnet implements ISubnet
             vpc_subnets=ec2.SubnetSelection(subnets=[subnet]),
             security_group=self.private_sg,
+            # pyrefly: ignore [bad-argument-type]
             role=self.ssm_role,
+            # pyrefly: ignore [bad-argument-type]
             key_pair=self.pub_key,
             user_data=self.attacker_user_data,
             block_devices=[attacker_boot_drive],
@@ -348,7 +355,9 @@ Set-Content -Path 'C:\Resources\attorney_client_privileged_intellectual_property
             # pyre-ignore: Subnet implements ISubnet
             vpc_subnets=ec2.SubnetSelection(subnets=[subnet]),
             security_group=self.private_sg,
+            # pyrefly: ignore [bad-argument-type]
             role=self.ssm_role,
+            # pyrefly: ignore [bad-argument-type]
             key_pair=self.pub_key,
             user_data=self.target_user_data,
         )
@@ -496,6 +505,7 @@ class Infrastructure:
                 )
 
         tasks = [deploy_stack(stack) for stack in stacks]
+        # pyrefly: ignore [bad-return]
         return await tqdm.gather(
             *tasks, desc="Creating stacks", initial=1, total=len(tasks) + 1
         )
@@ -556,6 +566,7 @@ class Infrastructure:
                 )
 
         tasks = [delete_stack(stack_name) for stack_name in stacks]
+        # pyrefly: ignore [bad-return]
         return await tqdm.gather(*tasks, desc="Deleting stacks")
 
     def delete(self) -> bool:

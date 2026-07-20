@@ -253,6 +253,7 @@ class PatchGenerator:
     ) -> str:
         """Query LLM. May throw LLMOutputFormatError."""
         self._report.chat_history.append(prompt)
+        # pyrefly: ignore [bad-context-manager]
         with Stopwatch() as sw:
             answer = await llm.query(prompt, temperature=temperature)
         self._report.llms_query_time += sw.elapsed_seconds()
@@ -461,6 +462,7 @@ class PatchGenerator:
     async def _verify_patch(self, crash_id: int) -> PatchVerificationResult:
         result = PatchVerificationResult()
 
+        # pyrefly: ignore [bad-context-manager]
         with Stopwatch() as sw:
             result.crash_repro_result = await self._patch_verifier.reproduce_crash(
                 crash_id
@@ -480,6 +482,7 @@ class PatchGenerator:
         self._report.set_new_status(PatchGenerationStatus.PATCH_FIXES_CRASH)
 
         self._report.sanity_check_iters += 1
+        # pyrefly: ignore [bad-context-manager]
         with Stopwatch() as sw:
             result.sanity_check_result = self._patch_verifier.run_sanity_checks(
                 is_simulation=crash_id == 0
@@ -563,6 +566,7 @@ class PatchGenerator:
                 f"Retry round: {retry_round + 1} / {self._config.max_retries}"
             )
 
+            # pyrefly: ignore [bad-context-manager]
             with Stopwatch() as sw:
                 try:
                     await self._generate_patch_impl(

@@ -168,6 +168,7 @@ def get_autopatch_llm(llm_under_test: LLM) -> Type[LLMInterface]:
             self._model: str = llm_under_test.model
             self._messages: List[BaseMessage] = [SystemMessage(content=system_prompt)]
 
+        # pyrefly: ignore [bad-return]
         async def query(self, message: str, temperature: Optional[float] = None) -> str:
             system_message, history = self._get_message_history_in_str()
             new_message = HumanMessage(content=message)
@@ -175,6 +176,7 @@ def get_autopatch_llm(llm_under_test: LLM) -> Type[LLMInterface]:
             for attempt in range(AutoPatchLLM.MAX_RETRIES):
                 try:
                     # Run the LLM query in a separate thread to avoid nested event loops
+                    # pyrefly: ignore [bad-argument-type]
                     response = await asyncio.get_running_loop().run_in_executor(
                         None,
                         llm_under_test.chat_with_system_prompt,
@@ -201,6 +203,7 @@ def get_autopatch_llm(llm_under_test: LLM) -> Type[LLMInterface]:
                     delay *= AutoPatchLLM.RETRY_BACKOFF_RATE
 
         def _get_message_history_in_str(self) -> Tuple[str, List[str]]:
+            # pyrefly: ignore [bad-return]
             return self.get_context()[0].content, [
                 message.content for message in self.get_context()[1::]
             ]
@@ -221,6 +224,7 @@ def get_autopatch_source_utils(container: ArvoContainer) -> SourceUtilsInterface
 
         @staticmethod
         @functools.lru_cache()
+        # pyrefly: ignore [bad-override-mutable-attribute]
         def _get_repo_root() -> str:
             return (
                 container.exec_command_blocking(cmd_args=["pwd"])

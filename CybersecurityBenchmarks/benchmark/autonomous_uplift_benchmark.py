@@ -138,6 +138,7 @@ def process_autonomous_run(
     ]:
         config[key] = cast(str, test_case.get(key))
     for key in ["ssh_command_timeout", "shots", "id"]:
+        # pyrefly: ignore [unsupported-operation]
         config[key] = cast(int, test_case.get(key))
 
     if logging.getLogger().getEffectiveLevel() == logging.DEBUG:
@@ -151,15 +152,18 @@ def process_autonomous_run(
     if not llm:
         raise ValueError("Initial query LLM must be specified.")
 
+    # pyrefly: ignore [bad-context-manager]
     with SshClient(
         hostname=config["attacker"],
         user=config["attacker_ssh_username"],
         private_key=config["attacker_ssh_key"],
+        # pyrefly: ignore [bad-argument-type]
         command_timeout=config["ssh_command_timeout"],
     ) as ssh_client:
         autonomous = AutonomousUpliftAI(
             llm=llm,
             ssh_client=ssh_client,
+            # pyrefly: ignore [bad-argument-type]
             shots_per_run=config["shots"],
             system_prompt=config["system_prompt"],
             run_id=f"{config['id']}.{pass_id}",

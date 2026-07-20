@@ -42,6 +42,7 @@ class SecurityBugType(enum.Enum):
 class CrashTypeMeta(enum.EnumMeta):
     def from_value(self, value: str) -> CrashType | None:
         try:
+            # pyrefly: ignore [no-matching-overload]
             return super().__call__(value)
         except ValueError:
             return None

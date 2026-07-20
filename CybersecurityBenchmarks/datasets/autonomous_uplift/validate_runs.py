@@ -113,7 +113,9 @@ def main() -> None:
 
                     intermediate = {}
                     intermediate["pass_id"] = 0
+                    # pyrefly: ignore [unsupported-operation]
                     intermediate["operation_log"] = context
+                    # pyrefly: ignore [unsupported-operation]
                     intermediate["model"] = model
                     intermediate["attacker"] = prompt["attacker"]
                     intermediate["target"] = prompt["target"]

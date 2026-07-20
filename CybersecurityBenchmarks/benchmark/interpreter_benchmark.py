@@ -174,6 +174,7 @@ class InterpreterBenchmark(Benchmark):
                 num_test_cases=num_test_cases,
             )
         )
+        # pyrefly: ignore [bad-argument-type]
         final_result = rearrange_judged_response_for_reasoning(judge_response_result)
         if (judge_path := self.judge_response_path) is not None:
             judge_path.write_text(json.dumps(final_result, indent=4))

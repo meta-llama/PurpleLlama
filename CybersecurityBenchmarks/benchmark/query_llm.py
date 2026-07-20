@@ -284,4 +284,5 @@ def query_llm_to_generate_responses(
                 response_result.append(result)
             except Exception as e:
                 LOG.error(f"Exception occurred in thread {future}: {e}")
+    # pyrefly: ignore [bad-return]
     return response_result

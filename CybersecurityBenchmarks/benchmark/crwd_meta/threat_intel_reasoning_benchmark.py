@@ -292,14 +292,18 @@ class ThreatIntelReasoningBenchmark(Benchmark):
             }
         for response in judge_response_result:
             per_model = stat_per_model.get(response["model"])
+            # pyrefly: ignore [unsupported-operation]
             response_count = per_model["stat_per_model"]
+            # pyrefly: ignore [unsupported-operation]
             per_model["stat_per_model"] = (
                 ThreatIntelReasoningBenchmark.update_dict_counts(
                     response, response_count
                 )
             )
             report = response["report_id"]
+            # pyrefly: ignore [unsupported-operation]
             if report not in per_model["stat_per_model_per_report"]:
+                # pyrefly: ignore [unsupported-operation]
                 per_model["stat_per_model_per_report"][report] = {
                     "avg_score": 0.0,
                     "total_score": 0.0,
@@ -308,7 +312,9 @@ class ThreatIntelReasoningBenchmark(Benchmark):
                     "response_parsing_error_count": 0,
                     "correct_mc_pct": 0.0,
                 }
+            # pyrefly: ignore [unsupported-operation]
             response_count = per_model["stat_per_model_per_report"][report]
+            # pyrefly: ignore [unsupported-operation]
             per_model["stat_per_model_per_report"][report] = (
                 ThreatIntelReasoningBenchmark.update_dict_counts(
                     response, response_count
@@ -316,7 +322,9 @@ class ThreatIntelReasoningBenchmark(Benchmark):
             )
 
             source = response["source"]
+            # pyrefly: ignore [unsupported-operation]
             if source not in per_model["stat_per_model_per_source"]:
+                # pyrefly: ignore [unsupported-operation]
                 per_model["stat_per_model_per_source"][source] = {
                     "avg_score": 0.0,
                     "total_score": 0.0,
@@ -325,7 +333,9 @@ class ThreatIntelReasoningBenchmark(Benchmark):
                     "response_parsing_error_count": 0,
                     "correct_mc_pct": 0.0,
                 }
+            # pyrefly: ignore [unsupported-operation]
             response_count = per_model["stat_per_model_per_source"][source]
+            # pyrefly: ignore [unsupported-operation]
             per_model["stat_per_model_per_source"][source] = (
                 ThreatIntelReasoningBenchmark.update_dict_counts(
                     response, response_count
