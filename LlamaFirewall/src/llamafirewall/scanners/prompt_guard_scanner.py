@@ -5,6 +5,8 @@
 
 # pyre-strict
 
+from llamafirewall.utils.memory_optimizer import ValidationBufferPool
+
 from ..llamafirewall_data_types import (
     Message,
     ScanDecision,
@@ -14,6 +16,8 @@ from ..llamafirewall_data_types import (
 )
 from .base_scanner import Scanner
 from .promptguard_utils import PromptGuard
+
+guard_mem_pool = ValidationBufferPool()
 
 
 class PromptGuardScanner(Scanner):
@@ -31,21 +35,35 @@ class PromptGuardScanner(Scanner):
     async def scan(
         self, message: Message, past_trace: Trace | None = None
     ) -> ScanResult:
-        text = message.content
+        text: str = message.content
 
-        score = self.pg.get_jailbreak_score(text=text)
+        pool_idx, active_buffer = guard_mem_pool.acquire()
+        
+        if pool_idx == -1:
+            active_buffer = bytearray(len(text) * 4)
 
-        decision = (
+        try:
+            text_bytes: bytes = text.encode("utf-8")
+            buffer_len = len(text_bytes)
+            active_buffer[:buffer_len] = text_bytes
+
+            score: float = self.pg.get_jailbreak_score(
+                text=active_buffer[:buffer_len].decode("utf-8")
+            )
+            
+        finally:
+            guard_mem_pool.release(pool_idx)
+
+        decision: ScanDecision = (
             ScanDecision.BLOCK if score >= self.block_threshold else ScanDecision.ALLOW
         )
 
-        reason = (
+        reason: str = (
             f'Received text is likely to be a prompt injection attack, with a probability of {score}.\n Full text: "{text}"'
             if score >= self.block_threshold
             else self.ALLOW_REASON
         )
 
-        # Return the scan result
         return ScanResult(
             decision=decision,
             reason=reason,
