@@ -670,6 +670,15 @@ where <INPUT_MODALITY> is one of "text", "image", or "text_and_image"
 Once the benchmarks have run, the evaluations of each model across each language
 will be available under the `stat-path`:
 
+### Governance audit trail example
+
+Teams that need reviewable audit evidence for security assessments can use the
+vendor-neutral event shape in
+[`docs/governance_audit_trails.md`](docs/governance_audit_trails.md). The
+example records benchmark metadata, output artifact paths, policy checks,
+remediation status, and redaction metadata without storing raw prompts or raw
+model responses by default.
+
 ### MITRE Results
 
 ```
