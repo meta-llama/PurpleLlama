@@ -412,15 +412,14 @@ def recursive_compare_dicts(
         if isinstance(v1, dict) and isinstance(v2, dict):
             for diff in recursive_compare_dicts(v1, v2, key_path):
                 yield diff
-        else:
-            if (
-                isinstance(v1, str)
-                and ("ptr_" not in v1)
-                and isinstance(v2, str)
-                and ("ptr_" not in v2)
-            ):
-                if v1 != v2:
-                    yield (key_path, v1, v2)
+        elif (
+            not isinstance(v1, (dict, list))
+            and not isinstance(v2, (dict, list))
+            and not (isinstance(v1, str) and "ptr_" in v1)
+            and not (isinstance(v2, str) and "ptr_" in v2)
+            and v1 != v2
+        ):
+            yield (key_path, v1, v2)
 
 
 def find_struct_field_for_path(
