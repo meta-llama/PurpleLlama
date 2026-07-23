@@ -18,9 +18,23 @@ from ..llamafirewall_data_types import (
 from .base_scanner import Scanner
 
 # Default regex patterns for common security concerns
+# Inspired by ATR (Agent Threat Rules) community patterns — MIT licensed
+# See: https://github.com/Agent-Threat-Rule/agent-threat-rules
 DEFAULT_REGEX_PATTERNS: Dict[str, str] = {
-    # Prompt injection patterns
-    "Prompt injection": r"ignore previous instructions|ignore all instructions",
+    # Prompt injection — direct instruction override
+    "Prompt injection — direct": r"(?i)\b(ignore|disregard|forget|override|bypass|skip|abandon|drop|cancel|suppress|nullify|void|revoke|dismiss|discard|reject)\s+(all\s+)?(the\s+|your\s+|my\s+|any\s+|these\s+|those\s+)?(previous|prior|above|earlier|preceding|original|existing|current|initial|default|given|assigned|preset|established)?\s*(instructions?|prompts?|rules?|guidelines?|directives?|constraints?|context|programming|training|protocols?|policies|configuration|parameters|boundaries|guardrails?|safeguards?|restrictions?|tasks?|assignments?|information|directions?|orders?|commands?)",
+    # Prompt injection — persona/s role-play override
+    "Prompt injection — persona override": r"(?i)\b(you\s+are\s+now|you\s+have\s+become|you\s+will\s+act\s+as|you\s+shall\s+be|switch\s+to\s+being|become|morph\s+into|adopt\s+the\s+persona)\s+(a|an|the|my|ein[ea]?)?\s*[a-zA-Z\u00C0-\u024F]+",
+    # Prompt injection — new task injection
+    "Prompt injection — new task": r"(?i)\b(new|updated|revised|replacement|corrected|actual|real|true|overriding)\s+(instructions?|rules?|directives?|guidelines?|orders?|commands?)\s*[:=\-]",
+    # Prompt injection — system prompt exfiltration
+    "Prompt injection — system prompt exfil": r"(?i)(reveal|show|display|output|print|repeat|provide|give|share|tell|what\s+are|what\s+were|what\s+is)\s+(me\s+)?(your|the|all)\s+(secret|hidden|internal|system|original|previous|initial|complete|full|given|guard|entire)?\s*(instructions?|prompts?|passwords?|secrets?|embeddings?|configuration|directives?|guidelines?|rules)",
+    # Prompt injection — multilingual (Spanish)
+    "Prompt injection — Spanish": r"(?i)(ignora|ignorar|olvida|olvidar|descarta|descartar|omite|omitir|anula|anular)\s+(todas?\s+)?(las?\s+)?(instrucciones|reglas|directrices|restricciones|indicaciones|limitaciones)\s+(previas|anteriores|originales|existentes|actuales)",
+    # Prompt injection — multilingual (German)
+    "Prompt injection — German": r"(?i)(ignoriere|vergiss|missachte|umgehe|verwirf)\s+(alle[sn]?|die\s+)?(vorherigen?|bisherigen?|aktuellen?|bestehenden?)?\s*(Anweisungen|Regeln|Richtlinien|Anordnungen|Vorgaben|Instruktionen|Beschraenkungen|Aufgaben|Informationen|alles)",
+    # Tool/credential spoofing — typo variants
+    "Tool spoofing — typo domains": r"(?i)(?:gtihub|githbu|gihtub|gthub|g1thub|slakc|slck|slaack|s1ack|opeanai|openla|open_al|openaii|anthroplc|anthrop1c|_anthropic|databse|databaes|dtabase)[-_](?:api|search|commit|pr|issues?|repos|send|post|read|message|channel|chat|complete|embed|generate|query|read|write|exec|connect)",
     # PII detection
     "Email address": r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b",
     "Phone number": r"\b(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\b",
