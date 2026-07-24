@@ -28,7 +28,8 @@ SEMGREP_GENERATED_RULES_PATH: Path = SEMGREP_RULE_REPO_PATH / "_generated_"
 def _get_semgrep_core_path() -> Path:
     semgrep_core_name = "semgrep-core"
     try:
-        with importlib.resources.path("semgrep.bin", semgrep_core_name) as path:
+        resource = importlib.resources.files("semgrep.bin") / semgrep_core_name
+        with importlib.resources.as_file(resource) as path:
             if path.is_file():
                 return path
     except (FileNotFoundError, ModuleNotFoundError):
