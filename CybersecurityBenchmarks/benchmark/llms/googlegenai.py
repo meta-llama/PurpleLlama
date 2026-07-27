@@ -223,7 +223,7 @@ class GOOGLEGENAI(LLM):
                 image_mimetype = get_mime_type(image_path)
 
                 content_parts.append(
-                    # pyrefly: ignore [bad-argument-type]
+                    # pyrefly: ignore [bad-argument-type, bad-assignment]
                     {"file_data": {"mime_type": image_mimetype, "file_uri": file_uri}}
                 )
 
@@ -233,7 +233,7 @@ class GOOGLEGENAI(LLM):
                 file_uris.append(file_uri)
                 audio_mimetype = get_mime_type(audio_path)
                 content_parts.append(
-                    # pyrefly: ignore [bad-argument-type]
+                    # pyrefly: ignore [bad-argument-type, bad-assignment]
                     {"file_data": {"mime_type": audio_mimetype, "file_uri": file_uri}}
                 )
 

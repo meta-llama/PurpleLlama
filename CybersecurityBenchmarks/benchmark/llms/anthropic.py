@@ -203,6 +203,7 @@ class ANTHROPIC(LLM):
                     # pyrefly: ignore [bad-argument-type]
                     {
                         "type": "image",
+                        # pyrefly: ignore [bad-assignment]
                         "source": {
                             "type": "base64",
                             "media_type": "image/png",

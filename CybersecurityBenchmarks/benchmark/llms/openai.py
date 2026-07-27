@@ -296,6 +296,7 @@ class OPENAI(LLM):
                     # pyrefly: ignore [bad-argument-type]
                     {
                         "type": "image_url",
+                        # pyrefly: ignore [bad-assignment]
                         "image_url": {"url": f"data:image/png;base64, {image_data}"},
                     }
                 )
@@ -306,6 +307,7 @@ class OPENAI(LLM):
                     # pyrefly: ignore [bad-argument-type]
                     {
                         "type": "input_audio",
+                        # pyrefly: ignore [bad-assignment]
                         "input_audio": {
                             "data": audio_to_b64(str(audio_path)),
                             "format": "wav",
@@ -317,6 +319,7 @@ class OPENAI(LLM):
             # pyrefly: ignore [bad-argument-type]
             {
                 "role": "user",
+                # pyrefly: ignore [bad-assignment]
                 "content": user_message_content,
             }
         )
