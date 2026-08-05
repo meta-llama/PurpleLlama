@@ -211,6 +211,7 @@ class NOVITA(LLM):
     @override
     def valid_models(self) -> list[str]:
         return [
-            "meta-llama/llama-3.3-70b-instruct",
-            "deepseek/deepseek-r1",
+            "moonshotai/kimi-k3",
+            "zai-org/glm-5.2",
+            "deepseek/deepseek-v4-flash-0731",
         ]

@@ -24,10 +24,10 @@ class TestLLM(unittest.TestCase):
 
     def test_create_novita(self) -> None:
         novita = llm.create(
-            "NOVITA::meta-llama/llama-3.3-70b-instruct::<my API key>"
+            "NOVITA::moonshotai/kimi-k3::<my API key>"
         )
         self.assertTrue(isinstance(novita, llm.NOVITA))
-        self.assertEqual(novita.model, "meta-llama/llama-3.3-70b-instruct")
+        self.assertEqual(novita.model, "moonshotai/kimi-k3")
         self.assertEqual(novita.api_key, "<my API key>")
         self.assertEqual(str(novita.client.base_url), "https://api.novita.ai/openai/")
 

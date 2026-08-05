@@ -127,7 +127,7 @@ The followings are a few examples:
 - `OPENAI::gpt-3.5-turbo::<API KEY>`
 - `OPENAI::gpt-3.5-turbo::<API KEY>::https://api.openai.com/v1/`
 - `TOGETHER::togethercomputer/llama-2-7b::<API KEY>`
-- `NOVITA::meta-llama/llama-3.3-70b-instruct::<API KEY>`
+- `NOVITA::moonshotai/kimi-k3::<API KEY>`
 
 ### How to run benchmarks for additional models and inference APIs
 
