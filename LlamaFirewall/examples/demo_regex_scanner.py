@@ -11,7 +11,6 @@ Example demonstrating how to use the RegexScanner.
 
 import asyncio
 
-from llamafirewall.config import UseCase
 from llamafirewall.llamafirewall import LlamaFirewall
 from llamafirewall.llamafirewall_data_types import UserMessage
 from llamafirewall.scanners.regex_scanner import RegexScanner
