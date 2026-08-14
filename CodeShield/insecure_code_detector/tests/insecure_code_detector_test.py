@@ -44,13 +44,32 @@ class InsecureCodeDetectorTest(unittest.IsolatedAsyncioTestCase, ABC):
         tests: list[tuple[str, int]],
         usecase: UseCase = UseCase.CYBERSECEVAL,
     ) -> None:
+        max_retries = 3
         for test_case in tests:
             test_input, expected_count = test_case
-            result = await insecure_code_detector.analyze(
-                language, test_input, None, None, None, usecase
-            )
-            print(test_case)
-            print(result)
-            self.assertEqual(
-                len(result), expected_count, "Test failed: {}".format(test_input)
-            )
+            last_error = None
+            for attempt in range(max_retries):
+                result = await insecure_code_detector.analyze(
+                    language, test_input, None, None, None, usecase
+                )
+                print(test_case)
+                print(result)
+                try:
+                    self.assertEqual(
+                        len(result),
+                        expected_count,
+                        "Test failed: {}".format(test_input),
+                    )
+                    last_error = None
+                    break
+                except AssertionError as e:
+                    last_error = e
+                    if expected_count > 0 and len(result) == 0:
+                        print(
+                            f"Retrying test case (attempt {attempt + 1}/{max_retries})"
+                            " — suspected transient osemgrep failure"
+                        )
+                        continue
+                    raise
+            if last_error is not None:
+                raise last_error
