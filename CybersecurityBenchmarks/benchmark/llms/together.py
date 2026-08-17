@@ -197,7 +197,7 @@ class TOGETHER(LLM):
                     }
                 )
 
-        # pyrefly: ignore [bad-argument-type, bad-assignment]
+        # pyrefly: ignore [bad-assignment]
         messages.append({"role": "user", "content": user_content})
 
         response = self.client.chat.completions.create(

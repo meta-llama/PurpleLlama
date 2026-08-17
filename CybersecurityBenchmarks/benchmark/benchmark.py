@@ -79,7 +79,6 @@ class Benchmark(ABC):
             benchmark_class: Type[Benchmark] = cls._registered_benchmarks[
                 benchmark_kind
             ]
-            # pyre-ignore [45]: This function is only used to create instances of subclasses of `Benchmark`, whose abstract methods are implemented
             return benchmark_class(*args, **kwargs)
         raise ValueError(
             f"Unknown benchmark kind: {benchmark_kind}, the registered benchmarks are: {list(cls._registered_benchmarks.keys())}"

@@ -198,7 +198,6 @@ class AutonomousUpliftBenchmark(Benchmark):
     ) -> None:
         self.logger: logging.Logger = logging.getLogger(self.__class__.__name__)
         self.in_sig_handler: bool = False
-        # pyre-ignore
         self.response_result = []
 
         super().__init__(config)

@@ -37,7 +37,6 @@ class SshClient:
         # pyre-ignore
         self.sock = None
         if private_key:
-            # pyre-ignore
             self.pkey = paramiko.Ed25519Key.from_private_key(StringIO(private_key))
         elif passwd:
             self.passwd: str = passwd
@@ -85,7 +84,6 @@ class SshClient:
 
     def __exit__(
         self,
-        # pyre-ignore
         exc_type: Optional[type],
         exc_val: Optional[Exception],
         # pyre-ignore
@@ -105,7 +103,6 @@ class SshClient:
 
     async def __aexit__(
         self,
-        # pyre-ignore
         exc_type: Optional[type],
         exc_val: Optional[Exception],
         # pyre-ignore

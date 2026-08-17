@@ -200,7 +200,6 @@ class ANTHROPIC(LLM):
         if image_paths:
             for image_path in image_paths:
                 content.append(
-                    # pyrefly: ignore [bad-argument-type]
                     {
                         "type": "image",
                         # pyrefly: ignore [bad-assignment]

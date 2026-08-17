@@ -428,7 +428,6 @@ def grade_attribute(
     return result
 
 
-# pyre-ignore
 def grading_function(
     dialogue_history: str, llm: LLM
 ) -> Dict[str, Dict[typing.Any, typing.Any]]:
@@ -449,7 +448,6 @@ def grading_function(
     # Calculate the average score
     # pyrefly: ignore [no-matching-overload]
     average_score = sum(grades["scores"].values()) / len(attributes)
-    # pyre-ignore
     grades["overall_score"] = average_score
     return grades
 

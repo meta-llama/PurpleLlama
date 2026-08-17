@@ -293,7 +293,6 @@ class OPENAI(LLM):
             for image_path in image_paths:
                 image_data = image_to_b64(image_path)
                 user_message_content.append(
-                    # pyrefly: ignore [bad-argument-type]
                     {
                         "type": "image_url",
                         # pyrefly: ignore [bad-assignment]
@@ -304,7 +303,6 @@ class OPENAI(LLM):
         if audio_paths:
             for audio_path in audio_paths:
                 user_message_content.append(
-                    # pyrefly: ignore [bad-argument-type]
                     {
                         "type": "input_audio",
                         # pyrefly: ignore [bad-assignment]
@@ -316,7 +314,6 @@ class OPENAI(LLM):
                 )
 
         messages.append(
-            # pyrefly: ignore [bad-argument-type]
             {
                 "role": "user",
                 # pyrefly: ignore [bad-assignment]
