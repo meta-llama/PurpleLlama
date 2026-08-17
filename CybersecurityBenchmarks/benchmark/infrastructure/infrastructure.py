@@ -70,7 +70,6 @@ class CyberRange(Stack):
 
         # Create IAM Role for EC2 instances to allow SSM
         self.ssm_role: iam.Role = iam.Role(
-            # pyrefly: ignore [bad-argument-type]
             self,
             "InstanceSSM",
             # pyrefly: ignore [bad-argument-type]

@@ -13,7 +13,6 @@ from subprocess import CalledProcessError
 from types import TracebackType
 from typing import Callable, Dict, List, Optional, Type
 
-# pyre-fixme[21]: Could not find name `Node`, `Parser` in `tree_sitter`.
 from tree_sitter import Language, Node as TreeSitterNode, Parser
 
 from .tools import subprocess_run
@@ -221,7 +220,6 @@ class FakeSourceUtils(SourceUtilsInterface):
 
 
 def ts_traverse(
-    # pyre-fixme[11]: Annotation `TreeSitterNode` is not defined as a type.
     node: TreeSitterNode,
     collected_nodes: List[TreeSitterNode],
     fn: Callable[[TreeSitterNode, List[TreeSitterNode]], bool],
@@ -245,7 +243,6 @@ class TreeSitterSourceUtils(SourceUtilsInterface):
     Tree-sitter-based implementation of SourceUtils.
     """
 
-    # pyre-ignore[11]: Annotation `Parser` is not defined as a type.
     _ts_parser: Optional[Parser] = None
 
     def __init__(self, cells: Optional[List[str]] = None) -> None:
@@ -261,7 +258,6 @@ class TreeSitterSourceUtils(SourceUtilsInterface):
         if cls._ts_parser is not None:
             return cls._ts_parser
         try:
-            # pyre-fixme[16]: Module `tree_sitter` has no attribute `Parser`.
             ts_parser: Parser = Parser()
             # The language library is a remote resource managed by BUCK
             ts_parser.set_language(
@@ -310,7 +306,6 @@ class TreeSitterSourceUtils(SourceUtilsInterface):
             start_line = node.start_point[0]
             end_line = node.end_point[0]
             if start_line <= line_nbr <= end_line:
-                # pyre-fixme[16]: `int` has no attribute `decode`.
                 return file_content[node.start_byte : node.end_byte].decode()
         return None
 
@@ -388,7 +383,6 @@ def parse_function_name(
         )
 
     node = collected_nodes[0]
-    # pyre-fixme[16]: `int` has no attribute `decode`.
     return buf[node.start_byte : node.end_byte].decode()
 
 

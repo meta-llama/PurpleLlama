@@ -150,7 +150,7 @@ class LlamaFirewall:
                     decisions, key=decisions.get
                 )  # pyrefly: ignore [no-matching-overload]
                 if decisions
-                else ScanDecision.ALLOW  # pyrefly: ignore [no-matching-overload]
+                else ScanDecision.ALLOW
             )
         )
         final_score = (
