@@ -73,7 +73,6 @@ async def llamafirewall_input_guardrail(
     )
 
 
-# pyre-ignore
 agent = Agent(
     name="Customer support agent",
     instructions="You are a customer support agent. You help customers with their questions.",
