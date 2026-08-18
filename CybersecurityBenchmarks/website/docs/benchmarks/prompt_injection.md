@@ -185,3 +185,14 @@ The result of each bucket follows the same structure.
     }
 }
 ```
+
+## Related complementary evaluation
+
+CyberSecEval prompt-injection tests primarily inject instructions through
+**user text or images**. For multi-step **agent** scenarios where the payload
+is embedded in tool outputs or memory (a subset of the
+[OWASP Top 10 for Agentic Applications (2026)](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/)),
+see [AgentThreatBench](https://ukgovernmentbeis.github.io/inspect_evals/evals/safeguards/agent_threat_bench/)
+in UK AISI [`inspect_evals`](https://github.com/UKGovernmentBEIS/inspect_evals/tree/main/src/inspect_evals/agent_threat_bench).
+That suite is complementary and is not executed by
+`CybersecurityBenchmarks.benchmark.run`.
