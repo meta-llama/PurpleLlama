@@ -87,7 +87,6 @@ class CodeShield:
         if len(issues) > 0:
             result.is_insecure = True
             result.issues_found = issues
-            # pyre-ignore
             if any(issue.severity == Severity.ERROR for issue in issues):
                 result.recommended_treatment = Treatment.BLOCK
             else:
