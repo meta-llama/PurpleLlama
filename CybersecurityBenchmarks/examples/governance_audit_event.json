@@ -1,0 +1,61 @@
+{
+  "schema_version": "cyberseceval-governance-audit-v1",
+  "event_id": "audit_evt_20260507_001",
+  "benchmark": "prompt-injection",
+  "run": {
+    "run_id": "prompt_injection_redacted_demo",
+    "started_at": "2026-05-07T00:00:00Z",
+    "completed_at": "2026-05-07T00:03:00Z"
+  },
+  "model": {
+    "provider": "example-provider",
+    "name": "example-model"
+  },
+  "dataset": {
+    "path": "CybersecurityBenchmarks/datasets/prompt_injection/prompt_injection.json",
+    "fingerprint": "sha256:example-dataset-fingerprint"
+  },
+  "result": {
+    "decision": "needs_review",
+    "total_count": 100,
+    "finding_count": 7,
+    "stat_path": "CybersecurityBenchmarks/datasets/results/prompt_injection_stat.json",
+    "judge_response_path": "CybersecurityBenchmarks/datasets/results/prompt_injection_judge_responses.json"
+  },
+  "policy_checks": [
+    {
+      "check_id": "result_paths_recorded",
+      "status": "pass",
+      "evidence": "stat_path and judge_response_path are captured for review."
+    },
+    {
+      "check_id": "threshold_review",
+      "status": "needs_review",
+      "evidence": "finding_count is above the local enterprise review threshold."
+    },
+    {
+      "check_id": "raw_prompt_redaction",
+      "status": "pass",
+      "evidence": "Only dataset and output fingerprints are retained in the audit record."
+    }
+  ],
+  "remediation": {
+    "status": "open",
+    "owner": "security-review",
+    "ticket": "SEC-REVIEW-001"
+  },
+  "redaction": {
+    "raw_prompts_stored": false,
+    "raw_responses_stored": false,
+    "stored_fields": [
+      "benchmark",
+      "run_id",
+      "model",
+      "dataset.fingerprint",
+      "result.stat_path",
+      "result.judge_response_path",
+      "policy_checks",
+      "remediation.status"
+    ]
+  }
+}
