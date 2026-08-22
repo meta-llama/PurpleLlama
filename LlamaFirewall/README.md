@@ -161,7 +161,7 @@ If you prefer to set up manually:
 1. Preload the Model: Preload the model to your local cache directory, `~/.cache/huggingface`.
 2. Alternative Option: Make sure your HF account has been set up, and for any missing model, LlamaFirewall will automate the download. To verify your HF login, try:
    ```bash
-   huggingface-cli whoami
+   hf auth whoami
    ```
    If you are not logged in, then you can log in via:
    ```bash
