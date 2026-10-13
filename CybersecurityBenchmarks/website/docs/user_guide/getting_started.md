@@ -44,6 +44,13 @@ The followings are a few examples:
 - `ANYSCALE::meta-llama/Llama-2-13b-chat-hf::<API KEY>`
 - `TOGETHER::togethercomputer/llama-2-7b::<API KEY>`
 
+By default, for OpenAI API-compatible models, the Chat Completions protocol is used. Adding `,responses`
+to the model name, such as `"OPENAI::gpt-5.4-mini,responses::<API KEY>"`, will tell the LLM client to
+use the [OpenAI Responses API](https://developers.openai.com/api/reference/responses/overview) instead.
+The newer GPT Codex models only support the Responses API, so this is necessary in order to benchmark
+them, but many of the GPT models support both protocols, and it can be valuable to benchmark across
+both protocols.
+
 ### How to use a different model supported by Anyscale or Together
 
 1. Lookup the models supported by
