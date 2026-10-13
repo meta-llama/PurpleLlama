@@ -92,6 +92,9 @@ You can also check out the 🤗 leaderboard [here](https://huggingface.co/spaces
 #### CyberSec Eval 3
 The newly released CyberSec Eval 3 features three additional test suites: visual prompt injection tests, spear phishing capability tests, and autonomous offensive cyber operations tests.
 
+#### Related complementary evaluations
+For multi-step **agentic** attacks — where adversarial payloads sit in tool outputs or memory, aligned to a subset of the [OWASP Top 10 for Agentic Applications (2026)](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — see [AgentThreatBench](https://ukgovernmentbeis.github.io/inspect_evals/evals/safeguards/agent_threat_bench/) in the UK AI Safety Institute [`inspect_evals`](https://github.com/UKGovernmentBEIS/inspect_evals/tree/main/src/inspect_evals/agent_threat_bench) suite. It is complementary to CyberSecEval and is not included in this repository. Details are in the [CybersecurityBenchmarks README](CybersecurityBenchmarks/README.md#related-complementary-evaluations).
+
 ## Getting Started
 
 As part of the [Llama reference system](https://github.com/meta-llama/llama-agentic-system), we’re integrating a safety layer to facilitate adoption and deployment of these safeguards.

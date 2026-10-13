@@ -77,6 +77,36 @@ The repository includes several types of benchmarks:
 Please take a look at our [wiki](https://meta-llama.github.io/PurpleLlama/)
 which contains detailed instructions on how to execute our benchmarks.
 
+## Related complementary evaluations
+
+CyberSecEval's prompt-injection suites measure whether an LLM follows injected
+instructions in **user-provided** text or images. They do not currently ship
+multi-step agent evaluations where the adversarial payload is embedded in
+**tool outputs or memory stores**.
+
+[AgentThreatBench](https://ukgovernmentbeis.github.io/inspect_evals/evals/safeguards/agent_threat_bench/)
+is a complementary evaluation in the UK AI Safety Institute's
+[`inspect_evals`](https://github.com/UKGovernmentBEIS/inspect_evals/tree/main/src/inspect_evals/agent_threat_bench)
+suite. It operationalizes a subset of the
+[OWASP Top 10 for Agentic Applications (2026)](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/)
+as executable Inspect AI tasks. As of this writing it includes three tasks
+covering two ASI categories:
+
+| Task | Attack surface | OWASP ID |
+| --- | --- | --- |
+| Memory poison | Adversarial RAG / memory-store entries | ASI06 |
+| Autonomy hijack | Indirect injection in `read_inbox` tool output | ASI01 |
+| Data exfiltration | Indirect injection in `lookup_customer` tool output | ASI01 |
+
+AgentThreatBench scores **utility** (task completion) and **security** (attack
+resistance) independently. It is **not** vendored here and is **not** runnable
+through `CybersecurityBenchmarks.benchmark.run`. To run it, follow the
+inspect_evals documentation (`pip install inspect-evals`).
+
+This section is a documentation pointer only. A first-party CyberSecEval
+integration would be a larger change and should be discussed with maintainers
+first (see [issue #230](https://github.com/meta-llama/PurpleLlama/issues/230)).
+
 # Getting Started
 
 Note that python 3.10 is required.
