@@ -11,6 +11,7 @@
 __all__ = [
     "AlignmentCheckScanner",
     "PIICheckScanner",
+    "PromptGuardCalibratedScanner",
 ]
 
 
@@ -27,4 +28,8 @@ def __getattr__(name: str) -> Type[object]:
         from .piicheck_scanner import PIICheckScanner
 
         return PIICheckScanner
+    elif name == "PromptGuardCalibratedScanner":
+        from .prompt_guard_calibrated_scanner import PromptGuardCalibratedScanner
+
+        return PromptGuardCalibratedScanner
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
