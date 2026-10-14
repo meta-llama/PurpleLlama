@@ -86,3 +86,33 @@ class TestLLM(unittest.TestCase):
         # When base_url is None, OpenAI client should use default endpoint
         # The default OpenAI base_url is "https://api.openai.com/v1"
         self.assertEqual(str(openai_llm.client.base_url), "https://api.openai.com/v1/")
+
+    def test_custom_endpoint_skips_static_model_warning(self) -> None:
+        custom_config = LLMConfig(
+            model="qwen3:4b-instruct",
+            api_key="ollama",
+            base_url="http://localhost:11434/v1/",
+        )
+
+        with self.assertNoLogs(
+            "CybersecurityBenchmarks.benchmark.llms.llm_base",
+            level="WARNING",
+        ):
+            OPENAI(custom_config)
+
+        default_config = LLMConfig(
+            model="unknown-model",
+            api_key="test-api-key",
+        )
+
+        with self.assertLogs(
+            "CybersecurityBenchmarks.benchmark.llms.llm_base",
+            level="WARNING",
+        ) as logs:
+            OPENAI(default_config)
+
+        self.assertIn(
+            "unknown-model is not in the valid model list",
+            logs.output[0],
+        )
+
