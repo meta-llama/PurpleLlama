@@ -54,11 +54,13 @@ class TOGETHER(LLM):
 
         response = self.client.chat.completions.create(
             model=self.model,
+            # pyrefly: ignore[bad-argument-type]
             messages=messages,
             max_tokens=DEFAULT_MAX_TOKENS,
             temperature=temperature,
             top_p=top_p,
             response_format=(
+                # pyrefly: ignore[bad-argument-type]
                 {"type": "json_object"}
                 if guided_decode_json_schema is not None
                 else None
@@ -89,11 +91,13 @@ class TOGETHER(LLM):
         logging.getLogger().setLevel(logging.WARNING)
         response = self.client.chat.completions.create(
             model=self.model,
+            # pyrefly: ignore[bad-argument-type]
             messages=messages,
             max_tokens=DEFAULT_MAX_TOKENS,
             temperature=temperature,
             top_p=top_p,
             response_format=(
+                # pyrefly: ignore[bad-argument-type]
                 {"type": "json_object"}
                 if guided_decode_json_schema is not None
                 else None
@@ -120,6 +124,7 @@ class TOGETHER(LLM):
             temperature=temperature,
             top_p=top_p,
             response_format=(
+                # pyrefly: ignore[bad-argument-type]
                 {"type": "json_object"}
                 if guided_decode_json_schema is not None
                 else None
@@ -147,6 +152,7 @@ class TOGETHER(LLM):
             temperature=temperature,
             top_p=top_p,
             response_format=(
+                # pyrefly: ignore[bad-argument-type]
                 {"type": "json_object"}
                 if guided_decode_json_schema is not None
                 else None
@@ -202,6 +208,7 @@ class TOGETHER(LLM):
 
         response = self.client.chat.completions.create(
             model=self.model,
+            # pyrefly: ignore[bad-argument-type]
             messages=messages,
             max_tokens=max_tokens,
             temperature=temperature,

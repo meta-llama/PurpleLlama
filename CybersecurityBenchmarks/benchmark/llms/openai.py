@@ -60,6 +60,7 @@ class OPENAI(LLM):
         logging.getLogger().setLevel(logging.WARNING)
         response = self.client.chat.completions.create(
             model=self.model,
+            # pyrefly: ignore[bad-argument-type]
             messages=messages,
             max_completion_tokens=(
                 # pyrefly: ignore [bad-argument-type]
@@ -74,6 +75,7 @@ class OPENAI(LLM):
             # pyrefly: ignore [bad-argument-type]
             top_p=top_p if (self.model not in self._reasoning_models) else NOT_GIVEN,
             response_format=(
+                # pyrefly: ignore[bad-argument-type]
                 {"type": "json_object"}
                 if guided_decode_json_schema is not None
                 else None
@@ -105,6 +107,7 @@ class OPENAI(LLM):
         logging.getLogger().setLevel(logging.WARNING)
         response = self.client.chat.completions.create(
             model=self.model,
+            # pyrefly: ignore[bad-argument-type]
             messages=messages,
             max_completion_tokens=(
                 # pyrefly: ignore [bad-argument-type]
@@ -119,6 +122,7 @@ class OPENAI(LLM):
             # pyrefly: ignore [bad-argument-type]
             top_p=top_p if (self.model not in self._reasoning_models) else NOT_GIVEN,
             response_format=(
+                # pyrefly: ignore[bad-argument-type]
                 {"type": "json_object"}
                 if guided_decode_json_schema is not None
                 else None
@@ -152,6 +156,7 @@ class OPENAI(LLM):
         message_list.append({"role": "user", "content": prompt})
         response = self.client.chat.completions.create(
             model=self.model,
+            # pyrefly: ignore[bad-argument-type]
             messages=message_list,
             max_completion_tokens=(
                 # pyrefly: ignore [bad-argument-type]
@@ -166,6 +171,7 @@ class OPENAI(LLM):
             # pyrefly: ignore [bad-argument-type]
             top_p=top_p if (self.model not in self._reasoning_models) else NOT_GIVEN,
             response_format=(
+                # pyrefly: ignore[bad-argument-type]
                 {"type": "json_object"}
                 if guided_decode_json_schema is not None
                 else None
@@ -205,6 +211,7 @@ class OPENAI(LLM):
             # pyrefly: ignore [bad-argument-type]
             top_p=top_p if (self.model not in self._reasoning_models) else NOT_GIVEN,
             response_format=(
+                # pyrefly: ignore[bad-argument-type]
                 {"type": "json_object"}
                 if guided_decode_json_schema is not None
                 else None
@@ -262,6 +269,7 @@ class OPENAI(LLM):
             # pyrefly: ignore [bad-argument-type]
             top_p=top_p if (self.model not in self._reasoning_models) else NOT_GIVEN,
             response_format=(
+                # pyrefly: ignore[bad-argument-type]
                 {"type": "json_object"}
                 if guided_decode_json_schema is not None
                 else None
@@ -323,6 +331,7 @@ class OPENAI(LLM):
 
         response = self.client.chat.completions.create(
             model=self.model,
+            # pyrefly: ignore[bad-argument-type]
             messages=messages,
             max_completion_tokens=(
                 # pyrefly: ignore [bad-argument-type]

@@ -279,6 +279,7 @@ class LLAMA(LLM):
 
         response = self.client.chat.completions.create(
             model=self.model,
+            # pyrefly: ignore[bad-argument-type]
             messages=messages,
             max_tokens=max_tokens,
             temperature=temperature,

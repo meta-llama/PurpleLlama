@@ -92,6 +92,7 @@ class LLMClient(Generic[OutputSchemaT]):
         try:
             response = self.client.beta.chat.completions.parse(
                 model=self.model_name,
+                # pyrefly: ignore[bad-argument-type]
                 messages=messages,
                 response_format=output_schema,
                 temperature=temperature,
