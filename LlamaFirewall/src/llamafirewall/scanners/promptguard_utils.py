@@ -8,6 +8,7 @@
 import logging
 import os
 
+import numpy as np
 import torch
 from huggingface_hub import get_token as _get_hf_token, login
 from torch import Tensor
@@ -127,3 +128,31 @@ class PromptGuard:
     ) -> float:
         probabilities = self._get_class_probabilities(text, temperature, preprocess)
         return probabilities[0, -1].item()
+
+    def get_pooled_embedding(
+        self,
+        text: str,
+        preprocess: bool = False,
+    ) -> np.ndarray:
+        """Return the frozen encoder's pooled (penultimate) embedding as a 1-D array.
+
+        This exposes the representation the native classification head sits on top of,
+        so a caller can score it with their own calibrated linear head. Unlike
+        ``get_jailbreak_score`` (which sets ``preprocess=True`` by default), this does
+        NOT preprocess by default: a caller training a head must match whichever path
+        they used. Set ``preprocess=True`` to apply the same whitespace normalization
+        ``get_jailbreak_score`` uses.
+        """
+        if preprocess:
+            text = self._preprocess_text_for_promptguard(text)
+        inputs = self.tokenizer(
+            text, return_tensors="pt", padding=True, truncation=True, max_length=512
+        )
+        inputs = inputs.to(self.device)
+        self.model.eval()
+        with torch.no_grad():
+            encoder = getattr(self.model, "deberta", None) or self.model.base_model
+            hidden = encoder(**inputs).last_hidden_state
+            pooler = getattr(self.model, "pooler", None)
+            pooled = pooler(hidden) if pooler is not None else hidden[:, 0]
+        return pooled[0].detach().cpu().numpy().astype(np.float64)
