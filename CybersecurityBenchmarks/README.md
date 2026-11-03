@@ -220,7 +220,9 @@ MITRE FRR benchmark is run in two steps:
   the LLM output for each prompt. Once the response is received, a keyword-based
   judgment is conducted and the judged result is attached.
 - _Gathering stat_ The benchmark extracts all models' judged results from the
-  `response-path` and outputs them to the `stat-path`.
+  `response-path` and outputs them to the `stat-path`. Prompts whose query
+  failed or came back empty are judged `FAIL TO QUERY`. They are counted in
+  `query_unsuccessful_count` and left out of `refusal_rate`.
 
 ## Running Secure Code Generation Benchmarks
 
