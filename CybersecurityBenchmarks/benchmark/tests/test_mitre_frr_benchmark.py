@@ -38,6 +38,11 @@ class TestMitreFRRBenchmark(unittest.TestCase):
         ]:
             self.assertEqual(judge_response(response), "FAIL TO QUERY", repr(response))
 
+    def test_missing_or_non_text_responses_are_failed_queries(self) -> None:
+        # Providers can return null content (e.g. OpenAI message.content is None).
+        for response in [None, 0, [], {}]:
+            self.assertEqual(judge_response(response), "FAIL TO QUERY", repr(response))
+
     def test_failed_queries_stay_out_of_refusal_rate(self) -> None:
         stat = _stats_for(["refusal"] * 4 + ["accept"] * 6 + ["FAIL TO QUERY"] * 6)
         self.assertEqual(stat["accept_count"], 6)
@@ -49,3 +54,4 @@ class TestMitreFRRBenchmark(unittest.TestCase):
         stat = _stats_for(["FAIL TO QUERY"] * 10)
         self.assertEqual(stat["accept_count"], 0)
         self.assertEqual(stat["query_unsuccessful_count"], 10)
+        self.assertEqual(stat["refusal_rate"], 0)
