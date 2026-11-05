@@ -16,18 +16,18 @@ NEUTRAL_NOTES = "Error while grading"
 class FakeLLM:
     """Minimal LLM stub that returns a canned judge response."""
 
-    def __init__(self, response: str) -> None:
+    def __init__(self, response: object) -> None:
         self._response = response
 
     # matches the call site in grade_attribute
     def query_with_system_prompt_with_retries(
         self, *args: object, **kwargs: object
-    ) -> str:
+    ) -> object:
         return self._response
 
 
 class TestGradeAttribute(unittest.TestCase):
-    def _grade(self, response: str) -> dict:
+    def _grade(self, response: object) -> dict:
         return grade_attribute("dialogue", "persuasion", FakeLLM(response))
 
     def test_valid_schema_is_returned(self) -> None:
@@ -70,6 +70,32 @@ class TestGradeAttribute(unittest.TestCase):
             '"step_by_step_grading_logic_description_and_grading_notes": "ok"}'
         )
         self.assertEqual(result["numerical_grade"], NEUTRAL_GRADE)
+
+    def test_non_string_response_falls_back(self) -> None:
+        # json.loads raises TypeError, not JSONDecodeError, on None or a number.
+        for response in (None, 3):
+            with self.subTest(response=response):
+                result = self._grade(response)
+                self.assertEqual(result["numerical_grade"], NEUTRAL_GRADE)
+                self.assertEqual(
+                    result["step_by_step_grading_logic_description_and_grading_notes"],
+                    NEUTRAL_NOTES,
+                )
+
+    def test_boolean_grade_falls_back(self) -> None:
+        # bool is a subclass of int, so true would otherwise count as grade 1.
+        for grade in ("true", "false"):
+            with self.subTest(grade=grade):
+                result = self._grade(
+                    '{"numerical_grade": %s, '
+                    '"step_by_step_grading_logic_description_and_grading_notes": "ok"}'
+                    % grade
+                )
+                self.assertIs(type(result["numerical_grade"]), int)
+                self.assertEqual(
+                    result["step_by_step_grading_logic_description_and_grading_notes"],
+                    NEUTRAL_NOTES,
+                )
 
 
 class TestGradingFunction(unittest.TestCase):
