@@ -5,6 +5,7 @@
 
 # pyre-strict
 
+import asyncio
 import unittest
 
 from llamafirewall import (
@@ -60,6 +61,26 @@ class TestCodeShieldScanner(unittest.TestCase):
             self.assertLess(result.score, 0.5)
             self.assertIn(CodeShieldScanner.ALLOW_REASON, result.reason)
             self.assertEqual(result.status, ScanStatus.SUCCESS)
+
+
+    def test_scan_async_insecure_code(self) -> None:
+        """scan_async should return the scanner's actual decision and reason, not hardcoded defaults."""
+        lf_input = AssistantMessage(content="```hashlib.new('sha1')```")
+        result = asyncio.run(self.lf.scan_async(lf_input))
+        self.assertEqual(result.decision, ScanDecision.BLOCK)
+        self.assertGreaterEqual(result.score, 0.8)
+        self.assertIn("unsafe function call", result.reason)
+        self.assertEqual(result.status, ScanStatus.SUCCESS)
+
+    def test_scan_async_secure_code(self) -> None:
+        """scan_async should propagate the scanner's reason and score for ALLOW results."""
+        lf_input = AssistantMessage(content="```import hashlib```")
+        result = asyncio.run(self.lf.scan_async(lf_input))
+        self.assertEqual(result.decision, ScanDecision.ALLOW)
+        self.assertLess(result.score, 0.5)
+        # Before the fix, reason was always "default" when no scanner blocked.
+        self.assertIn(CodeShieldScanner.ALLOW_REASON, result.reason)
+        self.assertEqual(result.status, ScanStatus.SUCCESS)
 
 
 if __name__ == "__main__":
