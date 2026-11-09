@@ -101,7 +101,7 @@ class ExistingOrTempDirectory:
         if isinstance(self.tmpdir, TemporaryDirectory):
             return Path(self.tmpdir.__enter__())
         assert isinstance(self.tmpdir, Path)
-        return self.tmpdir.__enter__()
+        return self.tmpdir
 
     def __exit__(
         self,

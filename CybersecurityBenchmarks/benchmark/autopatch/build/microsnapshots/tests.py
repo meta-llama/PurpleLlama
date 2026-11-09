@@ -24,6 +24,43 @@ from . import lib_dump
 from .lib_dump import Config, dump_values
 
 
+class ExistingDirectoryTest(unittest.TestCase):
+    def test_keeps_existing_directory_and_files(self) -> None:
+        with tempfile.TemporaryDirectory() as root:
+            directory = Path(root) / "output"
+            directory.mkdir()
+            marker = directory / "keep.txt"
+            marker.write_text("keep")
+
+            with lib_dump.ExistingOrTempDirectory(existing=directory) as output:
+                self.assertEqual(output, directory)
+                self.assertEqual(marker.read_text(), "keep")
+
+            self.assertEqual(marker.read_text(), "keep")
+
+    def test_creates_requested_directory_without_cleanup(self) -> None:
+        with tempfile.TemporaryDirectory() as root:
+            directory = Path(root) / "output"
+
+            with lib_dump.ExistingOrTempDirectory(existing=directory) as output:
+                self.assertEqual(output, directory)
+                self.assertTrue(output.is_dir())
+
+            self.assertTrue(directory.is_dir())
+
+    def test_propagates_exception_without_removing_directory(self) -> None:
+        with tempfile.TemporaryDirectory() as root:
+            directory = Path(root) / "output"
+            directory.mkdir()
+
+            with self.assertRaisesRegex(ValueError, "failure"):
+                with lib_dump.ExistingOrTempDirectory(existing=directory) as output:
+                    self.assertEqual(output, directory)
+                    raise ValueError("failure")
+
+            self.assertTrue(directory.is_dir())
+
+
 class MemCpy(unittest.TestCase):
     def val_x(self, ptr_offset: int) -> Dict[str, Any]:
         return {
