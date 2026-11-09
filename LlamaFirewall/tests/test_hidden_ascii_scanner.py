@@ -39,6 +39,7 @@ class TestHiddenASCIIScanner(unittest.TestCase):
             self.assertEqual(result.decision, ScanDecision.BLOCK)
             self.assertGreaterEqual(result.score, 0.8)
             self.assertIn("Hidden ASCII", result.reason)
+            self.assertIn("Hello, how are you doing?", result.reason)
             self.assertEqual(result.status, ScanStatus.SUCCESS)
 
     def test_benign_input(self) -> None:
