@@ -118,6 +118,7 @@ class RepoRevisionHelper:
         if not self._discard_local_changes:
             self.shelve()  # shelve the uncommited changes
         self._prev_revision = self.get_repo_revision()
+        # pyrefly: ignore [redefinition]
         self._target_revision: str
         self.checkout_repo_revision(self._target_revision)
 

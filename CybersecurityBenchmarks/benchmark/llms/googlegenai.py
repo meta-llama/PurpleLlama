@@ -315,7 +315,7 @@ class GOOGLEGENAI(LLM):
         temperature: float = DEFAULT_TEMPERATURE,
         top_p: float = DEFAULT_TOP_P,
     ) -> str:
-        # pyrefly: ignore [missing-attribute]
+        # pyrefly: ignore [abstract-method-call, missing-attribute]
         return super().chat_with_system_prompt(
             system_prompt,
             prompt_with_history,
