@@ -19,6 +19,12 @@ try:
 except ImportError:
     from CodeShield.insecure_code_detector import oss
 
+# Some regex test cases also count semgrep's matches, so they only hold where
+# the semgrep analyzer runs.
+requires_semgrep = unittest.skipUnless(
+    oss.ENABLE_SEMGREP, "Expected counts include semgrep matches"
+)
+
 
 class InsecureCodeDetectorTest(unittest.IsolatedAsyncioTestCase, ABC):
     @unittest.skipUnless(oss.ENABLE_REGEX_ANALYZER, "Regex analyzer not enabled")

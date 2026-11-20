@@ -8,7 +8,7 @@
 
 from CodeShield.insecure_code_detector.languages import Language
 
-from .insecure_code_detector_test import InsecureCodeDetectorTest
+from .insecure_code_detector_test import InsecureCodeDetectorTest, requires_semgrep
 
 # the following test cases contain an input string, and the corresponding number of expected insecure pattern matches
 JAVASCRIPT_TEST_CASES = [
@@ -25,5 +25,6 @@ JAVASCRIPT_TEST_CASES = [
 
 
 class TestJavascriptInsecureCodeDetector(InsecureCodeDetectorTest):
+    @requires_semgrep
     async def test_javascript_regex_patterns(self) -> None:
         await self.run_regex_tests(Language.JAVASCRIPT, JAVASCRIPT_TEST_CASES)

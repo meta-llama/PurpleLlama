@@ -8,7 +8,7 @@
 
 from CodeShield.insecure_code_detector.languages import Language
 
-from .insecure_code_detector_test import InsecureCodeDetectorTest
+from .insecure_code_detector_test import InsecureCodeDetectorTest, requires_semgrep
 
 # the following test cases contain an input string, and the corresponding number of expected insecure pattern matches
 C_REGEX_TEST_CASES = [
@@ -74,6 +74,7 @@ C_SEMGREP_TEST_CASES = [
 
 
 class TestCInsecureCodeDetector(InsecureCodeDetectorTest):
+    @requires_semgrep
     async def test_c_regex_patterns(self) -> None:
         await self.run_regex_tests(Language.C, C_REGEX_TEST_CASES)
 
