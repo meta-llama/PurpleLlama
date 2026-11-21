@@ -15,9 +15,10 @@ import os
 import re
 import tempfile
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import ExitStack, contextmanager
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional
+from typing import Iterator, List, Optional
 
 from . import insecure_patterns, languages
 from .analyzers import Analyzer
@@ -95,22 +96,11 @@ async def analyze(
     """
     result = []
     is_path_preexisting = True if path else False
-    file_path = (
-        path
-        if is_path_preexisting
-        else _write_code_to_file(
-            (code_before if code_before else "")
-            + generated_code
-            + (code_after if code_after else ""),
-            languages.get_file_extension(language),
-        )
-    )
-
     code_context = CodeContext(
         language,
         code_before,
         code_after,
-        file_path or Path(),
+        path or Path(),
         is_path_preexisting,
     )
 
@@ -128,31 +118,36 @@ async def analyze(
         if len(result) > 0:
             return result
 
-    # SEMGREP analyze
-    if oss.ENABLE_SEMGREP and (
-        Analyzer.SEMGREP in LANGUAGE_ANALYZER_MAP.get(language, [])
-    ):
-        if usecase == UseCase.CODESHIELD:
-            if not _is_semgrep_scan_recommended(generated_code, code_context, usecase):
-                return result
-        tasks.append(
-            asyncio.create_task(_semgrep_analyze(generated_code, code_context, usecase))
-        )
+    with ExitStack() as stack:
+        # SEMGREP analyze
+        if oss.ENABLE_SEMGREP and (
+            Analyzer.SEMGREP in LANGUAGE_ANALYZER_MAP.get(language, [])
+        ):
+            if usecase == UseCase.CODESHIELD:
+                if not _is_semgrep_scan_recommended(
+                    generated_code, code_context, usecase
+                ):
+                    return result
+            if not is_path_preexisting:
+                code_context.path = stack.enter_context(
+                    _write_code_to_file(
+                        (code_before or "") + generated_code + (code_after or ""),
+                        languages.get_file_extension(language),
+                    )
+                )
+            tasks.append(
+                asyncio.create_task(
+                    _semgrep_analyze(generated_code, code_context, usecase)
+                )
+            )
 
-    # Gather results from all tasks
-    results_from_tasks = await asyncio.gather(*tasks)
+        # Gather results from all tasks
+        results_from_tasks = await asyncio.gather(*tasks)
 
-    # Flatten the list of results
-    result += [issue for sublist in results_from_tasks for issue in sublist]
+        # Flatten the list of results
+        result += [issue for sublist in results_from_tasks for issue in sublist]
 
-    # end of static analysis: clean up
-    try:
-        if not is_path_preexisting:
-            os.remove(code_context.path)
-    except OSError:
-        LOG.warn("File created for static analysis could not be deleted.")
-
-    return result
+        return result
 
 
 def _is_comment_or_directive(code: str) -> bool:
@@ -217,7 +212,13 @@ async def _run_command(command: list[str]) -> str:
     process = await asyncio.create_subprocess_exec(
         *command, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT
     )
-    stdout, stderr = await process.communicate()
+    try:
+        stdout, stderr = await process.communicate()
+    except asyncio.CancelledError:
+        if process.returncode is None:
+            process.kill()
+        await process.communicate()
+        raise
     if process.returncode != 0:
         LOG.fatal(
             f"Process {' '.join(command)} failed with exit code {process.returncode}\nStdout: {stdout}\nStderr:{stderr}"
@@ -225,16 +226,18 @@ async def _run_command(command: list[str]) -> str:
     return stdout.decode("utf-8", errors="replace")
 
 
-def _write_code_to_file(file_content: str, extension: str) -> Path:
+@contextmanager
+def _write_code_to_file(file_content: str, extension: str) -> Iterator[Path]:
+    directory = tempfile.TemporaryDirectory()
     try:
-        with tempfile.NamedTemporaryFile(
-            suffix=extension, mode="w", delete=False
-        ) as tmp:
-            tmp.write(file_content)
-            return Path(tmp.name)
-    except Exception as e:
-        LOG.error(e)
-        raise Exception(f"Could not create file: {e}")
+        path = Path(directory.name) / f"code{extension}"
+        path.write_text(file_content, encoding="utf-8")
+        yield path
+    finally:
+        try:
+            directory.cleanup()
+        except OSError:
+            LOG.warning("File created for static analysis could not be deleted.")
 
 
 def _filter_issues_in_generated_code(
