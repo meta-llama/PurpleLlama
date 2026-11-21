@@ -1,4 +1,8 @@
 <p align="center">
+  <b>English</b> · <a href="README.zh.md">简体中文</a>
+</p>
+
+<p align="center">
   <img src="https://github.com/facebookresearch/PurpleLlama/blob/main/logo.png" width="400"/>
 </p>
 
