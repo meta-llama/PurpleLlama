@@ -19,6 +19,7 @@ __all__ = [
     "CustomCheckScanner",
     "AlignmentCheckScanner",
     "PIICheckScanner",
+    "PromptGuardCalibratedScanner",
 ]
 
 
@@ -51,6 +52,12 @@ def __getattr__(name: str) -> Type[object]:
         from .experimental.piicheck_scanner import PIICheckScanner
 
         return PIICheckScanner
+    elif name == "PromptGuardCalibratedScanner":
+        from .experimental.prompt_guard_calibrated_scanner import (
+            PromptGuardCalibratedScanner,
+        )
+
+        return PromptGuardCalibratedScanner
     elif name == "promptguard_utils":
         from . import promptguard_utils
 
