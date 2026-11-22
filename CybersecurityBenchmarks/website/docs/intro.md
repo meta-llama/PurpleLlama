@@ -73,3 +73,22 @@ The repository includes several types of benchmarks:
 9.  **CyberSOCEval Tests**: These tests, created in partnership with Crowdstrike, assess defensive capabilities and include two benchmarks:
     * Malware Analysis:  Assesses the precision and recall of LLMs in identifying malicious activities from potential malware, such as detecting ransomware or remote access trojans via mutiple choice questions where multple options may be correct.
     * Threat Intelligence Reasoning: Evaluates an AI's ability to parse unstructured threat intelligence reports and extract actionable insights via mutiple choice questions where multple options may be correct.
+
+## Related complementary evaluations
+
+CyberSecEval's prompt-injection suites measure whether an LLM follows injected
+instructions in **user-provided** text or images. They do not currently ship
+multi-step agent evaluations where the adversarial payload is embedded in
+**tool outputs or memory stores**.
+
+[AgentThreatBench](https://ukgovernmentbeis.github.io/inspect_evals/evals/safeguards/agent_threat_bench/)
+is a complementary evaluation in the UK AI Safety Institute's
+[`inspect_evals`](https://github.com/UKGovernmentBEIS/inspect_evals/tree/main/src/inspect_evals/agent_threat_bench)
+suite. It operationalizes a subset of the
+[OWASP Top 10 for Agentic Applications (2026)](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/)
+as executable Inspect AI tasks. As of this writing it includes three tasks
+covering two ASI categories (ASI01 Agent Goal Hijack and ASI06 Memory & Context
+Poisoning). It scores utility and security independently and is **not**
+included in this repository. See the
+[CybersecurityBenchmarks README](https://github.com/meta-llama/PurpleLlama/blob/main/CybersecurityBenchmarks/README.md#related-complementary-evaluations)
+for links and a short comparison.
