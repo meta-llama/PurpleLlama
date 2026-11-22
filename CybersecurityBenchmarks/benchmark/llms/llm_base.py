@@ -58,7 +58,7 @@ class LLM(ABC):
         self.max_tokens: int = config.max_tokens
         self.cot_end_tokens: list[str] | None = config.cot_end_tokens
         self.base_url: str | None = config.base_url
-        if self.model not in self.valid_models():
+        if self.base_url is None and self.model not in self.valid_models():
             LOG.warning(
                 f"{self.model} is not in the valid model list for {type(self).__name__}. Valid models are: {', '.join(self.valid_models())}."
             )
