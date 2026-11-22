@@ -24,6 +24,7 @@ from .llms.llm_base import (
     UnretriableQueryException,
 )
 from .llms.meta import LLAMA
+from .llms.novita import NOVITA
 from .llms.openai import OPENAI
 from .llms.together import TOGETHER
 
@@ -80,6 +81,8 @@ def create(
         return OPENAI(config)
     if provider == "TOGETHER":
         return TOGETHER(config)
+    if provider == "NOVITA":
+        return NOVITA(config)
     if provider == "ANTHROPIC":
         return ANTHROPIC(config)
     if provider == "GOOGLEGENAI":

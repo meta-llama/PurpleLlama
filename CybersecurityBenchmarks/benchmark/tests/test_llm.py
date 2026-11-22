@@ -22,6 +22,15 @@ class TestLLM(unittest.TestCase):
 
         self.assertRaises(ValueError, lambda: llm.create("GPT::unknown::<my API key"))
 
+    def test_create_novita(self) -> None:
+        novita = llm.create(
+            "NOVITA::moonshotai/kimi-k3::<my API key>"
+        )
+        self.assertTrue(isinstance(novita, llm.NOVITA))
+        self.assertEqual(novita.model, "moonshotai/kimi-k3")
+        self.assertEqual(novita.api_key, "<my API key>")
+        self.assertEqual(str(novita.client.base_url), "https://api.novita.ai/openai/")
+
     def test_create_with_base_url(self) -> None:
         """Test that create() function works with base_url parameter."""
         # Test 4-part format: PROVIDER::MODEL::API_KEY::BASE_URL
